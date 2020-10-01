@@ -26,6 +26,10 @@ it depends from where your application runs (inside our outside Google Cloud Pla
 
 The current authentication flow is as follows:
 - Check the `quarkus.google.cloud.service-account-location` property, if it exists, use the service account file from this location.
+- Check the access token returned as part of OpenId Connect Authorization Code Grant response after a user has authenticated with
+  Google OpenId Connect provider (see [Quarkus OpenId Connect for Web Applications](https://quarkus.io/guides/security-openid-connect-web-authentication)).
+  This access token can be used to access Google Services on behalf of the currently authenticated user
+  but will be ignored if the `quarkus.google.cloud.accessTokenEnabled` property is set to `false`.
 - Use `GoogleCredentials.getApplicationDefault()` that will search for credentials in multiple places:
     - Credentials file pointed to by the `GOOGLE_APPLICATION_CREDENTIALS` environment variable.
     - Credentials provided by the Google Cloud SDK `gcloud auth application-default login` command.
