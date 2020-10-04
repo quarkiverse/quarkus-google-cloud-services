@@ -1,6 +1,7 @@
 package io.quarkiverse.googlecloudservices.it;
 
 import static io.restassured.RestAssured.given;
+import static org.hamcrest.Matchers.is;
 
 import org.junit.jupiter.api.Test;
 
@@ -49,4 +50,12 @@ public class GoogleServicesResourcesTest {
                 .statusCode(200);
     }
 
+    @Test
+    public void testSecretManager() {
+        given()
+                .when().get("/secretmanager")
+                .then()
+                .statusCode(200)
+                .body(is("integration-test-secret"));
+    }
 }

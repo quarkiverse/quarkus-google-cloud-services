@@ -43,6 +43,7 @@
         <module>spanner</module>
         <module>storage</module>
         <module>firestore</module>
+        <module>secretmanager</module>
     </modules>
 
     <dependencyManagement>

@@ -1,0 +1,12 @@
+---
+name: "Google Cloud Secret Manager"
+metadata:
+  keywords:
+  - "secretmanager"
+  - "google cloud"
+  - "gcloud"
+  - "gcp"
+  categories:
+    - "cloud"
+    - "security"
+  status: "experimental"
