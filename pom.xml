@@ -4,6 +4,12 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
+    <parent>
+        <groupId>io.quarkiverse</groupId>
+        <artifactId>quarkiverse-parent</artifactId>
+        <version>2</version>
+    </parent>
+
     <groupId>io.quarkiverse.googlecloudservices</groupId>
     <artifactId>quarkus-google-cloud-services-parent</artifactId>
     <name>Quarkus - Google Cloud Services - Parent</name>
@@ -26,7 +32,7 @@
         Make sure to keep these two libraries compatible. -->
         <guava.version>29.0-jre</guava.version>
         <!-- Google Cloud library BOM has a dependency issue for google-api-client,
-        we fix it's version until we can update the BOM.-->
+        we fix its version until we can update the BOM.-->
         <google-api-client.version>1.30.10</google-api-client.version>
     </properties>
 
