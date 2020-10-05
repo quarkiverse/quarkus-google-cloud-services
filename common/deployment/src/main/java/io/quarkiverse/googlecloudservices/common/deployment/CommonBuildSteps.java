@@ -1,10 +1,10 @@
 package io.quarkiverse.googlecloudservices.common.deployment;
 
+import io.quarkiverse.googlecloudservices.common.GcpCredentialProducer;
 import io.quarkus.arc.deployment.AdditionalBeanBuildItem;
 import io.quarkus.deployment.annotations.BuildStep;
 import io.quarkus.deployment.builditem.ExtensionSslNativeSupportBuildItem;
 import io.quarkus.deployment.builditem.nativeimage.ReflectiveClassBuildItem;
-import io.quarkiverse.googlecloudservices.common.GcpCredentialProducer;
 
 public class CommonBuildSteps {
 
