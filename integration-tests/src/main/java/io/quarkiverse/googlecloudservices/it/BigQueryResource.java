@@ -25,7 +25,7 @@ public class BigQueryResource {
     @GET
     @Produces(MediaType.TEXT_PLAIN)
     public String bigquery() throws InterruptedException {
-        QueryJobConfiguration queryConfig = QueryJobConfiguration.newBuilder(
+        QueryJobConfiguration queryConfig = QueryJobConfiguration.newBuilder(// Define a new Job with the query
                 "SELECT "
                         + "CONCAT('https://stackoverflow.com/questions/', CAST(id as STRING)) as url, view_count "
                         + "FROM `bigquery-public-data.stackoverflow.posts_questions` "
@@ -47,7 +47,7 @@ public class BigQueryResource {
             throw new RuntimeException(queryJob.getStatus().getError().toString());
         }
 
-        // Get the results and return it
+        // Get the results and return them
         TableResult result = queryJob.getQueryResults();
         return StreamSupport.stream(result.iterateAll().spliterator(), false)
                 .map(row -> row.get("url").getStringValue() + " - " + row.get("view_count").getLongValue() + "\n")
