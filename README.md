@@ -1,7 +1,5 @@
 # Quarkiverse - Google Cloud Services
-<!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-1-orange.svg?style=flat-square)](#contributors-)
-<!-- ALL-CONTRIBUTORS-BADGE:END -->
+[![All Contributors](https://img.shields.io/badge/all_contributors-1-orange.svg?style=flat-square)](#contributors-) ![version](https://img.shields.io/maven-central/v/io.quarkiverse.googlecloudservices/quarkus-google-cloud-bigquery-parent)
 
 This repository hosts extensions for different Google Cloud Services.
 
@@ -17,6 +15,10 @@ They all share an optional common configuration property to set the project ID:
 quarkus.google.cloud.projectId=<your-project-id>
 ```
 
+All these extensions works with applications build as native image executables.
+
+These extension works well within the various Google Cloud Functions extensions available inside Quarkus as they directly authenticate via the built-in credentials.
+
 ## Authenticating to Google Cloud
 
 There are several ways to authenticate to Google Cloud, 
@@ -27,7 +29,7 @@ The current authentication flow is as follows:
 - Use `GoogleCredentials.getApplicationDefault()` that will search for credentials in multiple places:
     - Credentials file pointed to by the `GOOGLE_APPLICATION_CREDENTIALS` environment variable.
     - Credentials provided by the Google Cloud SDK `gcloud auth application-default login` command.
-    - Google Cloud managed environment (AppEngine, GCE, ...) built-in credentials.
+    - Google Cloud managed environment (AppEngine, GCE, Google Cloud Functions...) built-in credentials.
     
 ## WARNING
 
