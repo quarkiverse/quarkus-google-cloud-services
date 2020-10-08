@@ -43,8 +43,6 @@
         <module>spanner</module>
         <module>storage</module>
         <module>firestore</module>
-
-        <module>integration-tests</module>
     </modules>
 
     <dependencyManagement>
