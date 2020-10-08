@@ -1,5 +1,41 @@
-package io.quarkiverse.googlecloudservices.it;
+# Quarkiverse - Google Cloud Services - BigQuery
 
+This extension allows to inject a `com.google.cloud.bigquery.BigQuery` object inside your Quarkus application.
+
+## Bootstrapping the project
+
+First, we need a new project. Create a new project with the following command:
+
+```shell script
+mvn io.quarkus:quarkus-maven-plugin:<quarkusVersion>:create \
+    -DprojectGroupId=org.acme \
+    -DprojectArtifactId=bigquery-quickstart \
+    -Dextensions="quarkus-google-cloud-bigquery"
+cd bigquery-quickstart
+```
+
+This command generates a Maven project, importing the Google Cloud BigQuery extension.
+
+If you already have your Quarkus project configured, you can add the `quarkus-google-cloud-bigquery` extension to your project by running the following command in your project base directory:
+```shell script
+./mvnw quarkus:add-extension -Dextensions="quarkus-google-cloud-bigquery"
+```
+
+This will add the following to your pom.xml:
+
+```xml
+<dependency>
+    <groupId>io.quarkiverse.googlecloudservices</groupId>
+    <artifactId>quarkus-google-cloud-bigquery</artifactId>
+</dependency>
+```
+
+## Some example
+
+This is an example usage of the extension: we create a REST resource with a single endpoint that queries the Stackoverflow
+public dataset for questions tagged with 'google-bigquery' and returns the results.
+
+```java
 import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
@@ -20,7 +56,7 @@ import com.google.cloud.bigquery.TableResult;
 @Path("/bigquery")
 public class BigQueryResource {
     @Inject
-    BigQuery bigquery;
+    BigQuery bigquery; // Inject BigQuery
 
     @GET
     @Produces(MediaType.TEXT_PLAIN)
@@ -54,3 +90,4 @@ public class BigQueryResource {
                 .collect(Collectors.joining());
     }
 }
+```
