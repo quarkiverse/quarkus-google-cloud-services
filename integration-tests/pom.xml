@@ -16,6 +16,7 @@
 
     <modules>
         <module>main</module>
+        <module>google-cloud-functions</module>
     </modules>
 
 

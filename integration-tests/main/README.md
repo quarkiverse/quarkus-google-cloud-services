@@ -1,7 +1,11 @@
-# Quarkiverse - Google Cloud Services - Integration Tests
+# Quarkiverse - Google Cloud Services - Integration Tests - Main
 
 **WARNING:** all tests are disabled by default. 
 If you want to run them, you need to configure a valid GCP project inside the `application.properties`.
+
+This is the main integration test, it tests all Google Cloud services from REST endpoints using a service account authentication.
+
+Tests are disabled but native image is build by the CI to test the native image support for this extension.
 
 ## PubSub
 
