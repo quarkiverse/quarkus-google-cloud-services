@@ -1,0 +1,25 @@
+{
+  "files": [
+    "README.md"
+  ],
+  "imageSize": 100,
+  "commit": false,
+  "contributors": [
+    {
+      "login": "loicmathieu",
+      "name": "Loïc Mathieu",
+      "avatar_url": "https://avatars2.githubusercontent.com/u/1819009?v=4",
+      "profile": "https://www.loicmathieu.fr",
+      "contributions": [
+        "code",
+        "maintenance"
+      ]
+    }
+  ],
+  "contributorsPerLine": 7,
+  "projectName": "quarkiverse-google-cloud-services",
+  "projectOwner": "quarkiverse",
+  "repoType": "github",
+  "repoHost": "https://github.com",
+  "skipCi": true
+}
