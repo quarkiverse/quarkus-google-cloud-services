@@ -23,7 +23,7 @@ public class SecretManagerCredentialsProvider implements CredentialsProvider {
     @Override
     public Map<String, String> getCredentials(String credentialsProviderName) {
         String projectId = gcpConfiguration.projectId
-                .orElseThrow(() -> new SecretManagerException("Google Cloud project ID must be set."));
+                .orElseThrow(() -> new SecretManagerCredentialProviderException("Google Cloud project ID must be set."));
 
         try (SecretManagerServiceClient client = SecretManagerServiceClient.create()) {
             String secretName = providerConfig.secretName;
@@ -33,7 +33,7 @@ public class SecretManagerCredentialsProvider implements CredentialsProvider {
             String password = response.getPayload().getData().toStringUtf8();
             return Collections.singletonMap(CredentialsProvider.PASSWORD_PROPERTY_NAME, password);
         } catch (IOException e) {
-            throw new SecretManagerException("Unable to retrieve credentials using secret manager", e);
+            throw new SecretManagerCredentialProviderException("Unable to retrieve credentials using secret manager", e);
         }
     }
 }
