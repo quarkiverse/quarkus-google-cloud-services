@@ -17,11 +17,4 @@ public class SecretManagerCredentialsProviderConfig {
     @ConfigItem
     public String secretName;
 
-    @Override
-    public String toString() {
-        return "CredentialsProviderConfig{" +
-                ", secretName='" + secretVersion + '\'' +
-                ", secretVersion='" + secretName + '\'' +
-                '}';
-    }
 }
