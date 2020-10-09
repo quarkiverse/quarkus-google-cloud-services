@@ -13,7 +13,7 @@ import com.google.cloud.secretmanager.v1.SecretVersionName;
 import io.quarkiverse.googlecloudservices.common.GcpConfiguration;
 import io.quarkus.credentials.CredentialsProvider;
 
-public class SecretManagerProvider implements CredentialsProvider {
+public class SecretManagerCredentialsProvider implements CredentialsProvider {
     @Inject
     GcpConfiguration gcpConfiguration;
 
