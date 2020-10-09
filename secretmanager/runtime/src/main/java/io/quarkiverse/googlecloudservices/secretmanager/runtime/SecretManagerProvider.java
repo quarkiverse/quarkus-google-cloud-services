@@ -1,15 +1,17 @@
 package io.quarkiverse.googlecloudservices.secretmanager.runtime;
 
-import com.google.cloud.secretmanager.v1.AccessSecretVersionResponse;
-import com.google.cloud.secretmanager.v1.SecretManagerServiceClient;
-import com.google.cloud.secretmanager.v1.SecretVersionName;
-import io.quarkiverse.googlecloudservices.common.GcpConfiguration;
-import io.quarkus.credentials.CredentialsProvider;
-
-import javax.inject.Inject;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.Map;
+
+import javax.inject.Inject;
+
+import com.google.cloud.secretmanager.v1.AccessSecretVersionResponse;
+import com.google.cloud.secretmanager.v1.SecretManagerServiceClient;
+import com.google.cloud.secretmanager.v1.SecretVersionName;
+
+import io.quarkiverse.googlecloudservices.common.GcpConfiguration;
+import io.quarkus.credentials.CredentialsProvider;
 
 public class SecretManagerProvider implements CredentialsProvider {
     @Inject
