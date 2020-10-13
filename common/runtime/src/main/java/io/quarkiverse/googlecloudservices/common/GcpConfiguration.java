@@ -19,4 +19,17 @@ public class GcpConfiguration {
      */
     @ConfigItem
     public Optional<String> serviceAccountLocation;
+
+    /**
+     * Enable Google Cloud access token authentication
+     * For example, the access token which is returned as part of OpenId Connect Authorization Code Flow
+     * may be used to access Google Cloud services on behalf of the authenticated user.
+     *
+     * Note that if a service account location is configured then the access token will be ignored even if this property is
+     * enabled.
+     *
+     * Disable this property if the default Google Cloud authentication is required.
+     */
+    @ConfigItem(defaultValue = "true")
+    public boolean accessTokenEnabled = true;
 }
