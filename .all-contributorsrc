@@ -14,6 +14,15 @@
         "code",
         "maintenance"
       ]
+    },
+    {
+      "login": "sberyozkin",
+      "name": "sberyozkin",
+      "avatar_url": "https://avatars3.githubusercontent.com/u/467639?v=4",
+      "profile": "https://github.com/sberyozkin",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,
