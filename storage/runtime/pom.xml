@@ -10,6 +10,7 @@
 
     <artifactId>quarkus-google-cloud-storage</artifactId>
     <name>Quarkus - Google Cloud Services - Storage - Runtime</name>
+    <description>Use Google Cloud Storage object storage service</description>
 
     <dependencies>
         <dependency>

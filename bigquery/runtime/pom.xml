@@ -10,6 +10,7 @@
 
     <artifactId>quarkus-google-cloud-bigquery</artifactId>
     <name>Quarkus - Google Cloud Services - BigQuery - Runtime</name>
+    <description>Use Google Cloud BigQuery analytics database service</description>
 
     <dependencies>
         <dependency>

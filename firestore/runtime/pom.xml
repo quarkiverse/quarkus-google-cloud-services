@@ -10,6 +10,7 @@
 
     <artifactId>quarkus-google-cloud-firestore</artifactId>
     <name>Quarkus - Google Cloud Services - Firestore - Runtime</name>
+    <description>Use Google Cloud Firestore NOSQL database service</description>
 
     <dependencies>
         <dependency>
