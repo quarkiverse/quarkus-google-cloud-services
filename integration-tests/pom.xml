@@ -17,6 +17,7 @@
     <modules>
         <module>main</module>
         <module>google-cloud-functions</module>
+        <module>app-engine</module>
     </modules>
 
 
