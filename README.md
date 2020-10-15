@@ -1,5 +1,5 @@
 # Quarkiverse - Google Cloud Services
-[![All Contributors](https://img.shields.io/badge/all_contributors-1-orange.svg?style=flat-square)](#contributors-) ![version](https://img.shields.io/maven-central/v/io.quarkiverse.googlecloudservices/quarkus-google-cloud-bigquery-parent)
+[![All Contributors](https://img.shields.io/badge/all_contributors-1-orange.svg?style=flat-square)](#contributors-) [![version](https://img.shields.io/maven-central/v/io.quarkiverse.googlecloudservices/quarkus-google-cloud-bigquery-parent)](https://repo1.maven.org/maven2/io/quarkiverse/googlecloudservices/)
 
 This repository hosts extensions for different Google Cloud Services.
 
