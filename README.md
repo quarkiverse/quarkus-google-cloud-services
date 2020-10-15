@@ -33,17 +33,21 @@ The current authentication flow is as follows:
 - Use `GoogleCredentials.getApplicationDefault()` that will search for credentials in multiple places:
     - Credentials file pointed to by the `GOOGLE_APPLICATION_CREDENTIALS` environment variable.
     - Credentials provided by the Google Cloud SDK `gcloud auth application-default login` command.
-    - Google Cloud managed environment (AppEngine, GCE, Google Cloud Functions...) built-in credentials.
+    - Google Cloud managed environment (Google App Engine, Google Cloud Functions, GCE, ...) built-in credentials.
+    
+## Example applications
+
+Example applications can be found inside the integration-test folder:
+- [main](integration-tests/main): RESTEasy endpoints using all the Google Cloud Services extensions, to be deployed as a standalone JAR.
+- [google-cloud-functions](integration-tests/google-cloud-functions): A Google Cloud HTTP function using Google Cloud Storage. 
+- [app-engine](integration-tests/app-engine): A RESTEasy endpoint using Google Cloud Storage, to be deployed inside Google App Engine.
     
 ## WARNING
 
-This project is still in its early stage and no releases has been done yet. 
-The steps described inside the documentation to create a project cannot be done, one must package and install the dependencies locally to test it.
+This project is still in its early stage.
 
 Contributions are always welcome, but this repository is not really ready for external contributions yet, better create an issue
 to discuss them prior to any contributions.
-
-As already said, there is no release yet. To use it, you must build it from the source using Maven.
 
 ## Contributors ✨
 
