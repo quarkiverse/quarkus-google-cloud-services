@@ -10,6 +10,7 @@
 
     <artifactId>quarkus-google-cloud-pubsub</artifactId>
     <name>Quarkus - Google Cloud Services - PubSub - Runtime</name>
+    <description>Use Google Cloud PubSub messaging broker service</description>
 
     <dependencies>
         <dependency>

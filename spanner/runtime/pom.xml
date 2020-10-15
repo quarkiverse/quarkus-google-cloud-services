@@ -10,6 +10,7 @@
 
     <artifactId>quarkus-google-cloud-spanner</artifactId>
     <name>Quarkus - Google Cloud Services - Spanner - Runtime</name>
+    <description>Use Google Cloud Spanner RDBMS database service</description>
 
     <dependencies>
         <dependency>
