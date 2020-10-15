@@ -15,11 +15,16 @@ echo "Hello World!" > hello.txt
 gsutil cp hello.txt gs://my-bucket
 ```
 
+Then you need to configure your Google Cloud project inside the `application.properties`:
+```
+quarkus.google.cloud.project-id=<my-propject-id>
+```
+
 ## Deploying to Google Cloud Functions
 
 First build the application using `mvn clean package`.
 
-Then deploy to function to Google Cloud using:
+Then deploy the function to Google Cloud using:
 
 ```
 gcloud beta functions deploy quarkus-example-http \
