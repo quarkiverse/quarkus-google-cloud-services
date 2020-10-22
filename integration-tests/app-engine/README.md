@@ -41,7 +41,6 @@ target project:  [my-propject-id]
 target service:  [default]
 target version:  [20201015t104717]
 target url:      [https://my-propject-id.ew.r.appspot.com]
-
 ```
 
 The endpoint will then be available at https://my-propject-id.ew.r.appspot.com/storage.
