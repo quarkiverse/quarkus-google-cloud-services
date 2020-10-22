@@ -3,10 +3,12 @@ package io.quarkiverse.googlecloudservices.it;
 import static io.restassured.RestAssured.given;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 
 import io.quarkus.test.junit.QuarkusTest;
 
 @QuarkusTest
+@EnabledIfSystemProperty(named = "gcloud.test", matches = "true")
 public class GoogleServicesResourcesTest {
 
     @Test
