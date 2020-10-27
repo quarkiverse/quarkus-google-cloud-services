@@ -17,28 +17,28 @@ import io.quarkus.test.junit.QuarkusTest;
 
 @QuarkusTest
 public class FirestoreResourceTest {
-    static final int FIRESTORE_PORT = 8080;
-    static final String PROJECT_ID = "my-project-id";
+    private static final int PORT = 8080;
+    private static final String PROJECT_ID = "my-project-id";
 
-    static GenericContainer<?> FIRESTORE_CONTAINER;
+    private static GenericContainer<?> GCLOUD_CONTAINER;
 
     @BeforeAll
     public static void startGcloudContainer() throws IOException, InterruptedException {
-        FIRESTORE_CONTAINER = new GenericContainer<>("mtlynch/firestore-emulator")
-                .withExposedPorts(FIRESTORE_PORT)
+        GCLOUD_CONTAINER = new GenericContainer<>("mtlynch/firestore-emulator")
+                .withExposedPorts(PORT)
                 .withEnv("FIRESTORE_PROJECT_ID", PROJECT_ID)
-                .withEnv("PORT", String.valueOf(FIRESTORE_PORT))
+                .withEnv("PORT", String.valueOf(PORT))
                 .waitingFor(new LogMessageWaitStrategy().withRegEx("(?s).*running.*$"));
         List<String> portBindings = new ArrayList<>();
         portBindings.add("8080:8080");
-        FIRESTORE_CONTAINER.setPortBindings(portBindings);
-        FIRESTORE_CONTAINER.start();
+        GCLOUD_CONTAINER.setPortBindings(portBindings);
+        GCLOUD_CONTAINER.start();
     }
 
     @AfterAll
     public static void stopGcloudContainer() {
-        if (FIRESTORE_CONTAINER != null) {
-            FIRESTORE_CONTAINER.stop();
+        if (GCLOUD_CONTAINER != null) {
+            GCLOUD_CONTAINER.stop();
         }
     }
 
