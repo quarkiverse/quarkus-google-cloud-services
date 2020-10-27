@@ -1,0 +1,12 @@
+---
+name: "Google Cloud Bigtable"
+metadata:
+  keywords:
+  - "bigtable"
+  - "google cloud"
+  - "gcloud"
+  - "gcp"
+  categories:
+  - "cloud"
+  - "data"
+  status: "experimental"

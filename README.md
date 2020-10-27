@@ -5,6 +5,7 @@ This repository hosts extensions for different Google Cloud Services.
 
 You can find documentation for each of these extensions in their sub-directory:
 - [BigQuery](bigquery)
+- [Bigtable](bigtable)
 - [Firestore](firestore)
 - [PubSub](pubsub)
 - [Spanner](spanner)
@@ -15,7 +16,7 @@ They all share an optional common configuration property to set the project ID:
 quarkus.google.cloud.projectId=<your-project-id>
 ```
 
-All these extensions works with applications build as native image executables.
+All these extensions works with applications built as native image executables.
 
 These extension works well within the various Google Cloud Functions extensions available inside Quarkus as they directly authenticate via the built-in credentials.
 
@@ -34,6 +35,8 @@ The current authentication flow is as follows:
     - Credentials file pointed to by the `GOOGLE_APPLICATION_CREDENTIALS` environment variable.
     - Credentials provided by the Google Cloud SDK `gcloud auth application-default login` command.
     - Google Cloud managed environment (Google App Engine, Google Cloud Functions, GCE, ...) built-in credentials.
+    
+**Google PubSub and Google Bigtable must be authenticated using the `GOOGLE_APPLICATION_CREDENTIALS` environment variable only.
     
 ## Example applications
 
