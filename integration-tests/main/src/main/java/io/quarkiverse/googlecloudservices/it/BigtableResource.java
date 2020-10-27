@@ -26,25 +26,22 @@ public class BigtableResource {
 
     @PostConstruct
     void initBigtable() throws IOException {
-        BigtableTableAdminClient adminClient = BigtableTableAdminClient.create(projectId, INSTANCE_ID);
-        if (!adminClient.exists(TABLE_ID)) {
-            System.out.println("Creating table: " + TABLE_ID);
-            CreateTableRequest createTableRequest = CreateTableRequest.of(TABLE_ID).addFamily(COLUMN_FAMILY_ID);
-            adminClient.createTable(createTableRequest);
-            System.out.printf("Table %s created successfully%n", TABLE_ID);
+        try (BigtableTableAdminClient adminClient = BigtableTableAdminClient.create(projectId, INSTANCE_ID)) {
+            if (!adminClient.exists(TABLE_ID)) {
+                CreateTableRequest createTableRequest = CreateTableRequest.of(TABLE_ID).addFamily(COLUMN_FAMILY_ID);
+                adminClient.createTable(createTableRequest);
+            }
         }
     }
 
     @GET
     public String bigtable() throws IOException {
-        BigtableDataClient dataClient = BigtableDataClient.create(projectId, INSTANCE_ID);
-        try {
+        try (BigtableDataClient dataClient = BigtableDataClient.create(projectId, INSTANCE_ID)) {
             // create a row
             RowMutation rowMutation = RowMutation.create(TABLE_ID, "key1").setCell(COLUMN_FAMILY_ID, "test", "value1");
             dataClient.mutateRow(rowMutation);
 
             Row row = dataClient.readRow(TABLE_ID, "key1");
-            System.out.println("Row: " + row.getKey().toStringUtf8());
             StringBuilder cells = new StringBuilder();
             for (RowCell cell : row.getCells()) {
                 cells.append(String.format(
@@ -52,8 +49,6 @@ public class BigtableResource {
                         cell.getFamily(), cell.getQualifier().toStringUtf8(), cell.getValue().toStringUtf8()));
             }
             return cells.toString();
-        } finally {
-            dataClient.close();
         }
     }
 }
