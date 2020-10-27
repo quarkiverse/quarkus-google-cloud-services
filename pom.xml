@@ -42,6 +42,7 @@
         <module>spanner</module>
         <module>storage</module>
         <module>firestore</module>
+        <module>bigtable</module>
     </modules>
 
     <dependencyManagement>

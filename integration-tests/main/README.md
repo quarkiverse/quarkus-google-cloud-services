@@ -14,6 +14,26 @@ Before launching the test, be sure to achieve the following steps to setup all e
 All the extensions can be tested using the `GoogleServicesResourcesTest`, it needs to be run on a **real Google Cloud** project.
 This test is disabled by default as it depends on external services, if you want to run it you need to use the `gcloud` profile : `mvn test -Pgcloud`.
 
+### Bigtable
+
+To test Bigtable you first need to create a Bigtable instance named `test-instane`
+
+You can create one with `gcloud`:
+
+```
+gcloud bigtable instances create test-instance \
+    --cluster=test-cluster \
+    --cluster-zone=europe-west1-b \
+    --display-name=Test
+```
+
+As Bigtable mandates the usage of the `GOOGLE_APPLICATION_CREDENTIALS` environment variable to define its credentials, 
+you need to set this one instead of relying on the `quarkus.google.cloud.service-account-location` property. 
+
+```
+export GOOGLE_APPLICATION_CREDENTIALS=<your-service-account-file>
+```
+
 ### PubSub
 
 To test PubSub you first need to create a topic named `test-topic`

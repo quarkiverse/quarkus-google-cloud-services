@@ -20,6 +20,14 @@ public class GoogleServicesResourcesTest {
     }
 
     @Test
+    public void testBigtable() {
+        given()
+                .when().get("/bigtable")
+                .then()
+                .statusCode(200);
+    }
+
+    @Test
     public void testFirestore() {
         given()
                 .when().get("/firestore")
