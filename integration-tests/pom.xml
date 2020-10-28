@@ -14,6 +14,13 @@
     <name>Quarkus - Google Cloud Services - Integration Tests - Parent</name>
     <packaging>pom</packaging>
 
+    <properties>
+        <maven.deploy.skip>true</maven.deploy.skip>
+        <gpg.skip>true</gpg.skip>
+        <quarkus.build.skip>${skipTests}</quarkus.build.skip>
+        <native.surefire.skip>${skipTests}</native.surefire.skip>
+    </properties>
+
     <modules>
         <module>main</module>
         <module>google-cloud-functions</module>
