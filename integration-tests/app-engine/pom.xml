@@ -10,12 +10,11 @@
   </parent>
 
   <artifactId>quarkus-google-cloud-services-app-engine-it</artifactId>
-  <name>Quarkus - Google Cloud Services - Integration Tests - Functions</name>
+  <name>Quarkus - Google Cloud Services - Integration Tests - AppEngine</name>
 
   <properties>
     <maven.deploy.skip>true</maven.deploy.skip>
     <gpg.skip>true</gpg.skip>
-    <quarkus.build.skip>${skipTests}</quarkus.build.skip>
     <native.surefire.skip>${skipTests}</native.surefire.skip>
   </properties>
 
