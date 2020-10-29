@@ -12,6 +12,13 @@
   <artifactId>quarkus-google-cloud-services-main-it</artifactId>
   <name>Quarkus - Google Cloud Services - Integration Tests - Main</name>
 
+  <properties>
+    <maven.deploy.skip>true</maven.deploy.skip>
+    <gpg.skip>true</gpg.skip>
+    <quarkus.build.skip>${skipTests}</quarkus.build.skip>
+    <native.surefire.skip>${skipTests}</native.surefire.skip>
+  </properties>
+
   <dependencies>
     <dependency>
       <groupId>io.quarkus</groupId>
@@ -75,12 +82,12 @@
       <version>1.0.0</version>
       <scope>test</scope>
     </dependency>
-      <dependency>
-          <groupId>org.mockito</groupId>
-          <artifactId>mockito-core</artifactId>
-          <version>3.5.7</version>
-          <scope>test</scope>
-      </dependency>
+    <dependency>
+        <groupId>org.mockito</groupId>
+        <artifactId>mockito-core</artifactId>
+        <version>3.5.7</version>
+        <scope>test</scope>
+    </dependency>
   </dependencies>
 
   <build>
@@ -107,9 +114,6 @@
             <java.util.logging.manager>org.jboss.logmanager.LogManager</java.util.logging.manager>
           </systemProperties>
         </configuration>
-      </plugin>
-      <plugin>
-        <artifactId>maven-failsafe-plugin</artifactId>
       </plugin>
     </plugins>
   </build>
