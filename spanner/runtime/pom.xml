@@ -46,10 +46,9 @@
             <groupId>io.grpc</groupId>
             <artifactId>grpc-netty</artifactId>
         </dependency>
-        <!-- FIXME we should extract the needed code from quarkus-grpc into a common lib -->
         <dependency>
             <groupId>io.quarkus</groupId>
-            <artifactId>quarkus-grpc</artifactId>
+            <artifactId>quarkus-grpc-common</artifactId>
         </dependency>
     </dependencies>
 
