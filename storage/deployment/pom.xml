@@ -26,11 +26,6 @@
             <artifactId>quarkus-google-cloud-storage</artifactId>
             <version>0.3.0-SNAPSHOT</version>
         </dependency>
-        <dependency>
-            <groupId>com.google.cloud</groupId>
-            <artifactId>google-cloud-graalvm-support</artifactId>
-            <version>0.1.0</version>
-        </dependency>
     </dependencies>
 
     <build>
