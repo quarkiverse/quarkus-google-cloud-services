@@ -21,10 +21,9 @@
             <artifactId>quarkus-google-cloud-common-deployment</artifactId>
             <version>0.3.0-SNAPSHOT</version>
         </dependency>
-        <!-- FIXME we should extract the needed code from quarkus-grpc into a common lib -->
         <dependency>
             <groupId>io.quarkus</groupId>
-            <artifactId>quarkus-grpc-deployment</artifactId>
+            <artifactId>quarkus-grpc-common-deployment</artifactId>
         </dependency>
         <dependency>
             <groupId>io.quarkiverse.googlecloudservices</groupId>
