@@ -4,13 +4,13 @@ This extension allows using Google Cloud PubSub inside your Quarkus application.
 
 ## Bootstrapping the project
 
-First, we need a new project. Create a new project with the following command:
+First, we need a new project. Create a new project with the following command (replace the version placeholders with the correct ones):
 
 ```shell script
 mvn io.quarkus:quarkus-maven-plugin:<quarkusVersion>:create \
     -DprojectGroupId=org.acme \
     -DprojectArtifactId=pubsub-quickstart \
-    -Dextensions="quarkus-google-cloud-pubsub"
+    -Dextensions="resteasy-jackson,io.quarkiverse.googlecloudservices:quarkus-google-cloud-pubsub:${googleCloudServicesVersion}"
 cd pubsub-quickstart
 ```
 
@@ -18,7 +18,7 @@ This command generates a Maven project, importing the Google Cloud PubSub extens
 
 If you already have your Quarkus project configured, you can add the `quarkus-google-cloud-pubsub` extension to your project by running the following command in your project base directory:
 ```shell script
-./mvnw quarkus:add-extension -Dextensions="quarkus-google-cloud-pubsub"
+./mvnw quarkus:add-extension -Dextensions="io.quarkiverse.googlecloudservices:quarkus-google-cloud-pubsub:${googleCloudServicesVersion}"
 ```
 
 This will add the following to your pom.xml:
@@ -27,6 +27,7 @@ This will add the following to your pom.xml:
 <dependency>
     <groupId>io.quarkiverse.googlecloudservices</groupId>
     <artifactId>quarkus-google-cloud-pubsub</artifactId>
+    <version>${googleCloudServicesVersion}</version>
 </dependency>
 ```
 

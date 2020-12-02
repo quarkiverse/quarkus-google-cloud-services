@@ -4,13 +4,13 @@ This extension allows to inject a `com.google.cloud.firestore.Firestore` object 
 
 ## Bootstrapping the project
 
-First, we need a new project. Create a new project with the following command:
+First, we need a new project. Create a new project with the following command (replace the version placeholders with the correct ones):
 
 ```shell script
 mvn io.quarkus:quarkus-maven-plugin:<quarkusVersion>:create \
     -DprojectGroupId=org.acme \
     -DprojectArtifactId=firestore-quickstart \
-    -Dextensions="quarkus-google-cloud-firestore"
+    -Dextensions="resteasy-jackson,io.quarkiverse.googlecloudservices:quarkus-google-cloud-firestore:${googleCloudServicesVersion}"
 cd firestore-quickstart
 ```
 
@@ -18,7 +18,7 @@ This command generates a Maven project, importing the Google Cloud Firestore ext
 
 If you already have your Quarkus project configured, you can add the `quarkus-google-cloud-firestore` extension to your project by running the following command in your project base directory:
 ```shell script
-./mvnw quarkus:add-extension -Dextensions="quarkus-google-cloud-firestore"
+./mvnw quarkus:add-extension -Dextensions="io.quarkiverse.googlecloudservices:quarkus-google-cloud-firestore:${googleCloudServicesVersion}"
 ```
 
 This will add the following to your pom.xml:
@@ -27,6 +27,7 @@ This will add the following to your pom.xml:
 <dependency>
     <groupId>io.quarkiverse.googlecloudservices</groupId>
     <artifactId>quarkus-google-cloud-firestore</artifactId>
+    <version>${googleCloudServicesVersion}</version>
 </dependency>
 ```
 
