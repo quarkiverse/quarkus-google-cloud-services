@@ -4,13 +4,13 @@ This extension allows using Google Cloud Bigtable inside your Quarkus applicatio
 
 ## Bootstrapping the project
 
-First, we need a new project. Create a new project with the following command:
+First, we need a new project. Create a new project with the following command (replace the version placeholders with the correct ones):
 
 ```shell script
 mvn io.quarkus:quarkus-maven-plugin:<quarkusVersion>:create \
     -DprojectGroupId=org.acme \
     -DprojectArtifactId=pubsub-quickstart \
-    -Dextensions="quarkus-google-cloud-bigtable"
+    -Dextensions="resteasy-jackson,io.quarkiverse.googlecloudservices:quarkus-google-cloud-bigtable:${googleCloudServicesVersion}"
 cd pubsub-quickstart
 ```
 
@@ -18,7 +18,7 @@ This command generates a Maven project, importing the Google Cloud Bigtable exte
 
 If you already have your Quarkus project configured, you can add the `quarkus-google-cloud-bigtable` extension to your project by running the following command in your project base directory:
 ```shell script
-./mvnw quarkus:add-extension -Dextensions="quarkus-google-cloud-bigtable"
+./mvnw quarkus:add-extension -Dextensions="io.quarkiverse.googlecloudservices:quarkus-google-cloud-bigtable:${googleCloudServicesVersion}"
 ```
 
 This will add the following to your pom.xml:
@@ -27,6 +27,7 @@ This will add the following to your pom.xml:
 <dependency>
     <groupId>io.quarkiverse.googlecloudservices</groupId>
     <artifactId>quarkus-google-cloud-bigtable</artifactId>
+    <version>${googleCloudServicesVersion}</version>
 </dependency>
 ```
 
