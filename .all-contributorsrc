@@ -23,6 +23,15 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "dzou",
+      "name": "Daniel Zou",
+      "avatar_url": "https://avatars1.githubusercontent.com/u/3209274?v=4",
+      "profile": "https://github.com/dzou",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,
