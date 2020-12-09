@@ -26,7 +26,7 @@
         <google-cloud-sdk.version>16.1.0</google-cloud-sdk.version>
         <!-- The Google Cloud BOM includes the 'android' version of Guava so we need to fix the 'jre' version.
         Make sure to keep these two libraries compatible. -->
-        <guava.version>29.0-jre</guava.version>
+        <guava.version>30.0-jre</guava.version>
     </properties>
 
     <!-- Extension modules. Note that the integration-tests is added via profile to avoid releasing it -->
