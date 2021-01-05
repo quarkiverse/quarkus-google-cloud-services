@@ -32,6 +32,15 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "uny",
+      "name": "Yuki Nagai",
+      "avatar_url": "https://avatars1.githubusercontent.com/u/1780156?v=4",
+      "profile": "http://ynagai.info",
+      "contributions": [
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 7,
