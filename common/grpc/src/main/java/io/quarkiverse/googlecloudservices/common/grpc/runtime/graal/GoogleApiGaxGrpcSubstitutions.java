@@ -1,4 +1,4 @@
-package io.quarkiverse.googlecloudservices.pubsub.runtime.graal;
+package io.quarkiverse.googlecloudservices.common.grpc.runtime.graal;
 
 import java.io.IOException;
 import java.util.concurrent.Executor;
@@ -15,7 +15,13 @@ import com.oracle.svm.core.annotate.Alias;
 import com.oracle.svm.core.annotate.Substitute;
 import com.oracle.svm.core.annotate.TargetClass;
 
-import io.grpc.*;
+import io.grpc.CallOptions;
+import io.grpc.Channel;
+import io.grpc.ClientCall;
+import io.grpc.ClientInterceptor;
+import io.grpc.ManagedChannel;
+import io.grpc.ManagedChannelBuilder;
+import io.grpc.MethodDescriptor;
 
 @TargetClass(className = "com.google.api.gax.grpc.InstantiatingGrpcChannelProvider")
 final class Target_com_google_api_gax_grpc_InstantiatingGrpcChannelProvider {
