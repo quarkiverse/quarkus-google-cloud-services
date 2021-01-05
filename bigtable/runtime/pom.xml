@@ -18,6 +18,11 @@
             <version>0.4.0-SNAPSHOT</version>
         </dependency>
         <dependency>
+            <groupId>io.quarkiverse.googlecloudservices</groupId>
+            <artifactId>quarkus-google-cloud-common-grpc</artifactId>
+            <version>0.4.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
             <groupId>com.google.cloud</groupId>
             <artifactId>google-cloud-bigtable</artifactId>
             <exclusions>
@@ -34,16 +39,12 @@
                     <artifactId>checker-qual</artifactId>
                 </exclusion>
                 <!-- We exclude the grpc-netty-shaded library and include only the grpc-netty
-                     one as netty is already included with Quarkus -->
+                     one (coming from quarkus-google-cloud-common-grpc) as netty is already included with Quarkus -->
                 <exclusion>
                     <groupId>io.grpc</groupId>
                     <artifactId>grpc-netty-shaded</artifactId>
                 </exclusion>
             </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>io.grpc</groupId>
-            <artifactId>grpc-netty</artifactId>
         </dependency>
         <dependency>
             <groupId>io.quarkus</groupId>
