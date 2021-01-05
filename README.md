@@ -13,7 +13,7 @@ You can find documentation for each of these extensions in their sub-directory:
 
 They all share an optional common configuration property to set the project ID:
 ```
-quarkus.google.cloud.projectId=<your-project-id>
+quarkus.google.cloud.project-id=<your-project-id>
 ```
 
 All these extensions works with applications built as native image executables.
