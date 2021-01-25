@@ -22,8 +22,7 @@ jobs:
   build:
     name: "Build against latest Quarkus snapshot"
     runs-on: ubuntu-latest
-    # loicmathieu has been added to be able to manually trigger the workflow
-    if: github.actor == 'quarkusbot' || github.actor == 'quarkiversebot' || github.actor == 'loicmathieu'
+    if: github.actor == 'quarkusbot' || github.actor == 'quarkiversebot' || github.actor.role == 'Admin'
 
     steps:
       - name: Install yq
