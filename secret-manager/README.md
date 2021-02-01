@@ -32,7 +32,7 @@ This will add the following to your pom.xml:
 ```
 
 ## Some example
-This is an example fetching a single secret from GCP Secret Manager. The first example is in Java, while the second is the equivalent version in Kotlin.
+This is an example fetching a single secret from GCP Secret Manager.
 
 First, you'll have to create the secret in the GCP Secret Manager, as described in Google's documentation at https://cloud.google.com/secret-manager/docs/creating-and-accessing-secrets.
 
@@ -56,26 +56,6 @@ public class GCPSecretManager {
             AccessSecretVersionResponse response = client.accessSecretVersion(secretVersionName);
             return response.getPayload().getData().toStringUtf8();
         }
-    }
-}
-```
-
-```kotlin
-import com.google.cloud.secretmanager.v1.SecretManagerServiceClient
-import com.google.cloud.secretmanager.v1.SecretVersionName
-import org.eclipse.microprofile.config.inject.ConfigProperty
-import javax.enterprise.context.RequestScoped
-
-@RequestScoped
-class GCPSecretManager {
-
-    @ConfigProperty(name = "secretManagerProjectId", defaultValue = "")
-    lateinit var secretManagerProjectId: String
-    
-    fun getSecretFromSecretManager(secretName: String): String {
-        val secretVersionName = SecretVersionName.of(secretManagerProjectId, secretName, "latest")
-        val client = SecretManagerServiceClient.create()
-        return client.accessSecretVersion(secretVersionName).payload.data.toStringUtf8()
     }
 }
 ```
