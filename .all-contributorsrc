@@ -41,10 +41,20 @@
       "contributions": [
         "doc"
       ]
+    },
+    {
+      "login": "madsop",
+      "name": "Mads Opheim",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1844557?v=4",
+      "profile": "http://madsopheim.com",
+      "contributions": [
+        "code",
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 7,
-  "projectName": "quarkiverse-google-cloud-services",
+  "projectName": "quarkus-google-cloud-services",
   "projectOwner": "quarkiverse",
   "repoType": "github",
   "repoHost": "https://github.com",
