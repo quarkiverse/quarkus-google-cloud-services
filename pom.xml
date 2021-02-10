@@ -24,7 +24,7 @@
         <compiler-plugin.version>3.8.1</compiler-plugin.version>
 
         <google-cloud-sdk.version>16.1.0</google-cloud-sdk.version>
-        <google-cloud-graalvm.version>0.2.0</google-cloud-graalvm.version>
+        <google-cloud-graalvm.version>0.3.0</google-cloud-graalvm.version>
         <!-- The Google Cloud BOM includes the 'android' version of Guava so we need to fix the 'jre' version.
         Make sure to keep these two libraries compatible. -->
         <guava.version>30.0-jre</guava.version>
