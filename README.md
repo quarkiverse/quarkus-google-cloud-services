@@ -1,13 +1,14 @@
-# Quarkiverse - Google Cloud Services
-[![All Contributors](https://img.shields.io/badge/all_contributors-1-orange.svg?style=flat-square)](#contributors-) [![version](https://img.shields.io/maven-central/v/io.quarkiverse.googlecloudservices/quarkus-google-cloud-bigquery-parent)](https://repo1.maven.org/maven2/io/quarkiverse/googlecloudservices/)
+# Quarkiverse - Quarkus Google Cloud Services
+[![All Contributors](https://img.shields.io/badge/all_contributors-5-orange.svg?style=flat-square)](#contributors-) [![version](https://img.shields.io/maven-central/v/io.quarkiverse.googlecloudservices/quarkus-google-cloud-bigquery-parent)](https://repo1.maven.org/maven2/io/quarkiverse/googlecloudservices/)
 
-This repository hosts extensions for different Google Cloud Services.
+This repository hosts Quarkus extensions for different Google Cloud Services.
 
 You can find documentation for each of these extensions in their sub-directory:
 - [BigQuery](bigquery)
 - [Bigtable](bigtable)
 - [Firestore](firestore)
 - [PubSub](pubsub)
+- [Secret Manager](secret-manager)
 - [Spanner](spanner)
 - [Storage](storage)
 
@@ -23,7 +24,7 @@ These extension works well within the various Google Cloud Functions extensions 
 ## Authenticating to Google Cloud
 
 There are several ways to authenticate to Google Cloud, 
-it depends from where your application runs (inside our outside Google Cloud Platform) and for which service.
+it depends on where your application runs (inside our outside Google Cloud Platform) and for which service.
 
 The current authentication flow is as follows:
 - Check the `quarkus.google.cloud.service-account-location` property, if it exists, use the service account file from this location.
@@ -49,8 +50,7 @@ Example applications can be found inside the integration-test folder:
 
 This project is still in its early stage.
 
-Contributions are always welcome, but this repository is not really ready for external contributions yet, better create an issue
-to discuss them prior to any contributions.
+Contributions are always welcome, but better create an issue to discuss them prior to any contributions.
 
 ## Contributors ✨
 
@@ -61,7 +61,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
 <!-- markdownlint-disable -->
 <table>
   <tr>
-    <td align="center"><a href="https://www.loicmathieu.fr"><img src="https://avatars2.githubusercontent.com/u/1819009?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Loïc Mathieu</b></sub></a><br /><a href="https://github.com/quarkiverse/quarkus-google-cloud-services/commits?author=loicmathieu" title="Code">💻</a> <a href="#maintenance-loicmathieu" title="Maintenance">🚧</a></td>
+    <td align="center"><a href="https://www.loicmathieu.fr"><img src="https://avatars2.githubusercontent.com/u/1819009?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Loïc Mathieu</b></sub></a><br /><a href="https://github.com/quarkiverse/quarkus-google-cloud-services/commits?author=loicmathieu" title="Code">💻</a> <a href="#maintenance-loicmathieu" title="Maintenance">🚧</a></td><a href="https://github.com/quarkiverse/quarkus-google-cloud-services/commits?author=loicmathieu" title="Documentation">📖</a>
     <td align="center"><a href="https://github.com/sberyozkin"><img src="https://avatars3.githubusercontent.com/u/467639?v=4?s=100" width="100px;" alt=""/><br /><sub><b>sberyozkin</b></sub></a><br /><a href="https://github.com/quarkiverse/quarkus-google-cloud-services/commits?author=sberyozkin" title="Code">💻</a></td>
     <td align="center"><a href="https://github.com/dzou"><img src="https://avatars1.githubusercontent.com/u/3209274?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Daniel Zou</b></sub></a><br /><a href="https://github.com/quarkiverse/quarkus-google-cloud-services/commits?author=dzou" title="Code">💻</a></td>
     <td align="center"><a href="http://ynagai.info"><img src="https://avatars1.githubusercontent.com/u/1780156?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Yuki Nagai</b></sub></a><br /><a href="https://github.com/quarkiverse/quarkus-google-cloud-services/commits?author=uny" title="Documentation">📖</a></td>

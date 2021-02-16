@@ -36,6 +36,13 @@ This is an example fetching a single secret from GCP Secret Manager.
 
 First, you'll have to create the secret in the GCP Secret Manager, as described in Google's documentation at https://cloud.google.com/secret-manager/docs/creating-and-accessing-secrets.
 
+The following `gcloud` commands will create a secret named `test-secret` with the value `s3cr3t` in it.
+
+```shell
+gcloud secrets create test-secret --replication-policy="automatic"
+printf "s3cr3t" | gcloud secrets versions add integration-test --data-file=-
+```
+
 The _secretName_ parameter in the examples below refer to the name you give your secret, whereas the injected _secretManagerProjectId_ refers to the name of your project on GCP.
 
 ```java
@@ -47,12 +54,12 @@ import org.eclipse.microprofile.config.inject.ConfigProperty;
 @RequestScoped
 public class GCPSecretManager {
 
-    @ConfigProperty(name = "secretManagerProjectId", defaultValue = "")
-    String secretManagerProjectId;
+    @ConfigProperty(name = "quarkus.google.cloud.project-id")
+    String projectId;
 
     public String getSecretFromSecretManager(String secretName) throws IOException {
         try (SecretManagerServiceClient client = SecretManagerServiceClient.create()) {
-            SecretVersionName secretVersionName = SecretVersionName.of(secretManagerProjectId, secretName, "latest");
+            SecretVersionName secretVersionName = SecretVersionName.of(projectId, "test-secret", "latest");
             AccessSecretVersionResponse response = client.accessSecretVersion(secretVersionName);
             return response.getPayload().getData().toStringUtf8();
         }

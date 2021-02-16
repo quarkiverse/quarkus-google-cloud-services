@@ -51,6 +51,17 @@ you need to set this one instead of relying on the `quarkus.google.cloud.service
 export GOOGLE_APPLICATION_CREDENTIALS=<your-service-account-file>
 ```
 
+### Secret Manager
+
+To test Secret Manager you first need to create a secret;
+
+You can create one with `gcloud`:
+
+```
+gcloud secrets create test-secret --replication-policy="automatic"
+printf "integration-test-secret" | gcloud secrets versions add integration-test --data-file=-
+```
+
 ### Spanner
 
 To test Spanner you first need to have a running Spanner cluster named `test-instance`.
