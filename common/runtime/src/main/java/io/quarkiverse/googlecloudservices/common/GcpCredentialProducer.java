@@ -21,6 +21,8 @@ import io.quarkus.security.identity.SecurityIdentity;
 @ApplicationScoped
 public class GcpCredentialProducer {
 
+    private static final String CLOUD_OAUTH_SCOPE = "https://www.googleapis.com/auth/cloud-platform";
+
     @Inject
     GcpConfiguration gcpConfiguration;
 
@@ -40,17 +42,19 @@ public class GcpCredentialProducer {
     public GoogleCredentials googleCredential() throws IOException {
         if (gcpConfiguration.serviceAccountLocation.isPresent()) {
             try (FileInputStream is = new FileInputStream(gcpConfiguration.serviceAccountLocation.get())) {
-                return GoogleCredentials.fromStream(is);
+                return GoogleCredentials.fromStream(is).createScoped(CLOUD_OAUTH_SCOPE);
             }
         } else if (gcpConfiguration.accessTokenEnabled && securityIdentity.isResolvable()
                 && !securityIdentity.get().isAnonymous()) {
             for (Credential cred : securityIdentity.get().getCredentials()) {
                 if (cred instanceof TokenCredential && "bearer".equals(((TokenCredential) cred).getType())) {
-                    return GoogleCredentials.create(new AccessToken(((TokenCredential) cred).getToken(), null));
+                    return GoogleCredentials
+                            .create(new AccessToken(((TokenCredential) cred).getToken(), null))
+                            .createScoped(CLOUD_OAUTH_SCOPE);
                 }
             }
         }
 
-        return GoogleCredentials.getApplicationDefault();
+        return GoogleCredentials.getApplicationDefault().createScoped(CLOUD_OAUTH_SCOPE);
     }
 }
