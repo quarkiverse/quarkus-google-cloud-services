@@ -1,12 +1,11 @@
 package io.quarkiverse.googlecloudservices.it;
 
-import static io.restassured.RestAssured.given;
-import static org.hamcrest.CoreMatchers.is;
-
+import io.quarkus.test.junit.QuarkusTest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 
-import io.quarkus.test.junit.QuarkusTest;
+import static io.restassured.RestAssured.given;
+import static org.hamcrest.CoreMatchers.equalTo;
 
 @QuarkusTest
 @EnabledIfSystemProperty(named = "gcloud.test", matches = "true")
@@ -66,6 +65,6 @@ public class GoogleServicesResourcesTest {
                 .when().get("/secretmanager")
                 .then()
                 .statusCode(200)
-                .body(is("integration-test-secret"));
+                .body(equalTo("Secret accessed via client: hello || Secret accessed via property: hello"));
     }
 }
