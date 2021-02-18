@@ -31,7 +31,8 @@ This will add the following to your pom.xml:
 </dependency>
 ```
 
-## Some example
+## Client Usage Example
+
 This is an example fetching a single secret from GCP Secret Manager.
 
 First, you'll have to create the secret in the GCP Secret Manager, as described in Google's documentation at https://cloud.google.com/secret-manager/docs/creating-and-accessing-secrets.
@@ -53,16 +54,56 @@ import org.eclipse.microprofile.config.inject.ConfigProperty;
 
 @RequestScoped
 public class GCPSecretManager {
+    
+    @Inject
+    SecretManagerServiceClient client;
 
     @ConfigProperty(name = "quarkus.google.cloud.project-id")
     String projectId;
 
     public String getSecretFromSecretManager(String secretName) throws IOException {
-        try (SecretManagerServiceClient client = SecretManagerServiceClient.create()) {
-            SecretVersionName secretVersionName = SecretVersionName.of(projectId, "test-secret", "latest");
-            AccessSecretVersionResponse response = client.accessSecretVersion(secretVersionName);
-            return response.getPayload().getData().toStringUtf8();
-        }
+        SecretVersionName secretVersionName = SecretVersionName.of(projectId, secretName, "latest");
+        AccessSecretVersionResponse response = client.accessSecretVersion(secretVersionName);
+        return response.getPayload().getData().toStringUtf8();
     }
 }
 ```
+
+## Reading Secrets as Properties
+
+You can also load and reference secrets from GCP Secret Manager in your `application.properties` file by using the following syntax:
+
+```
+# 1. Long form - specify the project ID, secret ID, and version
+${sm//projects/<project-id>/secrets/<secret-id>/versions/<version-id>}
+
+# 2. Long form - specify project ID, secret ID, and use latest version
+${sm//projects/<project-id>/secrets/<secret-id>}
+
+# 3. Short form - specify project ID, secret ID, and version
+${sm//<project-id>/<secret-id>/<version-id>}
+
+# 4. Short form - default project; specify secret + version
+#
+# The default project is inferred from the "quarkus.google.cloud.project-id" property
+# in your application.properties, or from application-default credentials if
+# this is not set.
+${sm//<secret-id>/<version>}
+
+# 5. Shortest form - specify secret ID, use default project and latest version.
+${sm//<secret-id>}
+```
+
+You can use this syntax to load secrets directly from `application.properties`:
+
+```
+quarkus.database.password=${sm//my-secret-id/latest}
+```
+
+Alternatively, you can also reference the secret value as a `@ConfigProperty` without specifying it from `application.properties`.
+
+```
+@ConfigProperty(name = "${sm//my-secret-id}")
+String secret;
+```
+
