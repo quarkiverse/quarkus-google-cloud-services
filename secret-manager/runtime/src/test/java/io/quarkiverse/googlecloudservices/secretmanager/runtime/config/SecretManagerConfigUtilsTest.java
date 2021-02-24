@@ -1,10 +1,11 @@
 package io.quarkiverse.googlecloudservices.secretmanager.runtime.config;
 
-import com.google.cloud.secretmanager.v1.SecretVersionName;
-import org.junit.jupiter.api.Test;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+
+import org.junit.jupiter.api.Test;
+
+import com.google.cloud.secretmanager.v1.SecretVersionName;
 
 public class SecretManagerConfigUtilsTest {
 

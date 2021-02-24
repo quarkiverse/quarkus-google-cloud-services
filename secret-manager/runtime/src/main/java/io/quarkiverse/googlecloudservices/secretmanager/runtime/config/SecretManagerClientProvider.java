@@ -1,6 +1,7 @@
 package io.quarkiverse.googlecloudservices.secretmanager.runtime.config;
 
 import com.google.cloud.secretmanager.v1.SecretManagerServiceClient;
+
 import io.quarkus.arc.Arc;
 
 /**

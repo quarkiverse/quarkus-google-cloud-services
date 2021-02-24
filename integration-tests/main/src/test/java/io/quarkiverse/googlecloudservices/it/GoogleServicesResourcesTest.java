@@ -1,11 +1,12 @@
 package io.quarkiverse.googlecloudservices.it;
 
-import io.quarkus.test.junit.QuarkusTest;
+import static io.restassured.RestAssured.given;
+import static org.hamcrest.CoreMatchers.equalTo;
+
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 
-import static io.restassured.RestAssured.given;
-import static org.hamcrest.CoreMatchers.equalTo;
+import io.quarkus.test.junit.QuarkusTest;
 
 @QuarkusTest
 @EnabledIfSystemProperty(named = "gcloud.test", matches = "true")

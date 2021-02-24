@@ -5,6 +5,7 @@ import java.util.Map;
 
 import com.google.cloud.secretmanager.v1.AccessSecretVersionResponse;
 import com.google.cloud.secretmanager.v1.SecretVersionName;
+
 import io.smallrye.config.common.AbstractConfigSource;
 
 public class SecretManagerConfigSource extends AbstractConfigSource {
