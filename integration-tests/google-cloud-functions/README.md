@@ -15,10 +15,7 @@ echo "Hello World!" > hello.txt
 gsutil cp hello.txt gs://my-bucket
 ```
 
-Then you need to configure your Google Cloud project inside the `application.properties`:
-```
-quarkus.google.cloud.project-id=<my-propject-id>
-```
+As we plan to deploy to App Engine, we will not configure the project ID so that it will be taken automatically from the Cloud Functions runtime.
 
 ## Deploying to Google Cloud Functions
 
@@ -29,7 +26,7 @@ Then deploy the function to Google Cloud using:
 ```
 gcloud beta functions deploy quarkus-example-http \
   --entry-point=io.quarkus.gcp.functions.QuarkusHttpFunction \
-  --runtime=java11 --trigger-http --source=target/deployment
+  --runtime=java11 --trigger-http --source=target/deployment --allow-unauthenticated
 ```
 
-This command will give you as output a `httpsTrigger.url` that points to your function.
+This command will give you as output an `httpsTrigger.url` that points to your function.

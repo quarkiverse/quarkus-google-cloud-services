@@ -1,6 +1,6 @@
 # Quarkiverse - Google Cloud Services - Integration Tests - Main
 
-This is the main integration test, it allows to tests all Google Cloud services from REST endpoints using a service account authentication.
+This is the main integration test, it allows to test all Google Cloud services from REST endpoints using a service account authentication.
 
 It contains a test class that can be use to validate all services, this test is not run  by default.
 

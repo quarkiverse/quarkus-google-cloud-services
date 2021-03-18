@@ -8,8 +8,6 @@ import io.quarkus.deployment.annotations.BuildStep;
 import io.quarkus.deployment.builditem.ExtensionSslNativeSupportBuildItem;
 import io.quarkus.deployment.builditem.RunTimeConfigurationDefaultBuildItem;
 
-import java.io.IOException;
-
 public class CommonBuildSteps {
 
     @BuildStep
