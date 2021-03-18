@@ -28,6 +28,8 @@ public class FirestoreProducer {
     @Default
     public Firestore firestore() throws IOException {
         return FirestoreOptions.newBuilder().setCredentials(googleCredentials)
-                .setProjectId(gcpConfiguration.projectId.get()).build().getService();
+                .setProjectId(gcpConfiguration.projectId)
+                .build()
+                .getService();
     }
 }

@@ -28,6 +28,8 @@ public class StorageProducer {
     @Default
     public Storage storage() throws IOException {
         return StorageOptions.newBuilder().setCredentials(googleCredentials)
-                .setProjectId(gcpConfiguration.projectId.get()).build().getService();
+                .setProjectId(gcpConfiguration.projectId)
+                .build()
+                .getService();
     }
 }

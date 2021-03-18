@@ -33,9 +33,7 @@ public class SecretManagerProducer {
         SecretManagerServiceSettings.Builder builder = SecretManagerServiceSettings.newBuilder()
                 .setCredentialsProvider(() -> googleCredentials);
 
-        if (gcpConfiguration.projectId.isPresent()) {
-            builder.setQuotaProjectId(gcpConfiguration.projectId.get());
-        }
+        builder.setQuotaProjectId(gcpConfiguration.projectId);
 
         return SecretManagerServiceClient.create(builder.build());
     }
