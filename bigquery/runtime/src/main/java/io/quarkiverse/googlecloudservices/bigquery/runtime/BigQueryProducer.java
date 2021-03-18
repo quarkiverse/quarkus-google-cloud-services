@@ -28,6 +28,8 @@ public class BigQueryProducer {
     @Default
     public BigQuery bigQuery() throws IOException {
         return BigQueryOptions.newBuilder().setCredentials(googleCredentials)
-                .setProjectId(gcpConfiguration.projectId.get()).build().getService();
+                .setProjectId(gcpConfiguration.projectId)
+                .build()
+                .getService();
     }
 }

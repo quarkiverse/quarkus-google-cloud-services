@@ -27,6 +27,8 @@ public class SpannerProducer {
     @Default
     public Spanner storage() throws IOException {
         return SpannerOptions.newBuilder().setCredentials(googleCredentials)
-                .setProjectId(gcpConfiguration.projectId.get()).build().getService();
+                .setProjectId(gcpConfiguration.projectId)
+                .build()
+                .getService();
     }
 }

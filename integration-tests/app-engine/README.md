@@ -15,10 +15,7 @@ echo "Hello World!" > hello.txt
 gsutil cp hello.txt gs://my-bucket
 ```
 
-Then you need to configure your Google Cloud project inside the `application.properties`:
-```
-quarkus.google.cloud.project-id=<my-propject-id>
-```
+As we plan to deploy to App Engine, we will not configure the project ID so that it will be taken automatically from the App Engine runtime.
 
 ## Deploying to Google App Engine
 

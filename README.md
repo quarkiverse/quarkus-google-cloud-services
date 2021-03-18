@@ -17,9 +17,12 @@ They all share an optional common configuration property to set the project ID:
 quarkus.google.cloud.project-id=<your-project-id>
 ```
 
+If the project ID is not set, the extensions will default to using `ServiceOptions.getDefaultProjectId()` 
+that will use the default project detected via Application Default Credentials.
+
 All these extensions works with applications built as native image executables.
 
-These extension works well within the various Google Cloud Functions extensions available inside Quarkus as they directly authenticate via the built-in credentials.
+These extensions works well within the various Google Cloud Functions extensions available inside Quarkus as they directly authenticate via the built-in credentials.
 
 ## Authenticating to Google Cloud
 

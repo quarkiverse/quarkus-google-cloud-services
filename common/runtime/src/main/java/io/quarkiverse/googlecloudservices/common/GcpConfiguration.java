@@ -2,6 +2,8 @@ package io.quarkiverse.googlecloudservices.common;
 
 import java.util.Optional;
 
+import com.google.cloud.ServiceOptions;
+
 import io.quarkus.runtime.annotations.ConfigItem;
 import io.quarkus.runtime.annotations.ConfigPhase;
 import io.quarkus.runtime.annotations.ConfigRoot;
@@ -10,9 +12,10 @@ import io.quarkus.runtime.annotations.ConfigRoot;
 public class GcpConfiguration {
     /**
      * Google Cloud project ID.
+     * It defaults to `ServiceOptions.getDefaultProjectId()`, so to the project ID corresponding to the default credentials.
      */
     @ConfigItem
-    public Optional<String> projectId;
+    public String projectId;
 
     /**
      * Google Cloud service account file location.
