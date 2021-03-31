@@ -13,7 +13,7 @@ import com.google.cloud.storage.Storage;
 
 @Path("/storage")
 public class StorageResource {
-    private static final String BUCKET = "quarkus-hello";
+    public static final String BUCKET = "quarkus-hello";
 
     @Inject
     Storage storage;
