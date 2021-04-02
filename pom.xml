@@ -42,6 +42,15 @@
         <module>secret-manager</module>
     </modules>
 
+    <developers>
+        <developer>
+            <id>quarkus-google-cloud-services-team</id>
+            <name>Quarkus - Google Cloud Services Team</name>
+            <organization>quarkus-google-cloud-services</organization>
+            <organizationUrl>https://github.com/quarkiverse/quarkus-google-cloud-services</organizationUrl>
+        </developer>
+    </developers>
+
     <dependencyManagement>
         <dependencies>
             <dependency>
@@ -69,6 +78,100 @@
                 <groupId>com.google.cloud</groupId>
                 <artifactId>google-cloud-graalvm-support</artifactId>
                 <version>${google-cloud-graalvm.version}</version>
+            </dependency>
+            <!-- Modules -->
+            <!-- Common -->
+            <dependency>
+                <groupId>io.quarkiverse.googlecloudservices</groupId>
+                <artifactId>quarkus-google-cloud-common-deployment</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.quarkiverse.googlecloudservices</groupId>
+                <artifactId>quarkus-google-cloud-common</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.quarkiverse.googlecloudservices</groupId>
+                <artifactId>quarkus-google-cloud-common-grpc</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <!-- Big Query -->
+            <dependency>
+                <groupId>io.quarkiverse.googlecloudservices</groupId>
+                <artifactId>quarkus-google-cloud-bigquery-deployment</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.quarkiverse.googlecloudservices</groupId>
+                <artifactId>quarkus-google-cloud-bigquery</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <!-- Big Table -->
+            <dependency>
+                <groupId>io.quarkiverse.googlecloudservices</groupId>
+                <artifactId>quarkus-google-cloud-bigtable-deployment</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.quarkiverse.googlecloudservices</groupId>
+                <artifactId>quarkus-google-cloud-bigtable</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <!-- Firestore -->
+            <dependency>
+                <groupId>io.quarkiverse.googlecloudservices</groupId>
+                <artifactId>quarkus-google-cloud-firestore-deployment</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.quarkiverse.googlecloudservices</groupId>
+                <artifactId>quarkus-google-cloud-firestore</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <!-- Pub Sub -->
+            <dependency>
+                <groupId>io.quarkiverse.googlecloudservices</groupId>
+                <artifactId>quarkus-google-cloud-pubsub-deployment</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.quarkiverse.googlecloudservices</groupId>
+                <artifactId>quarkus-google-cloud-pubsub</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <!-- Secret Manager -->
+            <dependency>
+                <groupId>io.quarkiverse.googlecloudservices</groupId>
+                <artifactId>quarkus-google-cloud-secret-manager-deployment</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.quarkiverse.googlecloudservices</groupId>
+                <artifactId>quarkus-google-cloud-secret-manager</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <!-- Spanner -->
+            <dependency>
+                <groupId>io.quarkiverse.googlecloudservices</groupId>
+                <artifactId>quarkus-google-cloud-spanner-deployment</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.quarkiverse.googlecloudservices</groupId>
+                <artifactId>quarkus-google-cloud-spanner</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <!-- Storage -->
+            <dependency>
+                <groupId>io.quarkiverse.googlecloudservices</groupId>
+                <artifactId>quarkus-google-cloud-storage-deployment</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.quarkiverse.googlecloudservices</groupId>
+                <artifactId>quarkus-google-cloud-storage</artifactId>
+                <version>${project.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
