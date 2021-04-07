@@ -19,7 +19,6 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <formatter-maven-plugin.version>2.14.0</formatter-maven-plugin.version>
 
         <google-cloud-sdk.version>16.1.0</google-cloud-sdk.version>
         <google-cloud-graalvm.version>0.4.0</google-cloud-graalvm.version>
@@ -140,15 +139,5 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
-
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>net.revelc.code.formatter</groupId>
-                <artifactId>formatter-maven-plugin</artifactId>
-                <version>${formatter-maven-plugin.version}</version>
-            </plugin>
-        </plugins>
-    </build>
 
 </project>
