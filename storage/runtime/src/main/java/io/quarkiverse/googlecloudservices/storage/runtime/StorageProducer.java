@@ -1,18 +1,16 @@
 package io.quarkiverse.googlecloudservices.storage.runtime;
 
-import java.io.IOException;
+import com.google.auth.oauth2.GoogleCredentials;
+import com.google.cloud.storage.Storage;
+import com.google.cloud.storage.StorageOptions;
+import io.quarkiverse.googlecloudservices.common.GcpConfiguration;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Default;
 import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
 import javax.inject.Singleton;
-
-import com.google.auth.oauth2.GoogleCredentials;
-import com.google.cloud.storage.Storage;
-import com.google.cloud.storage.StorageOptions;
-
-import io.quarkiverse.googlecloudservices.common.GcpConfiguration;
+import java.io.IOException;
 
 @ApplicationScoped
 public class StorageProducer {
@@ -23,13 +21,17 @@ public class StorageProducer {
     @Inject
     GcpConfiguration gcpConfiguration;
 
+    @Inject
+    StorageConfiguration storageConfiguration;
+
     @Produces
     @Singleton
     @Default
     public Storage storage() throws IOException {
-        return StorageOptions.newBuilder().setCredentials(googleCredentials)
-                .setProjectId(gcpConfiguration.projectId)
-                .build()
-                .getService();
+        StorageOptions.Builder builder = StorageOptions.newBuilder()
+                .setCredentials(googleCredentials)
+                .setProjectId(gcpConfiguration.projectId);
+        storageConfiguration.hostOverride.ifPresent(builder::setHost);
+        return builder.build().getService();
     }
 }
