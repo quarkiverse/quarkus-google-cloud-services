@@ -5,7 +5,7 @@
     <parent>
         <groupId>io.quarkiverse</groupId>
         <artifactId>quarkiverse-parent</artifactId>
-        <version>4</version>
+        <version>6</version>
     </parent>
 
     <groupId>io.quarkiverse.googlecloudservices</groupId>
@@ -22,16 +22,11 @@
         <maven.compiler.parameters>true</maven.compiler.parameters>
         <quarkus.version>1.13.0.Final</quarkus.version>
         <compiler-plugin.version>3.8.1</compiler-plugin.version>
-
-        <google-cloud-sdk.version>16.1.0</google-cloud-sdk.version>
-        <google-cloud-graalvm.version>0.4.0</google-cloud-graalvm.version>
-        <!-- The Google Cloud BOM includes the 'android' version of Guava so we need to fix the 'jre' version.
-        Make sure to keep these two libraries compatible. -->
-        <guava.version>30.0-jre</guava.version>
     </properties>
 
     <!-- Extension modules. Note that the integration-tests is added via profile to avoid releasing it -->
     <modules>
+        <module>bom</module>
         <module>common</module>
         <module>bigquery</module>
         <module>pubsub</module>
@@ -51,24 +46,12 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
-            <!-- Google Cloud dependencies, imported as a BOM -->
-            <!-- Warning : it will also manage the version of Guava -->
             <dependency>
-                <groupId>com.google.cloud</groupId>
-                <artifactId>libraries-bom</artifactId>
-                <version>${google-cloud-sdk.version}</version>
+                <groupId>io.quarkiverse.googlecloudservices</groupId>
+                <artifactId>quarkus-google-cloud-services-bom</artifactId>
+                <version>${project.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
-            </dependency>
-            <dependency>
-                <groupId>com.google.guava</groupId>
-                <artifactId>guava</artifactId>
-                <version>${guava.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.google.cloud</groupId>
-                <artifactId>google-cloud-graalvm-support</artifactId>
-                <version>${google-cloud-graalvm.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
@@ -84,6 +67,11 @@
                 <plugin>
                     <groupId>io.quarkus</groupId>
                     <artifactId>quarkus-bootstrap-maven-plugin</artifactId>
+                    <version>${quarkus.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>io.quarkus</groupId>
+                    <artifactId>quarkus-maven-plugin</artifactId>
                     <version>${quarkus.version}</version>
                 </plugin>
             </plugins>
