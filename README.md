@@ -64,11 +64,12 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
 <!-- markdownlint-disable -->
 <table>
   <tr>
-    <td align="center"><a href="https://www.loicmathieu.fr"><img src="https://avatars2.githubusercontent.com/u/1819009?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Loïc Mathieu</b></sub></a><br /><a href="https://github.com/quarkiverse/quarkus-google-cloud-services/commits?author=loicmathieu" title="Code">💻</a> <a href="#maintenance-loicmathieu" title="Maintenance">🚧</a></td><a href="https://github.com/quarkiverse/quarkus-google-cloud-services/commits?author=loicmathieu" title="Documentation">📖</a>
+    <td align="center"><a href="https://www.loicmathieu.fr"><img src="https://avatars2.githubusercontent.com/u/1819009?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Loïc Mathieu</b></sub></a><br /><a href="https://github.com/quarkiverse/quarkus-google-cloud-services/commits?author=loicmathieu" title="Code">💻</a> <a href="#maintenance-loicmathieu" title="Maintenance">🚧</a></td>
     <td align="center"><a href="https://github.com/sberyozkin"><img src="https://avatars3.githubusercontent.com/u/467639?v=4?s=100" width="100px;" alt=""/><br /><sub><b>sberyozkin</b></sub></a><br /><a href="https://github.com/quarkiverse/quarkus-google-cloud-services/commits?author=sberyozkin" title="Code">💻</a></td>
     <td align="center"><a href="https://github.com/dzou"><img src="https://avatars1.githubusercontent.com/u/3209274?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Daniel Zou</b></sub></a><br /><a href="https://github.com/quarkiverse/quarkus-google-cloud-services/commits?author=dzou" title="Code">💻</a></td>
     <td align="center"><a href="http://ynagai.info"><img src="https://avatars1.githubusercontent.com/u/1780156?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Yuki Nagai</b></sub></a><br /><a href="https://github.com/quarkiverse/quarkus-google-cloud-services/commits?author=uny" title="Documentation">📖</a></td>
     <td align="center"><a href="http://madsopheim.com"><img src="https://avatars.githubusercontent.com/u/1844557?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Mads Opheim</b></sub></a><br /><a href="https://github.com/quarkiverse/quarkus-google-cloud-services/commits?author=madsop" title="Code">💻</a> <a href="https://github.com/quarkiverse/quarkus-google-cloud-services/commits?author=madsop" title="Documentation">📖</a></td>
+    <td align="center"><a href="https://github.com/PeterUlb"><img src="https://avatars.githubusercontent.com/u/13261215?v=4?s=100" width="100px;" alt=""/><br /><sub><b>PeterUlb</b></sub></a><br /><a href="https://github.com/quarkiverse/quarkus-google-cloud-services/commits?author=PeterUlb" title="Code">💻</a></td>
   </tr>
 </table>
 
