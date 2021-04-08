@@ -11,7 +11,7 @@
     <groupId>io.quarkiverse.googlecloudservices</groupId>
     <artifactId>quarkus-google-cloud-services-parent</artifactId>
     <name>Quarkus - Google Cloud Services - Parent</name>
-    <version>0.6.0</version>
+    <version>0.7.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <properties>
@@ -92,8 +92,4 @@
             </modules>
         </profile>
     </profiles>
-
-  <scm>
-    <tag>0.6.0</tag>
-  </scm>
 </project>
