@@ -1,11 +1,12 @@
 package io.quarkiverse.googlecloudservices.it;
 
-import com.google.cloud.storage.Bucket;
-import com.google.cloud.storage.BucketInfo;
-import com.google.cloud.storage.Storage;
-import io.quarkus.test.junit.QuarkusTest;
-import io.restassured.RestAssured;
-import io.restassured.parsing.Parser;
+import static io.restassured.RestAssured.given;
+
+import java.nio.charset.StandardCharsets;
+import java.util.Collections;
+
+import javax.inject.Inject;
+
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -13,11 +14,13 @@ import org.junit.jupiter.api.Test;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.utility.DockerImageName;
 
-import javax.inject.Inject;
-import java.nio.charset.StandardCharsets;
-import java.util.Collections;
+import com.google.cloud.storage.Bucket;
+import com.google.cloud.storage.BucketInfo;
+import com.google.cloud.storage.Storage;
 
-import static io.restassured.RestAssured.given;
+import io.quarkus.test.junit.QuarkusTest;
+import io.restassured.RestAssured;
+import io.restassured.parsing.Parser;
 
 @QuarkusTest
 public class StorageResourceTest {

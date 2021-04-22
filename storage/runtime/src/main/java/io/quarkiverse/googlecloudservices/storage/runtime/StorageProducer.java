@@ -1,16 +1,18 @@
 package io.quarkiverse.googlecloudservices.storage.runtime;
 
-import com.google.auth.oauth2.GoogleCredentials;
-import com.google.cloud.storage.Storage;
-import com.google.cloud.storage.StorageOptions;
-import io.quarkiverse.googlecloudservices.common.GcpConfiguration;
+import java.io.IOException;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Default;
 import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
 import javax.inject.Singleton;
-import java.io.IOException;
+
+import com.google.auth.oauth2.GoogleCredentials;
+import com.google.cloud.storage.Storage;
+import com.google.cloud.storage.StorageOptions;
+
+import io.quarkiverse.googlecloudservices.common.GcpConfiguration;
 
 @ApplicationScoped
 public class StorageProducer {

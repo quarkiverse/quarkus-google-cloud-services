@@ -13,6 +13,7 @@ import com.google.cloud.secretmanager.v1.SecretManagerServiceClient;
 import com.google.cloud.secretmanager.v1.SecretManagerServiceSettings;
 
 import io.quarkiverse.googlecloudservices.common.GcpConfiguration;
+import io.quarkus.arc.Unremovable;
 
 /**
  * Producer for the Google Cloud Secret Manager service.
@@ -29,6 +30,7 @@ public class SecretManagerProducer {
     @Produces
     @Singleton
     @Default
+    @Unremovable
     public SecretManagerServiceClient secretManagerClient() throws IOException {
         SecretManagerServiceSettings.Builder builder = SecretManagerServiceSettings.newBuilder()
                 .setCredentialsProvider(() -> googleCredentials);
