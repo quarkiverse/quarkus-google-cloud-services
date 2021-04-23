@@ -2,6 +2,7 @@ package io.quarkiverse.googlecloudservices.secretmanager.runtime.config;
 
 import java.util.Collections;
 import java.util.Map;
+import java.util.Set;
 
 import com.google.cloud.secretmanager.v1.AccessSecretVersionResponse;
 import com.google.cloud.secretmanager.v1.SecretVersionName;
@@ -27,6 +28,11 @@ public class SecretManagerConfigSource extends AbstractConfigSource {
     @Override
     public Map<String, String> getProperties() {
         return Collections.emptyMap();
+    }
+
+    @Override
+    public Set<String> getPropertyNames() {
+        return Collections.emptySet();
     }
 
     @Override
