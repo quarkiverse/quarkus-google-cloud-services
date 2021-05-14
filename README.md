@@ -20,9 +20,9 @@ quarkus.google.cloud.project-id=<your-project-id>
 If the project ID is not set, the extensions will default to using `ServiceOptions.getDefaultProjectId()` 
 that will use the default project detected via Application Default Credentials.
 
-All these extensions works with applications built as native image executables.
+All these extensions work with applications built as native image executables.
 
-These extensions works well within the various Google Cloud Functions extensions available inside Quarkus as they directly authenticate via the built-in credentials.
+These extensions work well within the various Google Cloud Functions extensions available inside Quarkus as they directly authenticate via the built-in credentials.
 
 ## Authenticating to Google Cloud
 
@@ -41,6 +41,38 @@ The current authentication flow is as follows:
     - Google Cloud managed environment (Google App Engine, Google Cloud Functions, GCE, ...) built-in credentials.
     
 **Google PubSub and Google Bigtable must be authenticated using the `GOOGLE_APPLICATION_CREDENTIALS` environment variable only.
+
+## Google Cloud services emulators: mocking Google Cloud credentials
+
+If you plan to use one of the Google Cloud services emulators (for running on localhost, or for testing purpose), on a non-authenticated environment, 
+you'll need to mock the Google Cloud authentication.
+
+For testing, this can be done by creating a CDI producer that will produce a mocked bean (with Quarkus mock support and Mockito) to replace the `GoogleCloudCredentials`.
+
+```java
+import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.inject.Default;
+import javax.enterprise.inject.Produces;
+import javax.inject.Singleton;
+
+import org.mockito.Mockito;
+
+import com.google.auth.oauth2.GoogleCredentials;
+
+import io.quarkus.test.Mock;
+
+@Mock
+@ApplicationScoped
+public class GoogleCredentialsMockProducer {
+
+  @Produces
+  @Singleton
+  @Default
+  public GoogleCredentials googleCredential() {
+    return Mockito.mock(GoogleCredentials.class);
+  }
+}
+```
     
 ## Example applications
 
