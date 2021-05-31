@@ -2,6 +2,7 @@ package io.quarkiverse.googlecloudservices.secretmanager.runtime.config;
 
 import java.util.Collections;
 import java.util.Map;
+import java.util.Set;
 
 import com.google.cloud.secretmanager.v1.AccessSecretVersionResponse;
 import com.google.cloud.secretmanager.v1.SecretVersionName;
@@ -30,6 +31,11 @@ public class SecretManagerConfigSource extends AbstractConfigSource {
     }
 
     @Override
+    public Set<String> getPropertyNames() {
+        return Collections.emptySet();
+    }
+
+    @Override
     public String getValue(String propertyName) {
         SecretVersionName secretVersionName = SecretManagerConfigUtils.getSecretVersionName(propertyName, defaultProject);
         if (secretVersionName == null) {
@@ -40,4 +46,5 @@ public class SecretManagerConfigSource extends AbstractConfigSource {
         AccessSecretVersionResponse response = clientProvider.get().accessSecretVersion(secretVersionName);
         return response.getPayload().getData().toStringUtf8();
     }
+
 }
