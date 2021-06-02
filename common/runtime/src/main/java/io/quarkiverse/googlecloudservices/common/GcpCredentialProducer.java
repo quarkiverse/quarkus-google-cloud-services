@@ -1,7 +1,9 @@
 package io.quarkiverse.googlecloudservices.common;
 
+import java.io.ByteArrayInputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.Base64;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
@@ -42,6 +44,11 @@ public class GcpCredentialProducer {
     public GoogleCredentials googleCredential() throws IOException {
         if (gcpConfiguration.serviceAccountLocation.isPresent()) {
             try (FileInputStream is = new FileInputStream(gcpConfiguration.serviceAccountLocation.get())) {
+                return GoogleCredentials.fromStream(is).createScoped(CLOUD_OAUTH_SCOPE);
+            }
+        } else if (gcpConfiguration.serviceAccountEncodedKey.isPresent()) {
+            byte[] decode = Base64.getDecoder().decode(gcpConfiguration.serviceAccountEncodedKey.get());
+            try (ByteArrayInputStream is = new ByteArrayInputStream(decode)) {
                 return GoogleCredentials.fromStream(is).createScoped(CLOUD_OAUTH_SCOPE);
             }
         } else if (gcpConfiguration.accessTokenEnabled && securityIdentity.isResolvable()
