@@ -24,7 +24,7 @@ public class GcpConfiguration {
     public Optional<String> serviceAccountLocation;
 
     /**
-     * Google Cloud service account file encoded in base64.
+     * Google Cloud service account base64 encoded content.
      */
     @ConfigItem
     public Optional<String> serviceAccountEncodedKey;
