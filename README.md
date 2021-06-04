@@ -31,6 +31,7 @@ it depends on where your application runs (inside our outside Google Cloud Platf
 
 The current authentication flow is as follows:
 - Check the `quarkus.google.cloud.service-account-location` property, if it exists, use the service account file from this location.
+- Check the `quarkus.google.cloud.service-account-encoded-key` property, if it exists, use the service account base64 encoded content.
 - Check the access token returned as part of OpenId Connect Authorization Code Grant response after a user has authenticated with
   Google OpenId Connect provider (see [Quarkus OpenId Connect for Web Applications](https://quarkus.io/guides/security-openid-connect-web-authentication)).
   This access token can be used to access Google Services on behalf of the currently authenticated user

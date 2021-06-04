@@ -24,6 +24,12 @@ public class GcpConfiguration {
     public Optional<String> serviceAccountLocation;
 
     /**
+     * Google Cloud service account base64 encoded content.
+     */
+    @ConfigItem
+    public Optional<String> serviceAccountEncodedKey;
+
+    /**
      * Enable Google Cloud access token authentication
      * For example, the access token which is returned as part of OpenId Connect Authorization Code Flow
      * may be used to access Google Cloud services on behalf of the authenticated user.
