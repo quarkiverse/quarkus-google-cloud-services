@@ -1,9 +1,6 @@
 # Quarkiverse - Quarkus Google Cloud Services
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-7-orange.svg?style=flat-square)](#contributors-)
-[![version](https://img.shields.io/maven-central/v/io.quarkiverse.googlecloudservices/quarkus-google-cloud-services-bom)](https://repo1.maven.org/maven2/io/quarkiverse/googlecloudservices/)
-[![Build](https://github.com/quarkiverse/quarkus-google-cloud-services/workflows/Build/badge.svg)](https://github.com/quarkiverse/quarkus-google-cloud-services/actions?query=workflow%3ABuild)
-[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
+[![All Contributors](https://img.shields.io/badge/all_contributors-8-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
 This repository hosts Quarkus extensions for different Google Cloud Services.
@@ -109,6 +106,9 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
     <td align="center"><a href="http://madsopheim.com"><img src="https://avatars.githubusercontent.com/u/1844557?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Mads Opheim</b></sub></a><br /><a href="https://github.com/quarkiverse/quarkus-google-cloud-services/commits?author=madsop" title="Code">💻</a> <a href="https://github.com/quarkiverse/quarkus-google-cloud-services/commits?author=madsop" title="Documentation">📖</a></td>
     <td align="center"><a href="https://github.com/PeterUlb"><img src="https://avatars.githubusercontent.com/u/13261215?v=4?s=100" width="100px;" alt=""/><br /><sub><b>PeterUlb</b></sub></a><br /><a href="https://github.com/quarkiverse/quarkus-google-cloud-services/commits?author=PeterUlb" title="Code">💻</a></td>
     <td align="center"><a href="https://www.4pixel.it"><img src="https://avatars.githubusercontent.com/u/3707628?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Felipe Sabadini</b></sub></a><br /><a href="https://github.com/quarkiverse/quarkus-google-cloud-services/commits?author=felipesabadini" title="Code">💻</a></td>
+  </tr>
+  <tr>
+    <td align="center"><a href="https://twitter.com/ppalaga"><img src="https://avatars.githubusercontent.com/u/1826249?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Peter Palaga</b></sub></a><br /><a href="https://github.com/quarkiverse/quarkus-google-cloud-services/commits?author=ppalaga" title="Code">💻</a></td>
   </tr>
 </table>
 
