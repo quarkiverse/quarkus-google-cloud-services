@@ -22,6 +22,7 @@
         <maven.compiler.parameters>true</maven.compiler.parameters>
         <quarkus.version>2.0.0.CR3</quarkus.version>
         <compiler-plugin.version>3.8.1</compiler-plugin.version>
+        <enforcer-plugin.version>3.0.0-M3</enforcer-plugin.version>
     </properties>
 
     <!-- Extension modules. Note that the integration-tests is added via profile to avoid releasing it -->
@@ -63,6 +64,16 @@
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-compiler-plugin</artifactId>
                     <version>${compiler-plugin.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-enforcer-plugin</artifactId>
+                    <version>${enforcer-plugin.version}</version>
+                    <configuration>
+                        <rules>
+                            <dependencyConvergence/>
+                        </rules>
+                    </configuration>
                 </plugin>
                 <plugin>
                     <groupId>io.quarkus</groupId>
