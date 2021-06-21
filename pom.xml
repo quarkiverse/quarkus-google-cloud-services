@@ -25,7 +25,6 @@
         <enforcer-plugin.version>3.0.0-M3</enforcer-plugin.version>
     </properties>
 
-    <!-- Extension modules. Note that the integration-tests is added via profile to avoid releasing it -->
     <modules>
         <module>bom</module>
         <module>common</module>
@@ -36,6 +35,7 @@
         <module>firestore</module>
         <module>bigtable</module>
         <module>secret-manager</module>
+        <module>integration-tests</module>
     </modules>
 
     <dependencyManagement>
@@ -89,18 +89,4 @@
         </pluginManagement>
     </build>
 
-    <profiles>
-        <profile>
-            <id>it</id>
-            <activation>
-                <property>
-                    <name>performRelease</name>
-                    <value>!true</value>
-                </property>
-            </activation>
-            <modules>
-                <module>integration-tests</module>
-            </modules>
-        </profile>
-    </profiles>
 </project>

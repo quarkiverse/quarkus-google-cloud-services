@@ -18,11 +18,26 @@
         <native.surefire.skip>${skipTests}</native.surefire.skip>
     </properties>
 
+    <!-- Only the main IT here, other will be added via profile to avoid running them while deploying -->
     <modules>
         <module>main</module>
-        <module>google-cloud-functions</module>
-        <module>app-engine</module>
     </modules>
+
+    <profiles>
+        <profile>
+            <id>it</id>
+            <activation>
+                <property>
+                    <name>performRelease</name>
+                    <value>!true</value>
+                </property>
+            </activation>
+            <modules>
+                <module>google-cloud-functions</module>
+                <module>app-engine</module>
+            </modules>
+        </profile>
+    </profiles>
 
 
 </project>
