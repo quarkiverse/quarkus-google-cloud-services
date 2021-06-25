@@ -1,0 +1,5 @@
+name: quarkus-google-cloud-services
+title: Quarkus Google Cloud Services
+version: main
+nav:
+  - modules/ROOT/nav.adoc
