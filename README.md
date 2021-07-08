@@ -7,7 +7,9 @@
 
 This repository hosts Quarkus extensions for different Google Cloud Services.
 
-You can find documentation for each of these extensions in their sub-directory:
+You can find the documentation in the [Google Cloud Services Quarkiverse documentation site](https://quarkiverse.github.io/quarkiverse-docs/quarkus-google-cloud-services/main/).
+
+The following services are implemented:
 - [BigQuery](bigquery)
 - [Bigtable](bigtable)
 - [Firestore](firestore)
@@ -86,9 +88,7 @@ Example applications can be found inside the integration-test folder:
 - [google-cloud-functions](integration-tests/google-cloud-functions): A Google Cloud HTTP function using Google Cloud Storage. 
 - [app-engine](integration-tests/app-engine): A RESTEasy endpoint using Google Cloud Storage, to be deployed inside Google App Engine.
     
-## WARNING
-
-This project is still in its early stage.
+## Contributing
 
 Contributions are always welcome, but better create an issue to discuss them prior to any contributions.
 
