@@ -1,6 +1,7 @@
 = Google Cloud Services extension pack for Quarkus
 
 The Google Cloud Services extension pack provides Quarkus extensions for the following services:
+
 - xref:bigquery.adoc[BigQuery]
 - xref:bigtable.adoc[BigTable]
 - xref:firestore.adoc[Firestore]
@@ -29,6 +30,7 @@ There are several ways to authenticate to Google Cloud,
 it depends on where your application runs (inside our outside Google Cloud Platform) and for which service.
 
 The current authentication flow is as follows:
+
 - Check the `quarkus.google.cloud.service-account-location` property, if it exists, use the service account file from this location.
 - Check the `quarkus.google.cloud.service-account-encoded-key` property, if it exists, use the service account base64 encoded content.
 - Check the access token returned as part of OpenId Connect Authorization Code Grant response after a user has authenticated with
@@ -80,6 +82,7 @@ public class GoogleCredentialsMockProducer {
 == Example applications
 
 Example applications can be found inside the integration-test folder of the GitHub repository:
+
 - https://github.com/quarkiverse/quarkus-google-cloud-services/integration-tests/main[main]: RESTEasy endpoints using all the Google Cloud Services extensions, to be deployed as a standalone JAR.
 - https://github.com/quarkiverse/quarkus-google-cloud-services/integration-tests/google-cloud-functions[google-cloud-functions]: A Google Cloud HTTP function using Google Cloud Storage.
 - https://github.com/quarkiverse/quarkus-google-cloud-services/integration-tests/app-engine[app-engine]: A RESTEasy endpoint using Google Cloud Storage, to be deployed inside Google App Engine.
