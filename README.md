@@ -47,7 +47,7 @@ The current authentication flow is as follows:
     - Credentials provided by the Google Cloud SDK `gcloud auth application-default login` command.
     - Google Cloud managed environment (Google App Engine, Google Cloud Functions, GCE, ...) built-in credentials.
     
-**Google PubSub and Google Bigtable must be authenticated using the `GOOGLE_APPLICATION_CREDENTIALS` environment variable only.
+**Google PubSub and Google Bigtable must be authenticated using the `GOOGLE_APPLICATION_CREDENTIALS` environment variable only.**
 
 ## Google Cloud services emulators: mocking Google Cloud credentials
 
