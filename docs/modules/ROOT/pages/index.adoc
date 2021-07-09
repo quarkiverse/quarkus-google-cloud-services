@@ -2,13 +2,13 @@
 
 The Google Cloud Services extension pack provides Quarkus extensions for the following services:
 
-- xref:bigquery.adoc[BigQuery]
-- xref:bigtable.adoc[BigTable]
-- xref:firestore.adoc[Firestore]
-- xref:pubsub.adoc[PubSub]
-- xref:secretmanager.adoc[SecretManager]
-- xref:spanner.adoc[Spanner]
-- xref:storage.adoc[Storage]
+* xref:bigquery.adoc[BigQuery]
+* xref:bigtable.adoc[BigTable]
+* xref:firestore.adoc[Firestore]
+* xref:pubsub.adoc[PubSub]
+* xref:secretmanager.adoc[SecretManager]
+* xref:spanner.adoc[Spanner]
+* xref:storage.adoc[Storage]
 
 They all share an optional common configuration property to set the project ID:
 [source, properties]
@@ -31,18 +31,18 @@ it depends on where your application runs (inside our outside Google Cloud Platf
 
 The current authentication flow is as follows:
 
-- Check the `quarkus.google.cloud.service-account-location` property, if it exists, use the service account file from this location.
-- Check the `quarkus.google.cloud.service-account-encoded-key` property, if it exists, use the service account base64 encoded content.
-- Check the access token returned as part of OpenId Connect Authorization Code Grant response after a user has authenticated with
-Google OpenId Connect provider (see [Quarkus OpenId Connect for Web Applications](https://quarkus.io/guides/security-openid-connect-web-authentication)).
+* Check the `quarkus.google.cloud.service-account-location` property, if it exists, use the service account file from this location.
+* Check the `quarkus.google.cloud.service-account-encoded-key` property, if it exists, use the service account base64 encoded content.
+* Check the access token returned as part of OpenId Connect Authorization Code Grant response after a user has authenticated with
+Google OpenId Connect provider (see https://quarkus.io/guides/security-openid-connect-web-authentication[Quarkus OpenId Connect for Web Applications]).
 This access token can be used to access Google Services on behalf of the currently authenticated user
 but will be ignored if the `quarkus.google.cloud.accessTokenEnabled` property is set to `false`.
-- Use `GoogleCredentials.getApplicationDefault()` that will search for credentials in multiple places:
-- Credentials file pointed to by the `GOOGLE_APPLICATION_CREDENTIALS` environment variable.
-- Credentials provided by the Google Cloud SDK `gcloud auth application-default login` command.
-- Google Cloud managed environment (Google App Engine, Google Cloud Functions, GCE, ...) built-in credentials.
+* Use `GoogleCredentials.getApplicationDefault()` that will search for credentials in multiple places:
+* Credentials file pointed to by the `GOOGLE_APPLICATION_CREDENTIALS` environment variable.
+* Credentials provided by the Google Cloud SDK `gcloud auth application-default login` command.
+* Google Cloud managed environment (Google App Engine, Google Cloud Functions, GCE, ...) built-in credentials.
 
-**Google PubSub and Google Bigtable must be authenticated using the `GOOGLE_APPLICATION_CREDENTIALS` environment variable only.
+**Google PubSub and Google Bigtable must be authenticated using the `GOOGLE_APPLICATION_CREDENTIALS` environment variable only.**
 
 [[emulators]]
 == Google Cloud services emulators: mocking Google Cloud credentials
@@ -83,6 +83,6 @@ public class GoogleCredentialsMockProducer {
 
 Example applications can be found inside the integration-test folder of the GitHub repository:
 
-- https://github.com/quarkiverse/quarkus-google-cloud-services/integration-tests/main[main]: RESTEasy endpoints using all the Google Cloud Services extensions, to be deployed as a standalone JAR.
-- https://github.com/quarkiverse/quarkus-google-cloud-services/integration-tests/google-cloud-functions[google-cloud-functions]: A Google Cloud HTTP function using Google Cloud Storage.
-- https://github.com/quarkiverse/quarkus-google-cloud-services/integration-tests/app-engine[app-engine]: A RESTEasy endpoint using Google Cloud Storage, to be deployed inside Google App Engine.
+* https://github.com/quarkiverse/quarkus-google-cloud-services/integration-tests/main[main]: RESTEasy endpoints using all the Google Cloud Services extensions, to be deployed as a standalone JAR.
+* https://github.com/quarkiverse/quarkus-google-cloud-services/integration-tests/google-cloud-functions[google-cloud-functions]: A Google Cloud HTTP function using Google Cloud Storage.
+* https://github.com/quarkiverse/quarkus-google-cloud-services/integration-tests/app-engine[app-engine]: A RESTEasy endpoint using Google Cloud Storage, to be deployed inside Google App Engine.
