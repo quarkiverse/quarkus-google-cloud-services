@@ -6,7 +6,6 @@ import java.io.IOException;
 import java.util.Base64;
 
 import javax.annotation.PostConstruct;
-import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Default;
 import javax.enterprise.inject.Instance;
 import javax.enterprise.inject.Produces;
@@ -20,16 +19,16 @@ import io.quarkus.security.credential.Credential;
 import io.quarkus.security.credential.TokenCredential;
 import io.quarkus.security.identity.SecurityIdentity;
 
-@ApplicationScoped
+@Singleton
 public class GcpCredentialProducer {
 
     private static final String CLOUD_OAUTH_SCOPE = "https://www.googleapis.com/auth/cloud-platform";
 
     @Inject
-    GcpConfiguration gcpConfiguration;
+    Instance<SecurityIdentity> securityIdentity;
 
     @Inject
-    Instance<SecurityIdentity> securityIdentity;
+    GcpConfigHolder gcpConfigHolder;
 
     @PostConstruct
     public void verifySecurityIdentity() {
@@ -42,6 +41,7 @@ public class GcpCredentialProducer {
     @Singleton
     @Default
     public GoogleCredentials googleCredential() throws IOException {
+        GcpBootstrapConfiguration gcpConfiguration = gcpConfigHolder.getBootstrapConfig();
         if (gcpConfiguration.serviceAccountLocation.isPresent()) {
             try (FileInputStream is = new FileInputStream(gcpConfiguration.serviceAccountLocation.get())) {
                 return GoogleCredentials.fromStream(is).createScoped(CLOUD_OAUTH_SCOPE);
