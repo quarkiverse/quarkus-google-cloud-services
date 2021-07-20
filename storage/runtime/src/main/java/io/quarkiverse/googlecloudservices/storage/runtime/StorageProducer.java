@@ -12,7 +12,8 @@ import com.google.auth.oauth2.GoogleCredentials;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.StorageOptions;
 
-import io.quarkiverse.googlecloudservices.common.GcpConfiguration;
+import io.quarkiverse.googlecloudservices.common.GcpBootstrapConfiguration;
+import io.quarkiverse.googlecloudservices.common.GcpConfigHolder;
 
 @ApplicationScoped
 public class StorageProducer {
@@ -21,7 +22,7 @@ public class StorageProducer {
     GoogleCredentials googleCredentials;
 
     @Inject
-    GcpConfiguration gcpConfiguration;
+    GcpConfigHolder gcpConfigHolder;
 
     @Inject
     StorageConfiguration storageConfiguration;
@@ -30,6 +31,7 @@ public class StorageProducer {
     @Singleton
     @Default
     public Storage storage() throws IOException {
+        GcpBootstrapConfiguration gcpConfiguration = gcpConfigHolder.getBootstrapConfig();
         StorageOptions.Builder builder = StorageOptions.newBuilder()
                 .setCredentials(googleCredentials)
                 .setProjectId(gcpConfiguration.projectId);

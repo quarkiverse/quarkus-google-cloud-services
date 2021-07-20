@@ -18,7 +18,7 @@ public class SecretManagerConfigSource extends AbstractConfigSource {
 
     private final String defaultProject;
 
-    private SecretManagerClientProvider clientProvider = new SecretManagerClientProvider();
+    private final SecretManagerClientProvider clientProvider = new SecretManagerClientProvider();
 
     public SecretManagerConfigSource(String defaultProject) {
         super(CONFIG_SOURCE_NAME, SECRET_MANAGER_ORDINAL);
