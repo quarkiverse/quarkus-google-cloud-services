@@ -11,7 +11,7 @@
     <groupId>io.quarkiverse.googlecloudservices</groupId>
     <artifactId>quarkus-google-cloud-services-bom</artifactId>
     <name>Quarkus - Google Cloud Services - BOM</name>
-    <version>0.9.0-SNAPSHOT</version>
+    <version>0.9.0</version>
     <packaging>pom</packaging>
 
     <properties>
@@ -163,4 +163,8 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
+
+  <scm>
+    <tag>0.9.0</tag>
+  </scm>
 </project>
