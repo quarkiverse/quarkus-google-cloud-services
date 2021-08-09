@@ -29,7 +29,7 @@ public class SpannerProducer {
     public Spanner storage() throws IOException {
         GcpBootstrapConfiguration gcpConfiguration = gcpConfigHolder.getBootstrapConfig();
         return SpannerOptions.newBuilder().setCredentials(googleCredentials)
-                .setProjectId(gcpConfiguration.projectId)
+                .setProjectId(gcpConfiguration.projectId.orElse(null))
                 .build()
                 .getService();
     }

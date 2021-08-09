@@ -30,7 +30,7 @@ public class BigQueryProducer {
     public BigQuery bigQuery() throws IOException {
         GcpBootstrapConfiguration gcpConfiguration = gcpConfigHolder.getBootstrapConfig();
         return BigQueryOptions.newBuilder().setCredentials(googleCredentials)
-                .setProjectId(gcpConfiguration.projectId)
+                .setProjectId(gcpConfiguration.projectId.orElse(null))
                 .build()
                 .getService();
     }
