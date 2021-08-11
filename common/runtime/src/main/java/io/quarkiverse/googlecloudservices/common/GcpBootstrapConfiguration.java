@@ -15,10 +15,11 @@ import io.quarkus.runtime.annotations.ConfigRoot;
 public class GcpBootstrapConfiguration {
     /**
      * Google Cloud project ID.
-     * It defaults to `ServiceOptions.getDefaultProjectId()`, so to the project ID corresponding to the default credentials.
+     * It defaults to `ServiceOptions.getDefaultProjectId()`,
+     * so to the project ID corresponding to the default credentials if the default credentials are set, otherwise null.
      */
-    @ConfigItem
-    public String projectId;
+    @ConfigItem(defaultValueDocumentation = "ServiceOptions.getDefaultProjectId()")
+    public Optional<String> projectId;
 
     /**
      * Google Cloud service account file location.

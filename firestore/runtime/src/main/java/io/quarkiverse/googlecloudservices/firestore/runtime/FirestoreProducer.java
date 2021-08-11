@@ -30,7 +30,7 @@ public class FirestoreProducer {
     public Firestore firestore() throws IOException {
         GcpBootstrapConfiguration gcpConfiguration = gcpConfigHolder.getBootstrapConfig();
         return FirestoreOptions.newBuilder().setCredentials(googleCredentials)
-                .setProjectId(gcpConfiguration.projectId)
+                .setProjectId(gcpConfiguration.projectId.orElse(null))
                 .build()
                 .getService();
     }

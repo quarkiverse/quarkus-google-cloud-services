@@ -14,7 +14,7 @@ public class SecretManagerConfigSourceProvider implements ConfigSourceProvider {
     private final String projectId;
 
     public SecretManagerConfigSourceProvider(GcpBootstrapConfiguration gcpBootstrapConfiguration) {
-        this.projectId = gcpBootstrapConfiguration.projectId;
+        this.projectId = gcpBootstrapConfiguration.projectId.orElse(null);
     }
 
     @Override
