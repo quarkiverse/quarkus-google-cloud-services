@@ -26,7 +26,7 @@
         <opencensus.version>0.28.3</opencensus.version><!-- mess in google-pubsub and grpc deps; should be rather stable as OpenCensus has been sunsetted already - see https://github.com/GoogleCloudPlatform/cloud-opensource-java/issues/862 -->
         <threeten.version>1.5.1</threeten.version><!-- mess in google-cloud-core transitive deps -->
         <perfmark.version>0.23.0</perfmark.version><!-- mess in bigtable, firestore, pubsub, spanner and secret-manager transitive deps -->
-        <conscrypt.version>2.5.1</conscrypt.version><!-- mess in bigtable, firestore, pubsub, spanner and secret-manager transitive deps -->
+        <conscrypt.version>2.5.2</conscrypt.version><!-- mess in bigtable, firestore, pubsub, spanner and secret-manager transitive deps -->
     </properties>
 
     <dependencyManagement>
