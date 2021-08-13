@@ -46,13 +46,18 @@ You can create one with `gcloud`:
 gcloud pubsub topics create test-topic
 ----
 
-As PubSub mandates the usage of the `GOOGLE_APPLICATION_CREDENTIALS` environment variable to define its credentials,
+== Authentication
+
+By default, PubSub mandates the usage of the `GOOGLE_APPLICATION_CREDENTIALS` environment variable to define its credentials, so
 you need to set this one instead of relying on the `quarkus.google.cloud.service-account-location` property.
 
 [source]
 ----
 export GOOGLE_APPLICATION_CREDENTIALS=<your-service-account-file>
 ----
+
+Another solution, is to inject a `CredentialsProvider` provided by the extension, and to use it inside the various PubSub
+builders and settings objects when, instantiating PubSub components. This can be seen on the example that follows.
 
 == Some example
 
@@ -80,11 +85,12 @@ import org.jboss.logging.Logger;
 import com.google.api.core.ApiFuture;
 import com.google.api.core.ApiFutureCallback;
 import com.google.api.core.ApiFutures;
+import com.google.api.gax.core.CredentialsProvider;
 import com.google.cloud.pubsub.v1.MessageReceiver;
 import com.google.cloud.pubsub.v1.Publisher;
 import com.google.cloud.pubsub.v1.Subscriber;
 import com.google.cloud.pubsub.v1.SubscriptionAdminClient;
-import com.google.cloud.pubsub.v1.TopicAdminClient;
+import com.google.cloud.pubsub.v1.SubscriptionAdminSettings;
 import com.google.common.util.concurrent.MoreExecutors;
 import com.google.protobuf.ByteString;
 import com.google.pubsub.v1.ProjectName;
@@ -104,6 +110,9 @@ public class PubSubResource {
 
     private TopicName topicName;
     private Subscriber subscriber;
+
+    @Inject
+    CredentialsProvider credentialsProvider;
 
     @PostConstruct
     void init() throws IOException {
@@ -132,7 +141,10 @@ public class PubSubResource {
     @GET
     @Produces(MediaType.TEXT_PLAIN)
     public void pubsub() throws IOException, InterruptedException {
-        Publisher publisher = Publisher.newBuilder(topicName).build();// Init a publisher to the topic
+        // Init a publisher to the topic
+        Publisher publisher = Publisher.newBuilder(topicName)
+                .setCredentialsProvider(credentialsProvider)
+                .build();
         try {
             ByteString data = ByteString.copyFromUtf8("my-message");// Create a new message
             PubsubMessage pubsubMessage = PubsubMessage.newBuilder().setData(data).build();
@@ -155,7 +167,10 @@ public class PubSubResource {
     private ProjectSubscriptionName initSubscription() throws IOException {
         // List all existing subscriptions and create the 'test-subscription' if needed
         ProjectSubscriptionName subscriptionName = ProjectSubscriptionName.of(projectId, "test-subscription");
-        try (SubscriptionAdminClient subscriptionAdminClient = SubscriptionAdminClient.create()) {
+        SubscriptionAdminSettings subscriptionAdminSettings = SubscriptionAdminSettings.newBuilder()
+                .setCredentialsProvider(credentialsProvider)
+                .build();
+        try (SubscriptionAdminClient subscriptionAdminClient = SubscriptionAdminClient.create(subscriptionAdminSettings)) {
             Iterable<Subscription> subscriptions = subscriptionAdminClient.listSubscriptions(ProjectName.of(projectId))
                     .iterateAll();
             Optional<Subscription> existing = StreamSupport.stream(subscriptions.spliterator(), false)

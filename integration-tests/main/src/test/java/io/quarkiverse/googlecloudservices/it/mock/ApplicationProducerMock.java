@@ -3,8 +3,6 @@ package io.quarkiverse.googlecloudservices.it.mock;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
-import java.io.IOException;
-
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Default;
 import javax.enterprise.inject.Produces;
@@ -12,6 +10,8 @@ import javax.inject.Singleton;
 
 import org.mockito.Mockito;
 
+import com.google.api.gax.core.CredentialsProvider;
+import com.google.api.gax.core.FixedCredentialsProvider;
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.cloud.secretmanager.v1.AccessSecretVersionResponse;
 import com.google.cloud.secretmanager.v1.SecretManagerServiceClient;
@@ -28,14 +28,22 @@ public class ApplicationProducerMock {
     @Produces
     @Singleton
     @Default
-    public GoogleCredentials googleCredential() throws IOException {
+    public GoogleCredentials googleCredential() {
         return Mockito.mock(GoogleCredentials.class);
     }
 
     @Produces
     @Singleton
     @Default
-    public SecretManagerServiceClient secretManagerServiceClient() throws IOException {
+    public CredentialsProvider credentialsProvider() {
+        GoogleCredentials credentials = Mockito.mock(GoogleCredentials.class);
+        return FixedCredentialsProvider.create(credentials);
+    }
+
+    @Produces
+    @Singleton
+    @Default
+    public SecretManagerServiceClient secretManagerServiceClient() {
         SecretManagerServiceClient client = Mockito.mock(SecretManagerServiceClient.class);
         when(client.accessSecretVersion(any(SecretVersionName.class)))
                 .thenReturn(

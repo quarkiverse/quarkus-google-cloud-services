@@ -7,6 +7,7 @@ import java.util.stream.StreamSupport;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
+import javax.inject.Inject;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -18,11 +19,14 @@ import org.jboss.logging.Logger;
 import com.google.api.core.ApiFuture;
 import com.google.api.core.ApiFutureCallback;
 import com.google.api.core.ApiFutures;
+import com.google.api.gax.core.CredentialsProvider;
 import com.google.cloud.pubsub.v1.MessageReceiver;
 import com.google.cloud.pubsub.v1.Publisher;
 import com.google.cloud.pubsub.v1.Subscriber;
 import com.google.cloud.pubsub.v1.SubscriptionAdminClient;
+import com.google.cloud.pubsub.v1.SubscriptionAdminSettings;
 import com.google.cloud.pubsub.v1.TopicAdminClient;
+import com.google.cloud.pubsub.v1.TopicAdminSettings;
 import com.google.common.util.concurrent.MoreExecutors;
 import com.google.protobuf.ByteString;
 import com.google.pubsub.v1.ProjectName;
@@ -40,6 +44,9 @@ public class PubSubResource {
     @ConfigProperty(name = "quarkus.google.cloud.project-id")
     String projectId;
 
+    @Inject
+    CredentialsProvider credentialsProvider;
+
     private TopicName topicName;
     private Subscriber subscriber;
 
@@ -53,8 +60,9 @@ public class PubSubResource {
             LOG.infov("Got message {0}", message.getData().toStringUtf8());
             consumer.ack();
         };
-        subscriber = Subscriber.newBuilder(subscriptionName, receiver).build();
-        ;
+        subscriber = Subscriber.newBuilder(subscriptionName, receiver)
+                .setCredentialsProvider(credentialsProvider)
+                .build();
         subscriber.startAsync().awaitRunning();
     }
 
@@ -68,7 +76,9 @@ public class PubSubResource {
     @GET
     @Produces(MediaType.TEXT_PLAIN)
     public void pubsub() throws IOException, InterruptedException {
-        Publisher publisher = Publisher.newBuilder(topicName).build();
+        Publisher publisher = Publisher.newBuilder(topicName)
+                .setCredentialsProvider(credentialsProvider)
+                .build();
         try {
             ByteString data = ByteString.copyFromUtf8("my-message");
             PubsubMessage pubsubMessage = PubsubMessage.newBuilder().setData(data).build();
@@ -89,7 +99,10 @@ public class PubSubResource {
     }
 
     private ProjectSubscriptionName initTopicAndSubscription() throws IOException {
-        try (TopicAdminClient topicAdminClient = TopicAdminClient.create()) {
+        TopicAdminSettings topicAdminSettings = TopicAdminSettings.newBuilder()
+                .setCredentialsProvider(credentialsProvider)
+                .build();
+        try (TopicAdminClient topicAdminClient = TopicAdminClient.create(topicAdminSettings)) {
             Iterable<Topic> topics = topicAdminClient.listTopics(ProjectName.of(projectId)).iterateAll();
             Optional<Topic> existing = StreamSupport.stream(topics.spliterator(), false)
                     .filter(topic -> topic.getName().equals(topicName.toString()))
@@ -98,8 +111,12 @@ public class PubSubResource {
                 topicAdminClient.createTopic(topicName.toString());
             }
         }
+
         ProjectSubscriptionName subscriptionName = ProjectSubscriptionName.of(projectId, "test-subscription");
-        try (SubscriptionAdminClient subscriptionAdminClient = SubscriptionAdminClient.create()) {
+        SubscriptionAdminSettings subscriptionAdminSettings = SubscriptionAdminSettings.newBuilder()
+                .setCredentialsProvider(credentialsProvider)
+                .build();
+        try (SubscriptionAdminClient subscriptionAdminClient = SubscriptionAdminClient.create(subscriptionAdminSettings)) {
             Iterable<Subscription> subscriptions = subscriptionAdminClient.listSubscriptions(ProjectName.of(projectId))
                     .iterateAll();
             Optional<Subscription> existing = StreamSupport.stream(subscriptions.spliterator(), false)

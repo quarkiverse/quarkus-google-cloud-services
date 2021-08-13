@@ -5,6 +5,7 @@ import com.google.cloud.ServiceOptions;
 import io.quarkiverse.googlecloudservices.common.GcpBootstrapConfiguration;
 import io.quarkiverse.googlecloudservices.common.GcpConfigHolder;
 import io.quarkiverse.googlecloudservices.common.GcpCredentialProducer;
+import io.quarkiverse.googlecloudservices.common.GcpCredentialProviderProducer;
 import io.quarkiverse.googlecloudservices.common.GcpCredentialRecorder;
 import io.quarkus.arc.deployment.AdditionalBeanBuildItem;
 import io.quarkus.deployment.annotations.BuildStep;
@@ -17,7 +18,9 @@ public class CommonBuildSteps {
 
     @BuildStep
     public AdditionalBeanBuildItem producer() {
-        return new AdditionalBeanBuildItem(GcpCredentialProducer.class, GcpConfigHolder.class);
+        return new AdditionalBeanBuildItem(GcpCredentialProducer.class,
+                GcpConfigHolder.class,
+                GcpCredentialProviderProducer.class);
     }
 
     @BuildStep
