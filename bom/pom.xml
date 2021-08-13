@@ -18,15 +18,14 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
-        <google-cloud-sdk.version>16.1.0</google-cloud-sdk.version>
+        <google-cloud-sdk.version>20.9.0</google-cloud-sdk.version>
         <google-cloud-graalvm.version>0.6.0</google-cloud-graalvm.version>
         <!-- The Google Cloud BOM includes the 'android' version of Guava so we need to fix the 'jre' version.
         Make sure to keep these two libraries compatible. -->
-        <guava.version>30.0-jre</guava.version>
+        <guava.version>30.1.1-jre</guava.version>
+        <!-- Dependency convergence issues -->
         <opencensus.version>0.28.3</opencensus.version><!-- mess in google-pubsub and grpc deps; should be rather stable as OpenCensus has been sunsetted already - see https://github.com/GoogleCloudPlatform/cloud-opensource-java/issues/862 -->
         <threeten.version>1.5.1</threeten.version><!-- mess in google-cloud-core transitive deps -->
-        <perfmark.version>0.23.0</perfmark.version><!-- mess in bigtable, firestore, pubsub, spanner and secret-manager transitive deps -->
-        <conscrypt.version>2.5.1</conscrypt.version><!-- mess in bigtable, firestore, pubsub, spanner and secret-manager transitive deps -->
     </properties>
 
     <dependencyManagement>
@@ -75,19 +74,9 @@
                 <version>${opencensus.version}</version>
             </dependency>
             <dependency>
-                <groupId>io.perfmark</groupId>
-                <artifactId>perfmark-api</artifactId>
-                <version>${perfmark.version}</version>
-            </dependency>
-            <dependency>
                 <groupId>org.threeten</groupId>
                 <artifactId>threetenbp</artifactId>
                 <version>${threeten.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.conscrypt</groupId>
-                <artifactId>conscrypt-openjdk-uber</artifactId>
-                <version>${conscrypt.version}</version>
             </dependency>
 
             <!-- Google Cloud Services Extensions -->
