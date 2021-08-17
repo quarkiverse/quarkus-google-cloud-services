@@ -18,7 +18,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
-        <google-cloud-sdk.version>20.9.0</google-cloud-sdk.version>
+        <google-cloud-sdk.version>21.0.0</google-cloud-sdk.version>
         <google-cloud-graalvm.version>0.6.0</google-cloud-graalvm.version>
         <!-- The Google Cloud BOM includes the 'android' version of Guava so we need to fix the 'jre' version.
         Make sure to keep these two libraries compatible. -->
