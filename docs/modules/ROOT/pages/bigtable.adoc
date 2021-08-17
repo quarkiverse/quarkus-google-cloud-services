@@ -48,13 +48,18 @@ gcloud bigtable instances create test-instance \
     --display-name=Test
 ----
 
-As Bigtable mandates the usage of the `GOOGLE_APPLICATION_CREDENTIALS` environment variable to define its credentials,
+== Authentication
+
+By default, Bigtable mandates the usage of the `GOOGLE_APPLICATION_CREDENTIALS` environment variable to define its credentials, so
 you need to set this one instead of relying on the `quarkus.google.cloud.service-account-location` property.
 
 [source, shell script]
 ----
 export GOOGLE_APPLICATION_CREDENTIALS=<your-service-account-file>
 ----
+
+Another solution, is to inject a `CredentialsProvider` provided by the extension, and to use the various BigTable*Settings classes
+to instantiate Bigtable components. This can be seen on the example that follows.
 
 == Some example
 
@@ -71,9 +76,12 @@ import javax.ws.rs.Path;
 
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 
+import com.google.api.gax.core.CredentialsProvider;
 import com.google.cloud.bigtable.admin.v2.BigtableTableAdminClient;
+import com.google.cloud.bigtable.admin.v2.BigtableTableAdminSettings;
 import com.google.cloud.bigtable.admin.v2.models.CreateTableRequest;
 import com.google.cloud.bigtable.data.v2.BigtableDataClient;
+import com.google.cloud.bigtable.data.v2.BigtableDataSettings;
 import com.google.cloud.bigtable.data.v2.models.Row;
 import com.google.cloud.bigtable.data.v2.models.RowCell;
 import com.google.cloud.bigtable.data.v2.models.RowMutation;
@@ -87,37 +95,52 @@ public class BigtableResource {
        @ConfigProperty(name = "quarkus.google.cloud.project-id")
        String projectId;
 
+        @Inject
+        CredentialsProvider credentialsProvider;
+
        @PostConstruct
        void initBigtable() throws IOException {
-           BigtableTableAdminClient adminClient = BigtableTableAdminClient.create(projectId, INSTANCE_ID);
-           if (!adminClient.exists(TABLE_ID)) {
-               System.out.println("Creating table: " + TABLE_ID);
-               CreateTableRequest createTableRequest = CreateTableRequest.of(TABLE_ID).addFamily(COLUMN_FAMILY_ID);
-               adminClient.createTable(createTableRequest);
-               System.out.printf("Table %s created successfully%n", TABLE_ID);
+           // init Bigtable settings using the injected CredentialsProvider
+           BigtableTableAdminSettings settings = BigtableTableAdminSettings.newBuilder()
+                   .setCredentialsProvider(credentialsProvider)
+                   .setProjectId(projectId)
+                   .setInstanceId(INSTANCE_ID)
+                   .build();
+           try (BigtableTableAdminClient adminClient = BigtableTableAdminClient.create(settings)) {
+               if (!adminClient.exists(TABLE_ID)) {
+                   System.out.println("Creating table: " + TABLE_ID);
+                   CreateTableRequest createTableRequest = CreateTableRequest.of(TABLE_ID).addFamily(COLUMN_FAMILY_ID);
+                   adminClient.createTable(createTableRequest);
+                   System.out.printf("Table %s created successfully%n", TABLE_ID);
+               }
            }
        }
 
        @GET
        public String bigtable() throws IOException {
-        BigtableDataClient dataClient = BigtableDataClient.create(projectId, instanceId);
-        try {
-            // create a row
-            RowMutation rowMutation = RowMutation.create(tableId, "key1").setCell(columnFamily, "test", "value1");
-            dataClient.mutateRow(rowMutation);
+           // init Bigtable settings using the injected CredentialsProvider
+           BigtableTableAdminSettings settings = BigtableTableAdminSettings.newBuilder()
+                   .setCredentialsProvider(credentialsProvider)
+                   .setProjectId(projectId)
+                   .setInstanceId(INSTANCE_ID)
+                   .build();
+           try (BigtableDataClient dataClient = BigtableDataClient.create(settings)) {
+                // create a row
+                RowMutation rowMutation = RowMutation.create(tableId, "key1").setCell(columnFamily, "test", "value1");
+                dataClient.mutateRow(rowMutation);
 
-            Row row = dataClient.readRow(tableId, "key1");
-            System.out.println("Row: " + row.getKey().toStringUtf8());
-            StringBuilder cells = new StringBuilder();
-            for (RowCell cell : row.getCells()) {
-                cells.append(String.format(
-                        "Family: %s    Qualifier: %s    Value: %s%n",
-                        cell.getFamily(), cell.getQualifier().toStringUtf8(), cell.getValue().toStringUtf8()));
+                Row row = dataClient.readRow(tableId, "key1");
+                System.out.println("Row: " + row.getKey().toStringUtf8());
+                StringBuilder cells = new StringBuilder();
+                for (RowCell cell : row.getCells()) {
+                    cells.append(String.format(
+                            "Family: %s    Qualifier: %s    Value: %s%n",
+                            cell.getFamily(), cell.getQualifier().toStringUtf8(), cell.getValue().toStringUtf8()));
+                }
+                return cells.toString();
+            } finally {
+                dataClient.close();
             }
-            return cells.toString();
-        } finally {
-            dataClient.close();
-        }
     }
 }
 ----

@@ -52,9 +52,10 @@ The current authentication flow is as follows:
 ## Google Cloud services emulators: mocking Google Cloud credentials
 
 If you plan to use one of the Google Cloud services emulators (for running on localhost, or for testing purpose), on a non-authenticated environment, 
-you'll need to mock the Google Cloud authentication.
+you'll need to mock the Google Cloud authentication, and optionally the `CredentialsProvider` if you're using it (otherwise it will be removed by Quarkus CDI engine).
 
-For testing, this can be done by creating a CDI producer that will produce a mocked bean (with Quarkus mock support and Mockito) to replace the `GoogleCloudCredentials`.
+For testing, this can be done by creating a CDI producer that will produce a mocked bean (with Quarkus mock support and Mockito) 
+to replace the `GoogleCloudCredentials` and the `CredentialsProvider`.
 
 ```java
 import javax.enterprise.context.ApplicationScoped;
@@ -65,6 +66,8 @@ import javax.inject.Singleton;
 import org.mockito.Mockito;
 
 import com.google.auth.oauth2.GoogleCredentials;
+import com.google.api.gax.core.CredentialsProvider;
+import com.google.api.gax.core.FixedCredentialsProvider;
 
 import io.quarkus.test.Mock;
 
@@ -77,6 +80,15 @@ public class GoogleCredentialsMockProducer {
   @Default
   public GoogleCredentials googleCredential() {
     return Mockito.mock(GoogleCredentials.class);
+  }
+
+  // only needed if you're injecting it inside one of your CDI beans
+  @Produces
+  @Singleton
+  @Default
+  public CredentialsProvider credentialsProvider() {
+    GoogleCredentials credentials = Mockito.mock(GoogleCredentials.class);
+    return FixedCredentialsProvider.create(credentials);
   }
 }
 ```
