@@ -20,7 +20,7 @@
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>
         <maven.compiler.parameters>true</maven.compiler.parameters>
-        <quarkus.version>2.1.2.Final</quarkus.version>
+        <quarkus.version>2.1.3.Final</quarkus.version>
         <compiler-plugin.version>3.8.1</compiler-plugin.version>
         <enforcer-plugin.version>3.0.0-M3</enforcer-plugin.version>
     </properties>
