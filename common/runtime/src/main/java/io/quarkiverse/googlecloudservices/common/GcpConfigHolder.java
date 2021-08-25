@@ -1,8 +1,8 @@
 package io.quarkiverse.googlecloudservices.common;
 
-import io.quarkus.arc.Unremovable;
-
 import javax.inject.Singleton;
+
+import io.quarkus.arc.Unremovable;
 
 @Singleton
 @Unremovable
