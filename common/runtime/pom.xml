@@ -48,7 +48,7 @@
         </dependency>
         <dependency>
             <groupId>com.google.cloud</groupId>
-            <artifactId>google-cloud-graalvm-support</artifactId>
+            <artifactId>native-image-support</artifactId>
         </dependency>
         <dependency>
             <groupId>com.google.cloud</groupId>
