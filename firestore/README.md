@@ -82,3 +82,7 @@ public class FirestoreResource {
     }
 }
 ```
+
+NOTE: Here we let Firestore serialize the `Person` object, Firestore will use reflection for this.
+So if you deploy your application as a GraalVM native image you will need to register the `Person` class for reflection.
+This can be done by annotating it with `@RegisterForReflection`.
