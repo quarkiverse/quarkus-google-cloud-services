@@ -9,7 +9,6 @@ import java.util.List;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.junitpioneer.jupiter.SetEnvironmentVariable;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.wait.strategy.LogMessageWaitStrategy;
 
@@ -43,7 +42,6 @@ public class FirestoreResourceTest {
     }
 
     @Test
-    @SetEnvironmentVariable(key = "FIRESTORE_EMULATOR_HOST", value = "localhost:8080")
     public void testFirestore() {
         given()
                 .when().get("/firestore")
