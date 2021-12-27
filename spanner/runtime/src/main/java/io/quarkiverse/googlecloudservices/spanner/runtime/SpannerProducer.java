@@ -23,14 +23,17 @@ public class SpannerProducer {
     @Inject
     GcpConfigHolder gcpConfigHolder;
 
+    @Inject
+    SpannerConfiguration spannerConfiguration;
+
     @Produces
     @Singleton
     @Default
     public Spanner storage() throws IOException {
         GcpBootstrapConfiguration gcpConfiguration = gcpConfigHolder.getBootstrapConfig();
-        return SpannerOptions.newBuilder().setCredentials(googleCredentials)
-                .setProjectId(gcpConfiguration.projectId.orElse(null))
-                .build()
-                .getService();
+        SpannerOptions.Builder builder = SpannerOptions.newBuilder().setCredentials(googleCredentials)
+                .setProjectId(gcpConfiguration.projectId.orElse(null));
+        spannerConfiguration.emulatorHost.ifPresent(builder::setEmulatorHost);
+        return builder.build().getService();
     }
 }
