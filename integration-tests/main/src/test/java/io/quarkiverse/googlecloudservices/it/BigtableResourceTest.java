@@ -9,37 +9,31 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junitpioneer.jupiter.SetEnvironmentVariable;
-import org.testcontainers.containers.GenericContainer;
-import org.testcontainers.containers.wait.strategy.LogMessageWaitStrategy;
+import org.testcontainers.containers.BigtableEmulatorContainer;
+import org.testcontainers.utility.DockerImageName;
 
 import io.quarkus.test.junit.QuarkusTest;
 
 @QuarkusTest
 public class BigtableResourceTest {
-    private static final int PORT = 8086;
-
-    private static GenericContainer<?> GCLOUD_CONTAINER;
+    private static final BigtableEmulatorContainer EMULATOR = new BigtableEmulatorContainer(
+            DockerImageName.parse("gcr.io/google.com/cloudsdktool/cloud-sdk"));
 
     @BeforeAll
     public static void startGcloudContainer() {
-        GCLOUD_CONTAINER = new GenericContainer<>("marcelcorso/gcloud-bigtable-emulator")
-                .withExposedPorts(PORT)
-                .waitingFor(new LogMessageWaitStrategy().withRegEx("(?s).*running.*$"));
         List<String> portBindings = new ArrayList<>();
-        portBindings.add("8086:8086");
-        GCLOUD_CONTAINER.setPortBindings(portBindings);
-        GCLOUD_CONTAINER.start();
+        portBindings.add("9000:9000");
+        EMULATOR.setPortBindings(portBindings);
+        EMULATOR.start();
     }
 
     @AfterAll
     public static void stopGcloudContainer() {
-        if (GCLOUD_CONTAINER != null) {
-            GCLOUD_CONTAINER.stop();
-        }
+        EMULATOR.stop();
     }
 
     @Test
-    @SetEnvironmentVariable(key = "BIGTABLE_EMULATOR_HOST", value = "localhost:8086")
+    @SetEnvironmentVariable(key = "BIGTABLE_EMULATOR_HOST", value = "localhost:9000")
     public void testBigtable() {
         given()
                 .when().get("/bigtable")
