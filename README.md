@@ -67,7 +67,7 @@ import org.mockito.Mockito;
 
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.api.gax.core.CredentialsProvider;
-import com.google.api.gax.core.FixedCredentialsProvider;
+import com.google.api.gax.core.NoCredentialsProvider;
 
 import io.quarkus.test.Mock;
 
@@ -87,8 +87,7 @@ public class GoogleCredentialsMockProducer {
   @Singleton
   @Default
   public CredentialsProvider credentialsProvider() {
-    GoogleCredentials credentials = Mockito.mock(GoogleCredentials.class);
-    return FixedCredentialsProvider.create(credentials);
+    return NoCredentialsProvider.create();
   }
 }
 ```
