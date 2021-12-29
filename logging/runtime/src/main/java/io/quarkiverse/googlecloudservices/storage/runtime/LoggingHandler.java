@@ -1,7 +1,7 @@
 package io.quarkiverse.googlecloudservices.storage.runtime;
 
-import java.util.logging.Handler;
-import java.util.logging.LogRecord;
+import org.jboss.logmanager.ExtHandler;
+import org.jboss.logmanager.ExtLogRecord;
 
 import com.google.api.Logging;
 import com.google.auth.oauth2.GoogleCredentials;
@@ -10,7 +10,7 @@ import io.quarkiverse.googlecloudservices.common.GcpConfigHolder;
 import io.quarkus.arc.Arc;
 import io.quarkus.arc.InstanceHandle;
 
-public class LoggingHandler extends Handler {
+public class LoggingHandler extends ExtHandler {
 
     private LoggingConfiguration config;
 
@@ -24,7 +24,7 @@ public class LoggingHandler extends Handler {
     }
 
     @Override
-    public void publish(LogRecord record) {
+    public void doPublish(ExtLogRecord record) {
         System.out.println("Log Record published: " + record);
     }
 
