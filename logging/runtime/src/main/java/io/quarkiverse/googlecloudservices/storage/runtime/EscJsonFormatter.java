@@ -10,10 +10,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 
+import com.google.common.base.Strings;
+
 import org.jboss.logmanager.ExtFormatter;
 import org.jboss.logmanager.ExtLogRecord;
-
-import com.google.common.base.Strings;
 
 public class EscJsonFormatter {
 
@@ -23,6 +23,7 @@ public class EscJsonFormatter {
         return (r) -> format(r);
     }
 
+    @SuppressWarnings("deprecation")
     protected Map<String, ?> format(ExtLogRecord record) {
         Map<String, Object> m = new HashMap<>();
         setEcsVersion(m);
@@ -40,6 +41,7 @@ public class EscJsonFormatter {
         return m;
     }
 
+    @SuppressWarnings("unchecked")
     protected void setParameters(Map<String, Object> m, Object[] parameters) {
         if (parameters != null && parameters.length > 0) {
             List<String> list = (List<String>) m.computeIfAbsent("parameters", (k) -> new ArrayList<String>(parameters.length));
@@ -114,6 +116,7 @@ public class EscJsonFormatter {
         }
     }
 
+    @SuppressWarnings("unchecked")
     protected Map<String, Object> getOrCreateObject(Map<String, Object> m, String name) {
         return (Map<String, Object>) m.computeIfAbsent(name, (k) -> new HashMap<String, Object>(3));
     }
