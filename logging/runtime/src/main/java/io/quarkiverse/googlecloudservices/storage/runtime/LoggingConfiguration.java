@@ -15,7 +15,7 @@ public class LoggingConfiguration {
     public boolean structured;
 
     /**
-     * When Google Operations log should be used.
+     * Which Google Operations log should be used.
      */
     @ConfigItem
     public String log;
