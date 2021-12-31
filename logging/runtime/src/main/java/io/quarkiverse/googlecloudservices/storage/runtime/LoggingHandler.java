@@ -20,6 +20,7 @@ import org.jboss.logmanager.ExtLogRecord;
 
 import io.quarkiverse.googlecloudservices.common.GcpBootstrapConfiguration;
 import io.quarkiverse.googlecloudservices.common.GcpConfigHolder;
+import io.quarkiverse.googlecloudservices.storage.runtime.ecs.EscJsonFormatter;
 import io.quarkus.arc.Arc;
 import io.quarkus.arc.InstanceHandle;
 
@@ -103,7 +104,6 @@ public class LoggingHandler extends ExtHandler {
     }
 
     private synchronized Logging initGetLogging() {
-        System.out.println("0");
         if (log == null) {
             InstanceHandle<GcpConfigHolder> config = Arc.container().instance(GcpConfigHolder.class);
             InstanceHandle<GoogleCredentials> creds = Arc.container().instance(GoogleCredentials.class);

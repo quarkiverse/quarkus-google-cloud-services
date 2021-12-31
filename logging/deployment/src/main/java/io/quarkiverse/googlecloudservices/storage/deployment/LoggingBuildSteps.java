@@ -2,11 +2,8 @@ package io.quarkiverse.googlecloudservices.storage.deployment;
 
 import com.google.auth.oauth2.GoogleCredentials;
 
-import co.elastic.logging.AdditionalField;
-import co.elastic.logging.EcsJsonSerializer;
-import co.elastic.logging.JsonUtils;
 import io.quarkiverse.googlecloudservices.storage.runtime.LoggingConfiguration;
-import io.quarkiverse.googlecloudservices.storage.runtime.LoggingHandlerFactory;
+import io.quarkiverse.googlecloudservices.storage.runtime.recorder.LoggingHandlerFactory;
 import io.quarkus.arc.deployment.UnremovableBeanBuildItem;
 import io.quarkus.deployment.annotations.BuildStep;
 import io.quarkus.deployment.annotations.ExecutionTime;
@@ -26,16 +23,6 @@ public class LoggingBuildSteps {
     @BuildStep
     public UnremovableBeanBuildItem credentials() {
         return UnremovableBeanBuildItem.beanTypes(GoogleCredentials.class);
-    }
-
-    @BuildStep
-    public UnremovableBeanBuildItem escSerializer() {
-        return UnremovableBeanBuildItem.beanTypes(AdditionalField.class, EcsJsonSerializer.class, JsonUtils.class);
-    }
-
-    @BuildStep
-    public UnremovableBeanBuildItem escTimestampSerializer() {
-        return UnremovableBeanBuildItem.beanClassNames("co.elastic.logging.TimestampSerializer");
     }
 
     @BuildStep
