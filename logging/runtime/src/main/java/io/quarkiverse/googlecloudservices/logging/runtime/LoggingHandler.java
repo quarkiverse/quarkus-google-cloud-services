@@ -3,9 +3,6 @@ package io.quarkiverse.googlecloudservices.logging.runtime;
 import java.util.Map;
 import java.util.logging.ErrorManager;
 
-import org.jboss.logmanager.ExtHandler;
-import org.jboss.logmanager.ExtLogRecord;
-
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.cloud.MonitoredResource;
 import com.google.cloud.logging.LogEntry;
@@ -14,6 +11,9 @@ import com.google.cloud.logging.Logging.WriteOption;
 import com.google.cloud.logging.LoggingOptions;
 import com.google.cloud.logging.Payload;
 import com.google.common.collect.ImmutableList;
+
+import org.jboss.logmanager.ExtHandler;
+import org.jboss.logmanager.ExtLogRecord;
 
 import io.quarkiverse.googlecloudservices.common.GcpBootstrapConfiguration;
 import io.quarkiverse.googlecloudservices.common.GcpConfigHolder;
@@ -36,6 +36,9 @@ import io.quarkus.arc.InstanceHandle;
 public class LoggingHandler extends ExtHandler {
 
     private final LoggingConfiguration config;
+
+    // lazy values, the depend on the gcp config (which in turn)
+    // depend on runtime configuration, not build time
     private Logging log;
     private WriteOption[] defaultWriteOptions;
     private JsonFormatter jsonFormat;
@@ -64,7 +67,7 @@ public class LoggingHandler extends ExtHandler {
             LogEntry logEntry = transform(record);
             l.write(ImmutableList.of(logEntry), defaultWriteOptions);
         } catch (Exception ex) {
-            getErrorManager().error(null, ex, ErrorManager.GENERIC_FAILURE);
+            getErrorManager().error("Failed to publish record to GCP", ex, ErrorManager.WRITE_FAILURE);
         }
     }
 
@@ -81,12 +84,13 @@ public class LoggingHandler extends ExtHandler {
         try {
             initGetLogging().flush();
         } catch (Exception ex) {
-            getErrorManager().error(null, ex, ErrorManager.FLUSH_FAILURE);
+            getErrorManager().error("Failed to fluch GCP logger", ex, ErrorManager.FLUSH_FAILURE);
         }
     }
 
     private synchronized Logging initGetLogging() {
         if (log == null) {
+            // get hold of the GCP config
             InstanceHandle<GcpConfigHolder> config = Arc.container().instance(GcpConfigHolder.class);
             InstanceHandle<GoogleCredentials> creds = Arc.container().instance(GoogleCredentials.class);
             GcpBootstrapConfiguration gcpConfiguration = config.get().getBootstrapConfig();

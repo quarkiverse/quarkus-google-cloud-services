@@ -18,10 +18,10 @@ public class LoggingHandlerFactory {
 
     public RuntimeValue<Optional<Handler>> create(LoggingConfiguration config) {
         if (!config.enabled) {
-            log.info("Goocle Cloud logging is disabled");
+            log.info("GCP logging is disabled");
             return new RuntimeValue<>(Optional.empty());
         } else {
-            log.info("Intiating lazy logging handler for log: {}", config.log);
+            log.info("GCP lazy logging handler created for log: {}", config.log);
             return new RuntimeValue<>(Optional.of(new LoggingHandler(config)));
         }
     }
