@@ -1,19 +1,21 @@
 package io.quarkiverse.googlecloudservices.logging.runtime;
 
+import java.util.Collections;
 import java.util.Map;
 import java.util.logging.ErrorManager;
 
-import org.jboss.logmanager.ExtHandler;
-import org.jboss.logmanager.ExtLogRecord;
-
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.cloud.MonitoredResource;
+import com.google.cloud.MonitoredResource.Builder;
 import com.google.cloud.logging.LogEntry;
 import com.google.cloud.logging.Logging;
 import com.google.cloud.logging.Logging.WriteOption;
 import com.google.cloud.logging.LoggingOptions;
 import com.google.cloud.logging.Payload;
 import com.google.common.collect.ImmutableList;
+
+import org.jboss.logmanager.ExtHandler;
+import org.jboss.logmanager.ExtLogRecord;
 
 import io.quarkiverse.googlecloudservices.common.GcpBootstrapConfiguration;
 import io.quarkiverse.googlecloudservices.common.GcpConfigHolder;
@@ -22,16 +24,11 @@ import io.quarkiverse.googlecloudservices.logging.runtime.util.LevelTransformer;
 import io.quarkus.arc.Arc;
 import io.quarkus.arc.InstanceHandle;
 
-// TODO: config write syncronozity
-// TODO: config flush severity
-// TODO: more labels
-// TODO: custom formatters?
-// TODO: configured monitored resource: https://cloud.google.com/monitoring/custom-metrics/creating-metrics#which-resource
 // TODO: trace + span ID decoration
 // TODO: config mdc name in esc
 // TODO: config parameters name in esc
 // TODO: config stack trace as array or string in esc
-// TODO: additional parameters (pod name, host IP etc)
+// TODO: additional labels per record
 
 public class LoggingHandler extends ExtHandler {
 
@@ -103,7 +100,8 @@ public class LoggingHandler extends ExtHandler {
             // create default write options
             defaultWriteOptions = new WriteOption[] {
                     WriteOption.logName(this.config.defaultLog),
-                    WriteOption.resource(MonitoredResource.newBuilder("global").build())
+                    WriteOption.resource(createMonitoredResource()),
+                    WriteOption.labels(this.config.defaultLabel == null ? Collections.emptyMap() : this.config.defaultLabel)
             };
             // check auto-flush and synchronizity 
             this.config.flushLevel.ifPresent(level -> log.setFlushSeverity(level.getSeverity()));
@@ -117,5 +115,13 @@ public class LoggingHandler extends ExtHandler {
             }
         }
         return log;
+    }
+
+    private MonitoredResource createMonitoredResource() {
+        Builder b = MonitoredResource.newBuilder(this.config.resource.type);
+        if (this.config.resource.label != null) {
+            this.config.resource.label.forEach((k, v) -> b.addLabel(k, v));
+        }
+        return b.build();
     }
 }

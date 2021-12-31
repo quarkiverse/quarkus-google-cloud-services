@@ -55,13 +55,37 @@ public class LoggingConfiguration {
      * Configure default labels.
      */
     @ConfigItem
-    public Optional<Map<String, String>> defaultLabel;
+    public Map<String, String> defaultLabel;
 
     /**
      * Configure log record stackl trace handling.
      */
     @ConfigItem
     public StackTraceConfig stackTrace;
+
+    /**
+     * Configured the monitored resource. Please consult the Google
+     * documentation for the correct values: https://cloud.google.com/logging/docs/api/v2/resource-list#resource-types
+     */
+    @ConfigItem
+    public ResourceConfig resource;
+
+    @ConfigGroup
+    public static class ResourceConfig {
+
+        /**
+         * The resource type of the log.
+         */
+        @ConfigItem(defaultValue = "global")
+        public String type;
+
+        /**
+         * Resource labels.
+         */
+        @ConfigItem
+        public Map<String, String> label;
+
+    }
 
     @ConfigGroup
     public static class MDCConfig {
