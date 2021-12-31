@@ -16,13 +16,33 @@ import org.jboss.logmanager.ExtLogRecord;
 import com.google.common.base.Strings;
 
 import io.quarkiverse.googlecloudservices.logging.runtime.JsonFormatter;
+import io.quarkiverse.googlecloudservices.logging.runtime.LoggingConfiguration;
 
 public class EscJsonFormatter {
 
     private static final Formatter MSG_FORMAT = new Formatter();
 
-    public JsonFormatter toFormatter() {
-        return (r) -> format(r);
+    public static JsonFormatter createFormatter() {
+        return new JsonFormatter() {
+
+            private EscJsonFormatter formatter;
+
+            @Override
+            public Map<String, ?> format(ExtLogRecord record) {
+                return formatter.format(record);
+            }
+
+            @Override
+            public void init(LoggingConfiguration config) {
+                formatter = new EscJsonFormatter(config);
+            }
+        };
+    }
+
+    private final LoggingConfiguration config;
+
+    protected EscJsonFormatter(LoggingConfiguration config) {
+        this.config = config;
     }
 
     @SuppressWarnings("deprecation")
@@ -45,8 +65,9 @@ public class EscJsonFormatter {
 
     @SuppressWarnings("unchecked")
     protected void setParameters(Map<String, Object> m, Object[] parameters) {
-        if (parameters != null && parameters.length > 0) {
-            List<String> list = (List<String>) m.computeIfAbsent("parameters", (k) -> new ArrayList<String>(parameters.length));
+        if (parameters != null && parameters.length > 0 && this.config.parameters.included) {
+            List<String> list = (List<String>) m.computeIfAbsent(this.config.parameters.fieldName,
+                    (k) -> new ArrayList<String>(parameters.length));
             for (Object o : parameters) {
                 list.add(String.valueOf(o));
             }
@@ -75,8 +96,8 @@ public class EscJsonFormatter {
     }
 
     protected void setMdc(Map<String, Object> m, Map<String, String> mdcCopy) {
-        if (mdcCopy != null && !mdcCopy.isEmpty()) {
-            Map<String, Object> mdc = getOrCreateObject(m, "mdc");
+        if (mdcCopy != null && !mdcCopy.isEmpty() && this.config.mdc.included) {
+            Map<String, Object> mdc = getOrCreateObject(m, this.config.mdc.fieldName);
             mdcCopy.forEach((k, v) -> mdc.put(k, v));
         }
     }

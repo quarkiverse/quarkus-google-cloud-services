@@ -25,8 +25,6 @@ import io.quarkus.arc.Arc;
 import io.quarkus.arc.InstanceHandle;
 
 // TODO: trace + span ID decoration
-// TODO: config mdc name in esc
-// TODO: config parameters name in esc
 // TODO: config stack trace as array or string in esc
 // TODO: additional labels per record
 
@@ -111,8 +109,10 @@ public class LoggingHandler extends ExtHandler {
             if (jsonFormat.isAvailable()) {
                 this.jsonFormat = jsonFormat.get();
             } else {
-                this.jsonFormat = new EscJsonFormatter().toFormatter();
+                this.jsonFormat = EscJsonFormatter.createFormatter();
             }
+            // config formatter
+            this.jsonFormat.init(this.config);
         }
         return log;
     }
