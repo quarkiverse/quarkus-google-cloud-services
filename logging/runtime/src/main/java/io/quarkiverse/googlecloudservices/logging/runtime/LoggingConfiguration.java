@@ -3,6 +3,7 @@ package io.quarkiverse.googlecloudservices.logging.runtime;
 import java.util.Map;
 import java.util.Optional;
 
+import com.google.cloud.logging.Severity;
 import com.google.cloud.logging.Synchronicity;
 
 import io.quarkus.runtime.annotations.ConfigGroup;
@@ -41,8 +42,8 @@ public class LoggingConfiguration {
     /**
      * Configure GCP logging synchronicity.
      */
-    @ConfigItem(defaultValue = "ASYNC")
-    public Synchronicity synchronicity;
+    @ConfigItem
+    public Optional<Synchronicity> synchronicity;
 
     /**
      * Configure auto flush level.
@@ -114,11 +115,21 @@ public class LoggingConfiguration {
     }
 
     public enum ConfigLevel {
-        DEBUG,
-        INFO,
-        WARN,
-        ERROR,
-        FATAL
+        DEBUG(Severity.DEBUG),
+        INFO(Severity.INFO),
+        WARN(Severity.WARNING),
+        ERROR(Severity.ERROR),
+        FATAL(Severity.CRITICAL);
+
+        private Severity severity;
+
+        private ConfigLevel(Severity severity) {
+            this.severity = severity;
+        }
+
+        public Severity getSeverity() {
+            return severity;
+        }
     }
 
     public enum StackTraceRendering {

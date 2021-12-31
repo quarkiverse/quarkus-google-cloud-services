@@ -105,6 +105,9 @@ public class LoggingHandler extends ExtHandler {
                     WriteOption.logName(this.config.defaultLog),
                     WriteOption.resource(MonitoredResource.newBuilder("global").build())
             };
+            // check auto-flush and synchronizity 
+            this.config.flushLevel.ifPresent(level -> log.setFlushSeverity(level.getSeverity()));
+            this.config.synchronicity.ifPresent(sync -> log.setWriteSynchronicity(sync));
             // create json formatter
             InstanceHandle<JsonFormatter> jsonFormat = Arc.container().instance(JsonFormatter.class);
             if (jsonFormat.isAvailable()) {
