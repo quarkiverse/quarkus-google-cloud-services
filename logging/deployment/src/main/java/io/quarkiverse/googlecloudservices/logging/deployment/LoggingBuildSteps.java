@@ -1,9 +1,9 @@
-package io.quarkiverse.googlecloudservices.storage.deployment;
+package io.quarkiverse.googlecloudservices.logging.deployment;
 
 import com.google.auth.oauth2.GoogleCredentials;
 
-import io.quarkiverse.googlecloudservices.storage.runtime.LoggingConfiguration;
-import io.quarkiverse.googlecloudservices.storage.runtime.recorder.LoggingHandlerFactory;
+import io.quarkiverse.googlecloudservices.logging.runtime.LoggingConfiguration;
+import io.quarkiverse.googlecloudservices.logging.runtime.recorder.LoggingHandlerFactory;
 import io.quarkus.arc.deployment.UnremovableBeanBuildItem;
 import io.quarkus.deployment.annotations.BuildStep;
 import io.quarkus.deployment.annotations.ExecutionTime;

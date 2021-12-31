@@ -1,4 +1,4 @@
-package io.quarkiverse.googlecloudservices.storage.runtime;
+package io.quarkiverse.googlecloudservices.logging.runtime;
 
 import java.util.Map;
 

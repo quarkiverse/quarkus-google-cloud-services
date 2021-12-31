@@ -1,4 +1,4 @@
-package io.quarkiverse.googlecloudservices.storage.runtime.ecs;
+package io.quarkiverse.googlecloudservices.logging.runtime.ecs;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -10,12 +10,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 
-import com.google.common.base.Strings;
-
 import org.jboss.logmanager.ExtFormatter;
 import org.jboss.logmanager.ExtLogRecord;
 
-import io.quarkiverse.googlecloudservices.storage.runtime.JsonFormatter;
+import com.google.common.base.Strings;
+
+import io.quarkiverse.googlecloudservices.logging.runtime.JsonFormatter;
 
 public class EscJsonFormatter {
 

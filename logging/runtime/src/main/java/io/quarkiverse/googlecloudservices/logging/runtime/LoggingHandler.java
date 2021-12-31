@@ -1,9 +1,10 @@
-package io.quarkiverse.googlecloudservices.storage.runtime;
+package io.quarkiverse.googlecloudservices.logging.runtime;
 
-import java.time.Instant;
 import java.util.Map;
 import java.util.logging.ErrorManager;
-import java.util.logging.Level;
+
+import org.jboss.logmanager.ExtHandler;
+import org.jboss.logmanager.ExtLogRecord;
 
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.cloud.MonitoredResource;
@@ -12,15 +13,12 @@ import com.google.cloud.logging.Logging;
 import com.google.cloud.logging.Logging.WriteOption;
 import com.google.cloud.logging.LoggingOptions;
 import com.google.cloud.logging.Payload;
-import com.google.cloud.logging.Severity;
 import com.google.common.collect.ImmutableList;
-
-import org.jboss.logmanager.ExtHandler;
-import org.jboss.logmanager.ExtLogRecord;
 
 import io.quarkiverse.googlecloudservices.common.GcpBootstrapConfiguration;
 import io.quarkiverse.googlecloudservices.common.GcpConfigHolder;
-import io.quarkiverse.googlecloudservices.storage.runtime.ecs.EscJsonFormatter;
+import io.quarkiverse.googlecloudservices.logging.runtime.ecs.EscJsonFormatter;
+import io.quarkiverse.googlecloudservices.logging.runtime.util.LevelTransformer;
 import io.quarkus.arc.Arc;
 import io.quarkus.arc.InstanceHandle;
 
@@ -72,26 +70,10 @@ public class LoggingHandler extends ExtHandler {
 
     private LogEntry transform(ExtLogRecord record) {
         Map<String, ?> json = jsonFormat.format(record);
-        Level level = record.getLevel();
         return LogEntry.newBuilder(Payload.JsonPayload.of(json))
-                .setTimestamp(Instant.ofEpochMilli(record.getMillis()))
-                .setSeverity(severityFor(level))
+                .setSeverity(LevelTransformer.toSeverity(record.getLevel()))
+                .setTimestamp(record.getInstant())
                 .build();
-    }
-
-    private static Severity severityFor(Level level) {
-        int i = level.intValue();
-        if (i <= Level.FINE.intValue()) {
-            return Severity.DEBUG;
-        } else if (i <= Level.INFO.intValue()) {
-            return Severity.INFO;
-        } else if (i <= Level.WARNING.intValue()) {
-            return Severity.WARNING;
-        } else if (i <= Level.SEVERE.intValue()) {
-            return Severity.ERROR;
-        } else {
-            return Severity.DEFAULT;
-        }
     }
 
     @Override

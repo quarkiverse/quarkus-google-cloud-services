@@ -1,4 +1,4 @@
-package io.quarkiverse.googlecloudservices.storage.runtime;
+package io.quarkiverse.googlecloudservices.logging.runtime;
 
 import io.quarkus.runtime.annotations.ConfigItem;
 import io.quarkus.runtime.annotations.ConfigPhase;
