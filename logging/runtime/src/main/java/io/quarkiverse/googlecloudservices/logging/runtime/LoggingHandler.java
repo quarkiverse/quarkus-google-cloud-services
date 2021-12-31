@@ -3,6 +3,9 @@ package io.quarkiverse.googlecloudservices.logging.runtime;
 import java.util.Map;
 import java.util.logging.ErrorManager;
 
+import org.jboss.logmanager.ExtHandler;
+import org.jboss.logmanager.ExtLogRecord;
+
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.cloud.MonitoredResource;
 import com.google.cloud.logging.LogEntry;
@@ -11,9 +14,6 @@ import com.google.cloud.logging.Logging.WriteOption;
 import com.google.cloud.logging.LoggingOptions;
 import com.google.cloud.logging.Payload;
 import com.google.common.collect.ImmutableList;
-
-import org.jboss.logmanager.ExtHandler;
-import org.jboss.logmanager.ExtLogRecord;
 
 import io.quarkiverse.googlecloudservices.common.GcpBootstrapConfiguration;
 import io.quarkiverse.googlecloudservices.common.GcpConfigHolder;
@@ -102,7 +102,7 @@ public class LoggingHandler extends ExtHandler {
                     .getService();
             // create default write options
             defaultWriteOptions = new WriteOption[] {
-                    WriteOption.logName(this.config.log),
+                    WriteOption.logName(this.config.defaultLog),
                     WriteOption.resource(MonitoredResource.newBuilder("global").build())
             };
             // create json formatter

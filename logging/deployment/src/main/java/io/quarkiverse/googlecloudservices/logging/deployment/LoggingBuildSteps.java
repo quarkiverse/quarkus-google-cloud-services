@@ -2,8 +2,11 @@ package io.quarkiverse.googlecloudservices.logging.deployment;
 
 import com.google.auth.oauth2.GoogleCredentials;
 
+import io.quarkiverse.googlecloudservices.logging.runtime.JsonFormatter;
 import io.quarkiverse.googlecloudservices.logging.runtime.LoggingConfiguration;
+import io.quarkiverse.googlecloudservices.logging.runtime.ecs.EscJsonFormatter;
 import io.quarkiverse.googlecloudservices.logging.runtime.recorder.LoggingHandlerFactory;
+import io.quarkiverse.googlecloudservices.logging.runtime.util.LevelTransformer;
 import io.quarkus.arc.deployment.UnremovableBeanBuildItem;
 import io.quarkus.deployment.annotations.BuildStep;
 import io.quarkus.deployment.annotations.ExecutionTime;
@@ -23,6 +26,11 @@ public class LoggingBuildSteps {
     @BuildStep
     public UnremovableBeanBuildItem credentials() {
         return UnremovableBeanBuildItem.beanTypes(GoogleCredentials.class);
+    }
+
+    @BuildStep
+    public UnremovableBeanBuildItem helperClasses() {
+        return UnremovableBeanBuildItem.beanTypes(EscJsonFormatter.class, LevelTransformer.class, JsonFormatter.class);
     }
 
     @BuildStep
