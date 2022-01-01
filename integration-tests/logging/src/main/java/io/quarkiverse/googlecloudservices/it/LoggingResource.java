@@ -19,6 +19,11 @@ public class LoggingResource {
     @Produces(MediaType.TEXT_PLAIN)
     public String tryLog(@PathParam("payload") String p) {
         logger.info("Hello {}", p, KeyValueParameter.of("word", p));
+        try {
+            throw new RuntimeException("Help! Help!");
+        } catch (RuntimeException e) {
+            logger.error("Oh no!", e);
+        }
         return "Hello " + p;
     }
 }

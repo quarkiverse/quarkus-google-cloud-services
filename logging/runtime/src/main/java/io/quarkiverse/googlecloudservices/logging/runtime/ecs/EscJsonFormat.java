@@ -18,6 +18,8 @@ import com.google.common.base.Strings;
 
 import io.quarkiverse.googlecloudservices.logging.runtime.JsonFormatter;
 import io.quarkiverse.googlecloudservices.logging.runtime.LoggingConfiguration;
+import io.quarkiverse.googlecloudservices.logging.runtime.LoggingConfiguration.StackElementRendering;
+import io.quarkiverse.googlecloudservices.logging.runtime.LoggingConfiguration.StackTraceRendering;
 
 /**
  * This is the base class for the ESC json formatter. For small adjustments
@@ -109,10 +111,38 @@ public class EscJsonFormat {
             if (!Strings.isNullOrEmpty(msg)) {
                 error.put("message", msg);
             }
-            StringWriter sw = new StringWriter(1024);
-            PrintWriter pw = new PrintWriter(sw);
-            thrown.printStackTrace(pw);
-            error.put("stack_trace", pw.toString());
+            if (this.config.stackTrace.included) {
+                /*
+                 * For string rendering we're using the normal stack trace, but
+                 * for arrays we're only looking at first exception, not any causes
+                 * since that would mean we'd have to look at possible circular references
+                 */
+                if (this.config.stackTrace.rendering == StackTraceRendering.STRING) {
+                    // render as a standard out string
+                    StringWriter sw = new StringWriter(1024);
+                    PrintWriter pw = new PrintWriter(sw);
+                    thrown.printStackTrace(pw);
+                    pw.flush();
+                    error.put("stack_trace", sw.toString());
+                } else if (this.config.stackTrace.elementRendering == StackElementRendering.STRING) {
+                    List<String> list = new ArrayList<>();
+                    for (StackTraceElement e : thrown.getStackTrace()) {
+                        list.add(String.format("%s.%s:%s", e.getClassName(), e.getMethodName(),
+                                String.valueOf(e.getLineNumber())));
+                    }
+                    error.put("stack_trace", list);
+                } else {
+                    List<Map<String, String>> list = new ArrayList<>();
+                    for (StackTraceElement e : thrown.getStackTrace()) {
+                        Map<String, String> element = new HashMap<>(3);
+                        element.put("class", e.getClassName());
+                        element.put("method", e.getMethodName());
+                        element.put("line", String.valueOf(e.getLineNumber()));
+                        list.add(element);
+                    }
+                    error.put("stack_trace", list);
+                }
+            }
         }
     }
 

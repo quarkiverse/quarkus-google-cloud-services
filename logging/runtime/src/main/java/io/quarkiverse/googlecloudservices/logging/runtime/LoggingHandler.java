@@ -92,7 +92,12 @@ public class LoggingHandler extends ExtHandler {
             return Collections.emptyMap();
         } else {
             Map<String, String> m = new HashMap<>(5);
-            this.extractors.forEach(e -> m.putAll(e.extract(record)));
+            this.extractors.forEach(e -> {
+                Map<String, String> extra = e.extract(record);
+                if (extra != null) {
+                    m.putAll(extra);
+                }
+            });
             return m;
         }
     }

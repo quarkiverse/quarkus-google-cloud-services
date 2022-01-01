@@ -119,6 +119,13 @@ public class LoggingConfiguration {
         @ConfigItem(defaultValue = "STRING")
         public StackTraceRendering rendering;
 
+        /**
+         * If the stack is rendered as an array, what format should each
+         * stack frame have?
+         */
+        @ConfigItem(defaultValue = "STRING")
+        public StackElementRendering elementRendering;
+
     }
 
     @ConfigGroup
@@ -159,5 +166,10 @@ public class LoggingConfiguration {
     public enum StackTraceRendering {
         STRING,
         ARRAY
+    }
+
+    public enum StackElementRendering {
+        STRING,
+        OBJECT
     }
 }

@@ -16,7 +16,7 @@ public interface LabelExtractor {
      * overwrite any default labels with the same key.
      * 
      * @param record Record to process, never null
-     * @return A map of labels, must not return null
+     * @return A map of labels, return empy map or null for no extra labels
      */
     public Map<String, String> extract(ExtLogRecord record);
 

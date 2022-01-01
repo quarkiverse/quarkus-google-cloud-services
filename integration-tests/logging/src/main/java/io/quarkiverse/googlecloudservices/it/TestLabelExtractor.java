@@ -14,8 +14,12 @@ import io.quarkiverse.googlecloudservices.logging.runtime.LabelExtractor;
 public class TestLabelExtractor implements LabelExtractor {
 
     public Map<String, String> extract(ExtLogRecord record) {
-        KeyValueParameter p = Arrays.asList(record.getParameters()).stream().filter(r -> (r instanceof KeyValueParameter))
-                .map(r -> (KeyValueParameter) r).findFirst().orElse(null);
-        return p == null ? Collections.emptyMap() : Collections.singletonMap(p.getKey(), p.getValue());
+        if (record.getParameters() == null) {
+            return null;
+        } else {
+            KeyValueParameter p = Arrays.asList(record.getParameters()).stream().filter(r -> (r instanceof KeyValueParameter))
+                    .map(r -> (KeyValueParameter) r).findFirst().orElse(null);
+            return p == null ? Collections.emptyMap() : Collections.singletonMap(p.getKey(), p.getValue());
+        }
     }
 }
