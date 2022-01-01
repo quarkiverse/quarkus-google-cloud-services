@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.ErrorManager;
 import java.util.logging.Level;
 
 import org.jboss.logmanager.ExtFormatter;
@@ -18,69 +19,89 @@ import com.google.common.base.Strings;
 import io.quarkiverse.googlecloudservices.logging.runtime.JsonFormatter;
 import io.quarkiverse.googlecloudservices.logging.runtime.LoggingConfiguration;
 
-public class EscJsonFormatter {
+/**
+ * This is the base class for the ESC json formatter. For small adjustments
+ * such as parameter filtering, override this class, implement {@link org.jboss.logmanager.formatters.JsonFormatter}
+ * and bind to CDI.
+ */
+public class EscJsonFormat {
 
     private static final Formatter MSG_FORMAT = new Formatter();
 
     public static JsonFormatter createFormatter() {
         return new JsonFormatter() {
 
-            private EscJsonFormatter formatter;
+            private EscJsonFormat formatter = new EscJsonFormat();
 
             @Override
             public Map<String, ?> format(ExtLogRecord record) {
-                return formatter.format(record);
+                return formatter.toEsc(record);
             }
 
             @Override
-            public void init(LoggingConfiguration config) {
-                formatter = new EscJsonFormatter(config);
+            public void init(LoggingConfiguration config, ErrorManager errorManager) {
+                formatter.setLoggingConfiguration(config);
+                formatter.setErrorManager(errorManager);
             }
         };
     }
 
-    private final LoggingConfiguration config;
+    protected LoggingConfiguration config;
+    protected ErrorManager errorManager;
 
-    protected EscJsonFormatter(LoggingConfiguration config) {
+    public void setLoggingConfiguration(LoggingConfiguration config) {
         this.config = config;
     }
 
-    @SuppressWarnings("deprecation")
-    protected Map<String, ?> format(ExtLogRecord record) {
-        Map<String, Object> m = new HashMap<>();
-        setEcsVersion(m);
-        setTimestamp(m, record.getInstant());
-        setLoggerName(m, record.getLoggerName());
-        setThreadName(m, record.getThreadName());
-        setThreadId(m, record.getThreadID());
-        setFormattedMessage(m, record);
-        setLogLevel(m, record.getLevel());
-        setSource(m, record.getSourceClassName(), record.getSourceLineNumber(), record.getSourceMethodName());
-        setMdc(m, record.getMdcCopy());
-        setThrown(m, record.getThrown());
-        setHost(m, record.getHostName());
-        setParameters(m, record.getParameters());
-        return m;
+    public void setErrorManager(ErrorManager errorManager) {
+        this.errorManager = errorManager;
+    }
+
+    public Map<String, ?> toEsc(ExtLogRecord record) {
+        if (this.config == null) {
+            return null; // sanity check
+        } else {
+            Map<String, Object> m = new HashMap<>();
+            putEcsVersion(m);
+            putTimestamp(m, record.getInstant());
+            putLoggerName(m, record.getLoggerName());
+            putThreadName(m, record.getThreadName());
+            putThreadId(m, record.getThreadID());
+            putFormattedMessage(m, record);
+            putLogLevel(m, record.getLevel());
+            putSource(m, record.getSourceClassName(), record.getSourceLineNumber(), record.getSourceMethodName());
+            putThrown(m, record.getThrown());
+            putHost(m, record.getHostName());
+            putMdcIfEnabled(m, record.getMdcCopy());
+            putParametersIfEnabled(m, record.getParameters());
+            return m;
+        }
     }
 
     @SuppressWarnings("unchecked")
-    protected void setParameters(Map<String, Object> m, Object[] parameters) {
+    protected void putParametersIfEnabled(Map<String, Object> m, Object[] parameters) {
         if (parameters != null && parameters.length > 0 && this.config.parameters.included) {
             List<String> list = (List<String>) m.computeIfAbsent(this.config.parameters.fieldName,
                     (k) -> new ArrayList<String>(parameters.length));
             for (Object o : parameters) {
-                list.add(String.valueOf(o));
+                if (shouldIncludeParameter(o)) {
+                    list.add(String.valueOf(o));
+                }
             }
         }
     }
 
-    protected void setHost(Map<String, Object> m, String hostName) {
+    protected boolean shouldIncludeParameter(Object p) {
+        return true;
+    }
+
+    protected void putHost(Map<String, Object> m, String hostName) {
         if (!Strings.isNullOrEmpty(hostName)) {
             getOrCreateObject(m, "host").put("name", hostName);
         }
     }
 
-    protected void setThrown(Map<String, Object> m, Throwable thrown) {
+    protected void putThrown(Map<String, Object> m, Throwable thrown) {
         if (thrown != null) {
             Map<String, Object> error = getOrCreateObject(m, "error");
             error.put("type", thrown.getClass().getName());
@@ -95,14 +116,14 @@ public class EscJsonFormatter {
         }
     }
 
-    protected void setMdc(Map<String, Object> m, Map<String, String> mdcCopy) {
+    protected void putMdcIfEnabled(Map<String, Object> m, Map<String, String> mdcCopy) {
         if (mdcCopy != null && !mdcCopy.isEmpty() && this.config.mdc.included) {
             Map<String, Object> mdc = getOrCreateObject(m, this.config.mdc.fieldName);
             mdcCopy.forEach((k, v) -> mdc.put(k, v));
         }
     }
 
-    protected void setSource(Map<String, Object> m, String sourceClassName, int sourceLineNumber, String sourceMethodName) {
+    protected void putSource(Map<String, Object> m, String sourceClassName, int sourceLineNumber, String sourceMethodName) {
         if (!Strings.isNullOrEmpty(sourceClassName)) {
             Map<String, Object> log = getOrCreateObject(m, "log");
             Map<String, Object> origin = getOrCreateObject(log, "origin");
@@ -115,25 +136,25 @@ public class EscJsonFormatter {
         }
     }
 
-    protected void setLogLevel(Map<String, Object> m, Level level) {
+    protected void putLogLevel(Map<String, Object> m, Level level) {
         getOrCreateObject(m, "log").put("level", level.getName());
     }
 
-    protected void setFormattedMessage(Map<String, Object> m, ExtLogRecord record) {
+    protected void putFormattedMessage(Map<String, Object> m, ExtLogRecord record) {
         m.put("message", MSG_FORMAT.format(record));
     }
 
-    protected void setThreadId(Map<String, Object> m, long longThreadID) {
+    protected void putThreadId(Map<String, Object> m, long longThreadID) {
         getOrCreateObject(getOrCreateObject(m, "process"), "thread").put("id", Long.valueOf(longThreadID));
     }
 
-    protected void setThreadName(Map<String, Object> m, String threadName) {
+    protected void putThreadName(Map<String, Object> m, String threadName) {
         if (!Strings.isNullOrEmpty(threadName)) {
             getOrCreateObject(getOrCreateObject(m, "process"), "thread").put("name", threadName);
         }
     }
 
-    protected void setLoggerName(Map<String, Object> m, String loggerName) {
+    protected void putLoggerName(Map<String, Object> m, String loggerName) {
         if (!Strings.isNullOrEmpty(loggerName)) {
             getOrCreateObject(m, "log").put("logger", loggerName);
         }
@@ -144,11 +165,11 @@ public class EscJsonFormatter {
         return (Map<String, Object>) m.computeIfAbsent(name, (k) -> new HashMap<String, Object>(3));
     }
 
-    protected void setEcsVersion(Map<String, Object> m) {
+    protected void putEcsVersion(Map<String, Object> m) {
         getOrCreateObject(m, "ecs").put("version", "1.2.0");
     }
 
-    protected void setTimestamp(Map<String, Object> m, Instant instant) {
+    protected void putTimestamp(Map<String, Object> m, Instant instant) {
         m.put("@timestamp", instant.atOffset(ZoneOffset.UTC).toString());
     }
 

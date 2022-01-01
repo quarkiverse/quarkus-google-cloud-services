@@ -18,7 +18,7 @@ public class LoggingResource {
     @Path("/{payload}")
     @Produces(MediaType.TEXT_PLAIN)
     public String tryLog(@PathParam("payload") String p) {
-        logger.info("Hello {}", p);
+        logger.info("Hello {}", p, KeyValueParameter.of("word", p));
         return "Hello " + p;
     }
 }

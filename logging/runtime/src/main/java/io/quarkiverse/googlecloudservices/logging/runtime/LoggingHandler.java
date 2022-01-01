@@ -1,8 +1,14 @@
 package io.quarkiverse.googlecloudservices.logging.runtime;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.logging.ErrorManager;
+
+import org.jboss.logmanager.ExtHandler;
+import org.jboss.logmanager.ExtLogRecord;
 
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.cloud.MonitoredResource;
@@ -14,14 +20,12 @@ import com.google.cloud.logging.LoggingOptions;
 import com.google.cloud.logging.Payload;
 import com.google.common.collect.ImmutableList;
 
-import org.jboss.logmanager.ExtHandler;
-import org.jboss.logmanager.ExtLogRecord;
-
 import io.quarkiverse.googlecloudservices.common.GcpBootstrapConfiguration;
 import io.quarkiverse.googlecloudservices.common.GcpConfigHolder;
-import io.quarkiverse.googlecloudservices.logging.runtime.ecs.EscJsonFormatter;
+import io.quarkiverse.googlecloudservices.logging.runtime.ecs.EscJsonFormat;
 import io.quarkiverse.googlecloudservices.logging.runtime.util.LevelTransformer;
 import io.quarkus.arc.Arc;
+import io.quarkus.arc.InjectableInstance;
 import io.quarkus.arc.InstanceHandle;
 
 // TODO: trace + span ID decoration
@@ -37,6 +41,7 @@ public class LoggingHandler extends ExtHandler {
     private Logging log;
     private WriteOption[] defaultWriteOptions;
     private JsonFormatter jsonFormat;
+    private List<LabelExtractor> extractors;
 
     public LoggingHandler(LoggingConfiguration config) {
         this.config = config;
@@ -60,7 +65,9 @@ public class LoggingHandler extends ExtHandler {
         try {
             Logging l = initGetLogging();
             LogEntry logEntry = transform(record);
-            l.write(ImmutableList.of(logEntry), defaultWriteOptions);
+            if (logEntry != null) {
+                l.write(ImmutableList.of(logEntry), defaultWriteOptions);
+            }
         } catch (Exception ex) {
             getErrorManager().error("Failed to publish record to GCP", ex, ErrorManager.WRITE_FAILURE);
         }
@@ -68,10 +75,26 @@ public class LoggingHandler extends ExtHandler {
 
     private LogEntry transform(ExtLogRecord record) {
         Map<String, ?> json = jsonFormat.format(record);
-        return LogEntry.newBuilder(Payload.JsonPayload.of(json))
-                .setSeverity(LevelTransformer.toSeverity(record.getLevel()))
-                .setTimestamp(record.getInstant())
-                .build();
+        if (json != null) {
+            Map<String, String> labels = extractLabels(record);
+            return LogEntry.newBuilder(Payload.JsonPayload.of(json))
+                    .setSeverity(LevelTransformer.toSeverity(record.getLevel()))
+                    .setTimestamp(record.getInstant())
+                    .setLabels(labels)
+                    .build();
+        } else {
+            return null;
+        }
+    }
+
+    private Map<String, String> extractLabels(ExtLogRecord record) {
+        if (this.extractors.isEmpty()) {
+            return Collections.emptyMap();
+        } else {
+            Map<String, String> m = new HashMap<>(5);
+            this.extractors.forEach(e -> m.putAll(e.extract(record)));
+            return m;
+        }
     }
 
     @Override
@@ -87,34 +110,54 @@ public class LoggingHandler extends ExtHandler {
         if (log == null) {
             // get hold of the GCP config
             InstanceHandle<GcpConfigHolder> config = Arc.container().instance(GcpConfigHolder.class);
-            InstanceHandle<GoogleCredentials> creds = Arc.container().instance(GoogleCredentials.class);
-            GcpBootstrapConfiguration gcpConfiguration = config.get().getBootstrapConfig();
             // create logger
-            log = LoggingOptions.getDefaultInstance().toBuilder()
-                    .setCredentials(creds.get())
-                    .setProjectId(gcpConfiguration.projectId.orElse(null))
-                    .build()
-                    .getService();
+            initLogger(config);
             // create default write options
-            defaultWriteOptions = new WriteOption[] {
-                    WriteOption.logName(this.config.defaultLog),
-                    WriteOption.resource(createMonitoredResource()),
-                    WriteOption.labels(this.config.defaultLabel == null ? Collections.emptyMap() : this.config.defaultLabel)
-            };
+            initDefaultWriteOptions();
             // check auto-flush and synchronizity 
             this.config.flushLevel.ifPresent(level -> log.setFlushSeverity(level.getSeverity()));
             this.config.synchronicity.ifPresent(sync -> log.setWriteSynchronicity(sync));
             // create json formatter
-            InstanceHandle<JsonFormatter> jsonFormat = Arc.container().instance(JsonFormatter.class);
-            if (jsonFormat.isAvailable()) {
-                this.jsonFormat = jsonFormat.get();
-            } else {
-                this.jsonFormat = EscJsonFormatter.createFormatter();
-            }
-            // config formatter
-            this.jsonFormat.init(this.config);
+            initJsonFormatter();
+            // init label extractors
+            initLabelExtractors();
         }
         return log;
+    }
+
+    private void initLabelExtractors() {
+        this.extractors = new ArrayList<>();
+        InjectableInstance<LabelExtractor> handle = Arc.container().select(LabelExtractor.class);
+        handle.forEach(this.extractors::add);
+    }
+
+    private void initJsonFormatter() {
+        InstanceHandle<JsonFormatter> jsonFormat = Arc.container().instance(JsonFormatter.class);
+        if (jsonFormat.isAvailable()) {
+            this.jsonFormat = jsonFormat.get();
+        } else {
+            this.jsonFormat = EscJsonFormat.createFormatter();
+        }
+        // config formatter
+        this.jsonFormat.init(this.config, getErrorManager());
+    }
+
+    private void initDefaultWriteOptions() {
+        defaultWriteOptions = new WriteOption[] {
+                WriteOption.logName(this.config.defaultLog),
+                WriteOption.resource(createMonitoredResource()),
+                WriteOption.labels(this.config.defaultLabel == null ? Collections.emptyMap() : this.config.defaultLabel)
+        };
+    }
+
+    private void initLogger(InstanceHandle<GcpConfigHolder> config) {
+        InstanceHandle<GoogleCredentials> creds = Arc.container().instance(GoogleCredentials.class);
+        GcpBootstrapConfiguration gcpConfiguration = config.get().getBootstrapConfig();
+        log = LoggingOptions.getDefaultInstance().toBuilder()
+                .setCredentials(creds.get())
+                .setProjectId(gcpConfiguration.projectId.orElse(null))
+                .build()
+                .getService();
     }
 
     private MonitoredResource createMonitoredResource() {
