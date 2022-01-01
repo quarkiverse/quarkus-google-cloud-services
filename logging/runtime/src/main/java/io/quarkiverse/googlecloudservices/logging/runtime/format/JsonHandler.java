@@ -38,6 +38,6 @@ public class JsonHandler implements InternalHandler {
     @Override
     public Payload<?> transform(ExtLogRecord record, TraceInfo trace) {
         Map<String, ?> json = jsonFormat.format(record, trace);
-        return Payload.JsonPayload.of(json);
+        return json == null ? null : Payload.JsonPayload.of(json);
     }
 }

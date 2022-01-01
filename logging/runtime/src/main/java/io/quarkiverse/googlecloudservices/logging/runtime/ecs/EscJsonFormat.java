@@ -18,10 +18,10 @@ import com.google.common.base.Strings;
 
 import io.quarkiverse.googlecloudservices.logging.runtime.JsonFormatter;
 import io.quarkiverse.googlecloudservices.logging.runtime.LoggingConfiguration;
-import io.quarkiverse.googlecloudservices.logging.runtime.LoggingConfiguration.StackElementRendering;
 import io.quarkiverse.googlecloudservices.logging.runtime.LoggingConfiguration.StackTraceRendering;
 import io.quarkiverse.googlecloudservices.logging.runtime.TraceInfo;
 import io.quarkiverse.googlecloudservices.logging.runtime.util.SimpleFormatter;
+import io.quarkiverse.googlecloudservices.logging.runtime.util.StackTraceFormatter;
 
 /**
  * This is the base class for the ESC json formatter. For small adjustments
@@ -138,23 +138,8 @@ public class EscJsonFormat {
                     thrown.printStackTrace(pw);
                     pw.flush();
                     error.put("stack_trace", sw.toString());
-                } else if (this.config.stackTrace.elementRendering == StackElementRendering.STRING) {
-                    List<String> list = new ArrayList<>();
-                    for (StackTraceElement e : thrown.getStackTrace()) {
-                        list.add(String.format("%s.%s:%s", e.getClassName(), e.getMethodName(),
-                                String.valueOf(e.getLineNumber())));
-                    }
-                    error.put("stack_trace", list);
                 } else {
-                    List<Map<String, String>> list = new ArrayList<>();
-                    for (StackTraceElement e : thrown.getStackTrace()) {
-                        Map<String, String> element = new HashMap<>(3);
-                        element.put("class", e.getClassName());
-                        element.put("method", e.getMethodName());
-                        element.put("line", String.valueOf(e.getLineNumber()));
-                        list.add(element);
-                    }
-                    error.put("stack_trace", list);
+                    error.put("stack_trace", new StackTraceFormatter(this.config.stackTrace.elementRendering).format(thrown));
                 }
             }
         }

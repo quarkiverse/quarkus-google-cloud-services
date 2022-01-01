@@ -20,10 +20,23 @@ public class LoggingResource {
     public String tryLog(@PathParam("payload") String p) {
         logger.info("Hello {}", p, KeyValueParameter.of("word", p));
         try {
-            throw new RuntimeException("Help! Help!");
+            throwExceptionWithCause();
+            ;
         } catch (RuntimeException e) {
             logger.error("Oh no!", e);
         }
         return "Hello " + p;
+    }
+
+    private void throwExceptionWithCause() {
+        try {
+            throwOne();
+        } catch (RuntimeException e) {
+            throw new RuntimeException("Not again!", e);
+        }
+    }
+
+    private void throwOne() {
+        throw new RuntimeException("Help!");
     }
 }
