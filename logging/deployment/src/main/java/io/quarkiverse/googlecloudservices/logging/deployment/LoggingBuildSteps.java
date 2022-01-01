@@ -8,8 +8,11 @@ import io.quarkiverse.googlecloudservices.logging.runtime.LoggingConfiguration;
 import io.quarkiverse.googlecloudservices.logging.runtime.TraceInfo;
 import io.quarkiverse.googlecloudservices.logging.runtime.TraceInfoExtractor;
 import io.quarkiverse.googlecloudservices.logging.runtime.ecs.EscJsonFormat;
+import io.quarkiverse.googlecloudservices.logging.runtime.format.JsonHandler;
+import io.quarkiverse.googlecloudservices.logging.runtime.format.TextHandler;
 import io.quarkiverse.googlecloudservices.logging.runtime.recorder.LoggingHandlerFactory;
 import io.quarkiverse.googlecloudservices.logging.runtime.util.LevelTransformer;
+import io.quarkiverse.googlecloudservices.logging.runtime.util.SimpleFormatter;
 import io.quarkus.arc.deployment.UnremovableBeanBuildItem;
 import io.quarkus.deployment.annotations.BuildStep;
 import io.quarkus.deployment.annotations.ExecutionTime;
@@ -33,8 +36,17 @@ public class LoggingBuildSteps {
 
     @BuildStep
     public UnremovableBeanBuildItem helperClasses() {
-        return UnremovableBeanBuildItem.beanTypes(EscJsonFormat.class, LevelTransformer.class, JsonFormatter.class,
-                LabelExtractor.class, LoggingConfiguration.class, TraceInfoExtractor.class, TraceInfo.class);
+        return UnremovableBeanBuildItem.beanTypes(
+                EscJsonFormat.class,
+                LevelTransformer.class,
+                JsonFormatter.class,
+                LabelExtractor.class,
+                LoggingConfiguration.class,
+                TraceInfoExtractor.class,
+                TraceInfo.class,
+                JsonHandler.class,
+                TextHandler.class,
+                SimpleFormatter.class);
     }
 
     @BuildStep

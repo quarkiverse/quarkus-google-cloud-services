@@ -21,6 +21,7 @@ import io.quarkiverse.googlecloudservices.logging.runtime.LoggingConfiguration;
 import io.quarkiverse.googlecloudservices.logging.runtime.LoggingConfiguration.StackElementRendering;
 import io.quarkiverse.googlecloudservices.logging.runtime.LoggingConfiguration.StackTraceRendering;
 import io.quarkiverse.googlecloudservices.logging.runtime.TraceInfo;
+import io.quarkiverse.googlecloudservices.logging.runtime.util.SimpleFormatter;
 
 /**
  * This is the base class for the ESC json formatter. For small adjustments
@@ -29,7 +30,7 @@ import io.quarkiverse.googlecloudservices.logging.runtime.TraceInfo;
  */
 public class EscJsonFormat {
 
-    private static final Formatter MSG_FORMAT = new Formatter();
+    private static final SimpleFormatter MSG_FORMAT = new SimpleFormatter();
 
     public static JsonFormatter createFormatter() {
         return new JsonFormatter() {

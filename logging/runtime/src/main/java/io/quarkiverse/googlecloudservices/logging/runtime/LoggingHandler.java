@@ -23,7 +23,10 @@ import com.google.common.collect.ImmutableList;
 
 import io.quarkiverse.googlecloudservices.common.GcpBootstrapConfiguration;
 import io.quarkiverse.googlecloudservices.common.GcpConfigHolder;
-import io.quarkiverse.googlecloudservices.logging.runtime.ecs.EscJsonFormat;
+import io.quarkiverse.googlecloudservices.logging.runtime.LoggingConfiguration.LogFormat;
+import io.quarkiverse.googlecloudservices.logging.runtime.format.InternalHandler;
+import io.quarkiverse.googlecloudservices.logging.runtime.format.JsonHandler;
+import io.quarkiverse.googlecloudservices.logging.runtime.format.TextHandler;
 import io.quarkiverse.googlecloudservices.logging.runtime.util.LevelTransformer;
 import io.quarkus.arc.Arc;
 import io.quarkus.arc.InjectableInstance;
@@ -38,7 +41,7 @@ public class LoggingHandler extends ExtHandler {
     private Logging log;
     private String projectId;
     private WriteOption[] defaultWriteOptions;
-    private JsonFormatter jsonFormat;
+    private InternalHandler internalHandler;
     private List<LabelExtractor> extractors;
     private TraceInfoExtractor traceExtractor;
 
@@ -74,10 +77,10 @@ public class LoggingHandler extends ExtHandler {
     }
 
     private LogEntry transform(ExtLogRecord record, TraceInfo trace) {
-        Map<String, ?> json = jsonFormat.format(record, trace);
-        if (json != null) {
+        Payload<?> payload = internalHandler.transform(record, trace);
+        if (payload != null) {
             Map<String, String> labels = extractLabels(record);
-            com.google.cloud.logging.LogEntry.Builder builder = LogEntry.newBuilder(Payload.JsonPayload.of(json))
+            com.google.cloud.logging.LogEntry.Builder builder = LogEntry.newBuilder(payload)
                     .setSeverity(LevelTransformer.toSeverity(record.getLevel()))
                     .setTimestamp(record.getInstant())
                     .setLabels(labels);
@@ -130,13 +133,21 @@ public class LoggingHandler extends ExtHandler {
             this.config.flushLevel.ifPresent(level -> log.setFlushSeverity(level.getSeverity()));
             this.config.synchronicity.ifPresent(sync -> log.setWriteSynchronicity(sync));
             // create json formatter
-            initJsonFormatter();
+            initInternalHandler();
             // init label extractors
             initLabelExtractors();
             // init trace extractor
             initTraceExtractor();
         }
         return log;
+    }
+
+    private void initInternalHandler() {
+        if (this.config.format == LogFormat.JSON) {
+            this.internalHandler = new JsonHandler(this.config, getErrorManager());
+        } else {
+            this.internalHandler = new TextHandler();
+        }
     }
 
     private void initLabelExtractors() {
@@ -152,17 +163,6 @@ public class LoggingHandler extends ExtHandler {
         } else {
             this.traceExtractor = (r) -> null;
         }
-    }
-
-    private void initJsonFormatter() {
-        InstanceHandle<JsonFormatter> jsonFormat = Arc.container().instance(JsonFormatter.class);
-        if (jsonFormat.isAvailable()) {
-            this.jsonFormat = jsonFormat.get();
-        } else {
-            this.jsonFormat = EscJsonFormat.createFormatter();
-        }
-        // config formatter
-        this.jsonFormat.init(this.config, getErrorManager());
     }
 
     private void initDefaultWriteOptions() {

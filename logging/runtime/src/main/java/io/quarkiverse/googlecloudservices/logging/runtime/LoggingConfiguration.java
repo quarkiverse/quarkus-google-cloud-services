@@ -28,6 +28,13 @@ public class LoggingConfiguration {
     public boolean enabled;
 
     /**
+     * Configure base formatting to be either plain text or
+     * structured json.
+     */
+    @ConfigItem(defaultValue = "TEXT")
+    public LogFormat format;
+
+    /**
      * Configure log record MDC handling.
      */
     @ConfigItem
@@ -195,5 +202,10 @@ public class LoggingConfiguration {
     public enum StackElementRendering {
         STRING,
         OBJECT
+    }
+
+    public enum LogFormat {
+        TEXT,
+        JSON
     }
 }
