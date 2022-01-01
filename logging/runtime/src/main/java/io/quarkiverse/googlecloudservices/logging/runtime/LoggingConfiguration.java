@@ -58,7 +58,7 @@ public class LoggingConfiguration {
     public Map<String, String> defaultLabel;
 
     /**
-     * Configure log record stackl trace handling.
+     * Configure log record stack trace handling.
      */
     @ConfigItem
     public StackTraceConfig stackTrace;
@@ -69,6 +69,30 @@ public class LoggingConfiguration {
      */
     @ConfigItem
     public ResourceConfig resource;
+
+    /**
+     * Configure how trace information is handled in GCP.
+     */
+    @ConfigItem
+    public GcpTracingConfig gcpTracing;
+
+    @ConfigGroup
+    public static class GcpTracingConfig {
+
+        /**
+         * Use this setting to determine if extracted trace ID's should
+         * also be forwarded to GCP for linking with GCP Operations Tracing.
+         */
+        @ConfigItem(defaultValue = "true")
+        public boolean enabled;
+
+        /**
+         * If the GCP Operations Tracing is in another project, configure it
+         * here. By default the logging project will be used.
+         */
+        @ConfigItem
+        public Optional<String> projectId;
+    }
 
     @ConfigGroup
     public static class ResourceConfig {

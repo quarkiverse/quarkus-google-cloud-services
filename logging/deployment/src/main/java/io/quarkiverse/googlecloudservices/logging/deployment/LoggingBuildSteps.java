@@ -5,6 +5,8 @@ import com.google.auth.oauth2.GoogleCredentials;
 import io.quarkiverse.googlecloudservices.logging.runtime.JsonFormatter;
 import io.quarkiverse.googlecloudservices.logging.runtime.LabelExtractor;
 import io.quarkiverse.googlecloudservices.logging.runtime.LoggingConfiguration;
+import io.quarkiverse.googlecloudservices.logging.runtime.TraceInfo;
+import io.quarkiverse.googlecloudservices.logging.runtime.TraceInfoExtractor;
 import io.quarkiverse.googlecloudservices.logging.runtime.ecs.EscJsonFormat;
 import io.quarkiverse.googlecloudservices.logging.runtime.recorder.LoggingHandlerFactory;
 import io.quarkiverse.googlecloudservices.logging.runtime.util.LevelTransformer;
@@ -32,7 +34,7 @@ public class LoggingBuildSteps {
     @BuildStep
     public UnremovableBeanBuildItem helperClasses() {
         return UnremovableBeanBuildItem.beanTypes(EscJsonFormat.class, LevelTransformer.class, JsonFormatter.class,
-                LabelExtractor.class, LoggingConfiguration.class);
+                LabelExtractor.class, LoggingConfiguration.class, TraceInfoExtractor.class, TraceInfo.class);
     }
 
     @BuildStep

@@ -9,6 +9,7 @@ import org.jboss.logmanager.ExtLogRecord;
 
 import io.quarkiverse.googlecloudservices.logging.runtime.JsonFormatter;
 import io.quarkiverse.googlecloudservices.logging.runtime.LoggingConfiguration;
+import io.quarkiverse.googlecloudservices.logging.runtime.TraceInfo;
 import io.quarkiverse.googlecloudservices.logging.runtime.ecs.EscJsonFormat;
 
 @ApplicationScoped
@@ -21,8 +22,8 @@ public class TestFormatter extends EscJsonFormat implements JsonFormatter {
     }
 
     @Override
-    public Map<String, ?> format(ExtLogRecord record) {
-        return super.toEsc(record);
+    public Map<String, ?> format(ExtLogRecord record, TraceInfo trace) {
+        return super.toEsc(record, trace);
     }
 
     @Override

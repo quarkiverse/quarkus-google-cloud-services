@@ -20,6 +20,7 @@ import io.quarkiverse.googlecloudservices.logging.runtime.JsonFormatter;
 import io.quarkiverse.googlecloudservices.logging.runtime.LoggingConfiguration;
 import io.quarkiverse.googlecloudservices.logging.runtime.LoggingConfiguration.StackElementRendering;
 import io.quarkiverse.googlecloudservices.logging.runtime.LoggingConfiguration.StackTraceRendering;
+import io.quarkiverse.googlecloudservices.logging.runtime.TraceInfo;
 
 /**
  * This is the base class for the ESC json formatter. For small adjustments
@@ -36,8 +37,8 @@ public class EscJsonFormat {
             private EscJsonFormat formatter = new EscJsonFormat();
 
             @Override
-            public Map<String, ?> format(ExtLogRecord record) {
-                return formatter.toEsc(record);
+            public Map<String, ?> format(ExtLogRecord record, TraceInfo tracing) {
+                return formatter.toEsc(record, tracing);
             }
 
             @Override
@@ -59,7 +60,7 @@ public class EscJsonFormat {
         this.errorManager = errorManager;
     }
 
-    public Map<String, ?> toEsc(ExtLogRecord record) {
+    public Map<String, ?> toEsc(ExtLogRecord record, TraceInfo tracing) {
         if (this.config == null) {
             return null; // sanity check
         } else {
@@ -76,7 +77,19 @@ public class EscJsonFormat {
             putHost(m, record.getHostName());
             putMdcIfEnabled(m, record.getMdcCopy());
             putParametersIfEnabled(m, record.getParameters());
+            if (tracing != null) {
+                putTracing(m, tracing);
+            }
             return m;
+        }
+    }
+
+    private void putTracing(Map<String, Object> m, TraceInfo tracing) {
+        if (!Strings.isNullOrEmpty(tracing.getTraceId())) {
+            getOrCreateObject(m, "trace").put("id", tracing.getTraceId());
+        }
+        if (!Strings.isNullOrEmpty(tracing.getSpanId())) {
+            getOrCreateObject(m, "span").put("id", tracing.getTraceId());
         }
     }
 

@@ -18,6 +18,7 @@ import com.google.cloud.logging.Logging;
 import com.google.cloud.logging.Logging.WriteOption;
 import com.google.cloud.logging.LoggingOptions;
 import com.google.cloud.logging.Payload;
+import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
 
 import io.quarkiverse.googlecloudservices.common.GcpBootstrapConfiguration;
@@ -28,20 +29,18 @@ import io.quarkus.arc.Arc;
 import io.quarkus.arc.InjectableInstance;
 import io.quarkus.arc.InstanceHandle;
 
-// TODO: trace + span ID decoration
-// TODO: config stack trace as array or string in esc
-// TODO: additional labels per record
-
 public class LoggingHandler extends ExtHandler {
 
     private final LoggingConfiguration config;
 
-    // lazy values, the depend on the gcp config (which in turn)
-    // depend on runtime configuration, not build time
+    // lazy values, the depend on the gcp config which in turn
+    // depend on runtime configuration - not build time
     private Logging log;
+    private String projectId;
     private WriteOption[] defaultWriteOptions;
     private JsonFormatter jsonFormat;
     private List<LabelExtractor> extractors;
+    private TraceInfoExtractor traceExtractor;
 
     public LoggingHandler(LoggingConfiguration config) {
         this.config = config;
@@ -64,7 +63,8 @@ public class LoggingHandler extends ExtHandler {
     public void doPublish(ExtLogRecord record) {
         try {
             Logging l = initGetLogging();
-            LogEntry logEntry = transform(record);
+            TraceInfo trace = traceExtractor.extract(record);
+            LogEntry logEntry = transform(record, trace);
             if (logEntry != null) {
                 l.write(ImmutableList.of(logEntry), defaultWriteOptions);
             }
@@ -73,18 +73,25 @@ public class LoggingHandler extends ExtHandler {
         }
     }
 
-    private LogEntry transform(ExtLogRecord record) {
-        Map<String, ?> json = jsonFormat.format(record);
+    private LogEntry transform(ExtLogRecord record, TraceInfo trace) {
+        Map<String, ?> json = jsonFormat.format(record, trace);
         if (json != null) {
             Map<String, String> labels = extractLabels(record);
-            return LogEntry.newBuilder(Payload.JsonPayload.of(json))
+            com.google.cloud.logging.LogEntry.Builder builder = LogEntry.newBuilder(Payload.JsonPayload.of(json))
                     .setSeverity(LevelTransformer.toSeverity(record.getLevel()))
                     .setTimestamp(record.getInstant())
-                    .setLabels(labels)
-                    .build();
+                    .setLabels(labels);
+            if (this.config.gcpTracing.enabled && trace != null && !Strings.isNullOrEmpty(trace.getTraceId())) {
+                builder = builder.setTrace(composeTraceString(trace.getTraceId()));
+            }
+            return builder.build();
         } else {
             return null;
         }
+    }
+
+    private String composeTraceString(String traceId) {
+        return String.format("projects/%s/traces/%s", this.config.gcpTracing.projectId.orElse(projectId), traceId);
     }
 
     private Map<String, String> extractLabels(ExtLogRecord record) {
@@ -126,6 +133,8 @@ public class LoggingHandler extends ExtHandler {
             initJsonFormatter();
             // init label extractors
             initLabelExtractors();
+            // init trace extractor
+            initTraceExtractor();
         }
         return log;
     }
@@ -134,6 +143,15 @@ public class LoggingHandler extends ExtHandler {
         this.extractors = new ArrayList<>();
         InjectableInstance<LabelExtractor> handle = Arc.container().select(LabelExtractor.class);
         handle.forEach(this.extractors::add);
+    }
+
+    private void initTraceExtractor() {
+        InstanceHandle<TraceInfoExtractor> handle = Arc.container().instance(TraceInfoExtractor.class);
+        if (handle.isAvailable()) {
+            this.traceExtractor = handle.get();
+        } else {
+            this.traceExtractor = (r) -> null;
+        }
     }
 
     private void initJsonFormatter() {
@@ -158,9 +176,10 @@ public class LoggingHandler extends ExtHandler {
     private void initLogger(InstanceHandle<GcpConfigHolder> config) {
         InstanceHandle<GoogleCredentials> creds = Arc.container().instance(GoogleCredentials.class);
         GcpBootstrapConfiguration gcpConfiguration = config.get().getBootstrapConfig();
-        log = LoggingOptions.getDefaultInstance().toBuilder()
+        this.projectId = gcpConfiguration.projectId.orElse(null);
+        this.log = LoggingOptions.getDefaultInstance().toBuilder()
                 .setCredentials(creds.get())
-                .setProjectId(gcpConfiguration.projectId.orElse(null))
+                .setProjectId(projectId)
                 .build()
                 .getService();
     }

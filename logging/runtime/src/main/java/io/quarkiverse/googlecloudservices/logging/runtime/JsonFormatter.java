@@ -25,8 +25,9 @@ public interface JsonFormatter {
      * Format a log record as a JSON map.
      * 
      * @param record The record to format, never null
+     * @param trace Trace information if available, may be null
      * @return A JSON map representation of the record, return null to drop the record
      */
-    public Map<String, ?> format(ExtLogRecord record);
+    public Map<String, ?> format(ExtLogRecord record, TraceInfo trace);
 
 }
