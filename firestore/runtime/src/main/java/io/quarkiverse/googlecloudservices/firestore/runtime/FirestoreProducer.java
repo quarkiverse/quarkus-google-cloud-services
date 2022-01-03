@@ -24,14 +24,18 @@ public class FirestoreProducer {
     @Inject
     GcpConfigHolder gcpConfigHolder;
 
+    @Inject
+    FirestoreConfiguration firestoreConfiguration;
+
     @Produces
     @Singleton
     @Default
     public Firestore firestore() throws IOException {
         GcpBootstrapConfiguration gcpConfiguration = gcpConfigHolder.getBootstrapConfig();
-        return FirestoreOptions.newBuilder().setCredentials(googleCredentials)
-                .setProjectId(gcpConfiguration.projectId.orElse(null))
-                .build()
-                .getService();
+        FirestoreOptions.Builder builder = FirestoreOptions.newBuilder().setCredentials(googleCredentials)
+                .setProjectId(gcpConfiguration.projectId.orElse(null));
+        firestoreConfiguration.hostOverride.ifPresent(builder::setHost);
+
+        return builder.build().getService();
     }
 }

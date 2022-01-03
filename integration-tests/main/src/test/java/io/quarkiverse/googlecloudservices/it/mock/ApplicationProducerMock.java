@@ -11,7 +11,7 @@ import javax.inject.Singleton;
 import org.mockito.Mockito;
 
 import com.google.api.gax.core.CredentialsProvider;
-import com.google.api.gax.core.FixedCredentialsProvider;
+import com.google.api.gax.core.NoCredentialsProvider;
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.cloud.secretmanager.v1.AccessSecretVersionResponse;
 import com.google.cloud.secretmanager.v1.SecretManagerServiceClient;
@@ -36,8 +36,7 @@ public class ApplicationProducerMock {
     @Singleton
     @Default
     public CredentialsProvider credentialsProvider() {
-        GoogleCredentials credentials = Mockito.mock(GoogleCredentials.class);
-        return FixedCredentialsProvider.create(credentials);
+        return NoCredentialsProvider.create();
     }
 
     @Produces

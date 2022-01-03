@@ -5,7 +5,7 @@
     <parent>
         <groupId>io.quarkiverse</groupId>
         <artifactId>quarkiverse-parent</artifactId>
-        <version>8</version>
+        <version>9</version>
     </parent>
 
     <groupId>io.quarkiverse.googlecloudservices</groupId>
@@ -18,10 +18,10 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
-        <google-cloud-sdk.version>24.0.0</google-cloud-sdk.version>
+        <google-cloud-sdk.version>24.1.1</google-cloud-sdk.version>
         <google-native-image-support.version>0.10.0</google-native-image-support.version>
         <!-- Dependency convergence issues -->
-        <opencensus.version>0.28.3</opencensus.version><!-- mess in google-pubsub and grpc deps; should be rather stable as OpenCensus has been sunsetted already - see https://github.com/GoogleCloudPlatform/cloud-opensource-java/issues/862 -->
+        <opencensus.version>0.30.0</opencensus.version><!-- mess in google-pubsub and grpc deps; should be rather stable as OpenCensus has been sunsetted already - see https://github.com/GoogleCloudPlatform/cloud-opensource-java/issues/862 -->
         <threeten.version>1.5.2</threeten.version><!-- mess in google-cloud-core transitive deps -->
     </properties>
 
@@ -67,6 +67,11 @@
             <dependency>
                 <groupId>io.opencensus</groupId>
                 <artifactId>opencensus-contrib-http-util</artifactId>
+                <version>${opencensus.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.opencensus</groupId>
+                <artifactId>opencensus-contrib-grpc-util</artifactId>
                 <version>${opencensus.version}</version>
             </dependency>
             <dependency>
