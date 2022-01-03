@@ -88,7 +88,7 @@ public class EscJsonFormat {
         }
     }
 
-    private void putTracing(Map<String, Object> m, TraceInfo tracing) {
+    protected void putTracing(Map<String, Object> m, TraceInfo tracing) {
         if (!Strings.isNullOrEmpty(tracing.getTraceId())) {
             getOrCreateObject(m, "trace").put("id", tracing.getTraceId());
         }
