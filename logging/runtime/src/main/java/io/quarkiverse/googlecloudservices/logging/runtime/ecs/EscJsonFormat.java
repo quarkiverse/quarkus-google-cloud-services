@@ -11,10 +11,10 @@ import java.util.Map;
 import java.util.logging.ErrorManager;
 import java.util.logging.Level;
 
-import com.google.common.base.Strings;
-
 import org.jboss.logmanager.ExtFormatter;
 import org.jboss.logmanager.ExtLogRecord;
+
+import com.google.common.base.Strings;
 
 import io.quarkiverse.googlecloudservices.logging.runtime.JsonFormatter;
 import io.quarkiverse.googlecloudservices.logging.runtime.LoggingConfiguration;
@@ -33,7 +33,7 @@ public class EscJsonFormat {
     private static final SimpleFormatter MSG_FORMAT = new SimpleFormatter();
 
     /**
-     * Create a formatter instance. 
+     * Create a formatter instance.
      */
     public static JsonFormatter createFormatter() {
         return new JsonFormatter() {
@@ -142,7 +142,8 @@ public class EscJsonFormat {
                     pw.flush();
                     error.put("stack_trace", sw.toString());
                 } else {
-                    error.put("stack_trace", new StackTraceArrayRenderer(this.config.stackTrace.elementRendering).format(thrown));
+                    error.put("stack_trace",
+                            new StackTraceArrayRenderer(this.config.stackTrace.elementRendering).format(thrown));
                 }
             }
         }

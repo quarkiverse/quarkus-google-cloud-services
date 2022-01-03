@@ -16,7 +16,7 @@ import io.quarkiverse.googlecloudservices.logging.runtime.LoggingConfiguration.S
  * This is a utility class for rendering a stack trace as an array
  * on thrown exceptions. It uses the same calculation as {@link Throwable}
  * for truncating stacks for causes - i.e. not show the same stack frames when
- * they are common - and checks for self referencing and circular references. 
+ * they are common - and checks for self referencing and circular references.
  */
 public class StackTraceArrayRenderer {
 
@@ -30,7 +30,7 @@ public class StackTraceArrayRenderer {
      * The returned list will contain one object for each throwable (including
      * causes and supressed exceptions), and each object will contain a list of
      * stack frames expressed as defined by the {@link StackElementRendering} given
-     * in the constructor. 
+     * in the constructor.
      * 
      * @param th Throwable to format, must not be nnull
      * @return A list of exceptions as JSON objects
@@ -44,10 +44,11 @@ public class StackTraceArrayRenderer {
     }
 
     /*
-     * Append the "throwable" to the "root" list of exceptions. The parent will be null for the 
+     * Append the "throwable" to the "root" list of exceptions. The parent will be null for the
      * first exception. This is a recorsive method and "throwable" might be null (for a null cause).
      */
-    private void append(List<Map<String, ?>> root, Set<Throwable> handled, Throwable parent, Throwable throwable, boolean supressed) {
+    private void append(List<Map<String, ?>> root, Set<Throwable> handled, Throwable parent, Throwable throwable,
+            boolean supressed) {
         if (throwable == null || throwable == parent) {
             return; // recursion ends
         } else {
@@ -59,7 +60,7 @@ public class StackTraceArrayRenderer {
             if (handled.contains(throwable)) {
                 // recursion ends with circular reference
                 ex.put("reference", true);
-                return; 
+                return;
             } else {
                 handled.add(throwable);
                 if (supressed) {

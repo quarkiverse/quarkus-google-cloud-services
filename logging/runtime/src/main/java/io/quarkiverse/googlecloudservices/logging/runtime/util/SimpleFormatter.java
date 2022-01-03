@@ -5,7 +5,7 @@ import org.jboss.logmanager.ExtLogRecord;
 
 /**
  * This formatter uses the {@link ExtFormatter} without
- * any modifications. 
+ * any modifications.
  */
 public class SimpleFormatter extends ExtFormatter {
 
