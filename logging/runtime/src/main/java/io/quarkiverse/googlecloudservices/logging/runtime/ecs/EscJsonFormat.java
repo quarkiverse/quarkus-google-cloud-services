@@ -11,10 +11,10 @@ import java.util.Map;
 import java.util.logging.ErrorManager;
 import java.util.logging.Level;
 
+import com.google.common.base.Strings;
+
 import org.jboss.logmanager.ExtFormatter;
 import org.jboss.logmanager.ExtLogRecord;
-
-import com.google.common.base.Strings;
 
 import io.quarkiverse.googlecloudservices.logging.runtime.JsonFormatter;
 import io.quarkiverse.googlecloudservices.logging.runtime.LoggingConfiguration;
@@ -32,6 +32,9 @@ public class EscJsonFormat {
 
     private static final SimpleFormatter MSG_FORMAT = new SimpleFormatter();
 
+    /**
+     * Create a formatter instance. 
+     */
     public static JsonFormatter createFormatter() {
         return new JsonFormatter() {
 

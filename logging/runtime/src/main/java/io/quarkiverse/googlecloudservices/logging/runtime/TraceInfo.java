@@ -1,5 +1,8 @@
 package io.quarkiverse.googlecloudservices.logging.runtime;
 
+/**
+ * This is a tuplet for trace and span ID's.
+ */
 public class TraceInfo {
 
     private final String traceId;

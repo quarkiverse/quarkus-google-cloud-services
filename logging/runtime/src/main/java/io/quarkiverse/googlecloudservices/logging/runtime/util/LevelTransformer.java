@@ -9,6 +9,9 @@ public class LevelTransformer {
     private LevelTransformer() {
     }
 
+    /**
+     * Traslate JUL log level to a GCP logging severity. 
+     */
     public static Severity toSeverity(Level level) {
         int i = level.intValue();
         if (i <= Level.FINE.intValue()) {

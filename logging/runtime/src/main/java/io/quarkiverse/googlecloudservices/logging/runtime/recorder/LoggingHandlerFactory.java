@@ -21,7 +21,7 @@ public class LoggingHandlerFactory {
             log.info("GCP logging is disabled");
             return new RuntimeValue<>(Optional.empty());
         } else {
-            log.info("GCP lazy logging handler created for log: {}", config.defaultLog);
+            log.info("GCP logging handler created for default log: {}", config.defaultLog);
             return new RuntimeValue<>(Optional.of(new LoggingHandler(config)));
         }
     }

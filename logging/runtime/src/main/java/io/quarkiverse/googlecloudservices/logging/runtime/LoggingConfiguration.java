@@ -15,8 +15,7 @@ import io.quarkus.runtime.annotations.ConfigRoot;
 public class LoggingConfiguration {
 
     /**
-     * Which Google Operations log should be used by default. This value can be overridden
-     * in code per record basis.
+     * Which Google Operations log should be used by default. 
      */
     @ConfigItem
     public String defaultLog;

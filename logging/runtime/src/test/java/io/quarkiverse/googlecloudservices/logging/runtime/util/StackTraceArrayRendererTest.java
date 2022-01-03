@@ -8,12 +8,12 @@ import org.junit.jupiter.api.Test;
 
 import io.quarkiverse.googlecloudservices.logging.runtime.LoggingConfiguration.StackElementRendering;
 
-public class StackTraceFormatterTest {
+public class StackTraceArrayRendererTest {
 
     @Test
     public void testTrivialCase() {
         Throwable th = captureThrowOne("message");
-        List<Map<String, ?>> list = new StackTraceFormatter(StackElementRendering.STRING).format(th);
+        List<Map<String, ?>> list = new StackTraceArrayRenderer(StackElementRendering.STRING).format(th);
         Assertions.assertEquals(1, list.size()); // a throwable is it's own cause
         Assertions.assertEquals("message", list.get(0).get("message"));
         Assertions.assertTrue(list.get(0).get("type").equals(RuntimeException.class.getName()));
@@ -22,14 +22,14 @@ public class StackTraceFormatterTest {
     @Test
     public void shouldHandleNullMessages() {
         Throwable th = captureThrowOne(null);
-        List<Map<String, ?>> list = new StackTraceFormatter(StackElementRendering.STRING).format(th);
+        List<Map<String, ?>> list = new StackTraceArrayRenderer(StackElementRendering.STRING).format(th);
         Assertions.assertFalse(list.get(0).containsKey("message"));
     }
 
     @Test
     public void shouldTruncateCommonFrames() {
         Throwable th = captureReThorwOne("message");
-        List<Map<String, ?>> list = new StackTraceFormatter(StackElementRendering.STRING).format(th);
+        List<Map<String, ?>> list = new StackTraceArrayRenderer(StackElementRendering.STRING).format(th);
         Assertions.assertEquals(2, list.size()); // with one cause
         Assertions.assertEquals("message", list.get(1).get("message"));
         Assertions.assertTrue(((Integer) list.get(1).get("commonFrames")).intValue() > 0);
