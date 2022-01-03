@@ -34,18 +34,6 @@ public class LoggingConfiguration {
     public LogFormat format;
 
     /**
-     * Configure log record MDC handling.
-     */
-    @ConfigItem
-    public MDCConfig mdc;
-
-    /**
-     * Configure log record parameter handling.
-     */
-    @ConfigItem
-    public ParametersConfig parameters;
-
-    /**
      * Configure GCP logging synchronicity.
      */
     @ConfigItem
@@ -64,12 +52,6 @@ public class LoggingConfiguration {
     public Map<String, String> defaultLabel;
 
     /**
-     * Configure log record stack trace handling.
-     */
-    @ConfigItem
-    public StackTraceConfig stackTrace;
-
-    /**
      * Configured the monitored resource. Please consult the Google
      * documentation for the correct values: https://cloud.google.com/logging/docs/api/v2/resource-list#resource-types
      */
@@ -81,6 +63,34 @@ public class LoggingConfiguration {
      */
     @ConfigItem
     public GcpTracingConfig gcpTracing;
+
+    /**
+     * Configuration options for structured logging.
+     */
+    @ConfigItem
+    public StructuredConfig structured;
+
+    @ConfigGroup
+    public static class StructuredConfig {
+
+        /**
+         * Configure log record stack trace handling.
+         */
+        @ConfigItem
+        public StackTraceConfig stackTrace;
+
+        /**
+         * Configure log record MDC handling.
+         */
+        @ConfigItem
+        public MDCConfig mdc;
+
+        /**
+         * Configure log record parameter handling.
+         */
+        @ConfigItem
+        public ParametersConfig parameters;
+    }
 
     @ConfigGroup
     public static class GcpTracingConfig {

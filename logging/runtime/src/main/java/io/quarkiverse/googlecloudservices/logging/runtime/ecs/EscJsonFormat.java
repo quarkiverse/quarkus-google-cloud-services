@@ -11,7 +11,6 @@ import java.util.Map;
 import java.util.logging.ErrorManager;
 import java.util.logging.Level;
 
-import org.jboss.logmanager.ExtFormatter;
 import org.jboss.logmanager.ExtLogRecord;
 
 import com.google.common.base.Strings;
@@ -99,8 +98,8 @@ public class EscJsonFormat {
 
     @SuppressWarnings("unchecked")
     protected void putParametersIfEnabled(Map<String, Object> m, Object[] parameters) {
-        if (parameters != null && parameters.length > 0 && this.config.parameters.included) {
-            List<String> list = (List<String>) m.computeIfAbsent(this.config.parameters.fieldName,
+        if (parameters != null && parameters.length > 0 && this.config.structured.parameters.included) {
+            List<String> list = (List<String>) m.computeIfAbsent(this.config.structured.parameters.fieldName,
                     (k) -> new ArrayList<String>(parameters.length));
             for (Object o : parameters) {
                 if (shouldIncludeParameter(o)) {
@@ -128,13 +127,13 @@ public class EscJsonFormat {
             if (!Strings.isNullOrEmpty(msg)) {
                 error.put("message", msg);
             }
-            if (this.config.stackTrace.included) {
+            if (this.config.structured.stackTrace.included) {
                 /*
                  * For string rendering we're using the normal stack trace, but
                  * for arrays we're only looking at first exception, not any causes
                  * since that would mean we'd have to look at possible circular references
                  */
-                if (this.config.stackTrace.rendering == StackTraceRendering.STRING) {
+                if (this.config.structured.stackTrace.rendering == StackTraceRendering.STRING) {
                     // render as a standard out string
                     StringWriter sw = new StringWriter(1024);
                     PrintWriter pw = new PrintWriter(sw);
@@ -143,15 +142,15 @@ public class EscJsonFormat {
                     error.put("stack_trace", sw.toString());
                 } else {
                     error.put("stack_trace",
-                            new StackTraceArrayRenderer(this.config.stackTrace.elementRendering).format(thrown));
+                            new StackTraceArrayRenderer(this.config.structured.stackTrace.elementRendering).format(thrown));
                 }
             }
         }
     }
 
     protected void putMdcIfEnabled(Map<String, Object> m, Map<String, String> mdcCopy) {
-        if (mdcCopy != null && !mdcCopy.isEmpty() && this.config.mdc.included) {
-            Map<String, Object> mdc = getOrCreateObject(m, this.config.mdc.fieldName);
+        if (mdcCopy != null && !mdcCopy.isEmpty() && this.config.structured.mdc.included) {
+            Map<String, Object> mdc = getOrCreateObject(m, this.config.structured.mdc.fieldName);
             mdcCopy.forEach((k, v) -> mdc.put(k, v));
         }
     }
@@ -204,13 +203,5 @@ public class EscJsonFormat {
 
     protected void putTimestamp(Map<String, Object> m, Instant instant) {
         m.put("@timestamp", instant.atOffset(ZoneOffset.UTC).toString());
-    }
-
-    private static class Formatter extends ExtFormatter {
-
-        @Override
-        public String format(ExtLogRecord record) {
-            return formatMessage(record);
-        }
     }
 }
