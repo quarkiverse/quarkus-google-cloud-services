@@ -21,7 +21,7 @@ import io.quarkiverse.googlecloudservices.logging.runtime.LoggingConfiguration;
 import io.quarkiverse.googlecloudservices.logging.runtime.LoggingConfiguration.StackTraceRendering;
 import io.quarkiverse.googlecloudservices.logging.runtime.TraceInfo;
 import io.quarkiverse.googlecloudservices.logging.runtime.util.SimpleFormatter;
-import io.quarkiverse.googlecloudservices.logging.runtime.util.StackTraceFormatter;
+import io.quarkiverse.googlecloudservices.logging.runtime.util.StackTraceArrayRenderer;
 
 /**
  * This is the base class for the ESC json formatter. For small adjustments
@@ -142,7 +142,7 @@ public class EscJsonFormat {
                     pw.flush();
                     error.put("stack_trace", sw.toString());
                 } else {
-                    error.put("stack_trace", new StackTraceFormatter(this.config.stackTrace.elementRendering).format(thrown));
+                    error.put("stack_trace", new StackTraceArrayRenderer(this.config.stackTrace.elementRendering).format(thrown));
                 }
             }
         }

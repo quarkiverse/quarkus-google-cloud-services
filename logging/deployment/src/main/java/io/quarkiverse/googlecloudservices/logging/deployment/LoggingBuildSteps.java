@@ -13,7 +13,7 @@ import io.quarkiverse.googlecloudservices.logging.runtime.format.TextHandler;
 import io.quarkiverse.googlecloudservices.logging.runtime.recorder.LoggingHandlerFactory;
 import io.quarkiverse.googlecloudservices.logging.runtime.util.LevelTransformer;
 import io.quarkiverse.googlecloudservices.logging.runtime.util.SimpleFormatter;
-import io.quarkiverse.googlecloudservices.logging.runtime.util.StackTraceFormatter;
+import io.quarkiverse.googlecloudservices.logging.runtime.util.StackTraceArrayRenderer;
 import io.quarkus.arc.deployment.UnremovableBeanBuildItem;
 import io.quarkus.deployment.annotations.BuildStep;
 import io.quarkus.deployment.annotations.ExecutionTime;
@@ -48,7 +48,7 @@ public class LoggingBuildSteps {
                 JsonHandler.class,
                 TextHandler.class,
                 SimpleFormatter.class,
-                StackTraceFormatter.class);
+                StackTraceArrayRenderer.class);
     }
 
     @BuildStep
