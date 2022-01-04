@@ -16,6 +16,7 @@ import com.google.cloud.logging.Payload;
 import com.google.cloud.logging.Severity;
 import com.google.common.collect.ImmutableList;
 
+import io.quarkiverse.googlecloudservices.it.logging.KeyValueParameter;
 import io.quarkiverse.googlecloudservices.logging.runtime.cdi.WriteOptionsHolder;
 
 @Path("/logging")
@@ -65,11 +66,11 @@ public class LoggingResource {
         try {
             throwOne();
         } catch (RuntimeException e) {
-            throw new RuntimeException("Not again!", e);
+            throw new RuntimeException(e);
         }
     }
 
     private void throwOne() {
-        throw new RuntimeException("Help!");
+        throw new RuntimeException("This is expected - it's a test exception");
     }
 }

@@ -1,4 +1,4 @@
-package io.quarkiverse.googlecloudservices.it;
+package io.quarkiverse.googlecloudservices.it.logging;
 
 import java.util.Arrays;
 import java.util.Collections;

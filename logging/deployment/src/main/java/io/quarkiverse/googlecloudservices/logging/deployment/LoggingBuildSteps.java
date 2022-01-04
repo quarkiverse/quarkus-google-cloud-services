@@ -39,7 +39,8 @@ public class LoggingBuildSteps {
         return UnremovableBeanBuildItem.beanTypes(
                 JsonFormatter.class,
                 LabelExtractor.class,
-                TraceInfoExtractor.class);
+                TraceInfoExtractor.class,
+                LoggingConfiguration.class);
     }
 
     @BuildStep

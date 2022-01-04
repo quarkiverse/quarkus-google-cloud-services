@@ -35,9 +35,10 @@ public class LoggingProducer {
     @Unremovable
     public Logging create() {
         GcpBootstrapConfiguration gcpConfiguration = gcpConfigHolder.getBootstrapConfig();
+        String projectId = gcpConfiguration.projectId.orElse(null);
         return LoggingOptions.getDefaultInstance().toBuilder()
                 .setCredentials(googleCredentials)
-                .setProjectId(gcpConfiguration.projectId.orElse(null))
+                .setProjectId(projectId)
                 .build()
                 .getService();
     }
