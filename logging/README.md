@@ -165,3 +165,29 @@ configurable:
 
 * `quarkus.google.cloud.logging.gcp-tracing.enabled=[true|false]`
 
+# Injecting GCP Logging
+You can inject a `Logging` instance directly. If you do, the configuration for the project to use,
+still apply. 
+
+If you want the configuration for default log, resource type and labels, and default labels, you can
+inject a `WriteOptionsHolder` which contains an array of default write options as configured. 
+
+```java
+[...]
+
+@Inject
+Logging gcpLogging;
+
+@Inject
+WriteOptionsHolder defaultOptions;
+
+public void log(String s) {
+    gcp.write(ImmutableList.of(LogEntry.newBuilder(Payload.StringPayload.of(s))
+        .setSeverity(Severity.DEBUG)
+        .setTimestamp(Instant.now())
+        .build())
+    , defaultOptions.getOptions());
+}
+
+[...]
+```
