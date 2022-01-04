@@ -7,6 +7,8 @@ import io.quarkiverse.googlecloudservices.logging.runtime.LabelExtractor;
 import io.quarkiverse.googlecloudservices.logging.runtime.LoggingConfiguration;
 import io.quarkiverse.googlecloudservices.logging.runtime.TraceInfo;
 import io.quarkiverse.googlecloudservices.logging.runtime.TraceInfoExtractor;
+import io.quarkiverse.googlecloudservices.logging.runtime.cdi.LoggingProducer;
+import io.quarkiverse.googlecloudservices.logging.runtime.cdi.WriteOptionsProducer;
 import io.quarkiverse.googlecloudservices.logging.runtime.ecs.EscJsonFormat;
 import io.quarkiverse.googlecloudservices.logging.runtime.format.JsonHandler;
 import io.quarkiverse.googlecloudservices.logging.runtime.format.TextHandler;
@@ -14,6 +16,7 @@ import io.quarkiverse.googlecloudservices.logging.runtime.recorder.LoggingHandle
 import io.quarkiverse.googlecloudservices.logging.runtime.util.LevelTransformer;
 import io.quarkiverse.googlecloudservices.logging.runtime.util.SimpleFormatter;
 import io.quarkiverse.googlecloudservices.logging.runtime.util.StackTraceArrayRenderer;
+import io.quarkus.arc.deployment.AdditionalBeanBuildItem;
 import io.quarkus.arc.deployment.UnremovableBeanBuildItem;
 import io.quarkus.deployment.annotations.BuildStep;
 import io.quarkus.deployment.annotations.ExecutionTime;
@@ -28,6 +31,16 @@ public class LoggingBuildSteps {
     @BuildStep
     public FeatureBuildItem feature() {
         return new FeatureBuildItem(FEATURE);
+    }
+
+    @BuildStep
+    public AdditionalBeanBuildItem logging() {
+        return new AdditionalBeanBuildItem(LoggingProducer.class);
+    }
+
+    @BuildStep
+    public AdditionalBeanBuildItem writeOptions() {
+        return new AdditionalBeanBuildItem(WriteOptionsProducer.class);
     }
 
     @BuildStep

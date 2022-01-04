@@ -10,20 +10,15 @@ import java.util.logging.ErrorManager;
 import org.jboss.logmanager.ExtHandler;
 import org.jboss.logmanager.ExtLogRecord;
 
-import com.google.auth.oauth2.GoogleCredentials;
-import com.google.cloud.MonitoredResource;
-import com.google.cloud.MonitoredResource.Builder;
 import com.google.cloud.logging.LogEntry;
 import com.google.cloud.logging.Logging;
 import com.google.cloud.logging.Logging.WriteOption;
-import com.google.cloud.logging.LoggingOptions;
 import com.google.cloud.logging.Payload;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
 
-import io.quarkiverse.googlecloudservices.common.GcpBootstrapConfiguration;
-import io.quarkiverse.googlecloudservices.common.GcpConfigHolder;
 import io.quarkiverse.googlecloudservices.logging.runtime.LoggingConfiguration.LogFormat;
+import io.quarkiverse.googlecloudservices.logging.runtime.cdi.WriteOptionsHolder;
 import io.quarkiverse.googlecloudservices.logging.runtime.format.InternalHandler;
 import io.quarkiverse.googlecloudservices.logging.runtime.format.JsonHandler;
 import io.quarkiverse.googlecloudservices.logging.runtime.format.TextHandler;
@@ -123,10 +118,8 @@ public class LoggingHandler extends ExtHandler {
 
     private synchronized Logging initGetLogging() {
         if (log == null) {
-            // get hold of the GCP config
-            InstanceHandle<GcpConfigHolder> config = Arc.container().instance(GcpConfigHolder.class);
             // create logger
-            initLogger(config);
+            initLogger();
             // create default write options
             initDefaultWriteOptions();
             // check auto-flush and synchronizity 
@@ -166,29 +159,10 @@ public class LoggingHandler extends ExtHandler {
     }
 
     private void initDefaultWriteOptions() {
-        defaultWriteOptions = new WriteOption[] {
-                WriteOption.logName(this.config.defaultLog),
-                WriteOption.resource(createMonitoredResource()),
-                WriteOption.labels(this.config.defaultLabel == null ? Collections.emptyMap() : this.config.defaultLabel)
-        };
+        this.defaultWriteOptions = Arc.container().instance(WriteOptionsHolder.class).get().getOptions();
     }
 
-    private void initLogger(InstanceHandle<GcpConfigHolder> config) {
-        InstanceHandle<GoogleCredentials> creds = Arc.container().instance(GoogleCredentials.class);
-        GcpBootstrapConfiguration gcpConfiguration = config.get().getBootstrapConfig();
-        this.projectId = gcpConfiguration.projectId.orElse(null);
-        this.log = LoggingOptions.getDefaultInstance().toBuilder()
-                .setCredentials(creds.get())
-                .setProjectId(projectId)
-                .build()
-                .getService();
-    }
-
-    private MonitoredResource createMonitoredResource() {
-        Builder b = MonitoredResource.newBuilder(this.config.resource.type);
-        if (this.config.resource.label != null) {
-            this.config.resource.label.forEach((k, v) -> b.addLabel(k, v));
-        }
-        return b.build();
+    private void initLogger() {
+        this.log = Arc.container().instance(Logging.class).get();
     }
 }
