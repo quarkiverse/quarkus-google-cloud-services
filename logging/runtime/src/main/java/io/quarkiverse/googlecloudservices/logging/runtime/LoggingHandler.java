@@ -122,9 +122,6 @@ public class LoggingHandler extends ExtHandler {
             initLogger();
             // create default write options
             initDefaultWriteOptions();
-            // check auto-flush and synchronizity 
-            this.config.flushLevel.ifPresent(level -> log.setFlushSeverity(level.getSeverity()));
-            this.config.synchronicity.ifPresent(sync -> log.setWriteSynchronicity(sync));
             // create json formatter
             initInternalHandler();
             // init label extractors

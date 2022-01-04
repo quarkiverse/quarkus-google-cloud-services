@@ -36,10 +36,14 @@ public class LoggingProducer {
     public Logging create() {
         GcpBootstrapConfiguration gcpConfiguration = gcpConfigHolder.getBootstrapConfig();
         String projectId = gcpConfiguration.projectId.orElse(null);
-        return LoggingOptions.getDefaultInstance().toBuilder()
+        Logging log = LoggingOptions.getDefaultInstance().toBuilder()
                 .setCredentials(googleCredentials)
                 .setProjectId(projectId)
                 .build()
                 .getService();
+        // check auto-flush and synchronizity 
+        loggingConfig.flushLevel.ifPresent(level -> log.setFlushSeverity(level.getSeverity()));
+        loggingConfig.synchronicity.ifPresent(sync -> log.setWriteSynchronicity(sync));
+        return log;
     }
 }
