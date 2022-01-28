@@ -107,3 +107,5 @@ Alternatively, you can also reference the secret value as a `@ConfigProperty` wi
 String secret;
 ```
 
+WARNING: When using secrets directly on your `application.properties`, the Google Cloud authentication is made early so 
+access token based authentication cannot be used. 
