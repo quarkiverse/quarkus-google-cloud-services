@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.util.Base64;
 
 import javax.annotation.PostConstruct;
+import javax.enterprise.context.ContextNotActiveException;
 import javax.enterprise.inject.Default;
 import javax.enterprise.inject.Instance;
 import javax.enterprise.inject.Produces;
@@ -52,7 +53,7 @@ public class GcpCredentialProducer {
                 return GoogleCredentials.fromStream(is).createScoped(CLOUD_OAUTH_SCOPE);
             }
         } else if (gcpConfiguration.accessTokenEnabled && securityIdentity.isResolvable()
-                && !securityIdentity.get().isAnonymous()) {
+                && !isAnonymous(securityIdentity.get())) {
             for (Credential cred : securityIdentity.get().getCredentials()) {
                 if (cred instanceof TokenCredential && "bearer".equals(((TokenCredential) cred).getType())) {
                     return GoogleCredentials
@@ -63,5 +64,15 @@ public class GcpCredentialProducer {
         }
 
         return GoogleCredentials.getApplicationDefault().createScoped(CLOUD_OAUTH_SCOPE);
+    }
+
+    private boolean isAnonymous(SecurityIdentity securityIdentity) {
+        try {
+            return securityIdentity.isAnonymous();
+        } catch (ContextNotActiveException e) {
+            // this is less than ideal but currently when the credential il returned out of a request context
+            // (for eg at configuration time for a config source) this exceptin can arise.
+            return true;
+        }
     }
 }
