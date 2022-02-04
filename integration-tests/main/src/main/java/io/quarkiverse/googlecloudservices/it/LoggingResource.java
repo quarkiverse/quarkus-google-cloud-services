@@ -24,6 +24,8 @@ public class LoggingResource {
 
     private org.slf4j.Logger slf4j = LoggerFactory.getLogger(getClass());
 
+    java.util.logging.Logger jul = java.util.logging.Logger.getLogger(getClass().getName());
+
     @Inject
     org.jboss.logging.Logger jboss;
 
@@ -39,8 +41,13 @@ public class LoggingResource {
     public String tryLog(@PathParam("payload") String p) {
         writeSlf4j(p);
         writeJBoss();
+        writeJul(p);
         writeGcp(p);
         return "Hello " + p;
+    }
+
+    private void writeJul(String p) {
+        jul.info("Mee too! Says JUL! Happily!");
     }
 
     private void writeGcp(String p) {
@@ -54,7 +61,7 @@ public class LoggingResource {
         try {
             throwExceptionWithCause();
         } catch (RuntimeException e) {
-            jboss.error("Oh no!", e);
+            jboss.error("Oh no says jboss!", e);
         }
     }
 
