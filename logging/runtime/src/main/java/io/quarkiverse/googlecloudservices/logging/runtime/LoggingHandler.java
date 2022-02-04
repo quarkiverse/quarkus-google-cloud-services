@@ -7,15 +7,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.ErrorManager;
 
-import org.jboss.logmanager.ExtHandler;
-import org.jboss.logmanager.ExtLogRecord;
-
 import com.google.cloud.logging.LogEntry;
 import com.google.cloud.logging.Logging;
 import com.google.cloud.logging.Logging.WriteOption;
 import com.google.cloud.logging.Payload;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
+
+import org.jboss.logmanager.ExtHandler;
+import org.jboss.logmanager.ExtLogRecord;
 
 import io.quarkiverse.googlecloudservices.logging.runtime.LoggingConfiguration.LogFormat;
 import io.quarkiverse.googlecloudservices.logging.runtime.cdi.WriteOptionsHolder;
@@ -31,7 +31,7 @@ public class LoggingHandler extends ExtHandler {
 
     private final LoggingConfiguration config;
 
-    // lazy values, the depend on the gcp config which in turn
+    // lazy values, they depend on the gcp config which in turn
     // depend on runtime configuration - not build time
     private Logging log;
     private String projectId;
@@ -45,16 +45,12 @@ public class LoggingHandler extends ExtHandler {
     }
 
     @Override
-    public synchronized void close() throws SecurityException {
-        if (log != null) {
-            try {
-                log.close();
-            } catch (Exception ex) {
-                // ignore
-            } finally {
-                log = null;
-            }
-        }
+    public void close() throws SecurityException {
+        /**
+         * Not implemented by choice: when quarkus shuts down the logger get closed
+         * BEFORE the last log entries are written, and this causes problems when reconnecting
+         * to Google Operations. We're relying on JVM shutdown here. 
+         */
     }
 
     @Override
