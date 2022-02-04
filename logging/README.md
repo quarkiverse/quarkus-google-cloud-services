@@ -11,7 +11,7 @@ First, we need a new project. Create a new project with the following command (r
 mvn io.quarkus:quarkus-maven-plugin:${quarkusVersion}:create \
     -DprojectGroupId=org.acme \
     -DprojectArtifactId=logging-quickstart \
-    -Dextensions="resteasy-jackson,io.quarkiverse.googlecloudservices:quarkus-google-cloud-secret-manager:${googleCloudServicesVersion}"
+    -Dextensions="resteasy-jackson,io.quarkiverse.googlecloudservices:quarkus-google-cloud-logging:${googleCloudServicesVersion}"
 cd logging-quickstart
 ```
 
