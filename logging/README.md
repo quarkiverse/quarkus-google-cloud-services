@@ -32,6 +32,36 @@ This will add the following to your pom.xml:
 </dependency>
 ```
 
+## How-to: Log
+When configured, all that is needed is to log data as you wish. You can use `JUL`, `jboss-logging` or `Slf4j`, or even GCP logging directly. You can also 
+inject the logger to use, so for example: 
+
+```java
+package mypackage;
+
+import javax.inject.Inject;
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
+
+import org.jboss.logging.Logger;
+
+@Path("/logging")
+public class LoggingResource {
+
+    @Inject
+    Logger logger;
+
+    @GET
+    @Produces(MediaType.TEXT_PLAIN)
+    public String tryLog() {
+        logger.info("Greeting the World");
+        return "Hello World!";
+    }
+}
+```
+
 ##  Configuration
 
 ### Basic
@@ -54,15 +84,16 @@ This logging system can either use a standard text based format, Elastic Common 
 * `quarkus.google.cloud.logging.format=[TEXT|JSON]`
 
 #### Structured Logging
-By setting the logging `format` to `JSON` this library will default to ECS format. 
+By setting the logging `format` to `JSON` this library will default to ECS format. As loca record parameters and MDC values are not
+official part of the ECS specification, these default to `parameters`  and `mdc` respectively, but this can be configured (see below).
 
-* `quarkus.google.cloud.logging.structured.stack-trace.included=[true|false]` - Should traces be included? Default to `true`
-* `quarkus.google.cloud.logging.structured.stack-trace.rendering=[array|string]` - Render the trace as a string or an array of objects, defaults to `string`
-* `quarkus.google.cloud.logging.structured.stack-trace.element-rendering=[string|object]` - How to render each stack element, defaults to `string`
+* `quarkus.google.cloud.logging.structured.stack-trace.included=[true|false]` - Should stack traces be included? Default to `true`
+* `quarkus.google.cloud.logging.structured.stack-trace.rendering=[array|string]` - Render stack traces as a strings or an arrays of objects, defaults to `string`
+* `quarkus.google.cloud.logging.structured.stack-trace.element-rendering=[string|object]` - How to render each stack trace element, defaults to `string`
 * `quarkus.google.cloud.logging.structured.parameters.included=[true|false]` - Should log record parameters be included? Defaults to `true`
-* `quarkus.google.cloud.logging.structured.parameters.field-name` - The ECS does not have parameters, this is the field name to use, defaults to `parameters`
+* `quarkus.google.cloud.logging.structured.parameters.field-name` - This is the field name to use in ESC for parameters, defaults to `parameters`
 * `quarkus.google.cloud.logging.structured.mdc.included=[true|false]` - Should the MDC values be included? Defaults to `true`
-* `quarkus.google.cloud.logging.structured.mdc.field-name` - The ECS does not have an MDC field, this is the field name to use, defaults to `mdc`
+* `quarkus.google.cloud.logging.structured.mdc.field-name` - This is the field name to use in ESC for MDC values, defaults to `mdc`
 
 You can use a completely custom structured format by binding a `JsonFormatter` to the CDI context. For example, if you want to filter the 
 included parameters, you could do this: 
