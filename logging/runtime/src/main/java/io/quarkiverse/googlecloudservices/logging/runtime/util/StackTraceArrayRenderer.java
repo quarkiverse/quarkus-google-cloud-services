@@ -14,7 +14,7 @@ import io.quarkiverse.googlecloudservices.logging.runtime.LoggingConfiguration.S
 
 /**
  * This is a utility class for rendering a stack trace as an array
- * on thrown exceptions. It uses the same calculation as {@link Throwable}
+ * of thrown exceptions. It uses the same calculation as {@link Throwable}
  * for truncating stacks for causes - i.e. not show the same stack frames when
  * they are common - and checks for self referencing and circular references.
  */

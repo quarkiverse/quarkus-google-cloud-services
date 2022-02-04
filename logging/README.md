@@ -44,6 +44,10 @@ If you which to disable the logging to GCP you can do so:
 
 * `quarkus.google.cloud.logging.enabled=false`
 
+This is useful for testing, not to write to Google Operations during development: 
+
+* `%test.quarkus.google.cloud.logging.enabled=false`
+
 ### Formatting
 This logging system can either use a standard text based format, Elastic Common Schema, or a completely custom schema.    
 
