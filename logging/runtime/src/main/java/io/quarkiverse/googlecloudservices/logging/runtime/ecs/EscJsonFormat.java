@@ -70,7 +70,7 @@ public class EscJsonFormat {
             Map<String, Object> m = new HashMap<>();
             putEcsVersion(m);
             putTimestamp(m, record.getInstant());
-            putLoggerName(m, record.getLoggerName());
+            putLoggerName(m, record.getLoggerName(), record.getLoggerClassName());
             putThreadName(m, record.getThreadName());
             putThreadId(m, record.getThreadID());
             putFormattedMessage(m, record);
@@ -92,7 +92,7 @@ public class EscJsonFormat {
             getOrCreateObject(m, "trace").put("id", tracing.getTraceId());
         }
         if (!Strings.isNullOrEmpty(tracing.getSpanId())) {
-            getOrCreateObject(m, "span").put("id", tracing.getTraceId());
+            getOrCreateObject(m, "span").put("id", tracing.getSpanId());
         }
     }
 
@@ -163,7 +163,7 @@ public class EscJsonFormat {
             clazz.put("name", sourceClassName);
             clazz.put("line", Integer.valueOf(sourceLineNumber));
             if (!Strings.isNullOrEmpty(sourceMethodName)) {
-                origin.put("function", sourceClassName);
+                origin.put("function", sourceMethodName);
             }
         }
     }
@@ -177,7 +177,10 @@ public class EscJsonFormat {
     }
 
     protected void putThreadId(Map<String, Object> m, long longThreadID) {
-        getOrCreateObject(getOrCreateObject(m, "process"), "thread").put("id", Long.valueOf(longThreadID));
+        // default value is zero, so check for that
+        if (longThreadID != 0) {
+            getOrCreateObject(getOrCreateObject(m, "process"), "thread").put("id", Long.valueOf(longThreadID));
+        }
     }
 
     protected void putThreadName(Map<String, Object> m, String threadName) {
@@ -186,8 +189,11 @@ public class EscJsonFormat {
         }
     }
 
-    protected void putLoggerName(Map<String, Object> m, String loggerName) {
-        if (!Strings.isNullOrEmpty(loggerName)) {
+    protected void putLoggerName(Map<String, Object> m, String loggerName, String loggerClassName) {
+        // logger class name takes precedence
+        if (!Strings.isNullOrEmpty(loggerClassName)) {
+            getOrCreateObject(m, "log").put("logger", loggerClassName);
+        } else if (!Strings.isNullOrEmpty(loggerName)) {
             getOrCreateObject(m, "log").put("logger", loggerName);
         }
     }

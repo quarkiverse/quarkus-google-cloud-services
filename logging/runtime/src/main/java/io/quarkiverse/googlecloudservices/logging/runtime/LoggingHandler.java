@@ -7,15 +7,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.ErrorManager;
 
+import org.jboss.logmanager.ExtHandler;
+import org.jboss.logmanager.ExtLogRecord;
+
 import com.google.cloud.logging.LogEntry;
 import com.google.cloud.logging.Logging;
 import com.google.cloud.logging.Logging.WriteOption;
 import com.google.cloud.logging.Payload;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
-
-import org.jboss.logmanager.ExtHandler;
-import org.jboss.logmanager.ExtLogRecord;
 
 import io.quarkiverse.googlecloudservices.logging.runtime.LoggingConfiguration.LogFormat;
 import io.quarkiverse.googlecloudservices.logging.runtime.cdi.WriteOptionsHolder;
@@ -49,7 +49,7 @@ public class LoggingHandler extends ExtHandler {
         /**
          * Not implemented by choice: when quarkus shuts down the logger get closed
          * BEFORE the last log entries are written, and this causes problems when reconnecting
-         * to Google Operations. We're relying on JVM shutdown here. 
+         * to Google Operations. We're relying on JVM shutdown here.
          */
     }
 
