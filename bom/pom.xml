@@ -19,7 +19,7 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
         <google-cloud-sdk.version>24.3.0</google-cloud-sdk.version>
-        <google-native-image-support.version>0.12.3</google-native-image-support.version>
+        <google-native-image-support.version>0.12.4</google-native-image-support.version>
         <!-- Dependency convergence issues -->
         <opencensus.version>0.31.0</opencensus.version><!-- mess in google-pubsub and grpc deps; should be rather stable as OpenCensus has been sunsetted already - see https://github.com/GoogleCloudPlatform/cloud-opensource-java/issues/862 -->
         <threeten.version>1.5.2</threeten.version><!-- mess in google-cloud-core transitive deps -->
