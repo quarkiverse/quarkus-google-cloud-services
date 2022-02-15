@@ -1,4 +1,4 @@
-# Quarkiverse - Google Cloud Services - Spanner
+# Quarkus - Google Cloud Services - Spanner
 
 This extension allows to inject a `com.google.cloud.spanner.Spanner` object inside your Quarkus application.
 

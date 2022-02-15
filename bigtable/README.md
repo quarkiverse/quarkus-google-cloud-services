@@ -1,4 +1,4 @@
-# Quarkiverse - Google Cloud Services - Bigtable
+# Quarkus - Google Cloud Services - Bigtable
 
 This extension allows using Google Cloud Bigtable inside your Quarkus application.
 

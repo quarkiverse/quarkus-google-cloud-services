@@ -1,4 +1,4 @@
-# Quarkiverse - Google Cloud Services - Storage
+# Quarkus - Google Cloud Services - Storage
 
 This extension allows to inject a `com.google.cloud.storage.Storage` object inside your Quarkus application.
 

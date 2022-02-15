@@ -1,4 +1,4 @@
-# Quarkiverse - Google Cloud Services - PubSub
+# Quarkus - Google Cloud Services - PubSub
 
 This extension allows using Google Cloud PubSub inside your Quarkus application.
 

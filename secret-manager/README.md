@@ -1,4 +1,4 @@
-# Quarkiverse - Google Cloud Services - Secret Manager
+# Quarkus - Google Cloud Services - Secret Manager
 
 This extension allows to use the Google Cloud Platform Secret Manager client library inside your Quarkus application. The current implementation is focused on _accessing_ the secrets, but extending the implementation into also allowing to create or edit a secret might be a natural next step.
 

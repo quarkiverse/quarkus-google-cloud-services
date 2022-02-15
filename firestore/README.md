@@ -1,4 +1,4 @@
-# Quarkiverse - Google Cloud Services - Firestore
+# Quarkus - Google Cloud Services - Firestore
 
 This extension allows to inject a `com.google.cloud.firestore.Firestore` object inside your Quarkus application.
 

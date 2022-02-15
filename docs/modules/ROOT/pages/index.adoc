@@ -21,7 +21,7 @@ that will use the default project detected via Application Default Credentials.
 
 All these extensions work with applications built as native image executables.
 
-These extensions work well within the various Google Cloud Functions extensions available inside Quarkus as they directly authenticate via the built-in credentials.
+These extensions work well within the various Google Cloud Functions extensions available inside Quarkus as they directly authenticate via the built-in credentials, see the https://quarkus.io/guides/deploying-to-google-cloud[deploying to google cloud platform] guide.
 
 [[authenticating]]
 == Authenticating to Google Cloud
@@ -42,7 +42,8 @@ but will be ignored if the `quarkus.google.cloud.accessTokenEnabled` property is
 * Credentials provided by the Google Cloud SDK `gcloud auth application-default login` command.
 * Google Cloud managed environment (Google App Engine, Google Cloud Functions, GCE, ...) built-in credentials.
 
-**Google PubSub and Google Bigtable must be authenticated using the `GOOGLE_APPLICATION_CREDENTIALS` environment variable only.**
+**Google PubSub and Google Bigtable should be authenticated using the `GOOGLE_APPLICATION_CREDENTIALS` environment variable,
+or use the provided `CredentialsProvider` when instantiating their objects.**
 
 [[emulators]]
 == Google Cloud services emulators: mocking Google Cloud credentials

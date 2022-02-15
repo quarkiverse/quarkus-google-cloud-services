@@ -1,4 +1,4 @@
-# Quarkiverse - Google Cloud Services - BigQuery
+# Quarkus - Google Cloud Services - BigQuery
 
 This extension allows to inject a `com.google.cloud.bigquery.BigQuery` object inside your Quarkus application.
 
