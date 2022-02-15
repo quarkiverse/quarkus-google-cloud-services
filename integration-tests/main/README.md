@@ -1,4 +1,4 @@
-# Quarkiverse - Google Cloud Services - Integration Tests - Main
+# Quarkus - Google Cloud Services - Integration Tests - Main
 
 This is the main integration test, it allows to test all Google Cloud services from REST endpoints using a service account authentication.
 
