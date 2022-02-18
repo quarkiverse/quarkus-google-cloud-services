@@ -127,7 +127,6 @@ public class PubSubResource {
             consumer.ack();
         };
         subscriber = Subscriber.newBuilder(subscriptionName, receiver).build();
-        ;
         subscriber.startAsync().awaitRunning();
     }
 
