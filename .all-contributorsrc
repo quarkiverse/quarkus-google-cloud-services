@@ -78,6 +78,15 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "lemoigne-yt",
+      "name": "Yann-Thomas LE MOIGNE",
+      "avatar_url": "https://avatars.githubusercontent.com/u/94898819?v=4",
+      "profile": "https://github.com/lemoigne-yt",
+      "contributions": [
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 7,
