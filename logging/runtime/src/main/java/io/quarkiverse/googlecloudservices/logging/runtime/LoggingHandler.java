@@ -24,6 +24,7 @@ import io.quarkiverse.googlecloudservices.logging.runtime.format.JsonHandler;
 import io.quarkiverse.googlecloudservices.logging.runtime.format.TextHandler;
 import io.quarkiverse.googlecloudservices.logging.runtime.util.LevelTransformer;
 import io.quarkus.arc.Arc;
+import io.quarkus.arc.ArcContainer;
 import io.quarkus.arc.InjectableInstance;
 import io.quarkus.arc.InstanceHandle;
 
@@ -57,6 +58,11 @@ public class LoggingHandler extends ExtHandler {
     public void doPublish(ExtLogRecord record) {
         try {
             Logging l = initGetLogging();
+            if (l == null) {
+                // When this happens it's because the injection context has
+                // been shut down - so we'll short-cut here
+                return;
+            }
             TraceInfo trace = traceExtractor.extract(record);
             LogEntry logEntry = transform(record, trace);
             if (logEntry != null) {
@@ -115,7 +121,9 @@ public class LoggingHandler extends ExtHandler {
     private synchronized Logging initGetLogging() {
         if (log == null) {
             // create logger
-            initLogger();
+            if (!initLogger()) {
+                return null;
+            }
             // create default write options
             initDefaultWriteOptions();
             // create json formatter
@@ -155,7 +163,14 @@ public class LoggingHandler extends ExtHandler {
         this.defaultWriteOptions = Arc.container().instance(WriteOptionsHolder.class).get().getOptions();
     }
 
-    private void initLogger() {
-        this.log = Arc.container().instance(Logging.class).get();
+    // return false if the container is shut down
+    private boolean initLogger() {
+        ArcContainer container = Arc.container();
+        if (container != null) {
+            this.log = container.instance(Logging.class).get();
+            return true;
+        } else {
+            return false;
+        }
     }
 }
