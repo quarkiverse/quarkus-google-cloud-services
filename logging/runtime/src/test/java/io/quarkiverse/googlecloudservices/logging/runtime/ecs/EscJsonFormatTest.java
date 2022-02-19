@@ -14,9 +14,7 @@ import com.google.gson.JsonObject;
 import io.quarkiverse.googlecloudservices.logging.runtime.LoggingConfiguration;
 import io.quarkiverse.googlecloudservices.logging.runtime.LoggingConfiguration.MDCConfig;
 import io.quarkiverse.googlecloudservices.logging.runtime.LoggingConfiguration.ParametersConfig;
-import io.quarkiverse.googlecloudservices.logging.runtime.LoggingConfiguration.StackElementRendering;
 import io.quarkiverse.googlecloudservices.logging.runtime.LoggingConfiguration.StackTraceConfig;
-import io.quarkiverse.googlecloudservices.logging.runtime.LoggingConfiguration.StackTraceRendering;
 import io.quarkiverse.googlecloudservices.logging.runtime.LoggingConfiguration.StructuredConfig;
 import io.quarkiverse.googlecloudservices.logging.runtime.TraceInfo;
 
@@ -139,19 +137,6 @@ public class EscJsonFormatTest {
     }
 
     @Test
-    public void testArrayStackTrace() {
-        EscJsonFormat f = new EscJsonFormat();
-        LoggingConfiguration c = createNewLoggingConfiguration();
-        c.structured.stackTrace.rendering = StackTraceRendering.ARRAY;
-        f.setLoggingConfiguration(c);
-        ExtLogRecord r = createNewLogRecord();
-        r.setThrown(new Exception("hello exception"));
-        JsonObject json = toJson(f, r);
-        // check that the trace is an array, the trace rendering itself is tested elsewhere
-        Assertions.assertTrue(json.getAsJsonObject("error").get("stack_trace").isJsonArray());
-    }
-
-    @Test
     public void testHost() {
         EscJsonFormat f = createConfiguredFormat();
         ExtLogRecord r = createNewLogRecord();
@@ -242,8 +227,6 @@ public class EscJsonFormatTest {
         c.structured.mdc = new MDCConfig();
         c.structured.mdc.included = true;
         c.structured.stackTrace = new StackTraceConfig();
-        c.structured.stackTrace.elementRendering = StackElementRendering.OBJECT;
-        c.structured.stackTrace.rendering = StackTraceRendering.STRING;
         c.structured.stackTrace.included = true;
         c.structured.parameters = new ParametersConfig();
         c.structured.parameters.included = true;

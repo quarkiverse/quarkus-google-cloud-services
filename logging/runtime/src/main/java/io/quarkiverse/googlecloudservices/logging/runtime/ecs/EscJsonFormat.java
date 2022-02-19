@@ -17,10 +17,8 @@ import com.google.common.base.Strings;
 
 import io.quarkiverse.googlecloudservices.logging.runtime.JsonFormatter;
 import io.quarkiverse.googlecloudservices.logging.runtime.LoggingConfiguration;
-import io.quarkiverse.googlecloudservices.logging.runtime.LoggingConfiguration.StackTraceRendering;
 import io.quarkiverse.googlecloudservices.logging.runtime.TraceInfo;
 import io.quarkiverse.googlecloudservices.logging.runtime.util.SimpleFormatter;
-import io.quarkiverse.googlecloudservices.logging.runtime.util.StackTraceArrayRenderer;
 
 /**
  * This is the base class for the ESC json formatter. For small adjustments
@@ -128,22 +126,12 @@ public class EscJsonFormat {
                 error.put("message", msg);
             }
             if (this.config.structured.stackTrace.included) {
-                /*
-                 * For string rendering we're using the normal stack trace, but
-                 * for arrays we're only looking at first exception, not any causes
-                 * since that would mean we'd have to look at possible circular references
-                 */
-                if (this.config.structured.stackTrace.rendering == StackTraceRendering.STRING) {
-                    // render as a standard out string
-                    StringWriter sw = new StringWriter(1024);
-                    PrintWriter pw = new PrintWriter(sw);
-                    thrown.printStackTrace(pw);
-                    pw.flush();
-                    error.put("stack_trace", sw.toString());
-                } else {
-                    error.put("stack_trace",
-                            new StackTraceArrayRenderer(this.config.structured.stackTrace.elementRendering).format(thrown));
-                }
+                // render as a standard out string
+                StringWriter sw = new StringWriter(1024);
+                PrintWriter pw = new PrintWriter(sw);
+                thrown.printStackTrace(pw);
+                pw.flush();
+                error.put("stack_trace", sw.toString());
             }
         }
     }

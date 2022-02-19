@@ -163,7 +163,7 @@ public class LoggingHandler extends ExtHandler {
         this.defaultWriteOptions = Arc.container().instance(WriteOptionsHolder.class).get().getOptions();
     }
 
-    // return false if the container is shut down
+    // return false if the CDI is shut down
     private boolean initLogger() {
         ArcContainer container = Arc.container();
         if (container != null) {

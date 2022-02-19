@@ -41,7 +41,7 @@ public class LoggingConfiguration {
     public Optional<Synchronicity> synchronicity;
 
     /**
-     * Configure auto flush level. Allowed values: 
+     * Configure auto flush level. Allowed values:
      * DEBUG|INFO|WARN|ERROR|FATAL
      */
     @ConfigItem
@@ -157,20 +157,6 @@ public class LoggingConfiguration {
         @ConfigItem(defaultValue = "true")
         public boolean included;
 
-        /**
-         * Should stack traces be rendered as strings or arrays? Allowed
-         * values: ARRAY|STRING
-         */
-        @ConfigItem(defaultValue = "STRING")
-        public StackTraceRendering rendering;
-
-        /**
-         * If the stack is rendered as an array, what format should each
-         * stack frame have? Allowed values: OBJECT|STRING
-         */
-        @ConfigItem(defaultValue = "STRING")
-        public StackElementRendering elementRendering;
-
     }
 
     @ConfigGroup
@@ -206,16 +192,6 @@ public class LoggingConfiguration {
         public Severity getSeverity() {
             return severity;
         }
-    }
-
-    public enum StackTraceRendering {
-        STRING,
-        ARRAY
-    }
-
-    public enum StackElementRendering {
-        STRING,
-        OBJECT
     }
 
     public enum LogFormat {
