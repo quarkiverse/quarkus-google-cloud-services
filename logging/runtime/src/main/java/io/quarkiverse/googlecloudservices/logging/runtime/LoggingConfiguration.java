@@ -28,19 +28,21 @@ public class LoggingConfiguration {
 
     /**
      * Configure base formatting to be either plain text or
-     * structured json.
+     * structured json. Allowed values: TEXT|JSON
      */
     @ConfigItem(defaultValue = "TEXT")
     public LogFormat format;
 
     /**
-     * Configure GCP logging synchronicity.
+     * Configure GCP logging synchronicity. Allowed values:
+     * SYNC|ASYNC
      */
     @ConfigItem
     public Optional<Synchronicity> synchronicity;
 
     /**
-     * Configure auto flush level.
+     * Configure auto flush level. Allowed values: 
+     * DEBUG|INFO|WARN|ERROR|FATAL
      */
     @ConfigItem
     public Optional<ConfigLevel> flushLevel;
@@ -53,7 +55,9 @@ public class LoggingConfiguration {
 
     /**
      * Configured the monitored resource. Please consult the Google
-     * documentation for the correct values: https://cloud.google.com/logging/docs/api/v2/resource-list#resource-types
+     * documentation for the correct values.
+     * 
+     * @see https://cloud.google.com/logging/docs/api/v2/resource-list#resource-types
      */
     @ConfigItem
     public ResourceConfig resource;
@@ -154,14 +158,15 @@ public class LoggingConfiguration {
         public boolean included;
 
         /**
-         * Should stack traces be rendered as strings or arrays?
+         * Should stack traces be rendered as strings or arrays? Allowed
+         * values: ARRAY|STRING
          */
         @ConfigItem(defaultValue = "STRING")
         public StackTraceRendering rendering;
 
         /**
          * If the stack is rendered as an array, what format should each
-         * stack frame have?
+         * stack frame have? Allowed values: OBJECT|STRING
          */
         @ConfigItem(defaultValue = "STRING")
         public StackElementRendering elementRendering;
