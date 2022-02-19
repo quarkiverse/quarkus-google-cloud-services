@@ -1,4 +1,4 @@
-# Quarkiverse - Google Cloud Services - Common
+# Quarkus - Google Cloud Services - Common
 
 Common module for Google Cloud Services extensions.
 

@@ -21,7 +21,28 @@ that will use the default project detected via Application Default Credentials.
 
 All these extensions work with applications built as native image executables.
 
-These extensions work well within the various Google Cloud Functions extensions available inside Quarkus as they directly authenticate via the built-in credentials.
+These extensions work well within the various Google Cloud Functions extensions available inside Quarkus as they directly authenticate via the built-in credentials, see the https://quarkus.io/guides/deploying-to-google-cloud[deploying to google cloud platform] guide.
+
+[[dependency-management]]
+== Dependency management
+
+All Google Cloud services extensions are part of the Quarkus platform, if you're using the platform BOM (`io.quarkus.platform:quarkus-bom`) there is no need to manage their version.
+
+If you're not using the platform BOM, you can use the Google Cloud services BOM to manage all versions:
+[source,xml]
+----
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>io.quarkiverse.googlecloudservices</groupId>
+        <artifactId>quarkus-google-cloud-services-bom</artifactId>
+        <version>${quarkus.google-cloud-services.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+----
 
 [[authenticating]]
 == Authenticating to Google Cloud
@@ -42,10 +63,11 @@ but will be ignored if the `quarkus.google.cloud.accessTokenEnabled` property is
 * Credentials provided by the Google Cloud SDK `gcloud auth application-default login` command.
 * Google Cloud managed environment (Google App Engine, Google Cloud Functions, GCE, ...) built-in credentials.
 
-**Google PubSub and Google Bigtable must be authenticated using the `GOOGLE_APPLICATION_CREDENTIALS` environment variable only.**
+**Google PubSub and Google Bigtable should be authenticated using the `GOOGLE_APPLICATION_CREDENTIALS` environment variable,
+or use the provided `CredentialsProvider` when instantiating their objects.**
 
 [[emulators]]
-== Google Cloud services emulators: mocking Google Cloud credentials
+== Using Google Cloud services emulators
 
 If you plan to use one of the Google Cloud services emulators (for running on localhost, or for testing purpose), on a non-authenticated environment,
 you'll need to mock the Google Cloud authentication, and optionally the `CredentialsProvider` if you're using it (otherwise it will be removed by Quarkus CDI engine).
@@ -94,6 +116,6 @@ public class GoogleCredentialsMockProducer {
 
 Example applications can be found inside the integration-test folder of the GitHub repository:
 
-* https://github.com/quarkiverse/quarkus-google-cloud-services/integration-tests/main[main]: RESTEasy endpoints using all the Google Cloud Services extensions, to be deployed as a standalone JAR.
-* https://github.com/quarkiverse/quarkus-google-cloud-services/integration-tests/google-cloud-functions[google-cloud-functions]: A Google Cloud HTTP function using Google Cloud Storage.
-* https://github.com/quarkiverse/quarkus-google-cloud-services/integration-tests/app-engine[app-engine]: A RESTEasy endpoint using Google Cloud Storage, to be deployed inside Google App Engine.
+* https://github.com/quarkiverse/quarkus-google-cloud-services/tree/main/integration-tests/main[main]: RESTEasy endpoints using all the Google Cloud Services extensions, to be deployed as a standalone JAR.
+* https://github.com/quarkiverse/quarkus-google-cloud-services/tree/main/integration-tests/google-cloud-functions[google-cloud-functions]: A Google Cloud HTTP function using Google Cloud Storage.
+* https://github.com/quarkiverse/quarkus-google-cloud-services/tree/main/integration-tests/app-engine[app-engine]: A RESTEasy endpoint using Google Cloud Storage, to be deployed inside Google App Engine.

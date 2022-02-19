@@ -1,4 +1,4 @@
-# Quarkiverse - Google Cloud Services - Integration Tests - Google App Engine
+# Quarkus - Google Cloud Services - Integration Tests - Google App Engine
 
 This integration test show how to integrate Google Cloud Storage with Google App Engine.
 

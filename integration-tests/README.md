@@ -1,4 +1,4 @@
-# Quarkiverse - Google Cloud Services - Integration Tests 
+# Quarkus - Google Cloud Services - Integration Tests 
 
 The Google Cloud Services extensions are tested using the following integration tests:
 
