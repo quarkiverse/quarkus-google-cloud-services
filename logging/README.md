@@ -88,7 +88,7 @@ By setting the logging `format` to `JSON` this library will default to ECS forma
 official part of the ECS specification, these default to `parameters`  and `mdc` respectively, but this can be configured (see below).
 
 * `quarkus.google.cloud.logging.structured.stack-trace.included=[true|false]` - Should stack traces be included? Default to `true`
-* `quarkus.google.cloud.logging.structured.stack-trace.rendering=[array|string]` - Render stack traces as a strings or an arrays of objects, defaults to `string`
+* `quarkus.google.cloud.logging.structured.stack-trace.rendering=[array|string]` - Render stack traces as a strings or an array of objects, defaults to `string`
 * `quarkus.google.cloud.logging.structured.stack-trace.element-rendering=[string|object]` - How to render each stack trace element, defaults to `string`
 * `quarkus.google.cloud.logging.structured.parameters.included=[true|false]` - Should log record parameters be included? Defaults to `true`
 * `quarkus.google.cloud.logging.structured.parameters.field-name` - This is the field name to use in ESC for parameters, defaults to `parameters`
