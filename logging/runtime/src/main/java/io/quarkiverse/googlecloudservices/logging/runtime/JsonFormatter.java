@@ -5,12 +5,8 @@ import java.util.logging.ErrorManager;
 
 import org.jboss.logmanager.ExtLogRecord;
 
-import io.quarkiverse.googlecloudservices.logging.runtime.ecs.EscJsonFormat;
-
 /**
- * Formatter for structured logging. You should only bind a single
- * formatter in the CDI context. If no formatter is found in the context
- * the {@link EscJsonFormat} is used.
+ * Formatter for structured logging.
  */
 public interface JsonFormatter {
 

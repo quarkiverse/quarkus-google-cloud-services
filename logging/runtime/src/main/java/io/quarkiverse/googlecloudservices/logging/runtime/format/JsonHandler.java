@@ -11,8 +11,6 @@ import io.quarkiverse.googlecloudservices.logging.runtime.JsonFormatter;
 import io.quarkiverse.googlecloudservices.logging.runtime.LoggingConfiguration;
 import io.quarkiverse.googlecloudservices.logging.runtime.TraceInfo;
 import io.quarkiverse.googlecloudservices.logging.runtime.ecs.EscJsonFormat;
-import io.quarkus.arc.Arc;
-import io.quarkus.arc.InstanceHandle;
 
 public class JsonHandler implements InternalHandler {
 
@@ -23,14 +21,7 @@ public class JsonHandler implements InternalHandler {
     }
 
     private JsonFormatter createJsonFormatter(LoggingConfiguration config, ErrorManager errorManager) {
-        JsonFormatter form = null;
-        InstanceHandle<JsonFormatter> jsonFormat = Arc.container().instance(JsonFormatter.class);
-        if (jsonFormat.isAvailable()) {
-            form = jsonFormat.get();
-        } else {
-            form = EscJsonFormat.createFormatter();
-        }
-        // config formatter
+        JsonFormatter form = EscJsonFormat.createFormatter();
         form.init(config, errorManager);
         return form;
     }

@@ -95,45 +95,6 @@ official part of the ECS specification, these default to `parameters`  and `mdc`
 * `quarkus.google.cloud.logging.structured.mdc.included=[true|false]` - Should the MDC values be included? Defaults to `true`
 * `quarkus.google.cloud.logging.structured.mdc.field-name` - This is the field name to use in ESC for MDC values, defaults to `mdc`
 
-You can use a completely custom structured format by binding a `JsonFormatter` to the CDI context. For example, if you want to filter the 
-included parameters, you could do this: 
-
-```java
-package mypackage;
-
-import java.util.Map;
-import java.util.logging.ErrorManager;
-
-import javax.enterprise.context.ApplicationScoped;
-
-import org.jboss.logmanager.ExtLogRecord;
-
-import io.quarkiverse.googlecloudservices.logging.runtime.JsonFormatter;
-import io.quarkiverse.googlecloudservices.logging.runtime.LoggingConfiguration;
-import io.quarkiverse.googlecloudservices.logging.runtime.TraceInfo;
-import io.quarkiverse.googlecloudservices.logging.runtime.ecs.EscJsonFormat;
-
-@ApplicationScoped
-public class TestFormatter extends EscJsonFormat implements JsonFormatter {
-
-    @Override
-    public void init(LoggingConfiguration config, ErrorManager error) {
-        super.setLoggingConfiguration(config);
-        super.setErrorManager(error);
-    }
-
-    @Override
-    public Map<String, ?> format(ExtLogRecord record, TraceInfo trace) {
-        return super.toEsc(record, trace);
-    }
-
-    @Override
-    protected boolean shouldIncludeParameter(Object p) {
-        return !(p instanceof MyCustomParameterType);
-    }
-}
-```
-
 ### Resource type and labels
 You can configure the resource type and the resource labels. This is used by GCP operations as dimensions
 when analysing logs. Please refer to the [GCP documentation](https://cloud.google.com/logging/docs/api/v2/resource-list#resource-types) 
