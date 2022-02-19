@@ -1,4 +1,4 @@
-# Quarkiverse - Google Cloud Services - Integration Tests - Google Cloud Functions
+# Quarkus - Google Cloud Services - Integration Tests - Google Cloud Functions
 
 This integration test show how to integrate Google Cloud Storage with Google Cloud Functions.
 
