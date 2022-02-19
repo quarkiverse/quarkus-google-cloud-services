@@ -84,7 +84,7 @@ This logging system can either use a standard text based format, Elastic Common 
 * `quarkus.google.cloud.logging.format=[TEXT|JSON]`
 
 #### Structured Logging
-By setting the logging `format` to `JSON` this library will default to ECS format. As loca record parameters and MDC values are not
+By setting the logging `format` to `JSON` this library will default to ECS format. As local record parameters and MDC values are not
 official part of the ECS specification, these default to `parameters`  and `mdc` respectively, but this can be configured (see below).
 
 * `quarkus.google.cloud.logging.structured.stack-trace.included=[true|false]` - Should stack traces be included? Default to `true`
