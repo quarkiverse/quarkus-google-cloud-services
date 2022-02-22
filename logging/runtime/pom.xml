@@ -18,10 +18,6 @@
             <artifactId>quarkus-google-cloud-common</artifactId>
         </dependency>
         <dependency>
-            <groupId>io.quarkiverse.googlecloudservices</groupId>
-            <artifactId>quarkus-google-cloud-common-grpc</artifactId>
-        </dependency>
-        <dependency>
             <groupId>io.quarkus</groupId>
             <artifactId>quarkus-grpc-common</artifactId>
         </dependency>
