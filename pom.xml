@@ -37,6 +37,7 @@
         <module>firestore</module>
         <module>bigtable</module>
         <module>secret-manager</module>
+        <module>logging</module>
         <module>integration-tests</module>
     </modules>
 

@@ -18,6 +18,15 @@ import io.restassured.http.ContentType;
 public class GoogleServicesResourcesTest {
 
     @Test
+    public void testLogging() {
+        given()
+                .pathParam("payload", "World")
+                .when().get("/logging/{payload}")
+                .then().assertThat()
+                .statusCode(200);
+    }
+
+    @Test
     public void testBigQuery() {
         given()
                 .when().get("/bigquery")
