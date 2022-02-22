@@ -32,6 +32,9 @@ This will add the following to your pom.xml:
 </dependency>
 ```
 
+In order to run the project you need to add two mandatory properties - `quarkus.google.cloud.logging.default-log` and 
+`quarkus.google.cloud.project-id` to your `application.properties`, see "Configuration" below
+
 ## How-to: Log
 When configured, all that is needed is to log data as you wish. You can use `JUL`, `jboss-logging` or `Slf4j`, or even GCP logging directly. You can also 
 inject the logger to use, so for example: 
