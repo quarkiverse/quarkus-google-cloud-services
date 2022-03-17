@@ -13,7 +13,7 @@ First, we need a new project.Create a new project with the following command (re
 mvn io.quarkus:quarkus-maven-plugin:<quarkusVersion>:create \
     -DprojectGroupId=org.acme \
     -DprojectArtifactId=bigquery-quickstart \
-    -Dextensions="resteasy-jackson,quarkus-google-cloud-storage"
+    -Dextensions="resteasy-reactive-jackson,quarkus-google-cloud-storage"
 cd storage-quickstart
 ----
 

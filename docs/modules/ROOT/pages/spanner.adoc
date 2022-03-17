@@ -13,7 +13,7 @@ First, we need a new project.Create a new project with the following command (re
 mvn io.quarkus:quarkus-maven-plugin:<quarkusVersion>:create \
     -DprojectGroupId=org.acme \
     -DprojectArtifactId=spanner-quickstart \
-    -Dextensions="resteasy-jackson,quarkus-google-cloud-spanner"
+    -Dextensions="resteasy-reactive-jackson,quarkus-google-cloud-spanner"
 cd spanner-quickstart
 ----
 
