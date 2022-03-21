@@ -22,7 +22,7 @@
         <google-native-image-support.version>0.12.10</google-native-image-support.version>
         <!-- Dependency convergence issues -->
         <opencensus.version>0.31.0</opencensus.version><!-- mess in google-pubsub and grpc deps; should be rather stable as OpenCensus has been sunsetted already - see https://github.com/GoogleCloudPlatform/cloud-opensource-java/issues/862 -->
-        <threeten.version>1.5.2</threeten.version><!-- mess in google-cloud-core transitive deps -->
+        <threeten.version>1.6.0</threeten.version><!-- mess in google-cloud-core transitive deps -->
     </properties>
 
     <dependencyManagement>
