@@ -12,6 +12,7 @@ import io.quarkus.deployment.annotations.ExecutionTime;
 import io.quarkus.deployment.annotations.Record;
 import io.quarkus.deployment.builditem.BootstrapConfigSetupCompleteBuildItem;
 import io.quarkus.deployment.builditem.ExtensionSslNativeSupportBuildItem;
+import io.quarkus.deployment.builditem.nativeimage.NativeImageConfigBuildItem;
 
 public class CommonBuildSteps {
 
@@ -32,5 +33,18 @@ public class CommonBuildSteps {
     @Consume(BootstrapConfigSetupCompleteBuildItem.class)
     public void configure(GcpCredentialRecorder recorder, GcpBootstrapConfiguration bootstrapConfiguration) {
         recorder.configure(bootstrapConfiguration);
+    }
+
+    /**
+     * Work around for https://github.com/quarkusio/quarkus/issues/25501 until
+     * https://github.com/oracle/graal/issues/4543 gets resolved
+     *
+     * @return
+     */
+    @BuildStep
+    public NativeImageConfigBuildItem nativeImageConfiguration() {
+        NativeImageConfigBuildItem.Builder builder = NativeImageConfigBuildItem.builder()
+                .addRuntimeReinitializedClass("com.sun.management.internal.PlatformMBeanProviderImpl");
+        return builder.build();
     }
 }
