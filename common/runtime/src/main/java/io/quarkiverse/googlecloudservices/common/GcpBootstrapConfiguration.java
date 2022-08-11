@@ -13,9 +13,16 @@ import io.quarkus.runtime.annotations.ConfigRoot;
  */
 @ConfigRoot(name = "google.cloud", phase = ConfigPhase.BOOTSTRAP)
 public class GcpBootstrapConfiguration {
+
+    /**
+     * Enable or disable metadata server access to retrieve configuration options (projectId, region...).
+     */
+    @ConfigItem()
+    public boolean enableMetadataServer = true;
+
     /**
      * Google Cloud project ID.
-     * It defaults to `ServiceOptions.getDefaultProjectId()`,
+     * It defaults to `ServiceOptions.getDefaultProjectId()` if enableMetadataServer is set to true (which is the default),
      * so to the project ID corresponding to the default credentials if the default credentials are set, otherwise null.
      */
     @ConfigItem(defaultValueDocumentation = "ServiceOptions.getDefaultProjectId()")
