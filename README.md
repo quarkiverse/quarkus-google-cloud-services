@@ -1,6 +1,6 @@
 # Quarkiverse - Quarkus Google Cloud Services
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-10-orange.svg?style=flat-square)](#contributors-)
+[![All Contributors](https://img.shields.io/badge/all_contributors-11-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 [![version](https://img.shields.io/maven-central/v/io.quarkiverse.googlecloudservices/quarkus-google-cloud-services-bom)](https://repo1.maven.org/maven2/io/quarkiverse/googlecloudservices/)
 [![Build](https://github.com/quarkiverse/quarkus-google-cloud-services/workflows/Build/badge.svg)](https://github.com/quarkiverse/quarkus-google-cloud-services/actions?query=workflow%3ABuild)
@@ -51,6 +51,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
     <td align="center"><a href="https://twitter.com/ppalaga"><img src="https://avatars.githubusercontent.com/u/1826249?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Peter Palaga</b></sub></a><br /><a href="https://github.com/quarkiverse/quarkus-google-cloud-services/commits?author=ppalaga" title="Code">💻</a></td>
     <td align="center"><a href="https://github.com/yatho"><img src="https://avatars.githubusercontent.com/u/6213245?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Yann-Thomas LE MOIGNE</b></sub></a><br /><a href="https://github.com/quarkiverse/quarkus-google-cloud-services/commits?author=yatho" title="Documentation">📖</a></td>
     <td align="center"><a href="https://lesincroyableslivres.fr/"><img src="https://avatars.githubusercontent.com/u/1279749?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Guillaume Smet</b></sub></a><br /><a href="https://github.com/quarkiverse/quarkus-google-cloud-services/commits?author=gsmet" title="Documentation">📖</a> <a href="https://github.com/quarkiverse/quarkus-google-cloud-services/commits?author=gsmet" title="Code">💻</a></td>
+    <td align="center"><a href="https://github.com/lucaspouzac"><img src="https://avatars.githubusercontent.com/u/758899?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Lucas Pouzac</b></sub></a><br /><a href="https://github.com/quarkiverse/quarkus-google-cloud-services/commits?author=lucaspouzac" title="Code">💻</a></td>
   </tr>
 </table>
 
