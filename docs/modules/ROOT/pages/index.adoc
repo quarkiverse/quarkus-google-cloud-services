@@ -4,6 +4,7 @@ The Google Cloud Services extension pack provides Quarkus extensions for the fol
 
 * xref:bigquery.adoc[BigQuery]
 * xref:bigtable.adoc[BigTable]
+* xref:firebase-admin.adoc[Firebase Admin]
 * xref:firestore.adoc[Firestore]
 * xref:pubsub.adoc[PubSub]
 * xref:secretmanager.adoc[SecretManager]
@@ -119,3 +120,4 @@ Example applications can be found inside the integration-test folder of the GitH
 * https://github.com/quarkiverse/quarkus-google-cloud-services/tree/main/integration-tests/main[main]: RESTEasy endpoints using all the Google Cloud Services extensions, to be deployed as a standalone JAR.
 * https://github.com/quarkiverse/quarkus-google-cloud-services/tree/main/integration-tests/google-cloud-functions[google-cloud-functions]: A Google Cloud HTTP function using Google Cloud Storage.
 * https://github.com/quarkiverse/quarkus-google-cloud-services/tree/main/integration-tests/app-engine[app-engine]: A RESTEasy endpoint using Google Cloud Storage, to be deployed inside Google App Engine.
+* https://github.com/quarkiverse/quarkus-google-cloud-services/tree/main/integration-tests/firebase-admin[firebase-admin]: RESTEasy endpoints using Firebase Admin SDK features, such as user management.

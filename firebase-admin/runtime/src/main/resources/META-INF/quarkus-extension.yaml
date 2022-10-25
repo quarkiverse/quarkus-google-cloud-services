@@ -1,0 +1,12 @@
+---
+name: "Google Cloud Firebase Auth"
+metadata:
+  keywords:
+  - "firebase"
+  - "google cloud"
+  - "gcloud"
+  - "gcp"
+  categories:
+  - "cloud"
+  - "data"
+  status: "experimental"

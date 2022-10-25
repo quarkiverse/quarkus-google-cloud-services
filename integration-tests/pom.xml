@@ -33,6 +33,7 @@
             <modules>
                 <module>google-cloud-functions</module>
                 <module>app-engine</module>
+                <module>firebase-admin</module>
             </modules>
         </profile>
     </profiles>
