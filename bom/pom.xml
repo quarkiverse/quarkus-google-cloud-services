@@ -97,7 +97,17 @@
                 <artifactId>quarkus-google-cloud-storage-deployment</artifactId>
                 <version>${project.version}</version>
             </dependency>
-            <dependency>
+	    <dependency>
+		    <groupId>io.quarkiverse.googlecloudservices</groupId>
+		    <artifactId>quarkus-google-cloud-translate</artifactId>
+		    <version>${project.version}</version>
+            </dependency>
+	    <dependency>
+		    <groupId>io.quarkiverse.googlecloudservices</groupId>
+		    <artifactId>quarkus-google-cloud-translate-deployment</artifactId>
+		    <version>${project.version}</version>
+            </dependency>
+	    <dependency>
                 <groupId>io.quarkiverse.googlecloudservices</groupId>
                 <artifactId>quarkus-google-cloud-pubsub</artifactId>
                 <version>${project.version}</version>

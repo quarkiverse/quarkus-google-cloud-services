@@ -1,0 +1,10 @@
+---
+name: "Google Cloud Translate"
+metadata:
+  keywords:
+  - "translate"
+  - "google cloud"
+  - "gcloud"
+  categories:
+  - "cloud"
+  status: "experimental"

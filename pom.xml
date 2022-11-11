@@ -33,7 +33,8 @@
         <module>pubsub</module>
         <module>spanner</module>
         <module>storage</module>
-        <module>firestore</module>
+        <module>translate</module>
+	<module>firestore</module>
         <module>bigtable</module>
         <module>secret-manager</module>
         <module>integration-tests</module>
