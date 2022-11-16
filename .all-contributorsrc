@@ -106,6 +106,15 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "bernardocoferre",
+      "name": "Bernardo Coferre",
+      "avatar_url": "https://avatars.githubusercontent.com/u/4994556?v=4",
+      "profile": "https://github.com/bernardocoferre",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,
@@ -113,5 +122,6 @@
   "projectOwner": "quarkiverse",
   "repoType": "github",
   "repoHost": "https://github.com",
-  "skipCi": true
+  "skipCi": true,
+  "commitConvention": "angular"
 }
