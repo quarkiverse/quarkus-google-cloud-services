@@ -4,6 +4,7 @@
 ** xref:index.adoc#examples[Example applications]
 * xref:bigquery.adoc[BigQuery]
 * xref:bigtable.adoc[BigTable]
+* xref:firebase-admin.adoc[Firebase Admin]
 * xref:firestore.adoc[Firestore]
 * xref:pubsub.adoc[PubSub]
 * xref:secretmanager.adoc[SecretManager]
