@@ -13,6 +13,7 @@ You can find the documentation in the [Google Cloud Services Quarkiverse documen
 The following services are implemented:
 - [BigQuery](bigquery)
 - [Bigtable](bigtable)
+- [Firebase Admin](firebase-admin)
 - [Firestore](firestore)
 - [PubSub](pubsub)
 - [Secret Manager](secret-manager)
@@ -25,6 +26,7 @@ Example applications can be found inside the integration-test folder:
 - [main](integration-tests/main): RESTEasy endpoints using all the Google Cloud Services extensions, to be deployed as a standalone JAR.
 - [google-cloud-functions](integration-tests/google-cloud-functions): A Google Cloud HTTP function using Google Cloud Storage. 
 - [app-engine](integration-tests/app-engine): A RESTEasy endpoint using Google Cloud Storage, to be deployed inside Google App Engine.
+- [firebase-admin](integration-tests/firebase-admin): RESTEasy endpoints using Firebase Admin SDK features, such as user management.
     
 ## Contributing
 
