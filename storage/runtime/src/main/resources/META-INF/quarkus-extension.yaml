@@ -8,4 +8,4 @@ metadata:
   - "gcp"
   categories:
   - "cloud"
-  status: "experimental"
+  status: "preview"
