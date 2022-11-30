@@ -1,6 +1,6 @@
 # Quarkiverse - Quarkus Google Cloud Services
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-12-orange.svg?style=flat-square)](#contributors-)
+[![All Contributors](https://img.shields.io/badge/all_contributors-13-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 [![version](https://img.shields.io/maven-central/v/io.quarkiverse.googlecloudservices/quarkus-google-cloud-services-bom)](https://repo1.maven.org/maven2/io/quarkiverse/googlecloudservices/)
 [![Build](https://github.com/quarkiverse/quarkus-google-cloud-services/workflows/Build/badge.svg)](https://github.com/quarkiverse/quarkus-google-cloud-services/actions?query=workflow%3ABuild)
@@ -56,6 +56,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
       <td align="center"><a href="https://lesincroyableslivres.fr/"><img src="https://avatars.githubusercontent.com/u/1279749?v=4?s=100" width="100px;" alt="Guillaume Smet"/><br /><sub><b>Guillaume Smet</b></sub></a><br /><a href="https://github.com/quarkiverse/quarkus-google-cloud-services/commits?author=gsmet" title="Documentation">📖</a> <a href="https://github.com/quarkiverse/quarkus-google-cloud-services/commits?author=gsmet" title="Code">💻</a></td>
       <td align="center"><a href="https://github.com/lucaspouzac"><img src="https://avatars.githubusercontent.com/u/758899?v=4?s=100" width="100px;" alt="Lucas Pouzac"/><br /><sub><b>Lucas Pouzac</b></sub></a><br /><a href="https://github.com/quarkiverse/quarkus-google-cloud-services/commits?author=lucaspouzac" title="Code">💻</a></td>
       <td align="center"><a href="https://github.com/bernardocoferre"><img src="https://avatars.githubusercontent.com/u/4994556?v=4?s=100" width="100px;" alt="Bernardo Coferre"/><br /><sub><b>Bernardo Coferre</b></sub></a><br /><a href="https://github.com/quarkiverse/quarkus-google-cloud-services/commits?author=bernardocoferre" title="Code">💻</a></td>
+      <td align="center"><a href="https://github.com/zanmagerl"><img src="https://avatars.githubusercontent.com/u/36709679?v=4?s=100" width="100px;" alt="Žan Magerl"/><br /><sub><b>Žan Magerl</b></sub></a><br /><a href="https://github.com/quarkiverse/quarkus-google-cloud-services/commits?author=zanmagerl" title="Code">💻</a></td>
     </tr>
   </tbody>
 </table>
