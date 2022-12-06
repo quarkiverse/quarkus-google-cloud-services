@@ -9,6 +9,7 @@ import io.quarkus.arc.deployment.AdditionalBeanBuildItem;
 import io.quarkus.deployment.annotations.BuildStep;
 import io.quarkus.deployment.annotations.Consume;
 import io.quarkus.deployment.annotations.ExecutionTime;
+import io.quarkus.deployment.annotations.Produce;
 import io.quarkus.deployment.annotations.Record;
 import io.quarkus.deployment.builditem.BootstrapConfigSetupCompleteBuildItem;
 import io.quarkus.deployment.builditem.ExtensionSslNativeSupportBuildItem;
@@ -31,6 +32,7 @@ public class CommonBuildSteps {
     @BuildStep
     @Record(ExecutionTime.RUNTIME_INIT)
     @Consume(BootstrapConfigSetupCompleteBuildItem.class)
+    @Produce(GcpConfigurationDoneBuildItem.class)
     public void configure(GcpCredentialRecorder recorder, GcpBootstrapConfiguration bootstrapConfiguration) {
         recorder.configure(bootstrapConfiguration);
     }
