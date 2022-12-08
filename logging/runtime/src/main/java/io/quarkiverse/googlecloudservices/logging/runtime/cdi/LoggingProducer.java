@@ -1,9 +1,9 @@
 package io.quarkiverse.googlecloudservices.logging.runtime.cdi;
 
-import javax.enterprise.inject.Default;
-import javax.enterprise.inject.Produces;
-import javax.inject.Inject;
-import javax.inject.Singleton;
+import jakarta.enterprise.inject.Default;
+import jakarta.enterprise.inject.Produces;
+import jakarta.inject.Inject;
+import jakarta.inject.Singleton;
 
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.cloud.logging.Logging;
