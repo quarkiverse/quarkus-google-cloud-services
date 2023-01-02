@@ -58,7 +58,7 @@ The current authentication flow is as follows:
 * Check the access token returned as part of OpenId Connect Authorization Code Grant response after a user has authenticated with
 Google OpenId Connect provider (see https://quarkus.io/guides/security-openid-connect-web-authentication[Quarkus OpenId Connect for Web Applications]).
 This access token can be used to access Google Services on behalf of the currently authenticated user
-but will be ignored if the `quarkus.google.cloud.accessTokenEnabled` property is set to `false`.
+but will be ignored if the `quarkus.google.cloud.access-token-enabled` property is set to `false`.
 * Use `GoogleCredentials.getApplicationDefault()` that will search for credentials in multiple places:
 * Credentials file pointed to by the `GOOGLE_APPLICATION_CREDENTIALS` environment variable.
 * Credentials provided by the Google Cloud SDK `gcloud auth application-default login` command.

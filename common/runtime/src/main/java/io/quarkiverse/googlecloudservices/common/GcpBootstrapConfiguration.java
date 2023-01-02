@@ -22,7 +22,8 @@ public class GcpBootstrapConfiguration {
 
     /**
      * Google Cloud project ID.
-     * It defaults to `ServiceOptions.getDefaultProjectId()` if enableMetadataServer is set to true (which is the default),
+     * It defaults to `ServiceOptions.getDefaultProjectId()` if `google.cloud.enable-metadata-server` is set to true (which is
+     * the default),
      * so to the project ID corresponding to the default credentials if the default credentials are set, otherwise null.
      */
     @ConfigItem(defaultValueDocumentation = "ServiceOptions.getDefaultProjectId()")
