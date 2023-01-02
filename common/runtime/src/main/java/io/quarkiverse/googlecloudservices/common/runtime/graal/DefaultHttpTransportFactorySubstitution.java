@@ -11,8 +11,8 @@ import com.oracle.svm.core.annotate.TargetClass;
 public final class DefaultHttpTransportFactorySubstitution {
     @Substitute
     public HttpTransport create() {
-        // Appengine HttpTransport didn't works on native image.
-        // Anyway, appengine don't allow to deploy native image on it so it's not an issue.
+        // AppEngine HttpTransport didn't work on native image.
+        // Anyway, AppEngine don't allow to deploy native image on it, so it's not an issue.
         return new NetHttpTransport();
     }
 

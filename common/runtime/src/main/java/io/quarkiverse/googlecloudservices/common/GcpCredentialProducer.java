@@ -70,8 +70,8 @@ public class GcpCredentialProducer {
         try {
             return securityIdentity.isAnonymous();
         } catch (ContextNotActiveException e) {
-            // this is less than ideal but currently when the credential il returned out of a request context
-            // (for eg at configuration time for a config source) this exceptin can arise.
+            // this is less than ideal but currently when the credential is returned out of a request context
+            // (for eg at configuration time for a config source) this exception can arise.
             return true;
         }
     }

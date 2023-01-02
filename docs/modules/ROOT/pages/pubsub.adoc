@@ -176,7 +176,7 @@ public class PubSubResource {
             Optional<Subscription> existing = StreamSupport.stream(subscriptions.spliterator(), false)
                     .filter(sub -> sub.getName().equals(subscriptionName.toString()))
                     .findFirst();
-            if (!existing.isPresent()) {
+            if (existing.isEmpty()) {
                 subscriptionAdminClient.createSubscription(subscriptionName, topicName, PushConfig.getDefaultInstance(), 0);
             }
         }
