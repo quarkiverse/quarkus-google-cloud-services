@@ -10,7 +10,7 @@ public interface TraceInfoExtractor {
 
     /**
      * Extract trace information for a log record.
-     * 
+     *
      * @param record Record to extract info from, never null
      * @return Trace information, may return null
      */

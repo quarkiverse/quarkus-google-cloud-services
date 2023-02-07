@@ -15,7 +15,7 @@ import io.quarkiverse.googlecloudservices.logging.runtime.LoggingConfiguration;
 import io.quarkus.arc.Unremovable;
 
 /**
- * Defautl write options producer.
+ * Default write options producer.
  */
 @Singleton
 public class WriteOptionsProducer {

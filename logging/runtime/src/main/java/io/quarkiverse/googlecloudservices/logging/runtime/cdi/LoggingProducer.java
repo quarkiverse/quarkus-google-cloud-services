@@ -41,7 +41,7 @@ public class LoggingProducer {
                 .setProjectId(projectId)
                 .build()
                 .getService();
-        // check auto-flush and synchronizity 
+        // check auto-flush and synchronicity
         loggingConfig.flushLevel.ifPresent(level -> log.setFlushSeverity(level.getSeverity()));
         loggingConfig.synchronicity.ifPresent(sync -> log.setWriteSynchronicity(sync));
         return log;

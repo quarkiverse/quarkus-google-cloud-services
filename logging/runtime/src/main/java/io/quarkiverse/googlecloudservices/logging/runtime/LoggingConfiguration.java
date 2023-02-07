@@ -56,7 +56,7 @@ public class LoggingConfiguration {
     /**
      * Configured the monitored resource. Please consult the Google
      * documentation for the correct values.
-     * 
+     *
      * @see https://cloud.google.com/logging/docs/api/v2/resource-list#resource-types
      */
     @ConfigItem
