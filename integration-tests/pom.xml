@@ -19,6 +19,7 @@
     <!-- Only the main IT here, other will be added via profile to avoid running them while deploying -->
     <modules>
         <module>main</module>
+        <module>smallrye-reactive-messaging-pubsub</module>
     </modules>
 
     <profiles>
