@@ -21,7 +21,7 @@ public class LoggingConfiguration {
     public String defaultLog;
 
     /**
-     * Enable or disable the Goocle Cloud logging.
+     * Enable or disable the Google Cloud logging.
      */
     @ConfigItem(defaultValue = "true")
     public boolean enabled;

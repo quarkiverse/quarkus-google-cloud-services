@@ -15,43 +15,28 @@ import org.jboss.logmanager.ExtLogRecord;
 
 import com.google.common.base.Strings;
 
-import io.quarkiverse.googlecloudservices.logging.runtime.JsonFormatter;
 import io.quarkiverse.googlecloudservices.logging.runtime.LoggingConfiguration;
 import io.quarkiverse.googlecloudservices.logging.runtime.TraceInfo;
 import io.quarkiverse.googlecloudservices.logging.runtime.util.SimpleFormatter;
 
 /**
- * This is the base class for the ESC json formatter. For small adjustments
- * such as parameter filtering, override this class, implement {@link org.jboss.logmanager.formatters.JsonFormatter}
- * and bind to CDI.
+ * This is the ESC json formatter.
  */
 public class EscJsonFormat {
 
     private static final SimpleFormatter MSG_FORMAT = new SimpleFormatter();
 
-    /**
-     * Create a formatter instance.
-     */
-    public static JsonFormatter createFormatter() {
-        return new JsonFormatter() {
-
-            private EscJsonFormat formatter = new EscJsonFormat();
-
-            @Override
-            public Map<String, ?> format(ExtLogRecord record, TraceInfo tracing) {
-                return formatter.toEsc(record, tracing);
-            }
-
-            @Override
-            public void init(LoggingConfiguration config, ErrorManager errorManager) {
-                formatter.setLoggingConfiguration(config);
-                formatter.setErrorManager(errorManager);
-            }
-        };
-    }
-
     protected LoggingConfiguration config;
     protected ErrorManager errorManager;
+
+    public Map<String, ?> format(ExtLogRecord record, TraceInfo tracing) {
+        return toEsc(record, tracing);
+    }
+
+    public void init(LoggingConfiguration config, ErrorManager errorManager) {
+        this.setLoggingConfiguration(config);
+        this.setErrorManager(errorManager);
+    }
 
     public void setLoggingConfiguration(LoggingConfiguration config) {
         this.config = config;

@@ -7,21 +7,20 @@ import org.jboss.logmanager.ExtLogRecord;
 
 import com.google.cloud.logging.Payload;
 
-import io.quarkiverse.googlecloudservices.logging.runtime.JsonFormatter;
 import io.quarkiverse.googlecloudservices.logging.runtime.LoggingConfiguration;
 import io.quarkiverse.googlecloudservices.logging.runtime.TraceInfo;
 import io.quarkiverse.googlecloudservices.logging.runtime.ecs.EscJsonFormat;
 
 public class JsonHandler implements InternalHandler {
 
-    private final JsonFormatter jsonFormat;
+    private final EscJsonFormat jsonFormat;
 
     public JsonHandler(LoggingConfiguration config, ErrorManager errorManager) {
         this.jsonFormat = createJsonFormatter(config, errorManager);
     }
 
-    private JsonFormatter createJsonFormatter(LoggingConfiguration config, ErrorManager errorManager) {
-        JsonFormatter form = EscJsonFormat.createFormatter();
+    private EscJsonFormat createJsonFormatter(LoggingConfiguration config, ErrorManager errorManager) {
+        EscJsonFormat form = new EscJsonFormat();
         form.init(config, errorManager);
         return form;
     }

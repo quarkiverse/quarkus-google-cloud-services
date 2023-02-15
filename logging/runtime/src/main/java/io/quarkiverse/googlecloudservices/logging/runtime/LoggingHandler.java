@@ -29,7 +29,7 @@ public class LoggingHandler extends ExtHandler {
 
     // lazy values, they depend on the gcp config which in turn
     // depend on runtime configuration - not build time
-    private Logging log;
+    private volatile Logging log;
     private WriteOption[] defaultWriteOptions;
     private InternalHandler internalHandler;
     private TraceInfoExtractor traceExtractor;

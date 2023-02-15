@@ -1,6 +1,5 @@
 package io.quarkiverse.googlecloudservices.logging.deployment;
 
-import io.quarkiverse.googlecloudservices.logging.runtime.JsonFormatter;
 import io.quarkiverse.googlecloudservices.logging.runtime.LoggingConfiguration;
 import io.quarkiverse.googlecloudservices.logging.runtime.TraceInfoExtractor;
 import io.quarkiverse.googlecloudservices.logging.runtime.cdi.LoggingProducer;
@@ -30,7 +29,6 @@ public class LoggingBuildSteps {
     @BuildStep
     public UnremovableBeanBuildItem helperClasses() {
         return UnremovableBeanBuildItem.beanTypes(
-                JsonFormatter.class,
                 TraceInfoExtractor.class,
                 LoggingConfiguration.class);
     }
