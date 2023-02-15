@@ -112,7 +112,7 @@ public class GoogleCredentialsMockProducer {
 }
 ----
 
-[examples]
+[[examples]]
 == Example applications
 
 Example applications can be found inside the integration-test folder of the GitHub repository:
