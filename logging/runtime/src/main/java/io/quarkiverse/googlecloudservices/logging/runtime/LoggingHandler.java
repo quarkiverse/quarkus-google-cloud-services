@@ -1,9 +1,5 @@
 package io.quarkiverse.googlecloudservices.logging.runtime;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.logging.ErrorManager;
 
@@ -25,7 +21,6 @@ import io.quarkiverse.googlecloudservices.logging.runtime.format.TextHandler;
 import io.quarkiverse.googlecloudservices.logging.runtime.util.LevelTransformer;
 import io.quarkus.arc.Arc;
 import io.quarkus.arc.ArcContainer;
-import io.quarkus.arc.InjectableInstance;
 import io.quarkus.arc.InstanceHandle;
 
 public class LoggingHandler extends ExtHandler {
@@ -35,10 +30,8 @@ public class LoggingHandler extends ExtHandler {
     // lazy values, they depend on the gcp config which in turn
     // depend on runtime configuration - not build time
     private Logging log;
-    private String projectId;
     private WriteOption[] defaultWriteOptions;
     private InternalHandler internalHandler;
-    private List<LabelExtractor> extractors;
     private TraceInfoExtractor traceExtractor;
 
     public LoggingHandler(LoggingConfiguration config) {
@@ -76,11 +69,9 @@ public class LoggingHandler extends ExtHandler {
     private LogEntry transform(ExtLogRecord record, TraceInfo trace) {
         Payload<?> payload = internalHandler.transform(record, trace);
         if (payload != null) {
-            Map<String, String> labels = extractLabels(record);
             com.google.cloud.logging.LogEntry.Builder builder = LogEntry.newBuilder(payload)
                     .setSeverity(LevelTransformer.toSeverity(record.getLevel()))
-                    .setTimestamp(record.getInstant())
-                    .setLabels(labels);
+                    .setTimestamp(record.getInstant());
             if (this.config.gcpTracing.enabled && trace != null && !Strings.isNullOrEmpty(trace.getTraceId())) {
                 builder = builder.setTrace(composeTraceString(trace.getTraceId()));
             }
@@ -91,22 +82,7 @@ public class LoggingHandler extends ExtHandler {
     }
 
     private String composeTraceString(String traceId) {
-        return String.format("projects/%s/traces/%s", this.config.gcpTracing.projectId.orElse(projectId), traceId);
-    }
-
-    private Map<String, String> extractLabels(ExtLogRecord record) {
-        if (this.extractors.isEmpty()) {
-            return Collections.emptyMap();
-        } else {
-            Map<String, String> m = new HashMap<>(5);
-            this.extractors.forEach(e -> {
-                Map<String, String> extra = e.extract(record);
-                if (extra != null) {
-                    m.putAll(extra);
-                }
-            });
-            return m;
-        }
+        return String.format("projects/%s/traces/%s", this.config.gcpTracing.projectId.orElse(null), traceId);
     }
 
     @Override
@@ -128,8 +104,6 @@ public class LoggingHandler extends ExtHandler {
             initDefaultWriteOptions();
             // create json formatter
             initInternalHandler();
-            // init label extractors
-            initLabelExtractors();
             // init trace extractor
             initTraceExtractor();
         }
@@ -142,12 +116,6 @@ public class LoggingHandler extends ExtHandler {
         } else {
             this.internalHandler = new TextHandler();
         }
-    }
-
-    private void initLabelExtractors() {
-        this.extractors = new ArrayList<>();
-        InjectableInstance<LabelExtractor> handle = Arc.container().select(LabelExtractor.class);
-        handle.forEach(this.extractors::add);
     }
 
     private void initTraceExtractor() {

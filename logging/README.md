@@ -109,30 +109,6 @@ You can configure default labels for each log record:
 
 * `quarkus.google.cloud.logging.default-label.<string>` - This is a string map with key/value pairs
 
-You can also extract custom labels per record by binding a `LabelExtractor` to the CDI context, e.g.: 
-
-```java
-package mypackage;
-
-import javax.enterprise.context.ApplicationScoped;
-
-import org.jboss.logmanager.ExtLogRecord;
-
-import io.quarkiverse.googlecloudservices.logging.runtime.LabelExtractor;
-
-@ApplicationScoped
-public class TestLabelExtractor implements LabelExtractor {
-
-    public Map<String, String> extract(ExtLogRecord record) {
-        if (record.getParameters() == null) {
-            return null;
-        } else {
-            // do something smart here
-        }
-    }
-}
-```
-
 ### Tracing
 In order to include trace and span ID in the log you must bind a `TraceInfoExtractor` to the CDI context, e.g.:
 
