@@ -1,6 +1,7 @@
 package io.quarkiverse.googlecloudservices.it;
 
 import java.time.Instant;
+import java.util.List;
 
 import javax.inject.Inject;
 import javax.ws.rs.GET;
@@ -14,10 +15,8 @@ import org.slf4j.LoggerFactory;
 import com.google.cloud.logging.LogEntry;
 import com.google.cloud.logging.Payload;
 import com.google.cloud.logging.Severity;
-import com.google.common.collect.ImmutableList;
 
 import io.quarkiverse.googlecloudservices.it.logging.KeyValueParameter;
-import io.quarkiverse.googlecloudservices.logging.runtime.cdi.WriteOptionsHolder;
 
 @Path("/logging")
 public class LoggingResource {
@@ -31,9 +30,6 @@ public class LoggingResource {
 
     @Inject
     com.google.cloud.logging.Logging gcp;
-
-    @Inject
-    WriteOptionsHolder defaultOptions;
 
     @GET
     @Path("/{payload}")
@@ -51,10 +47,10 @@ public class LoggingResource {
     }
 
     private void writeGcp(String p) {
-        gcp.write(ImmutableList.of(LogEntry.newBuilder(Payload.StringPayload.of("Hello from GCP Logging " + p))
+        gcp.write(List.of(LogEntry.newBuilder(Payload.StringPayload.of("Hello from GCP Logging " + p))
                 .setSeverity(Severity.DEBUG)
                 .setTimestamp(Instant.now())
-                .build()), defaultOptions.getOptions());
+                .build()));
     }
 
     private void writeJBoss() {

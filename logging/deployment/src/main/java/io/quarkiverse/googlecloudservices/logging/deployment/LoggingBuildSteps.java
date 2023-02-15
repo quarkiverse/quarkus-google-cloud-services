@@ -4,7 +4,6 @@ import io.quarkiverse.googlecloudservices.logging.runtime.JsonFormatter;
 import io.quarkiverse.googlecloudservices.logging.runtime.LoggingConfiguration;
 import io.quarkiverse.googlecloudservices.logging.runtime.TraceInfoExtractor;
 import io.quarkiverse.googlecloudservices.logging.runtime.cdi.LoggingProducer;
-import io.quarkiverse.googlecloudservices.logging.runtime.cdi.WriteOptionsProducer;
 import io.quarkiverse.googlecloudservices.logging.runtime.recorder.LoggingHandlerFactory;
 import io.quarkus.arc.deployment.AdditionalBeanBuildItem;
 import io.quarkus.arc.deployment.UnremovableBeanBuildItem;
@@ -26,11 +25,6 @@ public class LoggingBuildSteps {
     @BuildStep
     public AdditionalBeanBuildItem logging() {
         return new AdditionalBeanBuildItem(LoggingProducer.class);
-    }
-
-    @BuildStep
-    public AdditionalBeanBuildItem writeOptions() {
-        return new AdditionalBeanBuildItem(WriteOptionsProducer.class);
     }
 
     @BuildStep

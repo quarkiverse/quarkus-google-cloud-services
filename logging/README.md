@@ -140,27 +140,25 @@ configurable:
 
 # Injecting GCP Logging
 You can inject a `Logging` instance directly. If you do, the configuration for the project to use,
-still apply. 
-
-If you want the configuration for default log, resource type and labels, and default labels, you can
-inject a `WriteOptionsHolder` which contains an array of default write options as configured. 
+still apply.
 
 ```java
-[...]
+import java.time.Instant;
+import java.util.List;
+
+import com.google.cloud.logging.Logging;
+import com.google.cloud.logging.LogEntry;
+import com.google.cloud.logging.Payload;
+import com.google.cloud.logging.Severity;
 
 @Inject
 Logging gcpLogging;
 
-@Inject
-WriteOptionsHolder defaultOptions;
 
 public void log(String s) {
-    gcp.write(ImmutableList.of(LogEntry.newBuilder(Payload.StringPayload.of(s))
+    gcpLogging.write(List.of(LogEntry.newBuilder(Payload.StringPayload.of(s))
         .setSeverity(Severity.DEBUG)
         .setTimestamp(Instant.now())
-        .build())
-    , defaultOptions.getOptions());
+        .build()));
 }
-
-[...]
 ```

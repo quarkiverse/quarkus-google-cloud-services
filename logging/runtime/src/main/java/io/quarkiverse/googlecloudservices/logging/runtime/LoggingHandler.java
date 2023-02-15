@@ -1,11 +1,12 @@
 package io.quarkiverse.googlecloudservices.logging.runtime;
 
-import java.util.Map;
+import java.util.Collections;
 import java.util.logging.ErrorManager;
 
 import org.jboss.logmanager.ExtHandler;
 import org.jboss.logmanager.ExtLogRecord;
 
+import com.google.cloud.MonitoredResource;
 import com.google.cloud.logging.LogEntry;
 import com.google.cloud.logging.Logging;
 import com.google.cloud.logging.Logging.WriteOption;
@@ -14,7 +15,6 @@ import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
 
 import io.quarkiverse.googlecloudservices.logging.runtime.LoggingConfiguration.LogFormat;
-import io.quarkiverse.googlecloudservices.logging.runtime.cdi.WriteOptionsHolder;
 import io.quarkiverse.googlecloudservices.logging.runtime.format.InternalHandler;
 import io.quarkiverse.googlecloudservices.logging.runtime.format.JsonHandler;
 import io.quarkiverse.googlecloudservices.logging.runtime.format.TextHandler;
@@ -128,7 +128,19 @@ public class LoggingHandler extends ExtHandler {
     }
 
     private void initDefaultWriteOptions() {
-        this.defaultWriteOptions = Arc.container().instance(WriteOptionsHolder.class).get().getOptions();
+        this.defaultWriteOptions = new WriteOption[] {
+                WriteOption.logName(this.config.defaultLog),
+                WriteOption.resource(createMonitoredResource()),
+                WriteOption.labels(this.config.defaultLabel == null ? Collections.emptyMap() : this.config.defaultLabel)
+        };
+    }
+
+    private MonitoredResource createMonitoredResource() {
+        MonitoredResource.Builder b = MonitoredResource.newBuilder(this.config.resource.type);
+        if (this.config.resource.label != null) {
+            this.config.resource.label.forEach((k, v) -> b.addLabel(k, v));
+        }
+        return b.build();
     }
 
     // return false if the CDI is shut down
