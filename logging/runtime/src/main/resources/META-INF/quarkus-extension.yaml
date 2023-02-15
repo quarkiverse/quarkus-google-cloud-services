@@ -1,0 +1,11 @@
+---
+name: "Google Cloud Logging"
+metadata:
+  keywords:
+  - "logging"
+  - "google cloud"
+  - "gcloud"
+  - "gcp"
+  categories:
+  - "cloud"
+  status: "experimental"

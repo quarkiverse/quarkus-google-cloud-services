@@ -6,6 +6,7 @@
 * xref:bigtable.adoc[BigTable]
 * xref:firebase-admin.adoc[Firebase Admin]
 * xref:firestore.adoc[Firestore]
+* xref:logging.adoc[Logging]
 * xref:pubsub.adoc[PubSub]
 * xref:secretmanager.adoc[SecretManager]
 * xref:spanner.adoc[Spanner]
