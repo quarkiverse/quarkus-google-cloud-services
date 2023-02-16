@@ -27,7 +27,6 @@ Example applications can be found inside the integration-test folder:
 - [main](integration-tests/main): RESTEasy endpoints using all the Google Cloud Services extensions, to be deployed as a standalone JAR.
 - [google-cloud-functions](integration-tests/google-cloud-functions): A Google Cloud HTTP function using Google Cloud Storage. 
 - [app-engine](integration-tests/app-engine): A RESTEasy endpoint using Google Cloud Storage, to be deployed inside Google App Engine.
-- [logging](integration-tests/logging): A single RESTEasy which demonstrates a custom JSON formatter and trace and label extraction. 
 - [firebase-admin](integration-tests/firebase-admin): RESTEasy endpoints using Firebase Admin SDK features, such as user management.
     
 ## Contributing
