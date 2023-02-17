@@ -5,7 +5,7 @@ import static io.restassured.RestAssured.given;
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.AfterAll;

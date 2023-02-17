@@ -2,7 +2,7 @@ package io.quarkiverse.googlecloudservices.it.logging;
 
 import java.util.UUID;
 
-import javax.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.context.ApplicationScoped;
 
 import org.jboss.logmanager.ExtLogRecord;
 
