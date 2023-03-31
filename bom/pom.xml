@@ -21,7 +21,7 @@
         <google-cloud-sdk.version>26.11.0</google-cloud-sdk.version>
         <!-- Dependency convergence issues -->
         <opencensus.version>0.31.1</opencensus.version><!-- mess in google-pubsub and grpc deps; should be rather stable as OpenCensus has been sunsetted already - see https://github.com/GoogleCloudPlatform/cloud-opensource-java/issues/862 -->
-        <threeten.version>1.6.6</threeten.version><!-- mess in google-cloud-core transitive deps -->
+        <threeten.version>1.6.8</threeten.version><!-- mess in google-cloud-core transitive deps -->
         <perfmark-api.version>0.26.0</perfmark-api.version><!-- mess in grpc-core and google-cloud-secretmanager-->
         <conscrypt-version>2.5.2</conscrypt-version><!-- mess in google-cloud-bigquery and the other google cloud lib-->
     </properties>
