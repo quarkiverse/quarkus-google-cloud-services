@@ -1,11 +1,10 @@
 package io.quarkiverse.googlecloudservices.firebase.admin.deployment.authentication;
 
-
 import io.quarkus.runtime.annotations.ConfigItem;
 import io.quarkus.runtime.annotations.ConfigPhase;
 import io.quarkus.runtime.annotations.ConfigRoot;
 
-@ConfigRoot(name = "google.cloud.firebase.auth", phase = ConfigPhase.RUN_TIME)
+@ConfigRoot(name = "google.cloud.firebase.auth", phase = ConfigPhase.BUILD_TIME)
 public class FirebaseAuthConfiguration {
 
     /**
