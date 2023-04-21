@@ -14,6 +14,7 @@
 
     <properties>
         <firebase-admin-sdk.version>9.1.1</firebase-admin-sdk.version>
+        <microprofile-jwt-auth-api.version>1.2.1</microprofile-jwt-auth-api.version>
     </properties>
 
     <dependencies>
@@ -37,6 +38,19 @@ quarkus-google-cloud-common-grpc and Quarkus includes the netty library -->
         <dependency>
             <groupId>io.quarkus</groupId>
             <artifactId>quarkus-grpc-common</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-vertx-http</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-security</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.microprofile.jwt</groupId>
+            <artifactId>microprofile-jwt-auth-api</artifactId>
+            <version>${microprofile-jwt-auth-api.version}</version>
         </dependency>
     </dependencies>
 
