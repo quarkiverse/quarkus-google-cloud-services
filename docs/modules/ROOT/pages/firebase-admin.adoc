@@ -83,40 +83,7 @@ Default value is `false`.
 
 === Example
 
-Firebase supports adding of custom claims to the JWT token.
-This can be used to secure your endpoints using the `@RolesAllowed` annotation.
-The following example shows how to use Firebase Authentication to secure an endpoint.
-
-[source,java]
-----
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseAuthException;
-import com.google.firebase.auth.UserRecord;
-import javax.inject.Inject;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
-
-@Path("/auth")
-public class FirebaseAuthResourceTest {
-
-    @Inject
-    FirebaseAuth firebaseAuth;
-
-    @GET
-    @Path("/users/{uid}")
-    @RolesAllowed("admin")
-    @Produces(MediaType.APPLICATION_JSON)
-    public UserRecord getUserById(@PathParam("uid") String uid) throws FirebaseAuthException {
-        return firebaseAuth.getUser(uid);
-    }
-
-}
-----
-
-Or if you want to access the user's claims you can use SecurityIdentity:
+If you want to access the user's claims you can use SecurityIdentity:
 
 [source,java]
 ----
