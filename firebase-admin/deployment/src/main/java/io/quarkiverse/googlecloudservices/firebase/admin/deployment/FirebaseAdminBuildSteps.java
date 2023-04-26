@@ -3,8 +3,6 @@ package io.quarkiverse.googlecloudservices.firebase.admin.deployment;
 import io.quarkiverse.googlecloudservices.firebase.admin.deployment.authentication.FirebaseAuthConfiguration;
 import io.quarkiverse.googlecloudservices.firebase.admin.runtime.FirebaseAdminProducer;
 import io.quarkiverse.googlecloudservices.firebase.admin.runtime.authentication.http.DefaultFirebaseIdentityProvider;
-import io.quarkiverse.googlecloudservices.firebase.admin.runtime.authentication.http.FirebaseAuthenticationRequest;
-import io.quarkiverse.googlecloudservices.firebase.admin.runtime.authentication.http.FirebasePrincipal;
 import io.quarkiverse.googlecloudservices.firebase.admin.runtime.authentication.http.FirebaseSecurityAuthMechanism;
 import io.quarkus.arc.deployment.AdditionalBeanBuildItem;
 import io.quarkus.deployment.annotations.BuildProducer;
@@ -33,11 +31,7 @@ public class FirebaseAdminBuildSteps {
 
         AdditionalBeanBuildItem.Builder builder = AdditionalBeanBuildItem.builder().setUnremovable();
 
-        builder.addBeanClass(DefaultFirebaseIdentityProvider.class)
-                .addBeanClass(FirebaseAuthenticationRequest.class)
-                .addBeanClass(FirebasePrincipal.class)
-                .addBeanClass(FirebaseSecurityAuthMechanism.class);
-
+        builder.addBeanClasses(DefaultFirebaseIdentityProvider.class, FirebaseSecurityAuthMechanism.class);
         additionalBeans.produce(builder.build());
     }
 }
