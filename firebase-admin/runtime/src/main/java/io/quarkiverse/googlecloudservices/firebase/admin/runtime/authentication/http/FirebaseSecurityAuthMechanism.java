@@ -2,12 +2,10 @@ package io.quarkiverse.googlecloudservices.firebase.admin.runtime.authentication
 
 import static io.vertx.ext.web.handler.impl.HTTPAuthorizationHandler.Type.BEARER;
 
-import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
-import jakarta.annotation.PostConstruct;
 import jakarta.enterprise.context.ApplicationScoped;
 
 import io.netty.handler.codec.http.HttpHeaderNames;
@@ -26,8 +24,16 @@ import io.vertx.ext.web.RoutingContext;
 @ApplicationScoped
 public class FirebaseSecurityAuthMechanism implements HttpAuthenticationMechanism {
 
+    // The set of supported credential types
+    static final Set<Class<? extends AuthenticationRequest>> credentialTypes = Set.of(FirebaseAuthenticationRequest.class);
+
+    // The prefix of the Authorization header
     private static final String BEARER_PREFIX = BEARER + " ";
+
+    // The lowercase version of the prefix of the Authorization header
     private static final String LOWERCASE_BASIC_PREFIX = BEARER_PREFIX.toLowerCase(Locale.ENGLISH);
+
+    // The length of the prefix of the Authorization header
     private static final int PREFIX_LENGTH = BEARER_PREFIX.length();
 
     /**
@@ -79,12 +85,6 @@ public class FirebaseSecurityAuthMechanism implements HttpAuthenticationMechanis
     @Override
     public Uni<ChallengeData> getChallenge(RoutingContext context) {
         return Uni.createFrom().nullItem();
-    }
-
-    static final Set<Class<? extends AuthenticationRequest>> credentialTypes = new HashSet<>();
-
-    static {
-        credentialTypes.add(FirebaseAuthenticationRequest.class);
     }
 
     /**

@@ -6,10 +6,9 @@ Be sure to have read the https://quarkiverse.github.io/quarkiverse-docs/quarkus-
 
 == Bootstrapping the project
 
-First, we need a new project.
-Create a new project with the following command (replace the version placeholder with the correct one):
+First, we need a new project. Create a new project with the following command (replace the version placeholder with the correct one):
 
-[source,shell script]
+[source, shell script]
 ----
 mvn io.quarkus:quarkus-maven-plugin:${quarkusVersion}:create \
     -DprojectGroupId=org.acme \
@@ -22,14 +21,14 @@ This command generates a Maven project, importing the Google Cloud Firebase Admi
 
 If you already have your Quarkus project configured, you can add the `quarkus-google-cloud-firebase-admin` extension to your project by running the following command in your project base directory:
 
-[source,shell script]
+[source, shell script]
 ----
 ./mvnw quarkus:add-extension -Dextensions="quarkus-google-cloud-firebase-admin"
 ----
 
 This will add the following to your pom.xml:
 
-[source,xml]
+[source, xml]
 ----
 <dependency>
     <groupId>io.quarkiverse.googlecloudservices</groupId>
@@ -41,7 +40,7 @@ This will add the following to your pom.xml:
 
 This is an example usage of the extension: we create a REST resource with a single endpoint that retrieves a user by UID.
 
-[source,java]
+[source, java]
 ----
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthException;
@@ -85,7 +84,7 @@ Default value is `false`.
 
 If you want to access the user's claims you can use SecurityIdentity:
 
-[source,java]
+[source, java]
 ----
 import io.quarkus.security.identity.SecurityIdentity;
 import jakarta.inject.Inject;
