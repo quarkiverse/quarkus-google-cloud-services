@@ -20,6 +20,7 @@ cd firebase-admin-quickstart
 This command generates a Maven project, importing the Google Cloud Firebase Admin extension.
 
 If you already have your Quarkus project configured, you can add the `quarkus-google-cloud-firebase-admin` extension to your project by running the following command in your project base directory:
+
 [source, shell script]
 ----
 ./mvnw quarkus:add-extension -Dextensions="quarkus-google-cloud-firebase-admin"
@@ -62,6 +63,58 @@ public class FirebaseAuthResourceTest {
     @Produces(MediaType.APPLICATION_JSON)
     public UserRecord getUserById(@PathParam("uid") String uid) throws FirebaseAuthException {
         return firebaseAuth.getUser(uid);
+    }
+
+}
+----
+
+== Firebase Authentication
+
+This extension also supports Firebase Authentication, allowing you to secure your endpoints using Firebase's authentication mechanisms.
+This section describes how to use Firebase Authentication in your Quarkus application.
+
+Remember that you need to enable the Firebase Authentication service in your Firebase project. `quarkus.google.cloud.firebase-admin.auth.enable` must be set to `true` in your application configuration.
+
+=== Configuration
+
+* `quarkus.google.cloud.firebase-admin.auth.enabled` - Enable Firebase Authentication.
+Default value is `false`.
+
+=== Example
+
+If you want to access the user's claims you can use SecurityIdentity:
+
+[source, java]
+----
+import io.quarkus.security.identity.SecurityIdentity;
+import jakarta.inject.Inject;
+import jakarta.ws.rs.GET;
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.core.MediaType;
+
+import com.google.firebase.FirebaseApp;
+import com.google.firebase.FirebaseOptions;
+import org.eclipse.microprofile.jwt.JsonWebToken;
+
+@Path("/app")
+public class FirebaseAppResource {
+
+    @Inject
+    FirebaseApp firebaseApp;
+
+    @Inject
+    SecurityIdentity identity;
+
+    @GET
+    @Path("/options")
+    @Produces(MediaType.APPLICATION_JSON)
+    public FirebaseOptions getOptions() {
+        if(identity instanceof JsonWebToken) {
+            System.out.println("JWT: " + ((JsonWebToken) identity).getClaim("email"));
+        }
+
+        return firebaseApp.getOptions();
     }
 
 }
