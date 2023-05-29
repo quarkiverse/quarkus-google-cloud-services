@@ -14,7 +14,7 @@
 
     <properties>
         <firebase-admin-sdk.version>9.1.1</firebase-admin-sdk.version>
-        <microprofile-jwt-auth-api.version>1.2.1</microprofile-jwt-auth-api.version>
+        <microprofile-jwt-auth-api.version>2.1</microprofile-jwt-auth-api.version>
     </properties>
 
     <dependencies>
