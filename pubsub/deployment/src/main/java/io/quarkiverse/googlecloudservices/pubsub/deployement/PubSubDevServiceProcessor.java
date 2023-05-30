@@ -81,14 +81,18 @@ public class PubSubDevServiceProcessor {
     private DevServicesResultBuildItem.RunningDevService startContainerIfAvailable(DockerStatusBuildItem dockerStatusBuildItem,
             PubSubDevServiceConfig config,
             Optional<Duration> timeout) {
-        // Start container if PubSub is enabled and Docker is available
-        if (config.enabled && dockerStatusBuildItem.isDockerAvailable()) {
-            return startContainer(dockerStatusBuildItem, config, timeout);
-        } else {
-            LOGGER.warn(
-                    "Not starting Dev Services for PubSub as it has been disabled in the config or Docker is not available");
+        if (!config.enabled) {
+            // PubSub service explicitly disabled
+            LOGGER.debug("Not starting Dev Services for PubSub as it has been disabled in the config");
             return null;
         }
+
+        if (!dockerStatusBuildItem.isDockerAvailable()) {
+            LOGGER.warn("Not starting devservice because docker is not available");
+            return null;
+        }
+
+        return startContainer(dockerStatusBuildItem, config, timeout);
     }
 
     /**
@@ -102,22 +106,10 @@ public class PubSubDevServiceProcessor {
     private DevServicesResultBuildItem.RunningDevService startContainer(DockerStatusBuildItem dockerStatusBuildItem,
             PubSubDevServiceConfig config,
             Optional<Duration> timeout) {
-
-        if (!config.enabled) {
-            // PubSub service explicitly disabled
-            LOGGER.debug("Not starting Dev Services for PubSub as it has been disabled in the config");
-            return null;
-        }
-
-        if (!dockerStatusBuildItem.isDockerAvailable()) {
-            LOGGER.warn("Not starting devservice because docker is not available");
-            return null;
-        }
-
         // Create and configure PubSub emulator container
         PubSubEmulatorContainer pubSubEmulatorContainer = new QuarkusPubSubContainer(
                 DockerImageName.parse(config.imageName).asCompatibleSubstituteFor("gcr.io/google.com/cloudsdktool/cloud-sdk"),
-                config.port);
+                config.port.orElse(null));
 
         // Set container startup timeout if provided
         timeout.ifPresent(pubSubEmulatorContainer::withStartupTimeout);

@@ -1,5 +1,7 @@
 package io.quarkiverse.googlecloudservices.pubsub.deployement;
 
+import java.util.Optional;
+
 import io.quarkus.runtime.annotations.ConfigGroup;
 import io.quarkus.runtime.annotations.ConfigItem;
 
@@ -12,8 +14,8 @@ import io.quarkus.runtime.annotations.ConfigItem;
  *
  * <pre>
  * quarkus.pub-sub-dev-service.enabled = true
- * quarkus.pub-sub-dev-service.image-name = gcr.io/google.com/cloudsdktool/google-cloud-cli:380.0.0-emulators
- * quarkus.pub-sub-dev-service.emulatorPort = 8085
+ * quarkus.pub-sub-dev-service.image-name = gcr.io/google.com/cloudsdktool/google-cloud-cli # optional
+ * quarkus.pub-sub-dev-service.emulatorPort = 8085 # optional
  * </pre>
  */
 @ConfigGroup
@@ -21,23 +23,22 @@ public class PubSubDevServiceConfig {
 
     /**
      * Indicates whether the Pub/Sub service should be enabled or not.
-     * The default value is 'true'.
+     * The default value is 'false'.
      */
-    @ConfigItem(defaultValue = "true")
+    @ConfigItem(defaultValue = "false")
     public boolean enabled;
 
     /**
      * Sets the Docker image name for the Google Cloud SDK.
      * This image is used to emulate the Pub/Sub service in the development environment.
-     * The default value is 'gcr.io/google.com/cloudsdktool/google-cloud-cli:380.0.0-emulators'.
+     * The default value is 'gcr.io/google.com/cloudsdktool/google-cloud-cli'.
      */
-    @ConfigItem(name = "image-name", defaultValue = "gcr.io/google.com/cloudsdktool/google-cloud-cli:380.0.0-emulators")
+    @ConfigItem(name = "image-name", defaultValue = "gcr.io/google.com/cloudsdktool/google-cloud-cli")
     public String imageName;
 
     /**
      * Specifies the emulatorPort on which the Pub/Sub service should run in the development environment.
-     * The default value is '8085'.
      */
-    @ConfigItem(name = "emulatorPort", defaultValue = "8085")
-    public int port;
+    @ConfigItem(name = "emulatorPort")
+    public Optional<Integer> port = Optional.empty();
 }
