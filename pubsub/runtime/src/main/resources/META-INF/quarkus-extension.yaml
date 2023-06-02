@@ -1,15 +1,16 @@
 ---
 name: "Google Cloud Pubsub"
+artifact: ${project.groupId}:${project.artifactId}:${project.version}
 metadata:
   keywords:
   - "pubsub"
   - "google cloud"
   - "gcloud"
   - "gcp"
-  guide: "https://quarkiverse.github.io/quarkiverse-docs/quarkus-google-cloud-services/main/pubsub.html"
   categories:
   - "cloud"
   - "messaging"
+  guide: "https://quarkiverse.github.io/quarkiverse-docs/quarkus-google-cloud-services/main/pubsub.html"
   status: "preview"
   config:
   - "quarkus.google.cloud.pubsub."
