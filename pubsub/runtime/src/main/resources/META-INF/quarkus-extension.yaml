@@ -12,4 +12,4 @@ metadata:
   - "messaging"
   status: "preview"
   config:
-  - "quarkus.google.cloud.pubsub.*"
+  - "quarkus.google.cloud.pubsub."
