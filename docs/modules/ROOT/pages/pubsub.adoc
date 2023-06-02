@@ -195,7 +195,7 @@ The extension provides a Dev Service that can be used to run a local PubSub emul
 
 You can also set the
 
-* `quarkus.google.cloud.pubsub.devservice.port` property to change the port on which the emulator will be started (default is `8085`).
+* `quarkus.google.cloud.pubsub.devservice.port` property to change the port on which the emulator will be started (by default there is no port set, so the emulator will use a random port)
 
 === Using the Dev Service
 
@@ -341,7 +341,7 @@ public class PubSubResource {
 }
 ----
 
-So what did we change? First we created a `TransportChannelProvider` that connects to the Dev Service in the `init` method:
+So what did we changed? Firstly, we created a TransportChannelProvider that provides connection to devservice within the `init` method:
 
 [source,java]
 ----
