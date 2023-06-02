@@ -1,5 +1,6 @@
 ---
 name: "Google Cloud Bigtable"
+artifact: ${project.groupId}:${project.artifactId}:${project.version}
 metadata:
   keywords:
   - "bigtable"
@@ -9,4 +10,5 @@ metadata:
   categories:
   - "cloud"
   - "data"
+  guide: "https://quarkiverse.github.io/quarkiverse-docs/quarkus-google-cloud-services/main/bigtable.html"
   status: "preview"

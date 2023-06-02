@@ -1,5 +1,6 @@
 ---
 name: "Google Cloud Firestore"
+artifact: ${project.groupId}:${project.artifactId}:${project.version}
 metadata:
   keywords:
   - "firestore"
@@ -9,4 +10,7 @@ metadata:
   categories:
   - "cloud"
   - "data"
+  guide: "https://quarkiverse.github.io/quarkiverse-docs/quarkus-google-cloud-services/main/firestore.html"
   status: "preview"
+  config: 
+  - "quarkus.google.cloud.firestore."
