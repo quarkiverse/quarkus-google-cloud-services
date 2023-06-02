@@ -199,149 +199,18 @@ You can also set the
 
 === Using the Dev Service
 
-If we want to connect to the Dev Service, we need to specify `ChannelProvider` when creating subscription and publisher.
+If we want to connect to the Dev Service, we need to specify `TransportChannelProvider` when creating subscription and publisher.
 
-For this example, we will use the code from the previous example, and we will add a `ChannelProvider` to the `Publisher` and `Subscriber` builders.
+We can just reuse the code from the previous example and add the `TransportChannelProvider` to the `Subscriber` and `Publisher`. So what do we need to change?
+
+As a first thing we should declare variable which we can then reuse:
 
 [source,java]
 ----
-import java.io.IOException;
-import java.util.Optional;
-import java.util.concurrent.TimeUnit;
-import java.util.stream.StreamSupport;
-
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
-
-import org.eclipse.microprofile.config.inject.ConfigProperty;
-import org.jboss.logging.Logger;
-
-import com.google.api.core.ApiFuture;
-import com.google.api.core.ApiFutureCallback;
-import com.google.api.core.ApiFutures;
-import com.google.api.gax.core.CredentialsProvider;
-import com.google.api.gax.grpc.GrpcTransportChannel;
-import com.google.api.gax.rpc.FixedTransportChannelProvider;
-import com.google.api.gax.rpc.TransportChannelProvider;
-import com.google.cloud.pubsub.v1.MessageReceiver;
-import com.google.cloud.pubsub.v1.Publisher;
-import com.google.cloud.pubsub.v1.Subscriber;
-import com.google.cloud.pubsub.v1.SubscriptionAdminClient;
-import com.google.cloud.pubsub.v1.SubscriptionAdminSettings;
-import com.google.common.util.concurrent.MoreExecutors;
-import com.google.protobuf.ByteString;
-import com.google.pubsub.v1.ProjectName;
-import com.google.pubsub.v1.ProjectSubscriptionName;
-import com.google.pubsub.v1.PubsubMessage;
-import com.google.pubsub.v1.PushConfig;
-import com.google.pubsub.v1.Subscription;
-import com.google.pubsub.v1.Topic;
-import com.google.pubsub.v1.TopicName;
-
-import io.grpc.ManagedChannel;
-import io.grpc.ManagedChannelBuilder;
-
-@Path("/pubsub")
-public class PubSubResource {
-    private static final Logger LOG = Logger.getLogger(PubSubResource.class);
-
-    @ConfigProperty(name = "quarkus.google.cloud.project-id")
-    String projectId;// Inject the projectId property from application.properties
-
-    private TopicName topicName;
-    private Subscriber subscriber;
-
-    @Inject
-    CredentialsProvider credentialsProvider;
-
-    private TransportChannelProvider channelProvider;
-
-    @PostConstruct
-    void init() throws IOException {
-        // Create a ChannelProvider that connects to the Dev Service
-        ManagedChannel channel = ManagedChannelBuilder.forTarget("localhost:8085").usePlaintext().build();
-        channelProvider = FixedTransportChannelProvider.create(GrpcTransportChannel.create(channel));
-
-        // Init topic and subscription, the topic must have been created before
-        topicName = TopicName.of(projectId, "test-topic");
-        ProjectSubscriptionName subscriptionName = initSubscription();
-
-        // Subscribe to PubSub
-        MessageReceiver receiver = (message, consumer) -> {
-            LOG.infov("Got message {0}", message.getData().toStringUtf8());
-            consumer.ack();
-        };
-
-        // Create a subscriber and set the ChannelProvider
-        subscriber = Subscriber.newBuilder(subscriptionName, receiver).setChannelProvider(channelProvider).build();
-        subscriber.startAsync().awaitRunning();
-    }
-
-    @PreDestroy
-    void destroy() {
-        // Stop the subscription at destroy time
-        if (subscriber != null) {
-            subscriber.stopAsync();
-        }
-    }
-
-    @GET
-    @Produces(MediaType.TEXT_PLAIN)
-    public void pubsub() throws IOException, InterruptedException {
-        // Init a publisher to the topic
-        Publisher publisher = Publisher.newBuilder(topicName)
-                .setCredentialsProvider(credentialsProvider)
-                // Set the ChannelProvider
-                .setChannelProvider(channelProvider)
-                .build();
-        try {
-            ByteString data = ByteString.copyFromUtf8("my-message");// Create a new message
-            PubsubMessage pubsubMessage = PubsubMessage.newBuilder().setData(data).build();
-            ApiFuture<String> messageIdFuture = publisher.publish(pubsubMessage);// Publish the message
-            ApiFutures.addCallback(messageIdFuture, new ApiFutureCallback<String>() {// Wait for message submission and log the result
-                public void onSuccess(String messageId) {
-                    LOG.infov("published with message id {0}", messageId);
-                }
-
-                public void onFailure(Throwable t) {
-                    LOG.warnv("failed to publish: {0}", t);
-                }
-            }, MoreExecutors.directExecutor());
-        } finally {
-            publisher.shutdown();
-            publisher.awaitTermination(1, TimeUnit.MINUTES);
-        }
-    }
-
-    private ProjectSubscriptionName initSubscription() throws IOException {
-        // List all existing subscriptions and create the 'test-subscription' if needed
-        ProjectSubscriptionName subscriptionName = ProjectSubscriptionName.of(projectId, "test-subscription");
-        SubscriptionAdminSettings subscriptionAdminSettings = SubscriptionAdminSettings.newBuilder()
-                .setCredentialsProvider(credentialsProvider)
-                // Set the ChannelProvider
-                .setTransportChannelProvider(channelProvider)
-                .build();
-
-        try (SubscriptionAdminClient subscriptionAdminClient = SubscriptionAdminClient.create(subscriptionAdminSettings)) {
-            Iterable<Subscription> subscriptions = subscriptionAdminClient.listSubscriptions(ProjectName.of(projectId))
-                    .iterateAll();
-            Optional<Subscription> existing = StreamSupport.stream(subscriptions.spliterator(), false)
-                    .filter(sub -> sub.getName().equals(subscriptionName.toString()))
-                    .findFirst();
-            if (existing.isEmpty()) {
-                subscriptionAdminClient.createSubscription(subscriptionName, topicName, PushConfig.getDefaultInstance(), 0);
-            }
-        }
-        return subscriptionName;
-    }
-}
+private TransportChannelProvider channelProvider;
 ----
 
-So what did we changed? Firstly, we created a TransportChannelProvider that provides connection to devservice within the `init` method:
+Then, we can create a `TransportChannelProvider` that provides connection to devservice within the `init` method:
 
 [source,java]
 ----
@@ -350,7 +219,7 @@ ManagedChannel channel = ManagedChannelBuilder.forTarget("localhost:8085").usePl
 channelProvider = FixedTransportChannelProvider.create(GrpcTransportChannel.create(channel));
 ----
 
-Then when creating the `Subscriber` we set the `ChannelProvider`:
+Also in the same method when creating the `Subscriber` we set the `TransportChannelProvider`:
 
 [source,java]
 ----
@@ -371,7 +240,7 @@ Publisher publisher = Publisher.newBuilder(topicName)
 .build();
 ----
 
-And finally we also set the `ChannelProvider` when creating the `SubscriptionAdminClient` in the `initSubscription` method:
+And finally we also set the `TransportChannelProvider` when creating the `SubscriptionAdminClient` in the `initSubscription` method:
 
 [source,java]
 ----
