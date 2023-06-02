@@ -6,7 +6,10 @@ metadata:
   - "google cloud"
   - "gcloud"
   - "gcp"
+  guide: "https://quarkiverse.github.io/quarkiverse-docs/quarkus-google-cloud-services/main/pubsub.html"
   categories:
-    - "cloud"
-    - "messaging"
+  - "cloud"
+  - "messaging"
   status: "preview"
+  config:
+  - "quarkus.google.cloud.pubsub.*"
