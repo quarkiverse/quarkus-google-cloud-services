@@ -1,5 +1,6 @@
 ---
-name: "Google Cloud Firebase Auth"
+name: "Google Cloud Firebase Admin"
+artifact: ${project.groupId}:${project.artifactId}:${project.version}
 metadata:
   keywords:
   - "firebase"
@@ -9,4 +10,7 @@ metadata:
   categories:
   - "cloud"
   - "data"
+  guide: "https://quarkiverse.github.io/quarkiverse-docs/quarkus-google-cloud-services/main/firebase-admin.html"
   status: "experimental"
+  config: 
+  - "quarkus.google.cloud.firebase."

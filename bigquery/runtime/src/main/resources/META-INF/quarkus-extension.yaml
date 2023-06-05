@@ -1,5 +1,6 @@
 ---
 name: "Google Cloud Bigquery"
+artifact: ${project.groupId}:${project.artifactId}:${project.version}
 metadata:
   keywords:
   - "bigquery"
@@ -9,4 +10,5 @@ metadata:
   categories:
   - "cloud"
   - "data"
+  guide: "https://quarkiverse.github.io/quarkiverse-docs/quarkus-google-cloud-services/main/bigquery.html"
   status: "preview"

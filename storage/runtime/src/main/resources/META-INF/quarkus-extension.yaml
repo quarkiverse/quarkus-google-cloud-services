@@ -1,5 +1,6 @@
 ---
 name: "Google Cloud Storage"
+artifact: ${project.groupId}:${project.artifactId}:${project.version}
 metadata:
   keywords:
   - "storage"
@@ -8,4 +9,7 @@ metadata:
   - "gcp"
   categories:
   - "cloud"
+  guide: "https://quarkiverse.github.io/quarkiverse-docs/quarkus-google-cloud-services/main/storage.html"
   status: "preview"
+  config: 
+  - "quarkus.google.cloud.storage."
