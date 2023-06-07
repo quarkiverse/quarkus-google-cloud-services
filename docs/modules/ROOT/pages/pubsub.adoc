@@ -199,7 +199,7 @@ You can also set the
 
 === Using the Dev Service
 
-If we want to connect to the Dev Service, we need to specify `TransportChannelProvider` when creating subscription and publisher.
+If we want to connect to the Dev Service, we need to specify `TransportChannelProvider` when creating subscriptions and publishers.
 
 We can just reuse the code from the previous example and add the `TransportChannelProvider` to the `Subscriber` and `Publisher`. So what do we need to change?
 
