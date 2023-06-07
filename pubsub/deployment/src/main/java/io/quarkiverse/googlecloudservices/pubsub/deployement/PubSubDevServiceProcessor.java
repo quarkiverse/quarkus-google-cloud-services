@@ -28,9 +28,9 @@ public class PubSubDevServiceProcessor {
     private static final Logger LOGGER = Logger.getLogger(PubSubDevServiceProcessor.class.getName());
 
     // Running dev service instance
-    static volatile DevServicesResultBuildItem.RunningDevService devService;
+    private static volatile DevServicesResultBuildItem.RunningDevService devService;
     // Configuration for the PubSub Dev service
-    static volatile PubSubDevServiceConfig config;
+    private static volatile PubSubDevServiceConfig config;
 
     @BuildStep
     public DevServicesResultBuildItem startPubSub(DockerStatusBuildItem dockerStatusBuildItem,
@@ -115,10 +115,14 @@ public class PubSubDevServiceProcessor {
         timeout.ifPresent(pubSubEmulatorContainer::withStartupTimeout);
         pubSubEmulatorContainer.start();
 
+        // Set the config for the started container
+        PubSubDevServiceProcessor.config = config;
+
         // Return running service item with container details
         return new DevServicesResultBuildItem.RunningDevService(PubSubBuildSteps.FEATURE,
                 pubSubEmulatorContainer.getContainerId(),
-                pubSubEmulatorContainer::close, "pubsub", pubSubEmulatorContainer.getEmulatorEndpoint());
+                pubSubEmulatorContainer::close, "quarkus.google.cloud.pubsub.emulator-host",
+                pubSubEmulatorContainer.getEmulatorEndpoint());
     }
 
     /**
