@@ -203,7 +203,7 @@ If we want to connect to the Dev Service, we need to specify `TransportChannelPr
 
 We can just reuse the code from the previous example and add the `TransportChannelProvider` to the `Subscriber` and `Publisher`. So what do we need to change?
 
-As a first thing we should declare variable which we can then reuse:
+As a first thing, we should declare a variable which we can then reuse:
 
 [source,java]
 ----
