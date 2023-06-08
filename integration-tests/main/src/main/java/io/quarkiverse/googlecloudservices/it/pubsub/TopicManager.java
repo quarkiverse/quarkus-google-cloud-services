@@ -31,6 +31,9 @@ public class TopicManager {
     @ConfigProperty(name = "pubsub.use-emulator", defaultValue = "false")
     boolean useEmulator;
 
+    @ConfigProperty(name = "quarkus.google.cloud.pubsub.emulator-host")
+    String emulatorHost;
+
     private TopicName topicName;
     private Optional<TransportChannelProvider> channelProvider;
 
@@ -39,7 +42,7 @@ public class TopicManager {
         this.topicName = TopicName.of(projectId, "test-topic");
 
         if (useEmulator) {
-            ManagedChannel channel = ManagedChannelBuilder.forTarget("localhost:8085").usePlaintext().build();
+            ManagedChannel channel = ManagedChannelBuilder.forTarget(emulatorHost).usePlaintext().build();
             channelProvider = Optional.of(FixedTransportChannelProvider.create(GrpcTransportChannel.create(channel)));
         } else {
             channelProvider = Optional.empty();

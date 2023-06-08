@@ -184,3 +184,72 @@ public class PubSubResource {
     }
 }
 ----
+
+== Dev Service
+
+=== Configuring the Dev Service
+
+The extension provides a Dev Service that can be used to run a local PubSub emulator. This is useful for testing purposes, so you don't have to rely on a real PubSub instance. By default, the Dev Service is disabled, but you can enable it by setting the
+
+* `quarkus.google.cloud.pubsub.devservice.enabled` property to `true`
+
+You can also set the
+
+* `quarkus.google.cloud.pubsub.devservice.port` property to change the port on which the emulator will be started (by default there is no port set, so the emulator will use a random port)
+
+=== Using the Dev Service
+
+If we want to connect to the Dev Service, we need to specify `TransportChannelProvider` when creating subscriptions and publishers.
+
+We can just reuse the code from the previous example and add the `TransportChannelProvider` to the `Subscriber` and `Publisher`. So what do we need to change?
+
+As a first thing, we should declare a variable which we can then reuse and also inject the `quarkus.google.cloud.pubsub.emulator-host` property:
+
+[source,java]
+----
+@ConfigProperty(name = "quarkus.google.cloud.pubsub.emulator-host")
+String emulatorHost;
+
+private TransportChannelProvider channelProvider;
+----
+
+Then, we can create a `TransportChannelProvider` that provides connection to devservice within the `init` method:
+
+[source,java]
+----
+// Create a ChannelProvider that connects to the Dev Service
+ManagedChannel channel = ManagedChannelBuilder.forTarget(emulatorHost).usePlaintext().build();
+channelProvider = FixedTransportChannelProvider.create(GrpcTransportChannel.create(channel));
+----
+
+Also in the same method when creating the `Subscriber` we set the `TransportChannelProvider`:
+
+[source,java]
+----
+// Create a subscriber and set the ChannelProvider
+subscriber = Subscriber.newBuilder(subscriptionName, receiver).setChannelProvider(channelProvider).build();
+subscriber.startAsync().awaitRunning();
+----
+
+The same is done when creating the `Publisher` in the `pubsub` method:
+
+[source,java]
+----
+// Init a publisher to the topic
+Publisher publisher = Publisher.newBuilder(topicName)
+.setCredentialsProvider(credentialsProvider)
+// Set the ChannelProvider
+.setChannelProvider(channelProvider)
+.build();
+----
+
+And finally we also set the `TransportChannelProvider` when creating the `SubscriptionAdminClient` in the `initSubscription` method:
+
+[source,java]
+----
+SubscriptionAdminSettings subscriptionAdminSettings = SubscriptionAdminSettings.newBuilder()
+.setCredentialsProvider(credentialsProvider)
+// Set the ChannelProvider
+.setTransportChannelProvider(channelProvider)
+.build();
+----
