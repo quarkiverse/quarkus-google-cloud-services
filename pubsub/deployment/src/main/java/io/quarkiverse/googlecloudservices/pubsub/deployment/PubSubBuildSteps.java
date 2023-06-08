@@ -1,5 +1,7 @@
 package io.quarkiverse.googlecloudservices.pubsub.deployment;
 
+import io.quarkiverse.googlecloudservices.pubsub.QuarkusPubSub;
+import io.quarkus.arc.deployment.AdditionalBeanBuildItem;
 import io.quarkus.deployment.annotations.BuildStep;
 import io.quarkus.deployment.builditem.FeatureBuildItem;
 
@@ -9,5 +11,10 @@ public class PubSubBuildSteps {
     @BuildStep
     public FeatureBuildItem feature() {
         return new FeatureBuildItem(FEATURE);
+    }
+
+    @BuildStep
+    public AdditionalBeanBuildItem producer() {
+        return new AdditionalBeanBuildItem(QuarkusPubSub.class);
     }
 }
