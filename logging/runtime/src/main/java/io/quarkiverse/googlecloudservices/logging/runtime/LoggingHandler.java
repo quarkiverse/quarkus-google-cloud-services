@@ -59,10 +59,20 @@ public class LoggingHandler extends ExtHandler {
             TraceInfo trace = traceExtractor.extract(record);
             LogEntry logEntry = transform(record, trace);
             if (logEntry != null) {
-                l.write(ImmutableList.of(logEntry), defaultWriteOptions);
+                switch (config.logTarget) {
+                    case STDOUT:
+                        System.out.println(logEntry.toStructuredJsonString());
+                        break;
+                    case STDERR:
+                        System.err.println(logEntry.toStructuredJsonString());
+                        break;
+                    case CLOUD_LOGGING:
+                        l.write(ImmutableList.of(logEntry), defaultWriteOptions);
+                        break;
+                }
             }
         } catch (Exception ex) {
-            getErrorManager().error("Failed to publish record to GCP", ex, ErrorManager.WRITE_FAILURE);
+            getErrorManager().error("Failed to write logs", ex, ErrorManager.WRITE_FAILURE);
         }
     }
 
@@ -138,7 +148,7 @@ public class LoggingHandler extends ExtHandler {
     private MonitoredResource createMonitoredResource() {
         MonitoredResource.Builder b = MonitoredResource.newBuilder(this.config.resource.type);
         if (this.config.resource.label != null) {
-            this.config.resource.label.forEach((k, v) -> b.addLabel(k, v));
+            this.config.resource.label.forEach(b::addLabel);
         }
         return b.build();
     }

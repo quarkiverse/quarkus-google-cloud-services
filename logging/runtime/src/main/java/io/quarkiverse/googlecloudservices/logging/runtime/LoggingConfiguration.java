@@ -3,6 +3,7 @@ package io.quarkiverse.googlecloudservices.logging.runtime;
 import java.util.Map;
 import java.util.Optional;
 
+import com.google.cloud.logging.LoggingHandler.LogTarget;
 import com.google.cloud.logging.Severity;
 import com.google.cloud.logging.Synchronicity;
 
@@ -11,7 +12,7 @@ import io.quarkus.runtime.annotations.ConfigItem;
 import io.quarkus.runtime.annotations.ConfigPhase;
 import io.quarkus.runtime.annotations.ConfigRoot;
 
-@ConfigRoot(name = "google.cloud.logging", phase = ConfigPhase.RUN_TIME)
+@ConfigRoot(name = "google.cloud.logging", phase = ConfigPhase.BUILD_AND_RUN_TIME_FIXED)
 public class LoggingConfiguration {
 
     /**
@@ -25,6 +26,12 @@ public class LoggingConfiguration {
      */
     @ConfigItem(defaultValue = "true")
     public boolean enabled;
+
+    /**
+     * Enable or disable default Quarkus console logging.
+     */
+    @ConfigItem
+    public boolean enableConsoleLogging;
 
     /**
      * Configure base formatting to be either plain text or
@@ -73,6 +80,14 @@ public class LoggingConfiguration {
      */
     @ConfigItem
     public StructuredConfig structured;
+
+    /**
+     * Configures if logs should be written to stdout or stderr instead of using Google Cloud Operations API.
+     * Useful if app is deployed to managed Google Cloud Platform environment with installed logger agent.
+     * Possible values: STDOUT, STDERR and CLOUD_LOGGING.
+     */
+    @ConfigItem(defaultValue = "STDOUT")
+    public LogTarget logTarget;
 
     @ConfigGroup
     public static class StructuredConfig {
@@ -198,4 +213,5 @@ public class LoggingConfiguration {
         TEXT,
         JSON
     }
+
 }

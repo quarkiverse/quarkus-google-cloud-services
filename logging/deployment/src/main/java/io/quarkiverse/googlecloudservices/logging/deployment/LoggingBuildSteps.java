@@ -11,10 +11,12 @@ import io.quarkus.deployment.annotations.ExecutionTime;
 import io.quarkus.deployment.annotations.Record;
 import io.quarkus.deployment.builditem.FeatureBuildItem;
 import io.quarkus.deployment.builditem.LogHandlerBuildItem;
+import io.quarkus.deployment.builditem.RunTimeConfigurationDefaultBuildItem;
 
 public class LoggingBuildSteps {
 
     private static final String FEATURE = "google-cloud-logging";
+    private static final String QUARKUS_CONSOLE_LOGGING_CONFIG_KEY = "quarkus.log.console.enable";
 
     @BuildStep
     public FeatureBuildItem feature() {
@@ -37,5 +39,16 @@ public class LoggingBuildSteps {
     @Record(ExecutionTime.RUNTIME_INIT)
     public LogHandlerBuildItem handler(LoggingConfiguration config, LoggingHandlerFactory factory) {
         return new LogHandlerBuildItem(factory.create(config));
+    }
+
+    @BuildStep
+    public RunTimeConfigurationDefaultBuildItem configurationDefaultBuildItem(LoggingConfiguration config) {
+        boolean enableConsoleLogging = true;
+        // We should use configuration only if the GCP logging extension is enabled
+        if (config.enabled) {
+            enableConsoleLogging = config.enableConsoleLogging;
+        }
+        return new RunTimeConfigurationDefaultBuildItem(QUARKUS_CONSOLE_LOGGING_CONFIG_KEY,
+                Boolean.toString(enableConsoleLogging));
     }
 }
