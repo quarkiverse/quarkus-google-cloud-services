@@ -86,7 +86,7 @@ public class LoggingConfiguration {
      * Useful if app is deployed to managed Google Cloud Platform environment with installed logger agent.
      * Possible values: STDOUT, STDERR and CLOUD_LOGGING.
      */
-    @ConfigItem(defaultValue = "STDOUT")
+    @ConfigItem(defaultValue = "CLOUD_LOGGING")
     public LogTarget logTarget;
 
     @ConfigGroup
