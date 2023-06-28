@@ -12,7 +12,7 @@ import io.quarkus.runtime.annotations.ConfigItem;
 import io.quarkus.runtime.annotations.ConfigPhase;
 import io.quarkus.runtime.annotations.ConfigRoot;
 
-@ConfigRoot(name = "google.cloud.logging", phase = ConfigPhase.BUILD_AND_RUN_TIME_FIXED)
+@ConfigRoot(name = "google.cloud.logging", phase = ConfigPhase.RUN_TIME)
 public class LoggingConfiguration {
 
     /**
@@ -26,12 +26,6 @@ public class LoggingConfiguration {
      */
     @ConfigItem(defaultValue = "true")
     public boolean enabled;
-
-    /**
-     * Enable or disable default Quarkus console logging.
-     */
-    @ConfigItem
-    public boolean enableConsoleLogging;
 
     /**
      * Configure base formatting to be either plain text or
