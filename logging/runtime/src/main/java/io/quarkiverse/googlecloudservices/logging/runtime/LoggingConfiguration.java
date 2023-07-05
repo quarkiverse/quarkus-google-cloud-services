@@ -3,6 +3,7 @@ package io.quarkiverse.googlecloudservices.logging.runtime;
 import java.util.Map;
 import java.util.Optional;
 
+import com.google.cloud.logging.LoggingHandler.LogTarget;
 import com.google.cloud.logging.Severity;
 import com.google.cloud.logging.Synchronicity;
 
@@ -73,6 +74,14 @@ public class LoggingConfiguration {
      */
     @ConfigItem
     public StructuredConfig structured;
+
+    /**
+     * Configures if logs should be written to stdout or stderr instead of using Google Cloud Operations API.
+     * Useful if app is deployed to managed Google Cloud Platform environment with installed logger agent.
+     * Possible values: STDOUT, STDERR and CLOUD_LOGGING.
+     */
+    @ConfigItem(defaultValue = "CLOUD_LOGGING")
+    public LogTarget logTarget;
 
     @ConfigGroup
     public static class StructuredConfig {
@@ -198,4 +207,5 @@ public class LoggingConfiguration {
         TEXT,
         JSON
     }
+
 }
