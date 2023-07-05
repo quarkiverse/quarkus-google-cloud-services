@@ -1,4 +1,4 @@
-package io.quarkiverse.googlecloudservices.pubsub.deployement;
+package io.quarkiverse.googlecloudservices.pubsub.deployment;
 
 import io.quarkus.deployment.annotations.BuildStep;
 import io.quarkus.deployment.builditem.FeatureBuildItem;
