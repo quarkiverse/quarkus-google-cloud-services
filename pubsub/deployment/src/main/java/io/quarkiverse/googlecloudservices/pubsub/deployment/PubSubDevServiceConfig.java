@@ -1,4 +1,4 @@
-package io.quarkiverse.googlecloudservices.pubsub.deployement;
+package io.quarkiverse.googlecloudservices.pubsub.deployment;
 
 import java.util.Optional;
 
