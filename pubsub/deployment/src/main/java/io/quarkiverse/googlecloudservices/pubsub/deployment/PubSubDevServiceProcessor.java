@@ -18,9 +18,9 @@ import io.quarkus.deployment.dev.devservices.GlobalDevServicesConfig;
 import io.quarkus.deployment.logging.LoggingSetupBuildItem;
 
 /**
- * Processor responsible for managing PubSub Dev Services.
+ * Processor responsible for managing Pub/Sub Dev Services.
  * <p>
- * The processor starts the PubSub service in case it's not running.
+ * The processor starts the Pub/Sub service in case it's not running.
  */
 @BuildSteps(onlyIfNot = IsNormal.class, onlyIf = GlobalDevServicesConfig.Enabled.class)
 public class PubSubDevServiceProcessor {
@@ -29,7 +29,7 @@ public class PubSubDevServiceProcessor {
 
     // Running dev service instance
     private static volatile DevServicesResultBuildItem.RunningDevService devService;
-    // Configuration for the PubSub Dev service
+    // Configuration for the Pub/Sub Dev service
     private static volatile PubSubDevServiceConfig config;
 
     @BuildStep
@@ -74,7 +74,7 @@ public class PubSubDevServiceProcessor {
      * Start the container if conditions are met.
      *
      * @param dockerStatusBuildItem, Docker status
-     * @param config, Configuration for the PubSub service
+     * @param config, Configuration for the Pub/Sub service
      * @param timeout, Optional timeout for starting the service
      * @return Running service item, or null if the service couldn't be started
      */
@@ -96,7 +96,7 @@ public class PubSubDevServiceProcessor {
     }
 
     /**
-     * Starts the PubSub emulator container with provided configuration.
+     * Starts the Pub/Sub emulator container with provided configuration.
      *
      * @param dockerStatusBuildItem, Docker status
      * @param config, Configuration for the PubSub service
@@ -106,7 +106,7 @@ public class PubSubDevServiceProcessor {
     private DevServicesResultBuildItem.RunningDevService startContainer(DockerStatusBuildItem dockerStatusBuildItem,
             PubSubDevServiceConfig config,
             Optional<Duration> timeout) {
-        // Create and configure PubSub emulator container
+        // Create and configure Pub/Sub emulator container
         PubSubEmulatorContainer emulatorContainer = new QuarkusPubSubContainer(
                 DockerImageName.parse(config.imageName).asCompatibleSubstituteFor("gcr.io/google.com/cloudsdktool/cloud-sdk"),
                 config.port.orElse(null));
@@ -126,7 +126,7 @@ public class PubSubDevServiceProcessor {
     }
 
     /**
-     * Stops the running PubSub emulator container.
+     * Stops the running Pub/Sub emulator container.
      */
     private void stopContainer() {
         if (devService != null && devService.isOwner()) {
@@ -155,13 +155,13 @@ public class PubSubDevServiceProcessor {
         }
 
         /**
-         * Configures the PubSub emulator container.
+         * Configures the Pub/Sub emulator container.
          */
         @Override
         public void configure() {
             super.configure();
 
-            // Expose PubSub emulatorPort
+            // Expose Pub/Sub emulatorPort
             if (fixedExposedPort != null) {
                 addFixedExposedPort(fixedExposedPort, INTERNAL_PORT);
             } else {
