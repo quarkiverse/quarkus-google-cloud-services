@@ -6,7 +6,7 @@ import io.quarkus.runtime.annotations.ConfigGroup;
 import io.quarkus.runtime.annotations.ConfigItem;
 
 /**
- * Configuration group for the PubSubDevService. This class holds all the configuration properties
+ * Configuration group for the Pub/Sub. This class holds all the configuration properties
  * related to the Google Cloud Pub/Sub service for development environments.
  * <p>
  * Here is an example of how to configure these properties:
@@ -39,6 +39,6 @@ public class PubSubDevServiceConfig {
     /**
      * Specifies the emulatorPort on which the Pub/Sub service should run in the development environment.
      */
-    @ConfigItem(name = "emulatorPort")
-    public Optional<Integer> port = Optional.empty();
+    @ConfigItem
+    public Optional<Integer> emulatorPort = Optional.empty();
 }

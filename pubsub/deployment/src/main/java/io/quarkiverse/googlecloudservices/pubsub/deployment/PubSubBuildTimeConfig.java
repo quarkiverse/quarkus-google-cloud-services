@@ -13,7 +13,7 @@ import io.quarkus.runtime.annotations.ConfigRoot;
 public class PubSubBuildTimeConfig {
 
     /**
-     * Configuration for the Pub/Sub development service.
+     * Configuration for the Pub/Sub dev service.
      * These settings will be used when Pub/Sub service is being configured
      * for development purposes.
      */

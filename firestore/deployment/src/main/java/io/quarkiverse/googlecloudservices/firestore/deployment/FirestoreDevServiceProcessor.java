@@ -1,11 +1,11 @@
-package io.quarkiverse.googlecloudservices.pubsub.deployment;
+package io.quarkiverse.googlecloudservices.firestore.deployment;
 
 import java.time.Duration;
 import java.util.List;
 import java.util.Optional;
 
 import org.jboss.logging.Logger;
-import org.testcontainers.containers.PubSubEmulatorContainer;
+import org.testcontainers.containers.FirestoreEmulatorContainer;
 import org.testcontainers.utility.DockerImageName;
 
 import io.quarkus.deployment.IsNormal;
@@ -18,23 +18,23 @@ import io.quarkus.deployment.dev.devservices.GlobalDevServicesConfig;
 import io.quarkus.deployment.logging.LoggingSetupBuildItem;
 
 /**
- * Processor responsible for managing Pub/Sub Dev Services.
+ * Processor responsible for managing Firestore Dev Services.
  * <p>
- * The processor starts the Pub/Sub service in case it's not running.
+ * The processor starts the Firestore service in case it's not running.
  */
 @BuildSteps(onlyIfNot = IsNormal.class, onlyIf = GlobalDevServicesConfig.Enabled.class)
-public class PubSubDevServiceProcessor {
+public class FirestoreDevServiceProcessor {
 
-    private static final Logger LOGGER = Logger.getLogger(PubSubDevServiceProcessor.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(FirestoreDevServiceProcessor.class.getName());
 
     // Running dev service instance
     private static volatile DevServicesResultBuildItem.RunningDevService devService;
-    // Configuration for the Pub/Sub Dev service
-    private static volatile PubSubDevServiceConfig config;
+    // Configuration for the Firestore Dev service
+    private static volatile FirestoreDevServiceConfig config;
 
     @BuildStep
     public DevServicesResultBuildItem start(DockerStatusBuildItem dockerStatusBuildItem,
-            PubSubBuildTimeConfig pubSubBuildTimeConfig,
+            FirestoreBuildTimeConfig buildTimeConfig,
             List<DevServicesSharedNetworkBuildItem> devServicesSharedNetworkBuildItem,
             Optional<ConsoleInstalledBuildItem> consoleInstalledBuildItem,
             CuratedApplicationShutdownBuildItem closeBuildItem,
@@ -42,7 +42,7 @@ public class PubSubDevServiceProcessor {
             LoggingSetupBuildItem loggingSetupBuildItem,
             GlobalDevServicesConfig globalDevServicesConfig) {
         // If dev service is running and config has changed, stop the service
-        if (devService != null && !pubSubBuildTimeConfig.devservice.equals(config)) {
+        if (devService != null && !buildTimeConfig.devservice.equals(config)) {
             stopContainer();
         } else if (devService != null) {
             return devService.toBuildItem();
@@ -50,16 +50,16 @@ public class PubSubDevServiceProcessor {
 
         // Set up log compressor for startup logs
         StartupLogCompressor compressor = new StartupLogCompressor(
-                (launchMode.isTest() ? "(test) " : "") + "Google Cloud PubSub Dev Services Starting:",
+                (launchMode.isTest() ? "(test) " : "") + "Google Cloud Firestore Dev Services Starting:",
                 consoleInstalledBuildItem,
                 loggingSetupBuildItem);
 
         // Try starting the container if conditions are met
         try {
-            devService = startContainerIfAvailable(dockerStatusBuildItem, pubSubBuildTimeConfig.devservice,
+            devService = startContainerIfAvailable(dockerStatusBuildItem, buildTimeConfig.devservice,
                     globalDevServicesConfig.timeout);
         } catch (Throwable t) {
-            LOGGER.warn("Unable to start PubSub dev service", t);
+            LOGGER.warn("Unable to start Firestore dev service", t);
             // Dump captured logs in case of an error
             compressor.closeAndDumpCaptured();
             return null;
@@ -74,16 +74,16 @@ public class PubSubDevServiceProcessor {
      * Start the container if conditions are met.
      *
      * @param dockerStatusBuildItem, Docker status
-     * @param config, Configuration for the Pub/Sub service
+     * @param config, Configuration for the Firestore service
      * @param timeout, Optional timeout for starting the service
      * @return Running service item, or null if the service couldn't be started
      */
     private DevServicesResultBuildItem.RunningDevService startContainerIfAvailable(DockerStatusBuildItem dockerStatusBuildItem,
-            PubSubDevServiceConfig config,
+            FirestoreDevServiceConfig config,
             Optional<Duration> timeout) {
         if (!config.enabled) {
-            // PubSub service explicitly disabled
-            LOGGER.debug("Not starting Dev Services for PubSub as it has been disabled in the config");
+            // Firestore service explicitly disabled
+            LOGGER.debug("Not starting Dev Services for Firestore as it has been disabled in the config");
             return null;
         }
 
@@ -96,18 +96,18 @@ public class PubSubDevServiceProcessor {
     }
 
     /**
-     * Starts the Pub/Sub emulator container with provided configuration.
+     * Starts the Firestore emulator container with provided configuration.
      *
      * @param dockerStatusBuildItem, Docker status
-     * @param config, Configuration for the PubSub service
+     * @param config, Configuration for the Firestore service
      * @param timeout, Optional timeout for starting the service
      * @return Running service item, or null if the service couldn't be started
      */
     private DevServicesResultBuildItem.RunningDevService startContainer(DockerStatusBuildItem dockerStatusBuildItem,
-            PubSubDevServiceConfig config,
+            FirestoreDevServiceConfig config,
             Optional<Duration> timeout) {
-        // Create and configure Pub/Sub emulator container
-        PubSubEmulatorContainer emulatorContainer = new QuarkusPubSubContainer(
+        // Create and configure Firestore emulator container
+        FirestoreEmulatorContainer emulatorContainer = new QuarkusFirestoreContainer(
                 DockerImageName.parse(config.imageName).asCompatibleSubstituteFor("gcr.io/google.com/cloudsdktool/cloud-sdk"),
                 config.emulatorPort.orElse(null));
 
@@ -116,17 +116,17 @@ public class PubSubDevServiceProcessor {
         emulatorContainer.start();
 
         // Set the config for the started container
-        PubSubDevServiceProcessor.config = config;
+        FirestoreDevServiceProcessor.config = config;
 
         // Return running service item with container details
-        return new DevServicesResultBuildItem.RunningDevService(PubSubBuildSteps.FEATURE,
+        return new DevServicesResultBuildItem.RunningDevService(FirestoreBuildSteps.FEATURE,
                 emulatorContainer.getContainerId(),
-                emulatorContainer::close, "quarkus.google.cloud.pubsub.emulator-host",
+                emulatorContainer::close, "quarkus.google.cloud.firestore.host-override",
                 emulatorContainer.getEmulatorEndpoint());
     }
 
     /**
-     * Stops the running Pub/Sub emulator container.
+     * Stops the running Firestore emulator container.
      */
     private void stopContainer() {
         if (devService != null && devService.isOwner()) {
@@ -134,7 +134,7 @@ public class PubSubDevServiceProcessor {
                 // Try closing the running dev service
                 devService.close();
             } catch (Throwable e) {
-                LOGGER.error("Failed to stop pubsub container", e);
+                LOGGER.error("Failed to stop firestore container", e);
             } finally {
                 devService = null;
             }
@@ -142,26 +142,26 @@ public class PubSubDevServiceProcessor {
     }
 
     /**
-     * Class for creating and configuring a PubSub emulator container.
+     * Class for creating and configuring a Firestore emulator container.
      */
-    private static class QuarkusPubSubContainer extends PubSubEmulatorContainer {
+    private static class QuarkusFirestoreContainer extends FirestoreEmulatorContainer {
 
         private final Integer fixedExposedPort;
-        private static final int INTERNAL_PORT = 8085;
+        private static final int INTERNAL_PORT = 8080;
 
-        private QuarkusPubSubContainer(DockerImageName dockerImageName, Integer fixedExposedPort) {
+        private QuarkusFirestoreContainer(DockerImageName dockerImageName, Integer fixedExposedPort) {
             super(dockerImageName);
             this.fixedExposedPort = fixedExposedPort;
         }
 
         /**
-         * Configures the Pub/Sub emulator container.
+         * Configures the Firestore emulator container.
          */
         @Override
         public void configure() {
             super.configure();
 
-            // Expose Pub/Sub emulatorPort
+            // Expose Firestore emulatorPort
             if (fixedExposedPort != null) {
                 addFixedExposedPort(fixedExposedPort, INTERNAL_PORT);
             } else {

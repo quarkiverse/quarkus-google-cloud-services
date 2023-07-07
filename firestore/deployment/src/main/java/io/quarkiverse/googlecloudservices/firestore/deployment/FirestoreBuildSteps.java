@@ -6,7 +6,7 @@ import io.quarkus.deployment.annotations.BuildStep;
 import io.quarkus.deployment.builditem.FeatureBuildItem;
 
 public class FirestoreBuildSteps {
-    private static final String FEATURE = "google-cloud-firestore";
+    protected static final String FEATURE = "google-cloud-firestore";
 
     @BuildStep
     public FeatureBuildItem feature() {
