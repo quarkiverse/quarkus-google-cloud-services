@@ -39,6 +39,6 @@ public class PubSubDevServiceConfig {
     /**
      * Specifies the emulatorPort on which the Pub/Sub service should run in the development environment.
      */
-    @ConfigItem(name = "emulatorPort")
-    public Optional<Integer> port = Optional.empty();
+    @ConfigItem
+    public Optional<Integer> emulatorPort = Optional.empty();
 }

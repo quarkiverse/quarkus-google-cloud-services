@@ -33,12 +33,12 @@ public class FirestoreDevServiceConfig {
      * This image is used to emulate the Firestore service in the development environment.
      * The default value is 'gcr.io/google.com/cloudsdktool/google-cloud-cli'.
      */
-    @ConfigItem(name = "image-name", defaultValue = "gcr.io/google.com/cloudsdktool/google-cloud-cli")
+    @ConfigItem(defaultValue = "gcr.io/google.com/cloudsdktool/google-cloud-cli")
     public String imageName;
 
     /**
      * Specifies the emulatorPort on which the Firestore service should run in the development environment.
      */
-    @ConfigItem(name = "emulatorPort")
-    public Optional<Integer> port = Optional.empty();
+    @ConfigItem
+    public Optional<Integer> emulatorPort = Optional.empty();
 }

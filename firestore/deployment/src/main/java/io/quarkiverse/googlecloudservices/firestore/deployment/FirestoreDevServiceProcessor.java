@@ -109,7 +109,7 @@ public class FirestoreDevServiceProcessor {
         // Create and configure Firestore emulator container
         FirestoreEmulatorContainer emulatorContainer = new QuarkusFirestoreContainer(
                 DockerImageName.parse(config.imageName).asCompatibleSubstituteFor("gcr.io/google.com/cloudsdktool/cloud-sdk"),
-                config.port.orElse(null));
+                config.emulatorPort.orElse(null));
 
         // Set container startup timeout if provided
         timeout.ifPresent(emulatorContainer::withStartupTimeout);
