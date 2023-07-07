@@ -6,7 +6,8 @@ Be sure to have read the https://quarkiverse.github.io/quarkiverse-docs/quarkus-
 
 == Bootstrapping the project
 
-First, we need a new project. Create a new project with the following command (replace the version placeholder with the correct one):
+First, we need a new project.
+Create a new project with the following command (replace the version placeholder with the correct one):
 
 [source,shell script]
 ----
@@ -38,8 +39,7 @@ This will add the following to your pom.xml:
 
 == Some example
 
-This is an example usage of the extension: we create a REST resource with a single endpoint that creates a 'persons' collection,
-inserts three persons in it, then search for persons with last name Doe and returns them.
+This is an example usage of the extension: we create a REST resource with a single endpoint that creates a 'persons' collection, inserts three persons in it, then search for persons with last name Doe and returns them.
 
 [source,java]
 ----
@@ -92,3 +92,21 @@ public class FirestoreResource {
 NOTE: Here we let Firestore serialize the `Person` object, Firestore will use reflection for this.
 So if you deploy your application as a GraalVM native image you will need to register the `Person` class for reflection.
 This can be done by annotating it with `@RegisterForReflection`.
+
+== Dev Service
+
+=== Configuring the Dev Service
+
+The extension provides a Dev Service that can be used to run a local Firestore emulator.
+This is useful for testing purposes, so you don't have to rely on a real Firestore instance.
+By default, the Dev Service is disabled, but you can enable it by setting the
+
+* `quarkus.google.cloud.firestore.devservice.enabled` property to `true`
+
+You can also set the
+
+* `quarkus.google.cloud.firestore.devservice.port` property to change the port on which the emulator will be started (by default there is no port set, so the emulator will use a random port)
+
+=== Using the Dev Service
+
+Once the Dev Service is enabled, the Firestore client which you can `@Inject` in your application will be configured to use the emulator.
