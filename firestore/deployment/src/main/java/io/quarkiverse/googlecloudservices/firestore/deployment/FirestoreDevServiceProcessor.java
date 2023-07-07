@@ -121,7 +121,7 @@ public class FirestoreDevServiceProcessor {
         // Return running service item with container details
         return new DevServicesResultBuildItem.RunningDevService(FirestoreBuildSteps.FEATURE,
                 emulatorContainer.getContainerId(),
-                emulatorContainer::close, "quarkus.google.cloud.firestore.emulator-host",
+                emulatorContainer::close, "quarkus.google.cloud.firestore.host-override",
                 emulatorContainer.getEmulatorEndpoint());
     }
 
