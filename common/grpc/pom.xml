@@ -55,8 +55,8 @@
             to be able to support 22.2 and 22.3.
         -->
         <dependency>
-            <groupId>org.graalvm.nativeimage</groupId>
-            <artifactId>svm</artifactId>
+            <groupId>org.graalvm.sdk</groupId>
+            <artifactId>graal-sdk</artifactId>
         </dependency>
         <dependency>
             <groupId>org.graalvm.sdk</groupId>
