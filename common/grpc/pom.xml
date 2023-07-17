@@ -50,14 +50,6 @@
                 </exclusion>
             </exclusions>
         </dependency>
-        <!--
-            On GraalVM 22.3, the substitution annotations will be on the graal-sdk lib, so we add both lib here
-            to be able to support 22.2 and 22.3.
-        -->
-        <dependency>
-            <groupId>org.graalvm.nativeimage</groupId>
-            <artifactId>svm</artifactId>
-        </dependency>
         <dependency>
             <groupId>org.graalvm.sdk</groupId>
             <artifactId>graal-sdk</artifactId>
