@@ -32,7 +32,7 @@ public class SpannerProducer {
     public Spanner storage() throws IOException {
         GcpBootstrapConfiguration gcpConfiguration = gcpConfigHolder.getBootstrapConfig();
         SpannerOptions.Builder builder = SpannerOptions.newBuilder().setCredentials(googleCredentials)
-                .setProjectId(gcpConfiguration.projectId.orElse(null));
+                .setProjectId(gcpConfiguration.projectId().orElse(null));
         spannerConfiguration.emulatorHost.ifPresent(builder::setEmulatorHost);
         return builder.build().getService();
     }

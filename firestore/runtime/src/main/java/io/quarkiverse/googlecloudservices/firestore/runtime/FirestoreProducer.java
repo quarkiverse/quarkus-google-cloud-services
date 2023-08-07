@@ -38,7 +38,7 @@ public class FirestoreProducer {
         GcpBootstrapConfiguration gcpConfiguration = gcpConfigHolder.getBootstrapConfig();
         FirestoreOptions.Builder builder = FirestoreOptions.newBuilder()
                 .setCredentials(googleCredentials)
-                .setProjectId(gcpConfiguration.projectId.orElse(null));
+                .setProjectId(gcpConfiguration.projectId().orElse(null));
         firestoreConfiguration.hostOverride.ifPresent(builder::setHost);
         firestoreConfiguration.retry.ifPresent(retry -> builder.setRetrySettings(buildRetrySettings(retry)));
         return builder.build().getService();

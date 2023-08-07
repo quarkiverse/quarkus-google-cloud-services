@@ -43,16 +43,16 @@ public class GcpCredentialProducer {
     @Default
     public GoogleCredentials googleCredential() throws IOException {
         GcpBootstrapConfiguration gcpConfiguration = gcpConfigHolder.getBootstrapConfig();
-        if (gcpConfiguration.serviceAccountLocation.isPresent()) {
-            try (FileInputStream is = new FileInputStream(gcpConfiguration.serviceAccountLocation.get())) {
+        if (gcpConfiguration.serviceAccountLocation().isPresent()) {
+            try (FileInputStream is = new FileInputStream(gcpConfiguration.serviceAccountLocation().get())) {
                 return GoogleCredentials.fromStream(is).createScoped(CLOUD_OAUTH_SCOPE);
             }
-        } else if (gcpConfiguration.serviceAccountEncodedKey.isPresent()) {
-            byte[] decode = Base64.getDecoder().decode(gcpConfiguration.serviceAccountEncodedKey.get());
+        } else if (gcpConfiguration.serviceAccountEncodedKey().isPresent()) {
+            byte[] decode = Base64.getDecoder().decode(gcpConfiguration.serviceAccountEncodedKey().get());
             try (ByteArrayInputStream is = new ByteArrayInputStream(decode)) {
                 return GoogleCredentials.fromStream(is).createScoped(CLOUD_OAUTH_SCOPE);
             }
-        } else if (gcpConfiguration.accessTokenEnabled && securityIdentity.isResolvable()
+        } else if (gcpConfiguration.accessTokenEnabled() && securityIdentity.isResolvable()
                 && !isAnonymous(securityIdentity.get())) {
             for (Credential cred : securityIdentity.get().getCredentials()) {
                 if (cred instanceof TokenCredential && "bearer".equals(((TokenCredential) cred).getType())) {

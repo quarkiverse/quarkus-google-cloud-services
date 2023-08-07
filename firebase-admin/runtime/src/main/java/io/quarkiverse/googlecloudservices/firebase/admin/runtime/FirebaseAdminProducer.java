@@ -38,7 +38,7 @@ public class FirebaseAdminProducer {
 
         FirebaseOptions firebaseOptions = FirebaseOptions.builder()
                 .setCredentials(googleCredentials)
-                .setProjectId(gcpConfiguration.projectId.orElse(null))
+                .setProjectId(gcpConfiguration.projectId().orElse(null))
                 .build();
 
         return FirebaseApp.getApps().stream()
@@ -49,7 +49,7 @@ public class FirebaseAdminProducer {
 
     private FirebaseApp initializeFirebaseApp(GcpBootstrapConfiguration gcpBootstrapConfiguration,
             FirebaseOptions firebaseOptions) {
-        return gcpBootstrapConfiguration.projectId
+        return gcpBootstrapConfiguration.projectId()
                 .map(appName -> FirebaseApp.initializeApp(firebaseOptions, appName))
                 .orElse(FirebaseApp.initializeApp(firebaseOptions));
     }
