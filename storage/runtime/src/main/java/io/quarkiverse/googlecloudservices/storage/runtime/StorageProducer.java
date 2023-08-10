@@ -34,7 +34,7 @@ public class StorageProducer {
         GcpBootstrapConfiguration gcpConfiguration = gcpConfigHolder.getBootstrapConfig();
         StorageOptions.Builder builder = StorageOptions.newBuilder()
                 .setCredentials(googleCredentials)
-                .setProjectId(gcpConfiguration.projectId.orElse(null));
+                .setProjectId(gcpConfiguration.projectId().orElse(null));
         storageConfiguration.hostOverride.ifPresent(builder::setHost);
         return builder.build().getService();
     }

@@ -2,23 +2,25 @@ package io.quarkiverse.googlecloudservices.common;
 
 import java.util.Optional;
 
-import io.quarkus.runtime.annotations.ConfigItem;
 import io.quarkus.runtime.annotations.ConfigPhase;
 import io.quarkus.runtime.annotations.ConfigRoot;
+import io.smallrye.config.ConfigMapping;
+import io.smallrye.config.WithDefault;
 
 /**
  * Bootstrap configuration
  *
  * We need these properties at bootstrap to be able to register the secret manager config source that needs it.
  */
-@ConfigRoot(name = "google.cloud", phase = ConfigPhase.BOOTSTRAP)
-public class GcpBootstrapConfiguration {
+@ConfigMapping(prefix = "quarkus.google.cloud")
+@ConfigRoot(phase = ConfigPhase.RUN_TIME)
+public interface GcpBootstrapConfiguration {
 
     /**
      * Enable or disable metadata server access to retrieve configuration options (projectId, region...).
      */
-    @ConfigItem()
-    public boolean enableMetadataServer = true;
+    @WithDefault("true")
+    boolean enableMetadataServer();
 
     /**
      * Google Cloud project ID.
@@ -26,20 +28,17 @@ public class GcpBootstrapConfiguration {
      * the default),
      * so to the project ID corresponding to the default credentials if the default credentials are set, otherwise null.
      */
-    @ConfigItem(defaultValueDocumentation = "ServiceOptions.getDefaultProjectId()")
-    public Optional<String> projectId;
+    Optional<String> projectId();
 
     /**
      * Google Cloud service account file location.
      */
-    @ConfigItem
-    public Optional<String> serviceAccountLocation;
+    Optional<String> serviceAccountLocation();
 
     /**
      * Google Cloud service account base64 encoded content.
      */
-    @ConfigItem
-    public Optional<String> serviceAccountEncodedKey;
+    Optional<String> serviceAccountEncodedKey();
 
     /**
      * Enable Google Cloud access token authentication
@@ -51,6 +50,6 @@ public class GcpBootstrapConfiguration {
      *
      * Disable this property if the default Google Cloud authentication is required.
      */
-    @ConfigItem(defaultValue = "true")
-    public boolean accessTokenEnabled = true;
+    @WithDefault("true")
+    boolean accessTokenEnabled();
 }
