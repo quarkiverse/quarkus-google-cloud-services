@@ -19,7 +19,7 @@
     <maven.compiler.parameters>true</maven.compiler.parameters>
     <quarkus.version>3.3.0</quarkus.version>
     <compiler-plugin.version>3.8.1</compiler-plugin.version>
-    <enforcer-plugin.version>3.3.0</enforcer-plugin.version>
+    <enforcer-plugin.version>3.4.0</enforcer-plugin.version>
     <assertj.version>3.24.2</assertj.version>
   </properties>
   <scm>
