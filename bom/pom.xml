@@ -23,7 +23,8 @@
         <opencensus.version>0.31.1</opencensus.version><!-- mess in google-pubsub and grpc deps; should be rather stable as OpenCensus has been sunsetted already - see https://github.com/GoogleCloudPlatform/cloud-opensource-java/issues/862 -->
         <threeten.version>1.6.8</threeten.version><!-- mess in google-cloud-core transitive deps -->
         <perfmark-api.version>0.26.0</perfmark-api.version><!-- mess in grpc-core and google-cloud-secretmanager-->
-        <conscrypt-version>2.5.2</conscrypt-version><!-- mess in google-cloud-bigquery and the other google cloud lib-->
+        <conscrypt.version>2.5.2</conscrypt.version><!-- mess in google-cloud-bigquery and the other google cloud lib-->
+        <a11y-base.version>24.1.6</a11y-base.version>
     </properties>
 
     <dependencyManagement>
@@ -83,7 +84,12 @@
             <dependency>
                 <groupId>org.conscrypt</groupId>
                 <artifactId>conscrypt-openjdk-uber</artifactId>
-                <version>${conscrypt-version}</version>
+                <version>${conscrypt.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.mvnpm.at.vaadin</groupId>
+                <artifactId>a11y-base</artifactId>
+                <version>${a11y-base.version}</version>
             </dependency>
 
             <!-- Google Cloud Services Extensions -->
