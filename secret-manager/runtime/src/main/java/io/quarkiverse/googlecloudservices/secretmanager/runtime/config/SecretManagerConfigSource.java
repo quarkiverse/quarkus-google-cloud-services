@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import com.google.api.gax.core.FixedCredentialsProvider;
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.cloud.secretmanager.v1.AccessSecretVersionResponse;
 import com.google.cloud.secretmanager.v1.SecretManagerServiceClient;
@@ -32,8 +33,13 @@ public class SecretManagerConfigSource extends AbstractConfigSource {
     public SecretManagerConfigSource(final GcpBootstrapConfiguration gcpConfig, final String projectId) {
         super(CONFIG_SOURCE_NAME, SECRET_MANAGER_ORDINAL);
         this.projectId = projectId;
-        this.client = createClient(gcpConfig, projectId);
-        this.closed = new AtomicBoolean(false);
+        if (gcpConfig.secretManagerEnabled()) {
+            this.client = createClient(gcpConfig, projectId);
+            this.closed = new AtomicBoolean(false);
+        } else {
+            this.client = null;
+            this.closed = new AtomicBoolean(true);
+        }
     }
 
     @Override
@@ -75,7 +81,7 @@ public class SecretManagerConfigSource extends AbstractConfigSource {
             return SecretManagerServiceClient.create(
                     SecretManagerServiceSettings.newBuilder()
                             .setQuotaProjectId(projectId)
-                            .setCredentialsProvider(() -> credentials(gcpConfig))
+                            .setCredentialsProvider(FixedCredentialsProvider.create(credentials(gcpConfig)))
                             .build());
         } catch (IOException e) {
             throw new RuntimeException(e);

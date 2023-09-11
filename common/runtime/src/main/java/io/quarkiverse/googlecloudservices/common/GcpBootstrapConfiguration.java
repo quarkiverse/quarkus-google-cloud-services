@@ -52,4 +52,10 @@ public interface GcpBootstrapConfiguration {
      */
     @WithDefault("true")
     boolean accessTokenEnabled();
+
+    /**
+     * Whether to enable the secret manager
+     */
+    @WithDefault("true")
+    boolean secretManagerEnabled();
 }
