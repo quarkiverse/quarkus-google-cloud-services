@@ -24,7 +24,7 @@
         <threeten.version>1.6.8</threeten.version><!-- mess in google-cloud-core transitive deps -->
         <perfmark-api.version>0.26.0</perfmark-api.version><!-- mess in grpc-core and google-cloud-secretmanager-->
         <conscrypt.version>2.5.2</conscrypt.version><!-- mess in google-cloud-bigquery and the other google cloud lib-->
-        <a11y-base.version>24.1.6</a11y-base.version>
+        <a11y-base.version>24.1.7</a11y-base.version>
     </properties>
 
     <dependencyManagement>
