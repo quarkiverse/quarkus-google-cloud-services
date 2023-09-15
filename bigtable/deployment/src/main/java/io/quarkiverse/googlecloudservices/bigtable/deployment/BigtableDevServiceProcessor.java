@@ -22,9 +22,9 @@ import io.quarkus.deployment.dev.devservices.GlobalDevServicesConfig;
 import io.quarkus.deployment.logging.LoggingSetupBuildItem;
 
 /**
- * Processor responsible for managing Pub/Sub Dev Services.
+ * Processor responsible for managing Bigtable Dev Services.
  * <p>
- * The processor starts the Pub/Sub service in case it's not running.
+ * The processor starts the Bigtable service in case it's not running.
  */
 @BuildSteps(onlyIfNot = IsNormal.class, onlyIf = GlobalDevServicesConfig.Enabled.class)
 public class BigtableDevServiceProcessor {
@@ -33,12 +33,12 @@ public class BigtableDevServiceProcessor {
 
     // Running dev service instance
     private static volatile DevServicesResultBuildItem.RunningDevService devService;
-    // Configuration for the Pub/Sub Dev service
+    // Configuration for the Bigtable Dev service
     private static volatile BigtableDevServiceConfig config;
 
     @BuildStep
     public DevServicesResultBuildItem start(DockerStatusBuildItem dockerStatusBuildItem,
-            BigtableBuildTimeConfig pubSubBuildTimeConfig,
+            BigtableBuildTimeConfig buildTimeConfig,
             List<DevServicesSharedNetworkBuildItem> devServicesSharedNetworkBuildItem,
             Optional<ConsoleInstalledBuildItem> consoleInstalledBuildItem,
             CuratedApplicationShutdownBuildItem closeBuildItem,
@@ -46,7 +46,7 @@ public class BigtableDevServiceProcessor {
             LoggingSetupBuildItem loggingSetupBuildItem,
             GlobalDevServicesConfig globalDevServicesConfig) {
         // If dev service is running and config has changed, stop the service
-        if (devService != null && !pubSubBuildTimeConfig.devservice.equals(config)) {
+        if (devService != null && !buildTimeConfig.devservice.equals(config)) {
             stopContainer();
         } else if (devService != null) {
             return devService.toBuildItem();
@@ -54,16 +54,16 @@ public class BigtableDevServiceProcessor {
 
         // Set up log compressor for startup logs
         StartupLogCompressor compressor = new StartupLogCompressor(
-                (launchMode.isTest() ? "(test) " : "") + "Google Cloud PubSub Dev Services Starting:",
+                (launchMode.isTest() ? "(test) " : "") + "Google Cloud Bigtable Dev Services Starting:",
                 consoleInstalledBuildItem,
                 loggingSetupBuildItem);
 
         // Try starting the container if conditions are met
         try {
-            devService = startContainerIfAvailable(dockerStatusBuildItem, pubSubBuildTimeConfig.devservice,
+            devService = startContainerIfAvailable(dockerStatusBuildItem, buildTimeConfig.devservice,
                     globalDevServicesConfig.timeout);
         } catch (Throwable t) {
-            LOGGER.warn("Unable to start PubSub dev service", t);
+            LOGGER.warn("Unable to start Bigtable dev service", t);
             // Dump captured logs in case of an error
             compressor.closeAndDumpCaptured();
             return null;
@@ -78,7 +78,7 @@ public class BigtableDevServiceProcessor {
      * Start the container if conditions are met.
      *
      * @param dockerStatusBuildItem, Docker status
-     * @param config, Configuration for the Pub/Sub service
+     * @param config, Configuration for the Bigtable service
      * @param timeout, Optional timeout for starting the service
      * @return Running service item, or null if the service couldn't be started
      */
@@ -86,8 +86,8 @@ public class BigtableDevServiceProcessor {
             BigtableDevServiceConfig config,
             Optional<Duration> timeout) {
         if (!config.enabled) {
-            // PubSub service explicitly disabled
-            LOGGER.debug("Not starting Dev Services for PubSub as it has been disabled in the config");
+            // Bigtable service explicitly disabled
+            LOGGER.debug("Not starting Dev Services for Bigtable as it has been disabled in the config");
             return null;
         }
 
@@ -100,17 +100,17 @@ public class BigtableDevServiceProcessor {
     }
 
     /**
-     * Starts the Pub/Sub emulator container with provided configuration.
+     * Starts the Bigtable emulator container with provided configuration.
      *
      * @param dockerStatusBuildItem, Docker status
-     * @param config, Configuration for the PubSub service
+     * @param config, Configuration for the Bigtable service
      * @param timeout, Optional timeout for starting the service
      * @return Running service item, or null if the service couldn't be started
      */
     private DevServicesResultBuildItem.RunningDevService startContainer(DockerStatusBuildItem dockerStatusBuildItem,
             BigtableDevServiceConfig config,
             Optional<Duration> timeout) {
-        // Create and configure Pub/Sub emulator container
+        // Create and configure Bigtable emulator container
         BigtableEmulatorContainer emulatorContainer = new QuarkusBigtableContainer(
                 DockerImageName.parse(config.imageName).asCompatibleSubstituteFor("gcr.io/google.com/cloudsdktool/cloud-sdk"),
                 config.emulatorPort.orElse(null));
@@ -130,7 +130,7 @@ public class BigtableDevServiceProcessor {
     }
 
     /**
-     * Stops the running Pub/Sub emulator container.
+     * Stops the running Bigtable emulator container.
      */
     private void stopContainer() {
         if (devService != null && devService.isOwner()) {
@@ -138,7 +138,7 @@ public class BigtableDevServiceProcessor {
                 // Try closing the running dev service
                 devService.close();
             } catch (Throwable e) {
-                LOGGER.error("Failed to stop pubsub container", e);
+                LOGGER.error("Failed to stop Bigtable container", e);
             } finally {
                 devService = null;
             }
@@ -146,7 +146,7 @@ public class BigtableDevServiceProcessor {
     }
 
     /**
-     * Class for creating and configuring a PubSub emulator container.
+     * Class for creating and configuring a Bigtable emulator container.
      */
     private static class QuarkusBigtableContainer extends BigtableEmulatorContainer {
 
@@ -159,13 +159,13 @@ public class BigtableDevServiceProcessor {
         }
 
         /**
-         * Configures the Pub/Sub emulator container.
+         * Configures the Bigtable emulator container.
          */
         @Override
         public void configure() {
             super.configure();
 
-            // Expose Pub/Sub emulatorPort
+            // Expose Bigtable emulatorPort
             if (fixedExposedPort != null) {
                 addFixedExposedPort(fixedExposedPort, INTERNAL_PORT);
             } else {

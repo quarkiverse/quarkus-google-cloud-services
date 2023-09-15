@@ -22,7 +22,7 @@ import io.quarkus.runtime.annotations.ConfigItem;
 public class BigtableDevServiceConfig {
 
     /**
-     * Indicates whether the Firestore service should be enabled or not.
+     * Indicates whether the Bigtable service should be enabled or not.
      * The default value is 'false'.
      */
     @ConfigItem(defaultValue = "false")
@@ -30,14 +30,14 @@ public class BigtableDevServiceConfig {
 
     /**
      * Sets the Docker image name for the Google Cloud SDK.
-     * This image is used to emulate the Firestore service in the development environment.
+     * This image is used to emulate the Bigtable service in the development environment.
      * The default value is 'gcr.io/google.com/cloudsdktool/google-cloud-cli'.
      */
     @ConfigItem(defaultValue = "gcr.io/google.com/cloudsdktool/google-cloud-cli")
     public String imageName;
 
     /**
-     * Specifies the emulatorPort on which the Firestore service should run in the development environment.
+     * Specifies the emulatorPort on which the Bigtable service should run in the development environment.
      */
     @ConfigItem
     public Optional<Integer> emulatorPort = Optional.empty();
