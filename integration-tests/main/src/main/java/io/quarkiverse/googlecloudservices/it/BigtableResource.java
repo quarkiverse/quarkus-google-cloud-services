@@ -1,5 +1,14 @@
 package io.quarkiverse.googlecloudservices.it;
 
+import java.io.IOException;
+
+import jakarta.annotation.PostConstruct;
+import jakarta.inject.Inject;
+import jakarta.ws.rs.GET;
+import jakarta.ws.rs.Path;
+
+import org.eclipse.microprofile.config.inject.ConfigProperty;
+
 import com.google.api.gax.core.CredentialsProvider;
 import com.google.api.gax.core.NoCredentialsProvider;
 import com.google.api.gax.grpc.GrpcTransportChannel;
@@ -15,15 +24,9 @@ import com.google.cloud.bigtable.data.v2.BigtableDataSettings;
 import com.google.cloud.bigtable.data.v2.models.Row;
 import com.google.cloud.bigtable.data.v2.models.RowCell;
 import com.google.cloud.bigtable.data.v2.models.RowMutation;
+
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
-import jakarta.annotation.PostConstruct;
-import jakarta.inject.Inject;
-import jakarta.ws.rs.GET;
-import jakarta.ws.rs.Path;
-import org.eclipse.microprofile.config.inject.ConfigProperty;
-
-import java.io.IOException;
 
 @Path("/bigtable")
 public class BigtableResource {
@@ -49,8 +52,7 @@ public class BigtableResource {
             ManagedChannel channel = ManagedChannelBuilder.forTarget(emulatorHost).usePlaintext().build();
 
             TransportChannelProvider channelProvider = FixedTransportChannelProvider.create(
-                    GrpcTransportChannel.create(channel)
-            );
+                    GrpcTransportChannel.create(channel));
             NoCredentialsProvider credentialsProvider = NoCredentialsProvider.create();
 
             EnhancedBigtableTableAdminStub stub = EnhancedBigtableTableAdminStub.createEnhanced(
@@ -58,8 +60,7 @@ public class BigtableResource {
                             .newBuilder()
                             .setTransportChannelProvider(channelProvider)
                             .setCredentialsProvider(credentialsProvider)
-                            .build()
-            );
+                            .build());
 
             try (BigtableTableAdminClient adminClient = BigtableTableAdminClient.create(projectId, INSTANCE_ID, stub)) {
                 if (!adminClient.exists(TABLE_ID)) {
@@ -91,7 +92,11 @@ public class BigtableResource {
                 .setInstanceId(INSTANCE_ID);
 
         if (emulatorHost != null) {
-            settings = BigtableDataSettings.newBuilderForEmulator(emulatorHost, 8086)
+            String[] hostAndPort = emulatorHost.split(":");
+            String host = hostAndPort[0];
+            int port = Integer.parseInt(hostAndPort[1]);
+
+            settings = BigtableDataSettings.newBuilderForEmulator(host, port)
                     .setProjectId(projectId)
                     .setInstanceId(INSTANCE_ID);
             if (authenticated) {

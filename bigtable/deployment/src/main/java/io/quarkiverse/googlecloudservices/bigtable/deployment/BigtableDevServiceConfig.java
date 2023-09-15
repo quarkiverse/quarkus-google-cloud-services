@@ -1,9 +1,9 @@
 package io.quarkiverse.googlecloudservices.bigtable.deployment;
 
+import java.util.Optional;
+
 import io.quarkus.runtime.annotations.ConfigGroup;
 import io.quarkus.runtime.annotations.ConfigItem;
-
-import java.util.Optional;
 
 /**
  * Configuration group for the Bigtable dev service. This class holds all the configuration properties

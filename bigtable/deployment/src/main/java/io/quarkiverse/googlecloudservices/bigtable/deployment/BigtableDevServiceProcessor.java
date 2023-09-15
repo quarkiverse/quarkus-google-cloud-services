@@ -1,5 +1,13 @@
 package io.quarkiverse.googlecloudservices.bigtable.deployment;
 
+import java.time.Duration;
+import java.util.List;
+import java.util.Optional;
+
+import org.jboss.logging.Logger;
+import org.testcontainers.containers.BigtableEmulatorContainer;
+import org.testcontainers.utility.DockerImageName;
+
 import io.quarkus.deployment.IsNormal;
 import io.quarkus.deployment.annotations.BuildStep;
 import io.quarkus.deployment.annotations.BuildSteps;
@@ -12,13 +20,6 @@ import io.quarkus.deployment.console.ConsoleInstalledBuildItem;
 import io.quarkus.deployment.console.StartupLogCompressor;
 import io.quarkus.deployment.dev.devservices.GlobalDevServicesConfig;
 import io.quarkus.deployment.logging.LoggingSetupBuildItem;
-import org.jboss.logging.Logger;
-import org.testcontainers.containers.BigtableEmulatorContainer;
-import org.testcontainers.utility.DockerImageName;
-
-import java.time.Duration;
-import java.util.List;
-import java.util.Optional;
 
 /**
  * Processor responsible for managing Pub/Sub Dev Services.
@@ -37,13 +38,13 @@ public class BigtableDevServiceProcessor {
 
     @BuildStep
     public DevServicesResultBuildItem start(DockerStatusBuildItem dockerStatusBuildItem,
-                                            BigtableBuildTimeConfig pubSubBuildTimeConfig,
-                                            List<DevServicesSharedNetworkBuildItem> devServicesSharedNetworkBuildItem,
-                                            Optional<ConsoleInstalledBuildItem> consoleInstalledBuildItem,
-                                            CuratedApplicationShutdownBuildItem closeBuildItem,
-                                            LaunchModeBuildItem launchMode,
-                                            LoggingSetupBuildItem loggingSetupBuildItem,
-                                            GlobalDevServicesConfig globalDevServicesConfig) {
+            BigtableBuildTimeConfig pubSubBuildTimeConfig,
+            List<DevServicesSharedNetworkBuildItem> devServicesSharedNetworkBuildItem,
+            Optional<ConsoleInstalledBuildItem> consoleInstalledBuildItem,
+            CuratedApplicationShutdownBuildItem closeBuildItem,
+            LaunchModeBuildItem launchMode,
+            LoggingSetupBuildItem loggingSetupBuildItem,
+            GlobalDevServicesConfig globalDevServicesConfig) {
         // If dev service is running and config has changed, stop the service
         if (devService != null && !pubSubBuildTimeConfig.devservice.equals(config)) {
             stopContainer();
@@ -82,8 +83,8 @@ public class BigtableDevServiceProcessor {
      * @return Running service item, or null if the service couldn't be started
      */
     private DevServicesResultBuildItem.RunningDevService startContainerIfAvailable(DockerStatusBuildItem dockerStatusBuildItem,
-                                                                                   BigtableDevServiceConfig config,
-                                                                                   Optional<Duration> timeout) {
+            BigtableDevServiceConfig config,
+            Optional<Duration> timeout) {
         if (!config.enabled) {
             // PubSub service explicitly disabled
             LOGGER.debug("Not starting Dev Services for PubSub as it has been disabled in the config");
@@ -107,8 +108,8 @@ public class BigtableDevServiceProcessor {
      * @return Running service item, or null if the service couldn't be started
      */
     private DevServicesResultBuildItem.RunningDevService startContainer(DockerStatusBuildItem dockerStatusBuildItem,
-                                                                        BigtableDevServiceConfig config,
-                                                                        Optional<Duration> timeout) {
+            BigtableDevServiceConfig config,
+            Optional<Duration> timeout) {
         // Create and configure Pub/Sub emulator container
         BigtableEmulatorContainer emulatorContainer = new QuarkusBigtableContainer(
                 DockerImageName.parse(config.imageName).asCompatibleSubstituteFor("gcr.io/google.com/cloudsdktool/cloud-sdk"),
