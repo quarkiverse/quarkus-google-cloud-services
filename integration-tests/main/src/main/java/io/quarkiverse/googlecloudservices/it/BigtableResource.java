@@ -99,9 +99,6 @@ public class BigtableResource {
             settings = BigtableDataSettings.newBuilderForEmulator(host, port)
                     .setProjectId(projectId)
                     .setInstanceId(INSTANCE_ID);
-            if (authenticated) {
-                settings.setCredentialsProvider(credentialsProvider);
-            }
         }
 
         if (authenticated) {
