@@ -15,7 +15,7 @@ import io.quarkus.runtime.annotations.ConfigItem;
  * <pre>
  * quarkus.google.cloud.bigtable.deservice.enabled = true
  * quarkus.google.cloud.bigtable.deservice.image-name = gcr.io/google.com/cloudsdktool/google-cloud-cli # optional
- * quarkus.google.cloud.bigtable.deservice.emulatorPort = 8080 # optional
+ * quarkus.google.cloud.bigtable.deservice.emulatorPort = 9000 # optional
  * </pre>
  */
 @ConfigGroup

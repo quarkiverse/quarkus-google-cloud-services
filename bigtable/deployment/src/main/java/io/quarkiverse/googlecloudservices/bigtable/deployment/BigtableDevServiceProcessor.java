@@ -151,7 +151,7 @@ public class BigtableDevServiceProcessor {
     private static class QuarkusBigtableContainer extends BigtableEmulatorContainer {
 
         private final Integer fixedExposedPort;
-        private static final int INTERNAL_PORT = 8085;
+        private static final int INTERNAL_PORT = 9000;
 
         private QuarkusBigtableContainer(DockerImageName dockerImageName, Integer fixedExposedPort) {
             super(dockerImageName);
