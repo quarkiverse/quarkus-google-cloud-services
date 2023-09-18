@@ -10,14 +10,23 @@ import jakarta.ws.rs.Path;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 
 import com.google.api.gax.core.CredentialsProvider;
+import com.google.api.gax.core.NoCredentialsProvider;
+import com.google.api.gax.grpc.GrpcTransportChannel;
+import com.google.api.gax.rpc.FixedTransportChannelProvider;
+import com.google.api.gax.rpc.TransportChannelProvider;
 import com.google.cloud.bigtable.admin.v2.BigtableTableAdminClient;
 import com.google.cloud.bigtable.admin.v2.BigtableTableAdminSettings;
 import com.google.cloud.bigtable.admin.v2.models.CreateTableRequest;
+import com.google.cloud.bigtable.admin.v2.stub.BigtableTableAdminStubSettings;
+import com.google.cloud.bigtable.admin.v2.stub.EnhancedBigtableTableAdminStub;
 import com.google.cloud.bigtable.data.v2.BigtableDataClient;
 import com.google.cloud.bigtable.data.v2.BigtableDataSettings;
 import com.google.cloud.bigtable.data.v2.models.Row;
 import com.google.cloud.bigtable.data.v2.models.RowCell;
 import com.google.cloud.bigtable.data.v2.models.RowMutation;
+
+import io.grpc.ManagedChannel;
+import io.grpc.ManagedChannelBuilder;
 
 @Path("/bigtable")
 public class BigtableResource {
@@ -31,21 +40,47 @@ public class BigtableResource {
     @ConfigProperty(name = "bigtable.authenticated", defaultValue = "true")
     boolean authenticated;
 
+    @ConfigProperty(name = "quarkus.google.cloud.bigtable.emulator-host")
+    String emulatorHost;
+
     @Inject
     CredentialsProvider credentialsProvider;
 
     @PostConstruct
     void initBigtable() throws IOException {
-        BigtableTableAdminSettings.Builder settings = BigtableTableAdminSettings.newBuilder()
-                .setProjectId(projectId)
-                .setInstanceId(INSTANCE_ID);
-        if (authenticated) {
-            settings.setCredentialsProvider(credentialsProvider);
-        }
-        try (BigtableTableAdminClient adminClient = BigtableTableAdminClient.create(settings.build())) {
-            if (!adminClient.exists(TABLE_ID)) {
-                CreateTableRequest createTableRequest = CreateTableRequest.of(TABLE_ID).addFamily(COLUMN_FAMILY_ID);
-                adminClient.createTable(createTableRequest);
+        if (emulatorHost != null) {
+            ManagedChannel channel = ManagedChannelBuilder.forTarget(emulatorHost).usePlaintext().build();
+
+            TransportChannelProvider channelProvider = FixedTransportChannelProvider.create(
+                    GrpcTransportChannel.create(channel));
+            NoCredentialsProvider credentialsProvider = NoCredentialsProvider.create();
+
+            EnhancedBigtableTableAdminStub stub = EnhancedBigtableTableAdminStub.createEnhanced(
+                    BigtableTableAdminStubSettings
+                            .newBuilder()
+                            .setTransportChannelProvider(channelProvider)
+                            .setCredentialsProvider(credentialsProvider)
+                            .build());
+
+            try (BigtableTableAdminClient adminClient = BigtableTableAdminClient.create(projectId, INSTANCE_ID, stub)) {
+                if (!adminClient.exists(TABLE_ID)) {
+                    CreateTableRequest createTableRequest = CreateTableRequest.of(TABLE_ID).addFamily(COLUMN_FAMILY_ID);
+                    adminClient.createTable(createTableRequest);
+                }
+            }
+        } else {
+            BigtableTableAdminSettings.Builder settings = BigtableTableAdminSettings.newBuilder()
+                    .setProjectId(projectId)
+                    .setInstanceId(INSTANCE_ID);
+
+            if (authenticated) {
+                settings.setCredentialsProvider(credentialsProvider);
+            }
+            try (BigtableTableAdminClient adminClient = BigtableTableAdminClient.create(settings.build())) {
+                if (!adminClient.exists(TABLE_ID)) {
+                    CreateTableRequest createTableRequest = CreateTableRequest.of(TABLE_ID).addFamily(COLUMN_FAMILY_ID);
+                    adminClient.createTable(createTableRequest);
+                }
             }
         }
     }
@@ -55,6 +90,17 @@ public class BigtableResource {
         BigtableDataSettings.Builder settings = BigtableDataSettings.newBuilder()
                 .setProjectId(projectId)
                 .setInstanceId(INSTANCE_ID);
+
+        if (emulatorHost != null) {
+            String[] hostAndPort = emulatorHost.split(":");
+            String host = hostAndPort[0];
+            int port = Integer.parseInt(hostAndPort[1]);
+
+            settings = BigtableDataSettings.newBuilderForEmulator(host, port)
+                    .setProjectId(projectId)
+                    .setInstanceId(INSTANCE_ID);
+        }
+
         if (authenticated) {
             settings.setCredentialsProvider(credentialsProvider);
         }
