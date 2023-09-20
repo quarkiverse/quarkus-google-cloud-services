@@ -14,6 +14,9 @@ public class BigtableConfigProvider {
     @ConfigProperty(name = "quarkus.google.cloud.project-id")
     String projectId;
 
+    @ConfigProperty(name = "quarkus.google.cloud.bigtable.emulator-host")
+    String emulatorHost;
+
     public BigTableClientConfiguration getConfiguration(String name) {
         Map<String, BigTableClientConfiguration> clients = config.clients;
         if (clients == null) {
@@ -25,5 +28,9 @@ public class BigtableConfigProvider {
 
     public String getProjectId() {
         return projectId;
+    }
+
+    public String getEmulatorHost() {
+        return emulatorHost;
     }
 }

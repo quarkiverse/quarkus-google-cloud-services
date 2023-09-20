@@ -2,8 +2,6 @@ package io.quarkiverse.googlecloudservices.bigtable.runtime;
 
 import java.util.Map;
 
-import io.quarkus.runtime.annotations.ConfigDocMapKey;
-import io.quarkus.runtime.annotations.ConfigDocSection;
 import io.quarkus.runtime.annotations.ConfigItem;
 import io.quarkus.runtime.annotations.ConfigPhase;
 import io.quarkus.runtime.annotations.ConfigRoot;
@@ -21,7 +19,5 @@ public class BigtableConfiguration {
      * These settings will be used when Bigtable clients are being configured.
      */
     @ConfigItem
-    @ConfigDocSection
-    @ConfigDocMapKey("client-name")
     public Map<String, BigTableClientConfiguration> clients;
 }

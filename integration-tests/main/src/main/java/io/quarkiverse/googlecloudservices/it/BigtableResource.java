@@ -1,5 +1,14 @@
 package io.quarkiverse.googlecloudservices.it;
 
+import java.io.IOException;
+
+import jakarta.annotation.PostConstruct;
+import jakarta.inject.Inject;
+import jakarta.ws.rs.GET;
+import jakarta.ws.rs.Path;
+
+import org.eclipse.microprofile.config.inject.ConfigProperty;
+
 import com.google.api.gax.core.CredentialsProvider;
 import com.google.api.gax.core.NoCredentialsProvider;
 import com.google.api.gax.grpc.GrpcTransportChannel;
@@ -15,16 +24,10 @@ import com.google.cloud.bigtable.data.v2.BigtableDataSettings;
 import com.google.cloud.bigtable.data.v2.models.Row;
 import com.google.cloud.bigtable.data.v2.models.RowCell;
 import com.google.cloud.bigtable.data.v2.models.RowMutation;
+
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 import io.quarkiverse.googlecloudservice.bigtable.api.BigtableClient;
-import jakarta.annotation.PostConstruct;
-import jakarta.inject.Inject;
-import jakarta.ws.rs.GET;
-import jakarta.ws.rs.Path;
-import org.eclipse.microprofile.config.inject.ConfigProperty;
-
-import java.io.IOException;
 
 @Path("/bigtable")
 public class BigtableResource {
@@ -109,9 +112,9 @@ public class BigtableResource {
         try (BigtableDataClient dataClient = BigtableDataClient.create(settings.build())) {
             // create a row
             RowMutation rowMutation = RowMutation.create(TABLE_ID, "key1").setCell(COLUMN_FAMILY_ID, "test", "value1");
-            dataClient.mutateRow(rowMutation);
+            this.dataClient.mutateRow(rowMutation);
 
-            Row row = dataClient.readRow(TABLE_ID, "key1");
+            Row row = this.dataClient.readRow(TABLE_ID, "key1");
             StringBuilder cells = new StringBuilder();
             for (RowCell cell : row.getCells()) {
                 cells.append(String.format(

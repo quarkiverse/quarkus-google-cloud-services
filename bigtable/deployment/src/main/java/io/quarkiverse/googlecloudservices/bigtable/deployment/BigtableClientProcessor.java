@@ -17,12 +17,17 @@ import org.jboss.jandex.MethodParameterInfo;
 import org.jboss.jandex.Type;
 import org.jboss.logging.Logger;
 
+import com.google.cloud.bigtable.data.v2.BigtableDataClient;
+
 import io.quarkiverse.googlecloudservice.bigtable.api.BigtableClient;
 import io.quarkiverse.googlecloudservices.bigtable.runtime.BigtableConfigProvider;
 import io.quarkus.arc.deployment.AdditionalBeanBuildItem;
 import io.quarkus.arc.deployment.BeanDiscoveryFinishedBuildItem;
+import io.quarkus.arc.deployment.InjectionPointTransformerBuildItem;
 import io.quarkus.arc.deployment.SyntheticBeanBuildItem;
+import io.quarkus.arc.processor.Annotations;
 import io.quarkus.arc.processor.InjectionPointInfo;
+import io.quarkus.arc.processor.InjectionPointsTransformer;
 import io.quarkus.deployment.annotations.BuildProducer;
 import io.quarkus.deployment.annotations.BuildStep;
 import io.quarkus.deployment.builditem.CombinedIndexBuildItem;
@@ -107,20 +112,55 @@ public class BigtableClientProcessor {
             BuildProducer<SyntheticBeanBuildItem> syntheticBeans) {
         for (BigtableBuildItem client : clients) {
             for (BigtableBuildItem.ClientInfo clientInfo : client.getClients()) {
-                SyntheticBeanBuildItem.ExtendedBeanConfigurator configurator = SyntheticBeanBuildItem.configure(clientInfo.className)
-                        .addQualifier().annotation(BigTableDotNames.BIGTABLE_CLIENT).addValue("value", client.getClientName()).done()
+                String clientName = client.getClientName();
+                SyntheticBeanBuildItem.ExtendedBeanConfigurator configurator = SyntheticBeanBuildItem
+                        .configure(clientInfo.className)
+                        .addQualifier().annotation(BigTableDotNames.BIGTABLE_CLIENT).addValue("value", clientName).done()
                         .scope(Singleton.class)
                         .unremovable()
                         .forceApplicationClass()
+                        .addType(BigtableDataClient.class)
                         .creator(new Consumer<MethodCreator>() {
                             @Override
                             public void accept(MethodCreator mc) {
-                                BigtableClientProcessor.this.generateClientProducer(mc, client.getClientName());
+                                BigtableClientProcessor.this.generateClientProducer(mc, clientName);
                             }
                         });
                 syntheticBeans.produce(configurator.done());
             }
         }
+    }
+
+    @BuildStep
+    InjectionPointTransformerBuildItem transformInjectionPoints() {
+        return new InjectionPointTransformerBuildItem(new InjectionPointsTransformer() {
+
+            @Override
+            public void transform(TransformationContext ctx) {
+                AnnotationInstance clientAnnotation = Annotations.find(ctx.getQualifiers(), BigTableDotNames.BIGTABLE_CLIENT);
+                if (clientAnnotation != null && clientAnnotation.value() == null) {
+                    String clientName = null;
+                    if (ctx.getTarget().kind() == AnnotationTarget.Kind.FIELD) {
+                        clientName = clientAnnotation.target().asField().name();
+                    } else if (ctx.getTarget().kind() == AnnotationTarget.Kind.METHOD_PARAMETER) {
+                        MethodParameterInfo param = clientAnnotation.target().asMethodParameter();
+                        // We don't need to check if parameter names are recorded - that's validated elsewhere
+                        clientName = param.method().parameterName(param.position());
+                    }
+                    if (clientName != null) {
+                        ctx.transform().remove(BigTableDotNames::isBigtableClient)
+                                .add(BigTableDotNames.BIGTABLE_CLIENT, AnnotationValue.createStringValue("value", clientName))
+                                .done();
+                    }
+                }
+            }
+
+            @Override
+            public boolean appliesTo(Type requiredType) {
+                return true;
+            }
+
+        });
     }
 
     private void generateClientProducer(MethodCreator mc, String clientName) {
