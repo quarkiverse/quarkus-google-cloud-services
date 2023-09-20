@@ -20,7 +20,6 @@ import com.google.cloud.bigtable.admin.v2.models.CreateTableRequest;
 import com.google.cloud.bigtable.admin.v2.stub.BigtableTableAdminStubSettings;
 import com.google.cloud.bigtable.admin.v2.stub.EnhancedBigtableTableAdminStub;
 import com.google.cloud.bigtable.data.v2.BigtableDataClient;
-import com.google.cloud.bigtable.data.v2.BigtableDataSettings;
 import com.google.cloud.bigtable.data.v2.models.Row;
 import com.google.cloud.bigtable.data.v2.models.RowCell;
 import com.google.cloud.bigtable.data.v2.models.RowMutation;
@@ -92,36 +91,16 @@ public class BigtableResource {
 
     @GET
     public String bigtable() throws IOException {
-        BigtableDataSettings.Builder settings = BigtableDataSettings.newBuilder()
-                .setProjectId(projectId)
-                .setInstanceId(INSTANCE_ID);
+        RowMutation rowMutation = RowMutation.create(TABLE_ID, "key1").setCell(COLUMN_FAMILY_ID, "test", "value1");
+        dataClient.mutateRow(rowMutation);
 
-        if (emulatorHost != null) {
-            String[] hostAndPort = emulatorHost.split(":");
-            String host = hostAndPort[0];
-            int port = Integer.parseInt(hostAndPort[1]);
-
-            settings = BigtableDataSettings.newBuilderForEmulator(host, port)
-                    .setProjectId(projectId)
-                    .setInstanceId(INSTANCE_ID);
+        Row row = dataClient.readRow(TABLE_ID, "key1");
+        StringBuilder cells = new StringBuilder();
+        for (RowCell cell : row.getCells()) {
+            cells.append(String.format(
+                    "Family: %s    Qualifier: %s    Value: %s%n",
+                    cell.getFamily(), cell.getQualifier().toStringUtf8(), cell.getValue().toStringUtf8()));
         }
-
-        if (authenticated) {
-            settings.setCredentialsProvider(credentialsProvider);
-        }
-        try (BigtableDataClient dataClient = BigtableDataClient.create(settings.build())) {
-            // create a row
-            RowMutation rowMutation = RowMutation.create(TABLE_ID, "key1").setCell(COLUMN_FAMILY_ID, "test", "value1");
-            this.dataClient.mutateRow(rowMutation);
-
-            Row row = this.dataClient.readRow(TABLE_ID, "key1");
-            StringBuilder cells = new StringBuilder();
-            for (RowCell cell : row.getCells()) {
-                cells.append(String.format(
-                        "Family: %s    Qualifier: %s    Value: %s%n",
-                        cell.getFamily(), cell.getQualifier().toStringUtf8(), cell.getValue().toStringUtf8()));
-            }
-            return cells.toString();
-        }
+        return cells.toString();
     }
 }
