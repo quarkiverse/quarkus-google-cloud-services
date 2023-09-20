@@ -178,6 +178,15 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "snazy",
+      "name": "Robert Stupp",
+      "avatar_url": "https://avatars.githubusercontent.com/u/957468?v=4",
+      "profile": "https://github.com/snazy",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,
