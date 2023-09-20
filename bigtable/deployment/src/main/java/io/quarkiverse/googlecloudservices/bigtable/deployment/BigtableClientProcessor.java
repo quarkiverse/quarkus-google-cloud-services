@@ -1,7 +1,5 @@
 package io.quarkiverse.googlecloudservices.bigtable.deployment;
 
-import static io.quarkus.deployment.Feature.GRPC_CLIENT;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -39,7 +37,7 @@ public class BigtableClientProcessor {
 
     private static final Logger LOGGER = Logger.getLogger(BigtableClientProcessor.class.getName());
 
-    protected static final String FEATURE = "google-cloud-bigtable-client";
+    private static final String FEATURE = "google-cloud-bigtable-client";
 
     @BuildStep
     public void registerBeans(BuildProducer<AdditionalBeanBuildItem> beans) {
@@ -73,7 +71,7 @@ public class BigtableClientProcessor {
                                 + " in method "
                                 + param.method().declaringClass().name() + "#" + param.method().name()
                                 +
-                                "() - compile the class with debug info enabled (-g) or parameter names recorded (-parameters), or use GrpcClient#value() to specify the service name");
+                                "() - compile the class with debug info enabled (-g) or parameter names recorded (-parameters), or use BigtableClient#value() to specify the service name");
                     }
                 } else {
                     // This should never happen because @BigtableClient has @Target({ FIELD, PARAMETER })
@@ -103,12 +101,12 @@ public class BigtableClientProcessor {
                 clients.produce(item);
                 LOGGER.debugf("Detected client associated with the '%s' configuration prefix", item.getClientName());
             }
-            features.produce(new FeatureBuildItem(GRPC_CLIENT));
+            features.produce(new FeatureBuildItem(FEATURE));
         }
     }
 
     @BuildStep
-    public void generateGrpcClientProducers(List<BigtableBuildItem> clients,
+    public void generateBigtableClientProducers(List<BigtableBuildItem> clients,
             BuildProducer<SyntheticBeanBuildItem> syntheticBeans) {
         for (BigtableBuildItem client : clients) {
             for (BigtableBuildItem.ClientInfo clientInfo : client.getClients()) {
