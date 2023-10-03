@@ -36,15 +36,15 @@ public class SecretManagerConfigUtils {
             secretId = tokens[1];
             version = tokens[2];
         } else if (tokens.length == 4
-                && tokens[0].equals("projects")
-                && tokens[2].equals("secrets")) {
+                && "projects".equals(tokens[0])
+                && "secrets".equals(tokens[2])) {
             // property is form "sm//projects/<project-id>/secrets/<secret-id>"
             projectId = tokens[1];
             secretId = tokens[3];
         } else if (tokens.length == 6
-                && tokens[0].equals("projects")
-                && tokens[2].equals("secrets")
-                && tokens[4].equals("versions")) {
+                && "projects".equals(tokens[0])
+                && "secrets".equals(tokens[2])
+                && "versions".equals(tokens[4])) {
             // property is form "sm//projects/<project-id>/secrets/<secret-id>/versions/<version>"
             projectId = tokens[1];
             secretId = tokens[3];
