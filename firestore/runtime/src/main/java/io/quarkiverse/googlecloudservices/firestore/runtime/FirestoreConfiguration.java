@@ -25,6 +25,13 @@ public class FirestoreConfiguration {
     @ConfigItem
     public Optional<RetryConfiguration> retry;
 
+    /**
+     * The firestore database identifier.
+     * It not set, the default will be used.
+     */
+    @ConfigItem
+    public Optional<String> databaseId;
+
     @ConfigGroup
     public static class RetryConfiguration {
 
