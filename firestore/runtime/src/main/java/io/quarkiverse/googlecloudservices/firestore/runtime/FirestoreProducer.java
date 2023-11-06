@@ -41,6 +41,7 @@ public class FirestoreProducer {
                 .setProjectId(gcpConfiguration.projectId().orElse(null));
         firestoreConfiguration.hostOverride.ifPresent(builder::setHost);
         firestoreConfiguration.retry.ifPresent(retry -> builder.setRetrySettings(buildRetrySettings(retry)));
+        firestoreConfiguration.databaseId.ifPresent(databaseId -> builder.setDatabaseId(databaseId));
         return builder.build().getService();
     }
 
