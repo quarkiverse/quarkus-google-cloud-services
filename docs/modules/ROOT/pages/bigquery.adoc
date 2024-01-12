@@ -1,6 +1,6 @@
 = Google Cloud Services - BigQuery
 
-This extension allows to inject a `com.google.cloud.bigquery.BigQuery` object inside your Quarkus application.
+This extension allows to inject a `com.google.cloud.bigquery.BigQuery` object or a `com.google.cloud.bigquery.storage.v1.BigQueryWriteClient` object inside your Quarkus application.
 
 Be sure to have read the https://quarkiverse.github.io/quarkiverse-docs/quarkus-google-cloud-services/main/index.html[Google Cloud Services extension pack global documentation] before this one, it contains general configuration and information.
 
@@ -94,6 +94,31 @@ public class BigQueryResource {
         return StreamSupport.stream(result.iterateAll().spliterator(), false)
                 .map(row -> row.get("url").getStringValue() + " - " + row.get("view_count").getLongValue() + "\n")
                 .collect(Collectors.joining());
+    }
+}
+----
+
+If you want to use the BigQuery Storage Write API you can inject a `BigQueryWriteClient` :
+
+[source, java]
+----
+import javax.inject.Inject;
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
+
+import com.google.cloud.bigquery.storage.v1.BigQueryWriteClient;
+
+@Path("/bigquery")
+public class BigQueryResource {
+    @Inject
+    BigQueryWriteClient bigQueryWriteClient;
+
+    @GET
+    @Produces(MediaType.TEXT_PLAIN)
+    public String bigquery() {
+        // do whatever you want with the BigQueryWriteClient ...
     }
 }
 ----
