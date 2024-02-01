@@ -5,6 +5,7 @@ import java.util.Optional;
 import java.util.stream.StreamSupport;
 
 import jakarta.annotation.PostConstruct;
+import jakarta.annotation.PreDestroy;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 
@@ -46,6 +47,13 @@ public class TopicManager {
             channelProvider = Optional.of(FixedTransportChannelProvider.create(GrpcTransportChannel.create(channel)));
         } else {
             channelProvider = Optional.empty();
+        }
+    }
+
+    @PreDestroy
+    void destroy() throws Exception {
+        if (channelProvider.isPresent()) {
+            channelProvider.get().getTransportChannel().close();
         }
     }
 
