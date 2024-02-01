@@ -70,7 +70,9 @@ public class SecretManagerConfigSource extends AbstractConfigSource {
 
     void closeClient() {
         closed.compareAndSet(false, true);
-        client.close();
+        if (client != null) {
+            client.close();
+        }
     }
 
     private static SecretManagerServiceClient createClient(
