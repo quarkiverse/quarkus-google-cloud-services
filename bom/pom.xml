@@ -19,6 +19,8 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
         <google-cloud-sdk.version>26.29.0</google-cloud-sdk.version>
+        <arrow.version>15.0.0</arrow.version>
+
         <!-- Dependency convergence issues -->
         <opencensus.version>0.31.1</opencensus.version><!-- mess in google-pubsub and grpc deps; should be rather stable as OpenCensus has been sunsetted already - see https://github.com/GoogleCloudPlatform/cloud-opensource-java/issues/862 -->
         <threeten.version>1.6.8</threeten.version><!-- mess in google-cloud-core transitive deps -->
@@ -84,6 +86,28 @@
                 <groupId>org.conscrypt</groupId>
                 <artifactId>conscrypt-openjdk-uber</artifactId>
                 <version>${conscrypt.version}</version>
+            </dependency>
+
+            <!-- Force Apache Arrow to fix a Netty native issue -->
+            <dependency>
+                <groupId>org.apache.arrow</groupId>
+                <artifactId>arrow-vector</artifactId>
+                <version>${arrow.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.arrow</groupId>
+                <artifactId>arrow-format</artifactId>
+                <version>${arrow.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.arrow</groupId>
+                <artifactId>arrow-memory-core</artifactId>
+                <version>${arrow.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.arrow</groupId>
+                <artifactId>arrow-memory-netty</artifactId>
+                <version>${arrow.version}</version>
             </dependency>
 
             <!-- Google Cloud Services Extensions -->
