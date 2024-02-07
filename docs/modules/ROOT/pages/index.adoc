@@ -1,5 +1,7 @@
 = Google Cloud Services extension pack for Quarkus
 
+include::./includes/attributes.adoc[]
+
 The Google Cloud Services extension pack provides Quarkus extensions for the following services:
 
 * xref:bigquery.adoc[BigQuery]
