@@ -21,27 +21,31 @@ import com.google.common.util.concurrent.MoreExecutors;
 import com.google.protobuf.ByteString;
 import com.google.pubsub.v1.PubsubMessage;
 
-import io.quarkiverse.googlecloudservices.it.pubsub.TopicManager;
+import io.quarkiverse.googlecloudservices.pubsub.QuarkusPubSub;
 
 @Path("/pubsub")
 public class PubSubResource {
     private static final Logger LOG = Logger.getLogger(PubSubResource.class);
 
     @Inject
-    TopicManager topicManager;
+    QuarkusPubSub pubSub;
 
     private Subscriber subscriber;
     private String lastMessage;
 
     @PostConstruct
     void init() throws IOException {
+        // init topic and subscription
+        pubSub.createTopic("test-topic");
+        pubSub.createSubscription("test-topic", "test-subscription");
+
         // subscribe to PubSub
         MessageReceiver receiver = (message, consumer) -> {
             this.lastMessage = message.getData().toStringUtf8();
             LOG.infov("Got message {0}", this.lastMessage);
             consumer.ack();
         };
-        subscriber = topicManager.initSubscriber(receiver);
+        subscriber = pubSub.subscriber("test-subscription", receiver);
         subscriber.startAsync().awaitRunning();
     }
 
@@ -55,12 +59,12 @@ public class PubSubResource {
     @POST
     @Consumes(MediaType.TEXT_PLAIN)
     public void sendMessage(String message) throws IOException, InterruptedException {
-        Publisher publisher = topicManager.initPublisher();
+        Publisher publisher = pubSub.publisher("test-topic");
         try {
             ByteString data = ByteString.copyFromUtf8(message);
             PubsubMessage pubsubMessage = PubsubMessage.newBuilder().setData(data).build();
             ApiFuture<String> messageIdFuture = publisher.publish(pubsubMessage);
-            ApiFutures.addCallback(messageIdFuture, new ApiFutureCallback<String>() {
+            ApiFutures.addCallback(messageIdFuture, new ApiFutureCallback<>() {
                 public void onSuccess(String messageId) {
                     LOG.infov("published with message id {0}", messageId);
                 }
