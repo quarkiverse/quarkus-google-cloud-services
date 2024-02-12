@@ -6,6 +6,7 @@ import jakarta.enterprise.inject.Produces;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 
+import com.google.auth.Credentials;
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
@@ -18,7 +19,7 @@ import io.quarkiverse.googlecloudservices.common.GcpConfigHolder;
 public class FirebaseAdminProducer {
 
     @Inject
-    GoogleCredentials googleCredentials;
+    Credentials googleCredentials;
 
     @Inject
     GcpConfigHolder gcpConfigHolder;
@@ -37,7 +38,7 @@ public class FirebaseAdminProducer {
         GcpBootstrapConfiguration gcpConfiguration = gcpConfigHolder.getBootstrapConfig();
 
         FirebaseOptions firebaseOptions = FirebaseOptions.builder()
-                .setCredentials(googleCredentials)
+                .setCredentials((GoogleCredentials) googleCredentials)
                 .setProjectId(gcpConfiguration.projectId().orElse(null))
                 .build();
 

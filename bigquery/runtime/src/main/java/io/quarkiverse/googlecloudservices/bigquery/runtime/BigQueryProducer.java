@@ -9,7 +9,7 @@ import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 
 import com.google.api.gax.core.CredentialsProvider;
-import com.google.auth.oauth2.GoogleCredentials;
+import com.google.auth.Credentials;
 import com.google.cloud.bigquery.BigQuery;
 import com.google.cloud.bigquery.BigQueryOptions;
 import com.google.cloud.bigquery.storage.v1.BigQueryWriteClient;
@@ -22,7 +22,7 @@ import io.quarkiverse.googlecloudservices.common.GcpConfigHolder;
 public class BigQueryProducer {
 
     @Inject
-    GoogleCredentials googleCredentials;
+    Credentials googleCredentials;
 
     @Inject
     CredentialsProvider credentialsProvider;
