@@ -18,7 +18,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
-        <google-cloud-sdk.version>26.29.0</google-cloud-sdk.version>
+        <google-cloud-sdk.version>26.33.0</google-cloud-sdk.version>
         <arrow.version>15.0.0</arrow.version>
 
         <!-- Dependency convergence issues -->
