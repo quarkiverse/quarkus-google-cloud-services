@@ -7,13 +7,13 @@ import jakarta.inject.Singleton;
 
 import com.google.api.gax.core.CredentialsProvider;
 import com.google.api.gax.core.FixedCredentialsProvider;
-import com.google.auth.oauth2.GoogleCredentials;
+import com.google.auth.Credentials;
 
 @Singleton
 public class GcpCredentialProviderProducer {
 
     @Inject
-    GoogleCredentials googleCredentials;
+    Credentials googleCredentials;
 
     @Produces
     @Singleton

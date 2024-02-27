@@ -11,7 +11,7 @@ import jakarta.inject.Singleton;
 import org.threeten.bp.Duration;
 
 import com.google.api.gax.retrying.RetrySettings;
-import com.google.auth.oauth2.GoogleCredentials;
+import com.google.auth.Credentials;
 import com.google.cloud.firestore.Firestore;
 import com.google.cloud.firestore.FirestoreOptions;
 
@@ -23,7 +23,7 @@ import io.quarkiverse.googlecloudservices.firestore.runtime.FirestoreConfigurati
 public class FirestoreProducer {
 
     @Inject
-    GoogleCredentials googleCredentials;
+    Credentials googleCredentials;
 
     @Inject
     GcpConfigHolder gcpConfigHolder;
