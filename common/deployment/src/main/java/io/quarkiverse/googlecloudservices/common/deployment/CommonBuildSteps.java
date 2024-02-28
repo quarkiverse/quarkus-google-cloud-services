@@ -38,7 +38,9 @@ public class CommonBuildSteps {
     @BuildStep
     public NativeImageConfigBuildItem nativeImageConfiguration() {
         NativeImageConfigBuildItem.Builder builder = NativeImageConfigBuildItem.builder()
-                .addRuntimeReinitializedClass("com.sun.management.internal.PlatformMBeanProviderImpl");
+                .addRuntimeReinitializedClass("com.sun.management.internal.PlatformMBeanProviderImpl")
+                // Required due to sun.misc.Unsafe usage in static initializers
+                .addRuntimeReinitializedClass("com.google.common.cache.Striped64");
         return builder.build();
     }
 }
