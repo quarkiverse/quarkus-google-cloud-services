@@ -1,7 +1,9 @@
 package io.quarkiverse.googlecloudservices.firestore.runtime;
 
 import java.io.IOException;
+import java.util.concurrent.ScheduledExecutorService;
 
+import com.google.cloud.grpc.GrpcTransportOptions;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.Default;
 import jakarta.enterprise.inject.Disposes;
@@ -36,13 +38,21 @@ public class FirestoreProducer {
     @Inject
     GcpBootstrapConfiguration gcpBootstrapConfiguration;
 
+    @Inject
+    ScheduledExecutorService executorService;
+
     @Produces
     @Singleton
     @Default
     public Firestore firestore() throws IOException {
         GcpBootstrapConfiguration gcpConfiguration = gcpConfigHolder.getBootstrapConfig();
         FirestoreOptions.Builder builder = FirestoreOptions.newBuilder()
-                .setProjectId(gcpConfiguration.projectId().orElse(null));
+                .setProjectId(gcpConfiguration.projectId().orElse(null))
+                .setTransportOptions(
+                        GrpcTransportOptions
+                                .newBuilder()
+                                .setExecutorFactory(new FirestoreExecutorFactory(executorService))
+                                .build());
         firestoreConfiguration.databaseId().ifPresent(builder::setDatabaseId);
         if (useEmulatorCredentials()) {
             builder.setCredentials(new FirestoreOptions.EmulatorCredentials());
@@ -98,6 +108,24 @@ public class FirestoreProducer {
 
     public void close(@Disposes Firestore firestore) throws Exception {
         firestore.close();
+    }
+
+    class FirestoreExecutorFactory implements GrpcTransportOptions.ExecutorFactory<ScheduledExecutorService> {
+        private final ScheduledExecutorService executor;
+
+        public FirestoreExecutorFactory(ScheduledExecutorService executor) {
+            this.executor = executor;
+        }
+
+        @Override
+        public ScheduledExecutorService get() {
+            return executor;
+        }
+
+        @Override
+        public void release(ScheduledExecutorService executor) {
+            // Do nothing
+        }
     }
 
 }
