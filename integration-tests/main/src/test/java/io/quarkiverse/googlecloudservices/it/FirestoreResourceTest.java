@@ -10,9 +10,17 @@ import io.quarkus.test.junit.QuarkusTest;
 public class FirestoreResourceTest {
 
     @Test
-    public void testFirestore() {
+    public void testFirestoreQuery() {
         given()
-                .when().get("/firestore")
+                .when().get("/firestore/query")
+                .then()
+                .statusCode(200);
+    }
+
+    @Test
+    public void testFirestoreListDocuments() {
+        given()
+                .when().get("/firestore/all")
                 .then()
                 .statusCode(200);
     }
