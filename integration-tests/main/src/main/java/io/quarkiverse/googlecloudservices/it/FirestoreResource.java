@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 import jakarta.inject.Inject;
 import jakarta.ws.rs.GET;
@@ -24,9 +25,7 @@ public class FirestoreResource {
     @Inject
     Firestore firestore;
 
-    @GET
-    @Produces(MediaType.TEXT_PLAIN)
-    public String firestore() throws ExecutionException, InterruptedException {
+    private void fill() throws ExecutionException, InterruptedException {
         // insert 3 persons
         CollectionReference persons = firestore.collection("persons");
         List<ApiFuture<WriteResult>> futures = new ArrayList<>();
@@ -34,8 +33,16 @@ public class FirestoreResource {
         futures.add(persons.document("2").set(new Person(2L, "Jane", "Doe")));
         futures.add(persons.document("3").set(new Person(3L, "Charles", "Baudelaire")));
         ApiFutures.allAsList(futures).get();
+    }
+
+    @GET
+    @Path("query")
+    @Produces(MediaType.TEXT_PLAIN)
+    public String query() throws ExecutionException, InterruptedException {
+        fill();
 
         // search for lastname=Doe
+        CollectionReference persons = firestore.collection("persons");
         Query query = persons.whereEqualTo("lastname", "Doe");
         ApiFuture<QuerySnapshot> querySnapshot = query.get();
         return querySnapshot.get().getDocuments().stream()
@@ -43,4 +50,24 @@ public class FirestoreResource {
                         + document.getString("lastname") + "\n")
                 .collect(Collectors.joining());
     }
+
+    @GET
+    @Path("all")
+    @Produces(MediaType.TEXT_PLAIN)
+    public String all() throws ExecutionException, InterruptedException {
+        fill();
+
+        CollectionReference persons = firestore.collection("persons");
+        return StreamSupport.stream(persons.listDocuments().spliterator(), false)
+                .map(r -> {
+                    try {
+                        return r.get().get();
+                    } catch (InterruptedException | ExecutionException e) {
+                        throw new RuntimeException(e);
+                    }
+                }).map(document -> document.getId() + " - " + document.getString("firstname") + " "
+                        + document.getString("lastname") + "\n")
+                .collect(Collectors.joining());
+    }
+
 }
