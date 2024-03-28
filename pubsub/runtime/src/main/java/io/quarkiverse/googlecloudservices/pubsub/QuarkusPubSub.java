@@ -55,19 +55,33 @@ public class QuarkusPubSub {
      * Creates a PubSub Subscriber using the configured project ID.
      */
     public Subscriber subscriber(String subscription, MessageReceiver receiver) {
-        ProjectSubscriptionName subscriptionName = ProjectSubscriptionName.of(
-                gcpConfigHolder.getBootstrapConfig().projectId().orElseThrow(), subscription);
+        return subscriber(subscription, gcpConfigHolder.getBootstrapConfig().projectId().orElseThrow(), receiver);
+    }
+
+    /**
+     * Creates a PubSub Subscriber using the specified project ID.
+     */
+    public Subscriber subscriber(String subscription, String projectId, MessageReceiver receiver) {
+        ProjectSubscriptionName subscriptionName = ProjectSubscriptionName.of(projectId, subscription);
         var builder = Subscriber.newBuilder(subscriptionName, receiver)
                 .setCredentialsProvider(credentialsProvider);
         channelProvider.ifPresent(builder::setChannelProvider);
         return builder.build();
+
     }
 
     /**
      * Creates a PubSub Publisher using the configured project ID.
      */
     public Publisher publisher(String topic) throws IOException {
-        TopicName topicName = TopicName.of(gcpConfigHolder.getBootstrapConfig().projectId().orElseThrow(), topic);
+        return publisher(topic, gcpConfigHolder.getBootstrapConfig().projectId().orElseThrow());
+    }
+
+    /**
+     * Creates a PubSub Publisher using the specified project ID.
+     */
+    public Publisher publisher(String topic, String projectId) throws IOException {
+        TopicName topicName = TopicName.of(projectId, topic);
         var builder = Publisher.newBuilder(topicName)
                 .setCredentialsProvider(credentialsProvider);
         channelProvider.ifPresent(builder::setChannelProvider);
