@@ -7,6 +7,7 @@ import java.util.stream.StreamSupport;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.inject.Disposes;
 import jakarta.enterprise.inject.Produces;
 import jakarta.inject.Inject;
 
@@ -108,6 +109,13 @@ public class QuarkusPubSub {
     }
 
     /**
+     * CDI Dispose method for {@link #subscriptionAdminClient()}. Shouldn't be called directly
+     */
+    public void shutdownSubscriptionAdminClient(@Disposes SubscriptionAdminClient subscriptionAdminClient) {
+        subscriptionAdminClient.close();
+    }
+
+    /**
      * Creates a PubSub TopicAdminSettings using the configured project ID.
      */
     public TopicAdminSettings topicAdminSettings() throws IOException {
@@ -123,6 +131,13 @@ public class QuarkusPubSub {
     @Produces
     public TopicAdminClient topicAdminClient() throws IOException {
         return TopicAdminClient.create(topicAdminSettings());
+    }
+
+    /**
+     * CDI Dispose method for {@link #topicAdminClient()}. Shouldn't be called directly
+     */
+    public void shutdownTopicAdminClient(@Disposes TopicAdminClient topicAdminClient) {
+        topicAdminClient.close();
     }
 
     /**
