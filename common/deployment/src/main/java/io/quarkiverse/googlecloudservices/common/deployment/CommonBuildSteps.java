@@ -40,7 +40,9 @@ public class CommonBuildSteps {
         NativeImageConfigBuildItem.Builder builder = NativeImageConfigBuildItem.builder()
                 .addRuntimeReinitializedClass("com.sun.management.internal.PlatformMBeanProviderImpl")
                 // Required due to sun.misc.Unsafe usage in static initializers
-                .addRuntimeReinitializedClass("com.google.common.cache.Striped64");
+                .addRuntimeReinitializedClass("com.google.common.cache.Striped64")
+                // Required due to initializing a java.util.Random
+                .addRuntimeReinitializedClass("io.opentelemetry.sdk.internal.AndroidFriendlyRandomHolder");
         return builder.build();
     }
 }
