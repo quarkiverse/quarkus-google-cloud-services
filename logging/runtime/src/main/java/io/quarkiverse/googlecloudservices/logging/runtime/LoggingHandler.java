@@ -59,7 +59,7 @@ public class LoggingHandler extends ExtHandler {
             TraceInfo trace = traceExtractor.extract(record);
             LogEntry logEntry = transform(record, trace);
             if (logEntry != null) {
-                switch (config.logTarget) {
+                switch (config.logTarget()) {
                     case STDOUT:
                         System.out.println(logEntry.toStructuredJsonString());
                         break;
@@ -82,7 +82,7 @@ public class LoggingHandler extends ExtHandler {
             com.google.cloud.logging.LogEntry.Builder builder = LogEntry.newBuilder(payload)
                     .setSeverity(LevelTransformer.toSeverity(record.getLevel()))
                     .setTimestamp(record.getInstant());
-            if (this.config.gcpTracing.enabled && trace != null && !Strings.isNullOrEmpty(trace.getTraceId())) {
+            if (this.config.gcpTracing().enabled() && trace != null && !Strings.isNullOrEmpty(trace.getTraceId())) {
                 builder = builder.setTrace(composeTraceString(trace.getTraceId()));
             }
             return builder.build();
@@ -92,7 +92,7 @@ public class LoggingHandler extends ExtHandler {
     }
 
     private String composeTraceString(String traceId) {
-        return String.format("projects/%s/traces/%s", this.config.gcpTracing.projectId.orElse(null), traceId);
+        return String.format("projects/%s/traces/%s", this.config.gcpTracing().projectId().orElse(null), traceId);
     }
 
     @Override
@@ -121,7 +121,7 @@ public class LoggingHandler extends ExtHandler {
     }
 
     private void initInternalHandler() {
-        if (this.config.format == LogFormat.JSON) {
+        if (this.config.format() == LogFormat.JSON) {
             this.internalHandler = new JsonHandler(this.config, getErrorManager());
         } else {
             this.internalHandler = new TextHandler();
@@ -139,16 +139,16 @@ public class LoggingHandler extends ExtHandler {
 
     private void initDefaultWriteOptions() {
         this.defaultWriteOptions = new WriteOption[] {
-                WriteOption.logName(this.config.defaultLog),
+                WriteOption.logName(this.config.defaultLog()),
                 WriteOption.resource(createMonitoredResource()),
-                WriteOption.labels(this.config.defaultLabel == null ? Collections.emptyMap() : this.config.defaultLabel)
+                WriteOption.labels(this.config.defaultLabel() == null ? Collections.emptyMap() : this.config.defaultLabel())
         };
     }
 
     private MonitoredResource createMonitoredResource() {
-        MonitoredResource.Builder b = MonitoredResource.newBuilder(this.config.resource.type);
-        if (this.config.resource.label != null) {
-            this.config.resource.label.forEach(b::addLabel);
+        MonitoredResource.Builder b = MonitoredResource.newBuilder(this.config.resource().type());
+        if (this.config.resource().label() != null) {
+            this.config.resource().label().forEach(b::addLabel);
         }
         return b.build();
     }

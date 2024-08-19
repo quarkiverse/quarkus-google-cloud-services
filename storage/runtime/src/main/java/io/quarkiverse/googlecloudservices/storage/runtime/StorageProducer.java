@@ -35,7 +35,7 @@ public class StorageProducer {
         StorageOptions.Builder builder = StorageOptions.newBuilder()
                 .setCredentials(googleCredentials)
                 .setProjectId(gcpConfiguration.projectId().orElse(null));
-        storageConfiguration.hostOverride.ifPresent(builder::setHost);
+        storageConfiguration.hostOverride().ifPresent(builder::setHost);
         return builder.build().getService();
     }
 }
