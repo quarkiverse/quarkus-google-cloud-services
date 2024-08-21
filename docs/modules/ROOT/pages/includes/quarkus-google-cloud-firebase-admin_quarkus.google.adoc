@@ -1,0 +1,31 @@
+:summaryTableId: quarkus-google-cloud-firebase-admin_quarkus-google
+[.configuration-legend]
+icon:lock[title=Fixed at build time] Configuration property fixed at build time - All other configuration properties are overridable at runtime
+[.configuration-reference.searchable, cols="80,.^10,.^10"]
+|===
+
+h|[.header-title]##Configuration property##
+h|Type
+h|Default
+
+a|icon:lock[title=Fixed at build time] [[quarkus-google-cloud-firebase-admin_quarkus-google-cloud-firebase-auth-enabled]] [.property-path]##`quarkus.google.cloud.firebase.auth.enabled`##
+
+[.description]
+--
+Enable or disable Firebase authentication.
+
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_GOOGLE_CLOUD_FIREBASE_AUTH_ENABLED+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_GOOGLE_CLOUD_FIREBASE_AUTH_ENABLED+++`
+endif::add-copy-button-to-env-var[]
+--
+|boolean
+|`false`
+
+|===
+
+
+:!summaryTableId:
