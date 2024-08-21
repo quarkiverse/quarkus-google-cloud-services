@@ -85,8 +85,7 @@ public class FirestoreProducer {
      * @return whether to use the emulator credentials
      */
     private boolean useEmulatorCredentials() {
-        return this.firestoreConfiguration
-                .useEmulatorCredentials
+        return this.firestoreConfiguration.useEmulatorCredentials
                 .orElseGet(this::automaticEmulatorCredentials);
     }
 

@@ -24,9 +24,9 @@ public class FirestoreConfiguration {
      * the host running the library uses "localhost". This behaviour can be overridden by specifying this
      * configuration property:
      * <ul>
-     *     <li>If true: force usage of emulator credentials</li>
-     *     <li>If false: force not using emulator credentials</li>
-     *     <i>If not present: keep the automatic behaviour</i>
+     * <li>If true: force usage of emulator credentials</li>
+     * <li>If false: force not using emulator credentials</li>
+     * <i>If not present: keep the automatic behaviour</i>
      * </ul>
      */
     @ConfigItem
