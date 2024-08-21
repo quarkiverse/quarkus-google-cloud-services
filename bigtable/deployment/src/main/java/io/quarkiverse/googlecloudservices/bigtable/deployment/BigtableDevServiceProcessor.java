@@ -46,7 +46,7 @@ public class BigtableDevServiceProcessor {
             LoggingSetupBuildItem loggingSetupBuildItem,
             GlobalDevServicesConfig globalDevServicesConfig) {
         // If dev service is running and config has changed, stop the service
-        if (devService != null && !buildTimeConfig.devservice.equals(config)) {
+        if (devService != null && !buildTimeConfig.devservice().equals(config)) {
             stopContainer();
         } else if (devService != null) {
             return devService.toBuildItem();
@@ -60,7 +60,7 @@ public class BigtableDevServiceProcessor {
 
         // Try starting the container if conditions are met
         try {
-            devService = startContainerIfAvailable(dockerStatusBuildItem, buildTimeConfig.devservice,
+            devService = startContainerIfAvailable(dockerStatusBuildItem, buildTimeConfig.devservice(),
                     globalDevServicesConfig.timeout);
         } catch (Throwable t) {
             LOGGER.warn("Unable to start Bigtable dev service", t);
@@ -85,13 +85,13 @@ public class BigtableDevServiceProcessor {
     private DevServicesResultBuildItem.RunningDevService startContainerIfAvailable(DockerStatusBuildItem dockerStatusBuildItem,
             BigtableDevServiceConfig config,
             Optional<Duration> timeout) {
-        if (!config.enabled) {
+        if (!config.enabled()) {
             // Bigtable service explicitly disabled
             LOGGER.debug("Not starting Dev Services for Bigtable as it has been disabled in the config");
             return null;
         }
 
-        if (!dockerStatusBuildItem.isDockerAvailable()) {
+        if (!dockerStatusBuildItem.isContainerRuntimeAvailable()) {
             LOGGER.warn("Not starting devservice because docker is not available");
             return null;
         }
@@ -112,8 +112,8 @@ public class BigtableDevServiceProcessor {
             Optional<Duration> timeout) {
         // Create and configure Bigtable emulator container
         BigtableEmulatorContainer emulatorContainer = new QuarkusBigtableContainer(
-                DockerImageName.parse(config.imageName).asCompatibleSubstituteFor("gcr.io/google.com/cloudsdktool/cloud-sdk"),
-                config.emulatorPort.orElse(null));
+                DockerImageName.parse(config.imageName()).asCompatibleSubstituteFor("gcr.io/google.com/cloudsdktool/cloud-sdk"),
+                config.emulatorPort().orElse(null));
 
         // Set container startup timeout if provided
         timeout.ifPresent(emulatorContainer::withStartupTimeout);

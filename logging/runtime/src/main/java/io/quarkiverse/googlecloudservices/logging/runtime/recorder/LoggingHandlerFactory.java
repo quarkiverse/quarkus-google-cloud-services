@@ -17,11 +17,11 @@ public class LoggingHandlerFactory {
     private static final Logger LOG = LoggerFactory.getLogger(LoggingHandlerFactory.class);
 
     public RuntimeValue<Optional<Handler>> create(LoggingConfiguration config) {
-        if (!config.enabled) {
+        if (!config.enabled()) {
             LOG.info("GCP logging is disabled");
             return new RuntimeValue<>(Optional.empty());
         } else {
-            LOG.info("GCP logging handler created for default log: {}", config.defaultLog);
+            LOG.info("GCP logging handler created for default log: {}", config.defaultLog());
             return new RuntimeValue<>(Optional.of(new LoggingHandler(config)));
         }
     }

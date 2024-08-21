@@ -1,0 +1,254 @@
+:summaryTableId: quarkus-google-cloud-firestore_quarkus-google
+[.configuration-legend]
+icon:lock[title=Fixed at build time] Configuration property fixed at build time - All other configuration properties are overridable at runtime
+[.configuration-reference.searchable, cols="80,.^10,.^10"]
+|===
+
+h|[.header-title]##Configuration property##
+h|Type
+h|Default
+
+a|icon:lock[title=Fixed at build time] [[quarkus-google-cloud-firestore_quarkus-google-cloud-firestore-devservice-enabled]] [.property-path]##`quarkus.google.cloud.firestore.devservice.enabled`##
+
+[.description]
+--
+Indicates whether the Firestore service should be enabled or not. The default value is 'false'.
+
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_GOOGLE_CLOUD_FIRESTORE_DEVSERVICE_ENABLED+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_GOOGLE_CLOUD_FIRESTORE_DEVSERVICE_ENABLED+++`
+endif::add-copy-button-to-env-var[]
+--
+|boolean
+|`false`
+
+a|icon:lock[title=Fixed at build time] [[quarkus-google-cloud-firestore_quarkus-google-cloud-firestore-devservice-image-name]] [.property-path]##`quarkus.google.cloud.firestore.devservice.image-name`##
+
+[.description]
+--
+Sets the Docker image name for the Google Cloud SDK. This image is used to emulate the Firestore service in the development environment. The default value is 'gcr.io/google.com/cloudsdktool/google-cloud-cli'.
+
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_GOOGLE_CLOUD_FIRESTORE_DEVSERVICE_IMAGE_NAME+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_GOOGLE_CLOUD_FIRESTORE_DEVSERVICE_IMAGE_NAME+++`
+endif::add-copy-button-to-env-var[]
+--
+|string
+|`gcr.io/google.com/cloudsdktool/google-cloud-cli`
+
+a|icon:lock[title=Fixed at build time] [[quarkus-google-cloud-firestore_quarkus-google-cloud-firestore-devservice-emulator-port]] [.property-path]##`quarkus.google.cloud.firestore.devservice.emulator-port`##
+
+[.description]
+--
+Specifies the emulatorPort on which the Firestore service should run in the development environment.
+
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_GOOGLE_CLOUD_FIRESTORE_DEVSERVICE_EMULATOR_PORT+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_GOOGLE_CLOUD_FIRESTORE_DEVSERVICE_EMULATOR_PORT+++`
+endif::add-copy-button-to-env-var[]
+--
+|int
+|
+
+a| [[quarkus-google-cloud-firestore_quarkus-google-cloud-firestore-host-override]] [.property-path]##`quarkus.google.cloud.firestore.host-override`##
+
+[.description]
+--
+Overrides the default service host. This is most commonly used for development or testing activities with a local Google Cloud Firestore emulator instance.
+
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_GOOGLE_CLOUD_FIRESTORE_HOST_OVERRIDE+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_GOOGLE_CLOUD_FIRESTORE_HOST_OVERRIDE+++`
+endif::add-copy-button-to-env-var[]
+--
+|string
+|
+
+a| [[quarkus-google-cloud-firestore_quarkus-google-cloud-firestore-retry-total-timeout]] [.property-path]##`quarkus.google.cloud.firestore.retry.total-timeout`##
+
+[.description]
+--
+Total timeout for all retries.
+
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_GOOGLE_CLOUD_FIRESTORE_RETRY_TOTAL_TIMEOUT+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_GOOGLE_CLOUD_FIRESTORE_RETRY_TOTAL_TIMEOUT+++`
+endif::add-copy-button-to-env-var[]
+--
+|link:https://docs.oracle.com/en/java/javase/17/docs/api/java/time/Duration.html[Duration] link:#duration-note-anchor-{summaryTableId}[icon:question-circle[title=More information about the Duration format]]
+|
+
+a| [[quarkus-google-cloud-firestore_quarkus-google-cloud-firestore-retry-initial-retry-delay]] [.property-path]##`quarkus.google.cloud.firestore.retry.initial-retry-delay`##
+
+[.description]
+--
+Delay before the first retry.
+
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_GOOGLE_CLOUD_FIRESTORE_RETRY_INITIAL_RETRY_DELAY+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_GOOGLE_CLOUD_FIRESTORE_RETRY_INITIAL_RETRY_DELAY+++`
+endif::add-copy-button-to-env-var[]
+--
+|link:https://docs.oracle.com/en/java/javase/17/docs/api/java/time/Duration.html[Duration] link:#duration-note-anchor-{summaryTableId}[icon:question-circle[title=More information about the Duration format]]
+|
+
+a| [[quarkus-google-cloud-firestore_quarkus-google-cloud-firestore-retry-retry-delay-multiplier]] [.property-path]##`quarkus.google.cloud.firestore.retry.retry-delay-multiplier`##
+
+[.description]
+--
+Controls the rate of change of the delay. Next retry is multiplied by this factor.
+
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_GOOGLE_CLOUD_FIRESTORE_RETRY_RETRY_DELAY_MULTIPLIER+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_GOOGLE_CLOUD_FIRESTORE_RETRY_RETRY_DELAY_MULTIPLIER+++`
+endif::add-copy-button-to-env-var[]
+--
+|double
+|
+
+a| [[quarkus-google-cloud-firestore_quarkus-google-cloud-firestore-retry-max-retry-delay]] [.property-path]##`quarkus.google.cloud.firestore.retry.max-retry-delay`##
+
+[.description]
+--
+Limits the maximum retry delay.
+
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_GOOGLE_CLOUD_FIRESTORE_RETRY_MAX_RETRY_DELAY+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_GOOGLE_CLOUD_FIRESTORE_RETRY_MAX_RETRY_DELAY+++`
+endif::add-copy-button-to-env-var[]
+--
+|link:https://docs.oracle.com/en/java/javase/17/docs/api/java/time/Duration.html[Duration] link:#duration-note-anchor-{summaryTableId}[icon:question-circle[title=More information about the Duration format]]
+|
+
+a| [[quarkus-google-cloud-firestore_quarkus-google-cloud-firestore-retry-max-attempts]] [.property-path]##`quarkus.google.cloud.firestore.retry.max-attempts`##
+
+[.description]
+--
+Determines the maximum number of attempts. When number of attempts reach this limit they stop retrying.
+
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_GOOGLE_CLOUD_FIRESTORE_RETRY_MAX_ATTEMPTS+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_GOOGLE_CLOUD_FIRESTORE_RETRY_MAX_ATTEMPTS+++`
+endif::add-copy-button-to-env-var[]
+--
+|int
+|
+
+a| [[quarkus-google-cloud-firestore_quarkus-google-cloud-firestore-retry-initial-rpc-timeout]] [.property-path]##`quarkus.google.cloud.firestore.retry.initial-rpc-timeout`##
+
+[.description]
+--
+Timeout for the initial RPC.
+
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_GOOGLE_CLOUD_FIRESTORE_RETRY_INITIAL_RPC_TIMEOUT+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_GOOGLE_CLOUD_FIRESTORE_RETRY_INITIAL_RPC_TIMEOUT+++`
+endif::add-copy-button-to-env-var[]
+--
+|link:https://docs.oracle.com/en/java/javase/17/docs/api/java/time/Duration.html[Duration] link:#duration-note-anchor-{summaryTableId}[icon:question-circle[title=More information about the Duration format]]
+|
+
+a| [[quarkus-google-cloud-firestore_quarkus-google-cloud-firestore-retry-rpc-timeout-multiplier]] [.property-path]##`quarkus.google.cloud.firestore.retry.rpc-timeout-multiplier`##
+
+[.description]
+--
+Controls the rate of change of the RPC timeout. Next timeout is multiplied by this factor.
+
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_GOOGLE_CLOUD_FIRESTORE_RETRY_RPC_TIMEOUT_MULTIPLIER+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_GOOGLE_CLOUD_FIRESTORE_RETRY_RPC_TIMEOUT_MULTIPLIER+++`
+endif::add-copy-button-to-env-var[]
+--
+|double
+|
+
+a| [[quarkus-google-cloud-firestore_quarkus-google-cloud-firestore-retry-max-rpc-timeout]] [.property-path]##`quarkus.google.cloud.firestore.retry.max-rpc-timeout`##
+
+[.description]
+--
+Limits the maximum RPC timeout.
+
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_GOOGLE_CLOUD_FIRESTORE_RETRY_MAX_RPC_TIMEOUT+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_GOOGLE_CLOUD_FIRESTORE_RETRY_MAX_RPC_TIMEOUT+++`
+endif::add-copy-button-to-env-var[]
+--
+|link:https://docs.oracle.com/en/java/javase/17/docs/api/java/time/Duration.html[Duration] link:#duration-note-anchor-{summaryTableId}[icon:question-circle[title=More information about the Duration format]]
+|
+
+a| [[quarkus-google-cloud-firestore_quarkus-google-cloud-firestore-database-id]] [.property-path]##`quarkus.google.cloud.firestore.database-id`##
+
+[.description]
+--
+The firestore database identifier. It not set, the default will be used.
+
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_GOOGLE_CLOUD_FIRESTORE_DATABASE_ID+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_GOOGLE_CLOUD_FIRESTORE_DATABASE_ID+++`
+endif::add-copy-button-to-env-var[]
+--
+|string
+|
+
+|===
+
+ifndef::no-duration-note[]
+[NOTE]
+[id=duration-note-anchor-quarkus-google-cloud-firestore_quarkus-google]
+.About the Duration format
+====
+To write duration values, use the standard `java.time.Duration` format.
+See the link:https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/time/Duration.html#parse(java.lang.CharSequence)[Duration#parse() Java API documentation] for more information.
+
+You can also use a simplified format, starting with a number:
+
+* If the value is only a number, it represents time in seconds.
+* If the value is a number followed by `ms`, it represents time in milliseconds.
+
+In other cases, the simplified format is translated to the `java.time.Duration` format for parsing:
+
+* If the value is a number followed by `h`, `m`, or `s`, it is prefixed with `PT`.
+* If the value is a number followed by `d`, it is prefixed with `P`.
+====
+endif::no-duration-note[]
+
+:!summaryTableId:

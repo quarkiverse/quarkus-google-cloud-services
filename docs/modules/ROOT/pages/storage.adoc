@@ -83,3 +83,7 @@ public class StorageResource {
 
 }
 ----
+
+== Configuration Reference
+
+include::./includes/quarkus-google-cloud-storage.adoc[]

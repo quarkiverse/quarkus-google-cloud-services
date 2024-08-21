@@ -44,26 +44,26 @@ public class FirestoreProducer {
                 .setProjectId(gcpConfiguration.projectId().orElse(null));
         if (useEmulatorCredentials()) {
             builder.setCredentials(new FirestoreOptions.EmulatorCredentials());
-            firestoreConfiguration.hostOverride.ifPresent(builder::setEmulatorHost);
+            firestoreConfiguration.hostOverride().ifPresent(builder::setEmulatorHost);
         } else {
             builder.setCredentials(googleCredentials.get());
-            firestoreConfiguration.hostOverride.ifPresent(builder::setHost);
-            firestoreConfiguration.retry.map(this::buildRetrySettings).ifPresent(builder::setRetrySettings);
-            firestoreConfiguration.databaseId.ifPresent(builder::setDatabaseId);
+            firestoreConfiguration.hostOverride().ifPresent(builder::setHost);
+            firestoreConfiguration.retry().map(this::buildRetrySettings).ifPresent(builder::setRetrySettings);
+            firestoreConfiguration.databaseId().ifPresent(builder::setDatabaseId);
         }
         return builder.build().getService();
     }
 
     private RetrySettings buildRetrySettings(RetryConfiguration retryConfiguration) {
         RetrySettings.Builder retrySettingsBuilder = RetrySettings.newBuilder();
-        retryConfiguration.totalTimeout.ifPresent(d -> retrySettingsBuilder.setTotalTimeout(convertDuration(d)));
-        retryConfiguration.initialRetryDelay.ifPresent(d -> retrySettingsBuilder.setInitialRetryDelay(convertDuration(d)));
-        retryConfiguration.retryDelayMultiplier.ifPresent(retrySettingsBuilder::setRetryDelayMultiplier);
-        retryConfiguration.maxRetryDelay.ifPresent(d -> retrySettingsBuilder.setMaxRetryDelay(convertDuration(d)));
-        retryConfiguration.maxAttempts.ifPresent(retrySettingsBuilder::setMaxAttempts);
-        retryConfiguration.initialRpcTimeout.ifPresent(d -> retrySettingsBuilder.setInitialRpcTimeout(convertDuration(d)));
-        retryConfiguration.rpcTimeoutMultiplier.ifPresent(retrySettingsBuilder::setRpcTimeoutMultiplier);
-        retryConfiguration.maxRpcTimeout.ifPresent(d -> retrySettingsBuilder.setMaxRpcTimeout(convertDuration(d)));
+        retryConfiguration.totalTimeout().ifPresent(d -> retrySettingsBuilder.setTotalTimeout(convertDuration(d)));
+        retryConfiguration.initialRetryDelay().ifPresent(d -> retrySettingsBuilder.setInitialRetryDelay(convertDuration(d)));
+        retryConfiguration.retryDelayMultiplier().ifPresent(retrySettingsBuilder::setRetryDelayMultiplier);
+        retryConfiguration.maxRetryDelay().ifPresent(d -> retrySettingsBuilder.setMaxRetryDelay(convertDuration(d)));
+        retryConfiguration.maxAttempts().ifPresent(retrySettingsBuilder::setMaxAttempts);
+        retryConfiguration.initialRpcTimeout().ifPresent(d -> retrySettingsBuilder.setInitialRpcTimeout(convertDuration(d)));
+        retryConfiguration.rpcTimeoutMultiplier().ifPresent(retrySettingsBuilder::setRpcTimeoutMultiplier);
+        retryConfiguration.maxRpcTimeout().ifPresent(d -> retrySettingsBuilder.setMaxRpcTimeout(convertDuration(d)));
         return retrySettingsBuilder.build();
     }
 
@@ -91,8 +91,8 @@ public class FirestoreProducer {
 
     private boolean automaticEmulatorCredentials() {
         return !this.gcpBootstrapConfiguration.accessTokenEnabled()
-                && this.firestoreConfiguration.hostOverride.isPresent()
-                && this.firestoreConfiguration.hostOverride.get().contains("localhost");
+                && this.firestoreConfiguration.hostOverride().isPresent()
+                && this.firestoreConfiguration.hostOverride().get().contains("localhost");
     }
 
 }

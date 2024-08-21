@@ -114,6 +114,10 @@ public class GoogleCredentialsMockProducer {
 }
 ----
 
+== Configuration Reference
+
+include::./includes/quarkus-google-cloud.adoc[]
+
 [[examples]]
 == Example applications
 

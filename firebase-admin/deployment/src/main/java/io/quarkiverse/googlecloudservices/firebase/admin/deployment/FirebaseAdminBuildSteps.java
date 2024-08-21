@@ -25,7 +25,7 @@ public class FirebaseAdminBuildSteps {
 
     @BuildStep
     public void setupFirebaseAuth(BuildProducer<AdditionalBeanBuildItem> additionalBeans, FirebaseAuthConfiguration config) {
-        if (!config.enabled) {
+        if (!config.enabled()) {
             return;
         }
 
