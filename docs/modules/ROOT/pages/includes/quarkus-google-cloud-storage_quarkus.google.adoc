@@ -1,0 +1,31 @@
+:summaryTableId: quarkus-google-cloud-storage_quarkus-google
+[.configuration-legend]
+icon:lock[title=Fixed at build time] Configuration property fixed at build time - All other configuration properties are overridable at runtime
+[.configuration-reference.searchable, cols="80,.^10,.^10"]
+|===
+
+h|[.header-title]##Configuration property##
+h|Type
+h|Default
+
+a| [[quarkus-google-cloud-storage_quarkus-google-cloud-storage-host-override]] [.property-path]##`quarkus.google.cloud.storage.host-override`##
+
+[.description]
+--
+Overrides the default service host. This is most commonly used for development or testing activities with a local Google Cloud Storage emulator instance.
+
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_GOOGLE_CLOUD_STORAGE_HOST_OVERRIDE+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_GOOGLE_CLOUD_STORAGE_HOST_OVERRIDE+++`
+endif::add-copy-button-to-env-var[]
+--
+|string
+|
+
+|===
+
+
+:!summaryTableId:

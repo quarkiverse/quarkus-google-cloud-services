@@ -1,0 +1,116 @@
+:summaryTableId: quarkus-google-cloud_quarkus-google
+[.configuration-legend]
+icon:lock[title=Fixed at build time] Configuration property fixed at build time - All other configuration properties are overridable at runtime
+[.configuration-reference.searchable, cols="80,.^10,.^10"]
+|===
+
+h|[.header-title]##Configuration property##
+h|Type
+h|Default
+
+a| [[quarkus-google-cloud_quarkus-google-cloud-enable-metadata-server]] [.property-path]##`quarkus.google.cloud.enable-metadata-server`##
+
+[.description]
+--
+Enable or disable metadata server access to retrieve configuration options (projectId, region...).
+
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_GOOGLE_CLOUD_ENABLE_METADATA_SERVER+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_GOOGLE_CLOUD_ENABLE_METADATA_SERVER+++`
+endif::add-copy-button-to-env-var[]
+--
+|boolean
+|`true`
+
+a| [[quarkus-google-cloud_quarkus-google-cloud-project-id]] [.property-path]##`quarkus.google.cloud.project-id`##
+
+[.description]
+--
+Google Cloud project ID. It defaults to `ServiceOptions.getDefaultProjectId()` if `google.cloud.enable-metadata-server` is set to true (which is the default), so to the project ID corresponding to the default credentials if the default credentials are set, otherwise null.
+
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_GOOGLE_CLOUD_PROJECT_ID+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_GOOGLE_CLOUD_PROJECT_ID+++`
+endif::add-copy-button-to-env-var[]
+--
+|string
+|
+
+a| [[quarkus-google-cloud_quarkus-google-cloud-service-account-location]] [.property-path]##`quarkus.google.cloud.service-account-location`##
+
+[.description]
+--
+Google Cloud service account file location.
+
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_GOOGLE_CLOUD_SERVICE_ACCOUNT_LOCATION+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_GOOGLE_CLOUD_SERVICE_ACCOUNT_LOCATION+++`
+endif::add-copy-button-to-env-var[]
+--
+|string
+|
+
+a| [[quarkus-google-cloud_quarkus-google-cloud-service-account-encoded-key]] [.property-path]##`quarkus.google.cloud.service-account-encoded-key`##
+
+[.description]
+--
+Google Cloud service account base64 encoded content.
+
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_GOOGLE_CLOUD_SERVICE_ACCOUNT_ENCODED_KEY+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_GOOGLE_CLOUD_SERVICE_ACCOUNT_ENCODED_KEY+++`
+endif::add-copy-button-to-env-var[]
+--
+|string
+|
+
+a| [[quarkus-google-cloud_quarkus-google-cloud-access-token-enabled]] [.property-path]##`quarkus.google.cloud.access-token-enabled`##
+
+[.description]
+--
+Enable Google Cloud access token authentication For example, the access token which is returned as part of OpenId Connect Authorization Code Flow may be used to access Google Cloud services on behalf of the authenticated user. Note that if a service account location is configured then the access token will be ignored even if this property is enabled. Disable this property if the default Google Cloud authentication is required.
+
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_GOOGLE_CLOUD_ACCESS_TOKEN_ENABLED+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_GOOGLE_CLOUD_ACCESS_TOKEN_ENABLED+++`
+endif::add-copy-button-to-env-var[]
+--
+|boolean
+|`true`
+
+a| [[quarkus-google-cloud_quarkus-google-cloud-secret-manager-enabled]] [.property-path]##`quarkus.google.cloud.secret-manager-enabled`##
+
+[.description]
+--
+Whether to enable the secret manager
+
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_GOOGLE_CLOUD_SECRET_MANAGER_ENABLED+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_GOOGLE_CLOUD_SECRET_MANAGER_ENABLED+++`
+endif::add-copy-button-to-env-var[]
+--
+|boolean
+|`true`
+
+|===
+
+
+:!summaryTableId:

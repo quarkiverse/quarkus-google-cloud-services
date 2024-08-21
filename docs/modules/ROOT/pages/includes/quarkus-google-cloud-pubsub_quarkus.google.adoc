@@ -1,0 +1,82 @@
+:summaryTableId: quarkus-google-cloud-pubsub_quarkus-google
+[.configuration-legend]
+icon:lock[title=Fixed at build time] Configuration property fixed at build time - All other configuration properties are overridable at runtime
+[.configuration-reference.searchable, cols="80,.^10,.^10"]
+|===
+
+h|[.header-title]##Configuration property##
+h|Type
+h|Default
+
+a|icon:lock[title=Fixed at build time] [[quarkus-google-cloud-pubsub_quarkus-google-cloud-pubsub-devservice-enabled]] [.property-path]##`quarkus.google.cloud.pubsub.devservice.enabled`##
+
+[.description]
+--
+Indicates whether the Pub/Sub service should be enabled or not. The default value is 'false'.
+
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_GOOGLE_CLOUD_PUBSUB_DEVSERVICE_ENABLED+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_GOOGLE_CLOUD_PUBSUB_DEVSERVICE_ENABLED+++`
+endif::add-copy-button-to-env-var[]
+--
+|boolean
+|`false`
+
+a|icon:lock[title=Fixed at build time] [[quarkus-google-cloud-pubsub_quarkus-google-cloud-pubsub-devservice-image-name]] [.property-path]##`quarkus.google.cloud.pubsub.devservice.image-name`##
+
+[.description]
+--
+Sets the Docker image name for the Google Cloud SDK. This image is used to emulate the Pub/Sub service in the development environment. The default value is 'gcr.io/google.com/cloudsdktool/google-cloud-cli'.
+
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_GOOGLE_CLOUD_PUBSUB_DEVSERVICE_IMAGE_NAME+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_GOOGLE_CLOUD_PUBSUB_DEVSERVICE_IMAGE_NAME+++`
+endif::add-copy-button-to-env-var[]
+--
+|string
+|`gcr.io/google.com/cloudsdktool/google-cloud-cli`
+
+a|icon:lock[title=Fixed at build time] [[quarkus-google-cloud-pubsub_quarkus-google-cloud-pubsub-devservice-emulator-port]] [.property-path]##`quarkus.google.cloud.pubsub.devservice.emulator-port`##
+
+[.description]
+--
+Specifies the emulatorPort on which the Pub/Sub service should run in the development environment.
+
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_GOOGLE_CLOUD_PUBSUB_DEVSERVICE_EMULATOR_PORT+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_GOOGLE_CLOUD_PUBSUB_DEVSERVICE_EMULATOR_PORT+++`
+endif::add-copy-button-to-env-var[]
+--
+|int
+|
+
+a| [[quarkus-google-cloud-pubsub_quarkus-google-cloud-pubsub-emulator-host]] [.property-path]##`quarkus.google.cloud.pubsub.emulator-host`##
+
+[.description]
+--
+Enable emulator and set its host.
+
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_GOOGLE_CLOUD_PUBSUB_EMULATOR_HOST+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_GOOGLE_CLOUD_PUBSUB_EMULATOR_HOST+++`
+endif::add-copy-button-to-env-var[]
+--
+|string
+|
+
+|===
+
+
+:!summaryTableId:
