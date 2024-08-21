@@ -119,3 +119,7 @@ public class FirebaseAppResource {
 
 }
 ----
+
+== Configuration Reference
+
+include::./includes/quarkus-google-cloud-firebase-admin.adoc[]

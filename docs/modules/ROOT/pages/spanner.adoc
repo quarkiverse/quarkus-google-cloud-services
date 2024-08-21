@@ -128,3 +128,7 @@ public class SpannerResource {
 
 }
 ----
+
+== Configuration Reference
+
+include::./includes/quarkus-google-cloud-spanner.adoc[]

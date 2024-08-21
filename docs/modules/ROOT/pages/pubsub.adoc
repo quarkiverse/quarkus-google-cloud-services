@@ -219,3 +219,7 @@ SubscriptionAdminSettings subscriptionAdminSettings = SubscriptionAdminSettings.
 .setTransportChannelProvider(channelProvider)
 .build();
 ----
+
+== Configuration Reference
+
+include::./includes/quarkus-google-cloud-pubsub.adoc[]

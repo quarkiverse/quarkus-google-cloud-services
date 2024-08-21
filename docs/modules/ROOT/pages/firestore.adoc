@@ -110,3 +110,7 @@ You can also set the
 === Using the Dev Service
 
 Once the Dev Service is enabled, the Firestore client which you can `@Inject` in your application will be configured to use the emulator.
+
+== Configuration Reference
+
+include::./includes/quarkus-google-cloud-firestore.adoc[]
