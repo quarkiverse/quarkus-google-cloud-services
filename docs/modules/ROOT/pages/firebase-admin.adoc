@@ -110,8 +110,8 @@ public class FirebaseAppResource {
     @Path("/options")
     @Produces(MediaType.APPLICATION_JSON)
     public FirebaseOptions getOptions() {
-        if(identity instanceof JsonWebToken) {
-            System.out.println("JWT: " + ((JsonWebToken) identity).getClaim("email"));
+        if(identity.getPrincipal() instanceof JsonWebToken) {
+            System.out.println("JWT: " + ((JsonWebToken) identity.getPrincipal()).getClaim("email"));
         }
 
         return firebaseApp.getOptions();
