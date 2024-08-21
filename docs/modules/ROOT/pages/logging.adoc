@@ -164,3 +164,7 @@ public void log(String s) {
         .build()));
 }
 ```
+
+== Configuration Reference
+
+include::./includes/quarkus-google-cloud-logging.adoc[]
