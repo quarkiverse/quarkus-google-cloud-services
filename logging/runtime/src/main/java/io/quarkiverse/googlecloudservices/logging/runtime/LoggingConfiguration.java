@@ -7,52 +7,49 @@ import com.google.cloud.logging.LoggingHandler.LogTarget;
 import com.google.cloud.logging.Severity;
 import com.google.cloud.logging.Synchronicity;
 
-import io.quarkus.runtime.annotations.ConfigGroup;
-import io.quarkus.runtime.annotations.ConfigItem;
 import io.quarkus.runtime.annotations.ConfigPhase;
 import io.quarkus.runtime.annotations.ConfigRoot;
+import io.smallrye.config.ConfigMapping;
+import io.smallrye.config.WithDefault;
 
-@ConfigRoot(name = "google.cloud.logging", phase = ConfigPhase.RUN_TIME)
-public class LoggingConfiguration {
+@ConfigMapping(prefix = "quarkus.google.cloud.logging")
+@ConfigRoot(phase = ConfigPhase.RUN_TIME)
+public interface LoggingConfiguration {
 
     /**
      * Which Google Operations log should be used by default.
      */
-    @ConfigItem
-    public String defaultLog;
+    String defaultLog();
 
     /**
      * Enable or disable the Google Cloud logging.
      */
-    @ConfigItem(defaultValue = "true")
-    public boolean enabled;
+    @WithDefault("true")
+    boolean enabled();
 
     /**
      * Configure base formatting to be either plain text or
      * structured json. Allowed values: TEXT|JSON
      */
-    @ConfigItem(defaultValue = "TEXT")
-    public LogFormat format;
+    @WithDefault("TEXT")
+    LogFormat format();
 
     /**
      * Configure GCP logging synchronicity. Allowed values:
      * SYNC|ASYNC
      */
-    @ConfigItem
-    public Optional<Synchronicity> synchronicity;
+    Optional<Synchronicity> synchronicity();
 
     /**
      * Configure auto flush level. Allowed values:
      * DEBUG|INFO|WARN|ERROR|FATAL
      */
-    @ConfigItem
-    public Optional<ConfigLevel> flushLevel;
+    Optional<ConfigLevel> flushLevel();
 
     /**
      * Configure default labels.
      */
-    @ConfigItem
-    public Map<String, String> defaultLabel;
+    Map<String, String> defaultLabel();
 
     /**
      * Configured the monitored resource. Please consult the Google
@@ -60,132 +57,118 @@ public class LoggingConfiguration {
      *
      * @see https://cloud.google.com/logging/docs/api/v2/resource-list#resource-types
      */
-    @ConfigItem
-    public ResourceConfig resource;
+    ResourceConfig resource();
 
     /**
      * Configure how trace information is handled in GCP.
      */
-    @ConfigItem
-    public GcpTracingConfig gcpTracing;
+    GcpTracingConfig gcpTracing();
 
     /**
      * Configuration options for structured logging.
      */
-    @ConfigItem
-    public StructuredConfig structured;
+    StructuredConfig structured();
 
     /**
      * Configures if logs should be written to stdout or stderr instead of using Google Cloud Operations API.
      * Useful if app is deployed to managed Google Cloud Platform environment with installed logger agent.
      * Possible values: STDOUT, STDERR and CLOUD_LOGGING.
      */
-    @ConfigItem(defaultValue = "CLOUD_LOGGING")
-    public LogTarget logTarget;
+    @WithDefault("CLOUD_LOGGING")
+    LogTarget logTarget();
 
-    @ConfigGroup
-    public static class StructuredConfig {
+    interface StructuredConfig {
 
         /**
          * Configure log record stack trace handling.
          */
-        @ConfigItem
-        public StackTraceConfig stackTrace;
+        StackTraceConfig stackTrace();
 
         /**
          * Configure log record MDC handling.
          */
-        @ConfigItem
-        public MDCConfig mdc;
+        MDCConfig mdc();
 
         /**
          * Configure log record parameter handling.
          */
-        @ConfigItem
-        public ParametersConfig parameters;
+        ParametersConfig parameters();
     }
 
-    @ConfigGroup
-    public static class GcpTracingConfig {
+    interface GcpTracingConfig {
 
         /**
          * Use this setting to determine if extracted trace ID's should
          * also be forwarded to GCP for linking with GCP Operations Tracing.
          */
-        @ConfigItem(defaultValue = "true")
-        public boolean enabled;
+        @WithDefault("true")
+        boolean enabled();
 
         /**
          * If the GCP Operations Tracing is in another project, configure it
          * here. By default the logging project will be used.
          */
-        @ConfigItem
-        public Optional<String> projectId;
+        Optional<String> projectId();
     }
 
-    @ConfigGroup
-    public static class ResourceConfig {
+    interface ResourceConfig {
 
         /**
          * The resource type of the log.
          */
-        @ConfigItem(defaultValue = "global")
-        public String type;
+        @WithDefault("global")
+        String type();
 
         /**
          * Resource labels.
          */
-        @ConfigItem
-        public Map<String, String> label;
+        Map<String, String> label();
 
     }
 
-    @ConfigGroup
-    public static class MDCConfig {
+    interface MDCConfig {
 
         /**
          * Include MDC values in the log.
          */
-        @ConfigItem(defaultValue = "true")
-        public boolean included;
+        @WithDefault("true")
+        boolean included();
 
         /**
          * Field name for MDC values, defaults to 'mdc'.
          */
-        @ConfigItem(defaultValue = "mdc")
-        public String fieldName;
+        @WithDefault("mdc")
+        String fieldName();
 
     }
 
-    @ConfigGroup
-    public static class StackTraceConfig {
+    interface StackTraceConfig {
 
         /**
          * Include stack traces when exceptions are thrown.
          */
-        @ConfigItem(defaultValue = "true")
-        public boolean included;
+        @WithDefault("true")
+        boolean included();
 
     }
 
-    @ConfigGroup
-    public static class ParametersConfig {
+    interface ParametersConfig {
 
         /**
          * Include parameter values in the log.
          */
-        @ConfigItem(defaultValue = "true")
-        public boolean included;
+        @WithDefault("true")
+        boolean included();
 
         /**
          * Field name for parameter values, defaults to 'parameters'.
          */
-        @ConfigItem(defaultValue = "parameters")
-        public String fieldName;
+        @WithDefault("parameters")
+        String fieldName();
 
     }
 
-    public enum ConfigLevel {
+    enum ConfigLevel {
         DEBUG(Severity.DEBUG),
         INFO(Severity.INFO),
         WARN(Severity.WARNING),
@@ -203,7 +186,7 @@ public class LoggingConfiguration {
         }
     }
 
-    public enum LogFormat {
+    enum LogFormat {
         TEXT,
         JSON
     }

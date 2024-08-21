@@ -1,15 +1,16 @@
 package io.quarkiverse.googlecloudservices.firebase.admin.deployment.authentication;
 
-import io.quarkus.runtime.annotations.ConfigItem;
-import io.quarkus.runtime.annotations.ConfigPhase;
 import io.quarkus.runtime.annotations.ConfigRoot;
+import io.smallrye.config.ConfigMapping;
+import io.smallrye.config.WithDefault;
 
-@ConfigRoot(name = "google.cloud.firebase.auth", phase = ConfigPhase.BUILD_TIME)
-public class FirebaseAuthConfiguration {
+@ConfigMapping(prefix = "quarkus.google.cloud.firebase.auth")
+@ConfigRoot
+public interface FirebaseAuthConfiguration {
 
     /**
      * Enable or disable Firebase authentication.
      */
-    @ConfigItem(defaultValue = "false")
-    public boolean enabled;
+    @WithDefault("false")
+    boolean enabled();
 }

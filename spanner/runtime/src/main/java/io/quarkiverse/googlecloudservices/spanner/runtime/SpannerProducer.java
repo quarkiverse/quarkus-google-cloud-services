@@ -1,7 +1,5 @@
 package io.quarkiverse.googlecloudservices.spanner.runtime;
 
-import java.io.IOException;
-
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.Default;
 import jakarta.enterprise.inject.Produces;
@@ -29,11 +27,11 @@ public class SpannerProducer {
     @Produces
     @Singleton
     @Default
-    public Spanner storage() throws IOException {
+    public Spanner storage() {
         GcpBootstrapConfiguration gcpConfiguration = gcpConfigHolder.getBootstrapConfig();
         SpannerOptions.Builder builder = SpannerOptions.newBuilder().setCredentials(googleCredentials)
                 .setProjectId(gcpConfiguration.projectId().orElse(null));
-        spannerConfiguration.emulatorHost.ifPresent(builder::setEmulatorHost);
+        spannerConfiguration.emulatorHost().ifPresent(builder::setEmulatorHost);
         return builder.build().getService();
     }
 }
