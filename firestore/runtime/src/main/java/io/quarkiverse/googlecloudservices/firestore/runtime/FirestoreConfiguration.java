@@ -28,8 +28,7 @@ public interface FirestoreConfiguration {
      * <i>If not present: keep the automatic behaviour</i>
      * </ul>
      */
-    @ConfigItem
-    public Optional<Boolean> useEmulatorCredentials;
+    Optional<Boolean> useEmulatorCredentials();
 
     /**
      * Controls the retry settings for Firestore requests.
