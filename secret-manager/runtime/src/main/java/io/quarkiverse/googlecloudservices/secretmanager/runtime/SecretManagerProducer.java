@@ -7,7 +7,7 @@ import jakarta.enterprise.inject.Produces;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 
-import com.google.auth.oauth2.GoogleCredentials;
+import com.google.auth.Credentials;
 import com.google.cloud.secretmanager.v1.SecretManagerServiceClient;
 import com.google.cloud.secretmanager.v1.SecretManagerServiceSettings;
 
@@ -22,7 +22,7 @@ import io.quarkus.arc.Unremovable;
 public class SecretManagerProducer {
 
     @Inject
-    GoogleCredentials googleCredentials;
+    Credentials googleCredentials;
 
     @Inject
     GcpConfigHolder gcpConfigHolder;

@@ -37,8 +37,8 @@ public class QuarkusPubSub {
 
     @PostConstruct
     void init() {
-        if (pubSubConfiguration.emulatorHost.isPresent()) {
-            ManagedChannel channel = ManagedChannelBuilder.forTarget(pubSubConfiguration.emulatorHost.get()).usePlaintext()
+        if (pubSubConfiguration.emulatorHost().isPresent()) {
+            ManagedChannel channel = ManagedChannelBuilder.forTarget(pubSubConfiguration.emulatorHost().get()).usePlaintext()
                     .build();
             channelProvider = Optional.of(FixedTransportChannelProvider.create(GrpcTransportChannel.create(channel)));
         } else {

@@ -42,7 +42,7 @@ public class FirestoreDevServiceProcessor {
             LoggingSetupBuildItem loggingSetupBuildItem,
             GlobalDevServicesConfig globalDevServicesConfig) {
         // If dev service is running and config has changed, stop the service
-        if (devService != null && !buildTimeConfig.devservice.equals(config)) {
+        if (devService != null && !buildTimeConfig.devservice().equals(config)) {
             stopContainer();
         } else if (devService != null) {
             return devService.toBuildItem();
@@ -56,7 +56,7 @@ public class FirestoreDevServiceProcessor {
 
         // Try starting the container if conditions are met
         try {
-            devService = startContainerIfAvailable(dockerStatusBuildItem, buildTimeConfig.devservice,
+            devService = startContainerIfAvailable(dockerStatusBuildItem, buildTimeConfig.devservice(),
                     globalDevServicesConfig.timeout);
         } catch (Throwable t) {
             LOGGER.warn("Unable to start Firestore dev service", t);
@@ -81,13 +81,13 @@ public class FirestoreDevServiceProcessor {
     private DevServicesResultBuildItem.RunningDevService startContainerIfAvailable(DockerStatusBuildItem dockerStatusBuildItem,
             FirestoreDevServiceConfig config,
             Optional<Duration> timeout) {
-        if (!config.enabled) {
+        if (!config.enabled()) {
             // Firestore service explicitly disabled
             LOGGER.debug("Not starting Dev Services for Firestore as it has been disabled in the config");
             return null;
         }
 
-        if (!dockerStatusBuildItem.isDockerAvailable()) {
+        if (!dockerStatusBuildItem.isContainerRuntimeAvailable()) {
             LOGGER.warn("Not starting devservice because docker is not available");
             return null;
         }
@@ -108,8 +108,8 @@ public class FirestoreDevServiceProcessor {
             Optional<Duration> timeout) {
         // Create and configure Firestore emulator container
         FirestoreEmulatorContainer emulatorContainer = new QuarkusFirestoreContainer(
-                DockerImageName.parse(config.imageName).asCompatibleSubstituteFor("gcr.io/google.com/cloudsdktool/cloud-sdk"),
-                config.emulatorPort.orElse(null));
+                DockerImageName.parse(config.imageName()).asCompatibleSubstituteFor("gcr.io/google.com/cloudsdktool/cloud-sdk"),
+                config.emulatorPort().orElse(null));
 
         // Set container startup timeout if provided
         timeout.ifPresent(emulatorContainer::withStartupTimeout);

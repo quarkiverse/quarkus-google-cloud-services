@@ -3,6 +3,7 @@ package io.quarkiverse.googlecloudservices.it;
 import java.io.IOException;
 
 import jakarta.annotation.PostConstruct;
+import jakarta.annotation.PreDestroy;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
@@ -46,12 +47,14 @@ public class BigtableResource {
     @Inject
     CredentialsProvider credentialsProvider;
 
+    private TransportChannelProvider channelProvider;
+
     @PostConstruct
     void initBigtable() throws IOException {
         if (emulatorHost != null) {
             ManagedChannel channel = ManagedChannelBuilder.forTarget(emulatorHost).usePlaintext().build();
 
-            TransportChannelProvider channelProvider = FixedTransportChannelProvider.create(
+            this.channelProvider = FixedTransportChannelProvider.create(
                     GrpcTransportChannel.create(channel));
             NoCredentialsProvider credentialsProvider = NoCredentialsProvider.create();
 
@@ -82,6 +85,13 @@ public class BigtableResource {
                     adminClient.createTable(createTableRequest);
                 }
             }
+        }
+    }
+
+    @PreDestroy
+    void closeChannel() throws Exception {
+        if (this.channelProvider != null) {
+            this.channelProvider.getTransportChannel().close();
         }
     }
 

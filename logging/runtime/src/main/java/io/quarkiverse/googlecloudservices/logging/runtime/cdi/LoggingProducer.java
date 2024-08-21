@@ -5,7 +5,7 @@ import jakarta.enterprise.inject.Produces;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 
-import com.google.auth.oauth2.GoogleCredentials;
+import com.google.auth.Credentials;
 import com.google.cloud.logging.Logging;
 import com.google.cloud.logging.LoggingOptions;
 
@@ -21,7 +21,7 @@ import io.quarkus.arc.Unremovable;
 public class LoggingProducer {
 
     @Inject
-    GoogleCredentials googleCredentials;
+    Credentials googleCredentials;
 
     @Inject
     GcpConfigHolder gcpConfigHolder;
@@ -42,8 +42,8 @@ public class LoggingProducer {
                 .build()
                 .getService();
         // check auto-flush and synchronicity
-        loggingConfig.flushLevel.ifPresent(level -> log.setFlushSeverity(level.getSeverity()));
-        loggingConfig.synchronicity.ifPresent(sync -> log.setWriteSynchronicity(sync));
+        loggingConfig.flushLevel().ifPresent(level -> log.setFlushSeverity(level.getSeverity()));
+        loggingConfig.synchronicity().ifPresent(sync -> log.setWriteSynchronicity(sync));
         return log;
     }
 }

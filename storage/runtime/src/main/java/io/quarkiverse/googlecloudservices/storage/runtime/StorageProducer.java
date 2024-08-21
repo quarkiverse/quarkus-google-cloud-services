@@ -8,7 +8,7 @@ import jakarta.enterprise.inject.Produces;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 
-import com.google.auth.oauth2.GoogleCredentials;
+import com.google.auth.Credentials;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.StorageOptions;
 
@@ -19,7 +19,7 @@ import io.quarkiverse.googlecloudservices.common.GcpConfigHolder;
 public class StorageProducer {
 
     @Inject
-    GoogleCredentials googleCredentials;
+    Credentials googleCredentials;
 
     @Inject
     GcpConfigHolder gcpConfigHolder;
@@ -35,7 +35,7 @@ public class StorageProducer {
         StorageOptions.Builder builder = StorageOptions.newBuilder()
                 .setCredentials(googleCredentials)
                 .setProjectId(gcpConfiguration.projectId().orElse(null));
-        storageConfiguration.hostOverride.ifPresent(builder::setHost);
+        storageConfiguration.hostOverride().ifPresent(builder::setHost);
         return builder.build().getService();
     }
 }

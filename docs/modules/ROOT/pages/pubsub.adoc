@@ -161,7 +161,7 @@ The extension provides a Dev Service that can be used to run a local PubSub emul
 
 You can also set the
 
-* `quarkus.google.cloud.pubsub.devservice.port` property to change the port on which the emulator will be started (by default there is no port set, so the emulator will use a random port)
+* `quarkus.google.cloud.pubsub.devservice.emulator-port` property to change the port on which the emulator will be started (by default there is no port set, so the emulator will use a random port)
 
 === Using the Dev Service
 
@@ -219,3 +219,7 @@ SubscriptionAdminSettings subscriptionAdminSettings = SubscriptionAdminSettings.
 .setTransportChannelProvider(channelProvider)
 .build();
 ----
+
+== Configuration Reference
+
+include::./includes/quarkus-google-cloud-pubsub.adoc[]

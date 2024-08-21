@@ -1,5 +1,7 @@
 package io.quarkiverse.googlecloudservices.logging.runtime.ecs;
 
+import static org.mockito.Mockito.when;
+
 import java.util.Map;
 import java.util.UUID;
 import java.util.logging.Level;
@@ -7,6 +9,7 @@ import java.util.logging.Level;
 import org.jboss.logmanager.ExtLogRecord;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
@@ -91,7 +94,7 @@ public class EscJsonFormatTest {
     public void testExcludeMdcAccordingToConfig() {
         EscJsonFormat f = new EscJsonFormat();
         LoggingConfiguration c = createNewLoggingConfiguration();
-        c.structured.mdc.included = false;
+        when(c.structured().mdc().included()).thenReturn(false);
         f.setLoggingConfiguration(c);
         ExtLogRecord r = createNewLogRecord();
         r.setMdc(Map.of("k", "v"));
@@ -103,8 +106,7 @@ public class EscJsonFormatTest {
     public void testMdcFieldName() {
         EscJsonFormat f = new EscJsonFormat();
         LoggingConfiguration c = createNewLoggingConfiguration();
-        c.structured.mdc.included = true;
-        c.structured.mdc.fieldName = "fieldName";
+        when(c.structured().mdc().fieldName()).thenReturn("fieldName");
         f.setLoggingConfiguration(c);
         ExtLogRecord r = createNewLogRecord();
         r.setMdc(Map.of("k", "v"));
@@ -128,7 +130,7 @@ public class EscJsonFormatTest {
     public void testExcludeStackTrace() {
         EscJsonFormat f = new EscJsonFormat();
         LoggingConfiguration c = createNewLoggingConfiguration();
-        c.structured.stackTrace.included = false;
+        when(c.structured().stackTrace().included()).thenReturn(false);
         f.setLoggingConfiguration(c);
         ExtLogRecord r = createNewLogRecord();
         r.setThrown(new Exception("hello exception"));
@@ -152,7 +154,7 @@ public class EscJsonFormatTest {
     public void testExcludeParameters() {
         EscJsonFormat f = new EscJsonFormat();
         LoggingConfiguration c = createNewLoggingConfiguration();
-        c.structured.parameters.included = false;
+        when(c.structured().parameters().included()).thenReturn(false);
         f.setLoggingConfiguration(c);
         ExtLogRecord r = createNewLogRecord();
         r.setParameters(new Object[] { "p1", "p2" });
@@ -164,7 +166,6 @@ public class EscJsonFormatTest {
     public void testIncludeParameters() {
         EscJsonFormat f = new EscJsonFormat();
         LoggingConfiguration c = createNewLoggingConfiguration();
-        c.structured.parameters.included = true;
         f.setLoggingConfiguration(c);
         ExtLogRecord r = createNewLogRecord();
         r.setParameters(new Object[] { "p1", "p2" });
@@ -222,15 +223,23 @@ public class EscJsonFormatTest {
     }
 
     private LoggingConfiguration createNewLoggingConfiguration() {
-        LoggingConfiguration c = new LoggingConfiguration();
-        c.structured = new StructuredConfig();
-        c.structured.mdc = new MDCConfig();
-        c.structured.mdc.included = true;
-        c.structured.stackTrace = new StackTraceConfig();
-        c.structured.stackTrace.included = true;
-        c.structured.parameters = new ParametersConfig();
-        c.structured.parameters.included = true;
-        c.structured.parameters.fieldName = "parameters";
+        LoggingConfiguration c = Mockito.mock(LoggingConfiguration.class);
+        StructuredConfig structured = Mockito.mock(StructuredConfig.class);
+        MDCConfig mdc = Mockito.mock(MDCConfig.class);
+        StackTraceConfig stackTrace = Mockito.mock(StackTraceConfig.class);
+        ParametersConfig parameters = Mockito.mock(ParametersConfig.class);
+
+        when(mdc.included()).thenReturn(true);
+        when(stackTrace.included()).thenReturn(true);
+        when(parameters.included()).thenReturn(true);
+        when(parameters.fieldName()).thenReturn("parameters");
+
+        when(structured.mdc()).thenReturn(mdc);
+        when(structured.stackTrace()).thenReturn(stackTrace);
+        when(structured.parameters()).thenReturn(parameters);
+
+        when(c.structured()).thenReturn(structured);
+
         return c;
     }
 

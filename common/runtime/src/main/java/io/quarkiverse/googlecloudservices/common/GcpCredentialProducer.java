@@ -13,6 +13,7 @@ import jakarta.enterprise.inject.Produces;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 
+import com.google.auth.Credentials;
 import com.google.auth.oauth2.AccessToken;
 import com.google.auth.oauth2.GoogleCredentials;
 
@@ -41,7 +42,7 @@ public class GcpCredentialProducer {
     @Produces
     @Singleton
     @Default
-    public GoogleCredentials googleCredential() throws IOException {
+    public Credentials googleCredential() throws IOException {
         GcpBootstrapConfiguration gcpConfiguration = gcpConfigHolder.getBootstrapConfig();
         if (gcpConfiguration.serviceAccountLocation().isPresent()) {
             try (FileInputStream is = new FileInputStream(gcpConfiguration.serviceAccountLocation().get())) {

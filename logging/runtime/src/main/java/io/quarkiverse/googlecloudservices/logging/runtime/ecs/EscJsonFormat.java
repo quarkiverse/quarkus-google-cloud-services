@@ -81,8 +81,8 @@ public class EscJsonFormat {
 
     @SuppressWarnings("unchecked")
     protected void putParametersIfEnabled(Map<String, Object> m, Object[] parameters) {
-        if (parameters != null && parameters.length > 0 && this.config.structured.parameters.included) {
-            List<String> list = (List<String>) m.computeIfAbsent(this.config.structured.parameters.fieldName,
+        if (parameters != null && parameters.length > 0 && this.config.structured().parameters().included()) {
+            List<String> list = (List<String>) m.computeIfAbsent(this.config.structured().parameters().fieldName(),
                     (k) -> new ArrayList<String>(parameters.length));
             for (Object o : parameters) {
                 if (shouldIncludeParameter(o)) {
@@ -110,7 +110,7 @@ public class EscJsonFormat {
             if (!Strings.isNullOrEmpty(msg)) {
                 error.put("message", msg);
             }
-            if (this.config.structured.stackTrace.included) {
+            if (this.config.structured().stackTrace().included()) {
                 // render as a standard out string
                 StringWriter sw = new StringWriter(1024);
                 PrintWriter pw = new PrintWriter(sw);
@@ -122,8 +122,8 @@ public class EscJsonFormat {
     }
 
     protected void putMdcIfEnabled(Map<String, Object> m, Map<String, String> mdcCopy) {
-        if (mdcCopy != null && !mdcCopy.isEmpty() && this.config.structured.mdc.included) {
-            Map<String, Object> mdc = getOrCreateObject(m, this.config.structured.mdc.fieldName);
+        if (mdcCopy != null && !mdcCopy.isEmpty() && this.config.structured().mdc().included()) {
+            Map<String, Object> mdc = getOrCreateObject(m, this.config.structured().mdc().fieldName());
             mdcCopy.forEach((k, v) -> mdc.put(k, v));
         }
     }

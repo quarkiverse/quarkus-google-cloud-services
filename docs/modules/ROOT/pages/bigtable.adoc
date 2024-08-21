@@ -145,3 +145,7 @@ public class BigtableResource {
     }
 }
 ----
+
+== Configuration Reference
+
+include::./includes/quarkus-google-cloud-bigtable.adoc[]
