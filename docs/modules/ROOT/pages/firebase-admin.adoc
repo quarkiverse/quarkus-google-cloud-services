@@ -77,7 +77,7 @@ Remember that you need to enable the Firebase Authentication service in your Fir
 
 === Configuration
 
-* `quarkus.google.cloud.firebase-admin.auth.enabled` - Enable Firebase Authentication.
+* `quarkus.google.cloud.firebase.auth.enabled` - Enable Firebase Authentication.
 Default value is `false`.
 
 === Example
