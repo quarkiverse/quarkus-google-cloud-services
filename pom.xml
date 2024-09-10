@@ -35,8 +35,6 @@
     <module>bigtable</module>
     <module>secret-manager</module>
     <module>logging</module>
-    <module>integration-tests</module>
-    <module>docs</module>
   </modules>
   <dependencyManagement>
     <dependencies>
@@ -97,4 +95,30 @@
       </plugins>
     </pluginManagement>
   </build>
+  <profiles>
+    <profile>
+      <id>docs</id>
+      <activation>
+        <property>
+          <name>performRelease</name>
+          <value>!true</value>
+        </property>
+      </activation>
+      <modules>
+        <module>docs</module>
+      </modules>
+    </profile>
+    <profile>
+      <id>it</id>
+      <activation>
+        <property>
+          <name>performRelease</name>
+          <value>!true</value>
+        </property>
+      </activation>
+      <modules>
+        <module>integration-tests</module>
+      </modules>
+    </profile>
+  </profiles>
 </project>
