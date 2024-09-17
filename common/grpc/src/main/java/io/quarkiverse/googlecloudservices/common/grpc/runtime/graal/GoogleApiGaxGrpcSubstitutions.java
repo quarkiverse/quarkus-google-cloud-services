@@ -1,10 +1,9 @@
 package io.quarkiverse.googlecloudservices.common.grpc.runtime.graal;
 
 import java.io.IOException;
+import java.time.Duration;
 import java.util.concurrent.Executor;
 import java.util.concurrent.TimeUnit;
-
-import org.threeten.bp.Duration;
 
 import com.google.api.core.ApiFunction;
 import com.google.api.gax.grpc.ChannelPrimer;
