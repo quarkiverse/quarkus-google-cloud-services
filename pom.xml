@@ -35,6 +35,7 @@
     <module>bigtable</module>
     <module>secret-manager</module>
     <module>logging</module>
+    <module>integration-tests</module>
   </modules>
   <dependencyManagement>
     <dependencies>
@@ -106,18 +107,6 @@
       </activation>
       <modules>
         <module>docs</module>
-      </modules>
-    </profile>
-    <profile>
-      <id>it</id>
-      <activation>
-        <property>
-          <name>performRelease</name>
-          <value>!true</value>
-        </property>
-      </activation>
-      <modules>
-        <module>integration-tests</module>
       </modules>
     </profile>
   </profiles>
