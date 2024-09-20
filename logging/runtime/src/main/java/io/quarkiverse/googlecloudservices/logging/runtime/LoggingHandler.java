@@ -2,6 +2,7 @@ package io.quarkiverse.googlecloudservices.logging.runtime;
 
 import java.util.Collections;
 import java.util.logging.ErrorManager;
+import java.util.logging.Level;
 
 import org.jboss.logmanager.ExtHandler;
 import org.jboss.logmanager.ExtLogRecord;
@@ -11,6 +12,7 @@ import com.google.cloud.logging.LogEntry;
 import com.google.cloud.logging.Logging;
 import com.google.cloud.logging.Logging.WriteOption;
 import com.google.cloud.logging.Payload;
+import com.google.cloud.logging.Severity;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
 
@@ -24,6 +26,10 @@ import io.quarkus.arc.ArcContainer;
 import io.quarkus.arc.InstanceHandle;
 
 public class LoggingHandler extends ExtHandler {
+
+    private static final String LEVEL_NAME_KEY = "levelName";
+    private static final String LEVEL_VALUE_KEY = "levelValue";
+    private static final String LOGGER_NAME_KEY = "loggerName";
 
     private final LoggingConfiguration config;
 
@@ -79,11 +85,24 @@ public class LoggingHandler extends ExtHandler {
     private LogEntry transform(ExtLogRecord record, TraceInfo trace) {
         Payload<?> payload = internalHandler.transform(record, trace);
         if (payload != null) {
+            Level level = record.getLevel();
+            Severity severity = LevelTransformer.toSeverity(level);
             com.google.cloud.logging.LogEntry.Builder builder = LogEntry.newBuilder(payload)
-                    .setSeverity(LevelTransformer.toSeverity(record.getLevel()))
-                    .setTimestamp(record.getInstant());
+                    .setSeverity(severity)
+                    .setTimestamp(record.getInstant())
+                    .addLabel(LEVEL_NAME_KEY, level.toString())
+                    .addLabel(LEVEL_VALUE_KEY, String.valueOf(level.intValue()));
+
+            String loggerName = record.getSourceClassName();
+            if (!Strings.isNullOrEmpty(loggerName)) {
+                builder = builder.addLabel(LOGGER_NAME_KEY, loggerName);
+            }
+
             if (this.config.gcpTracing().enabled() && trace != null && !Strings.isNullOrEmpty(trace.getTraceId())) {
-                builder = builder.setTrace(composeTraceString(trace.getTraceId()));
+                builder = builder
+                        .setTrace(composeTraceString(trace.getTraceId()))
+                        .setSpanId(trace.getSpanId())
+                        .setTraceSampled(true);
             }
             return builder.build();
         } else {
