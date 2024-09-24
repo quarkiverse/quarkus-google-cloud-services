@@ -32,6 +32,7 @@ import io.quarkus.arc.InstanceHandle;
  */
 class LoggingHandlerTest {
 
+    private final PrintStream standardOut = System.out;
     private final ByteArrayOutputStream outputStreamCaptor = new ByteArrayOutputStream();
 
     @BeforeEach
@@ -43,7 +44,7 @@ class LoggingHandlerTest {
     @AfterEach
     void tearDown() {
         // Reset System.out after test complete
-        System.setOut(System.out);
+        System.setOut(standardOut);
     }
 
     @Test
