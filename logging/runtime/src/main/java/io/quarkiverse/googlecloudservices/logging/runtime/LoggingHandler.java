@@ -82,8 +82,12 @@ public class LoggingHandler extends ExtHandler {
             com.google.cloud.logging.LogEntry.Builder builder = LogEntry.newBuilder(payload)
                     .setSeverity(LevelTransformer.toSeverity(record.getLevel()))
                     .setTimestamp(record.getInstant());
+
             if (this.config.gcpTracing().enabled() && trace != null && !Strings.isNullOrEmpty(trace.getTraceId())) {
-                builder = builder.setTrace(composeTraceString(trace.getTraceId()));
+                builder = builder
+                        .setTrace(composeTraceString(trace.getTraceId()))
+                        .setSpanId(trace.getSpanId())
+                        .setTraceSampled(true);
             }
             return builder.build();
         } else {
@@ -100,7 +104,7 @@ public class LoggingHandler extends ExtHandler {
         try {
             initGetLogging().flush();
         } catch (Exception ex) {
-            getErrorManager().error("Failed to fluch GCP logger", ex, ErrorManager.FLUSH_FAILURE);
+            getErrorManager().error("Failed to flush GCP logger", ex, ErrorManager.FLUSH_FAILURE);
         }
     }
 
