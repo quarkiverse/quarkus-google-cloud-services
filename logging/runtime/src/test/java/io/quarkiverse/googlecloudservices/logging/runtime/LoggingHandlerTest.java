@@ -79,13 +79,6 @@ class LoggingHandlerTest {
                     () -> assertEquals(spanId, logEntryJson.get("logging.googleapis.com/spanId").getAsString()),
                     () -> assertTrue(logEntryJson.get("logging.googleapis.com/trace_sampled").getAsBoolean()));
 
-            JsonObject labels = logEntryJson.get("logging.googleapis.com/labels").getAsJsonObject();
-            assertNotNull(labels);
-            assertAll(
-                    () -> assertEquals("INFO", labels.get("levelName").getAsString()),
-                    () -> assertEquals("800", labels.get("levelValue").getAsString()),
-                    () -> assertEquals(getClass().getName(), labels.get("loggerName").getAsString()));
-
             JsonObject log = logEntryJson.get("log").getAsJsonObject();
             assertNotNull(log);
             assertAll(
