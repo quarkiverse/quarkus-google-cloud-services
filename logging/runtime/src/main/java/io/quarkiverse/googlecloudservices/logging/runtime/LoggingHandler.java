@@ -1,6 +1,7 @@
 package io.quarkiverse.googlecloudservices.logging.runtime;
 
 import java.util.Collections;
+import java.util.Map;
 import java.util.logging.ErrorManager;
 
 import org.jboss.logmanager.ExtHandler;
@@ -33,6 +34,7 @@ public class LoggingHandler extends ExtHandler {
     private WriteOption[] defaultWriteOptions;
     private InternalHandler internalHandler;
     private TraceInfoExtractor traceExtractor;
+    private LogRecordLabelSupplier logRecordLabelSupplier;
 
     public LoggingHandler(LoggingConfiguration config) {
         this.config = config;
@@ -83,6 +85,14 @@ public class LoggingHandler extends ExtHandler {
                     .setSeverity(LevelTransformer.toSeverity(record.getLevel()))
                     .setTimestamp(record.getInstant());
 
+            final Map<String, String> customLabels = logRecordLabelSupplier.getCustomLabels(record);
+
+            if (customLabels != null) {
+                for (Map.Entry<String, String> entry : customLabels.entrySet()) {
+                    builder = builder.addLabel(entry.getKey(), entry.getValue());
+                }
+            }
+
             if (this.config.gcpTracing().enabled() && trace != null && !Strings.isNullOrEmpty(trace.getTraceId())) {
                 builder = builder
                         .setTrace(composeTraceString(trace.getTraceId()))
@@ -120,8 +130,19 @@ public class LoggingHandler extends ExtHandler {
             initInternalHandler();
             // init trace extractor
             initTraceExtractor();
+            // init log record label supplier
+            initLogRecordLabelSupplier();
         }
         return log;
+    }
+
+    private void initLogRecordLabelSupplier() {
+        InstanceHandle<LogRecordLabelSupplier> handle = Arc.container().instance(LogRecordLabelSupplier.class);
+        if (handle.isAvailable()) {
+            this.logRecordLabelSupplier = handle.get();
+        } else {
+            this.logRecordLabelSupplier = s -> Collections.emptyMap();
+        }
     }
 
     private void initInternalHandler() {

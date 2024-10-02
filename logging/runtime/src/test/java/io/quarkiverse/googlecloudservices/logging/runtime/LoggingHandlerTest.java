@@ -8,6 +8,7 @@ import static org.mockito.Mockito.when;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.logging.Level;
@@ -79,6 +80,13 @@ class LoggingHandlerTest {
                     () -> assertEquals(spanId, logEntryJson.get("logging.googleapis.com/spanId").getAsString()),
                     () -> assertTrue(logEntryJson.get("logging.googleapis.com/trace_sampled").getAsBoolean()));
 
+            JsonObject labels = logEntryJson.get("logging.googleapis.com/labels").getAsJsonObject();
+            assertNotNull(labels);
+            assertAll(
+                    () -> assertEquals(2, labels.entrySet().size()),
+                    () -> assertEquals("value1", labels.get("label1").getAsString()),
+                    () -> assertEquals("value2", labels.get("label2").getAsString()));
+
             JsonObject log = logEntryJson.get("log").getAsJsonObject();
             assertNotNull(log);
             assertAll(
@@ -101,6 +109,11 @@ class LoggingHandlerTest {
         when(traceInfoInstanceHandler.get()).thenReturn(x -> new TraceInfo(traceId, spanId));
         when(traceInfoInstanceHandler.isAvailable()).thenReturn(true);
         when(container.instance(TraceInfoExtractor.class)).thenReturn(traceInfoInstanceHandler);
+
+        InstanceHandle<LogRecordLabelSupplier> logRecordLabelSupplierInstanceHandler = Mockito.mock(InstanceHandle.class);
+        when(logRecordLabelSupplierInstanceHandler.get()).thenReturn(x -> Map.of("label1", "value1", "label2", "value2"));
+        when(logRecordLabelSupplierInstanceHandler.isAvailable()).thenReturn(true);
+        when(container.instance(LogRecordLabelSupplier.class)).thenReturn(logRecordLabelSupplierInstanceHandler);
 
         InstanceHandle<Logging> loggingInstanceHandler = Mockito.mock(InstanceHandle.class);
         Logging logging = Mockito.mock(Logging.class);
