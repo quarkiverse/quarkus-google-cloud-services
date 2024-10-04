@@ -110,10 +110,10 @@ class LoggingHandlerTest {
         when(traceInfoInstanceHandler.isAvailable()).thenReturn(true);
         when(container.instance(TraceInfoExtractor.class)).thenReturn(traceInfoInstanceHandler);
 
-        InstanceHandle<LogRecordLabelSupplier> logRecordLabelSupplierInstanceHandler = Mockito.mock(InstanceHandle.class);
-        when(logRecordLabelSupplierInstanceHandler.get()).thenReturn(x -> Map.of("label1", "value1", "label2", "value2"));
-        when(logRecordLabelSupplierInstanceHandler.isAvailable()).thenReturn(true);
-        when(container.instance(LogRecordLabelSupplier.class)).thenReturn(logRecordLabelSupplierInstanceHandler);
+        InstanceHandle<LogRecordLabelExtractor> logRecordLabelExtractorInstanceHandle = Mockito.mock(InstanceHandle.class);
+        when(logRecordLabelExtractorInstanceHandle.get()).thenReturn(x -> Map.of("label1", "value1", "label2", "value2"));
+        when(logRecordLabelExtractorInstanceHandle.isAvailable()).thenReturn(true);
+        when(container.instance(LogRecordLabelExtractor.class)).thenReturn(logRecordLabelExtractorInstanceHandle);
 
         InstanceHandle<Logging> loggingInstanceHandler = Mockito.mock(InstanceHandle.class);
         Logging logging = Mockito.mock(Logging.class);

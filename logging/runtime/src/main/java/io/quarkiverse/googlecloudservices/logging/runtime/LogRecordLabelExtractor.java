@@ -6,9 +6,9 @@ import org.jboss.logmanager.ExtLogRecord;
 
 /**
  * Bind an instance of this interface to include additional labels
- * in the log record. You should only bind one supplier in the CDI context.
+ * in the log record. You should only bind one extractor in the CDI context.
  */
-public interface LogRecordLabelSupplier {
+public interface LogRecordLabelExtractor {
 
     /**
      * Supply additional labels for a log record.

@@ -34,7 +34,7 @@ public class LoggingHandler extends ExtHandler {
     private WriteOption[] defaultWriteOptions;
     private InternalHandler internalHandler;
     private TraceInfoExtractor traceExtractor;
-    private LogRecordLabelSupplier logRecordLabelSupplier;
+    private LogRecordLabelExtractor logRecordLabelExtractor;
 
     public LoggingHandler(LoggingConfiguration config) {
         this.config = config;
@@ -85,7 +85,7 @@ public class LoggingHandler extends ExtHandler {
                     .setSeverity(LevelTransformer.toSeverity(record.getLevel()))
                     .setTimestamp(record.getInstant());
 
-            final Map<String, String> customLabels = logRecordLabelSupplier.getCustomLabels(record);
+            final Map<String, String> customLabels = logRecordLabelExtractor.getCustomLabels(record);
 
             if (customLabels != null) {
                 for (Map.Entry<String, String> entry : customLabels.entrySet()) {
@@ -130,18 +130,18 @@ public class LoggingHandler extends ExtHandler {
             initInternalHandler();
             // init trace extractor
             initTraceExtractor();
-            // init log record label supplier
-            initLogRecordLabelSupplier();
+            // init log record label extractor
+            initLogRecordLabelExtractor();
         }
         return log;
     }
 
-    private void initLogRecordLabelSupplier() {
-        InstanceHandle<LogRecordLabelSupplier> handle = Arc.container().instance(LogRecordLabelSupplier.class);
+    private void initLogRecordLabelExtractor() {
+        InstanceHandle<LogRecordLabelExtractor> handle = Arc.container().instance(LogRecordLabelExtractor.class);
         if (handle.isAvailable()) {
-            this.logRecordLabelSupplier = handle.get();
+            this.logRecordLabelExtractor = handle.get();
         } else {
-            this.logRecordLabelSupplier = s -> Collections.emptyMap();
+            this.logRecordLabelExtractor = s -> Collections.emptyMap();
         }
     }
 
