@@ -141,6 +141,34 @@ By default, this will also be set on the Google Cloud Operations log entry as a 
 
 * `quarkus.google.cloud.logging.gcp-tracing.enabled=[true|false]`
 
+=== Custom Labels
+
+In order to include additional labels in the log, you must bind a `LogRecordLabelExtractor` to the CDI context, e.g.:
+
+[source,java]
+----
+package mypackage;
+
+import java.util.Map;
+
+import javax.enterprise.context.ApplicationScoped;
+
+import org.jboss.logmanager.ExtLogRecord;
+
+import io.quarkiverse.googlecloudservices.logging.runtime.LogRecordLabelExtractor;
+
+@ApplicationScoped
+public class LogLabelExtractor implements LogRecordLabelExtractor {
+
+    @Override
+    public Map<String, String> getCustomLabels(ExtLogRecord extLogRecord) {
+        return Map.of(/* some label, some value */);
+    }
+}
+----
+
+This will include additional labels in the log.
+
 == Injecting GCP Logging
 You can inject a `com.google.cloud.logging.Logging` instance directly. If you do so, the configuration for the project to use, still apply.
 

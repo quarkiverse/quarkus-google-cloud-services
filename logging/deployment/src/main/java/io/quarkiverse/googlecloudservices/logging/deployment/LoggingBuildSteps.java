@@ -3,6 +3,7 @@ package io.quarkiverse.googlecloudservices.logging.deployment;
 import java.util.ArrayList;
 import java.util.List;
 
+import io.quarkiverse.googlecloudservices.logging.runtime.LogRecordLabelExtractor;
 import io.quarkiverse.googlecloudservices.logging.runtime.LoggingConfiguration;
 import io.quarkiverse.googlecloudservices.logging.runtime.TraceInfoExtractor;
 import io.quarkiverse.googlecloudservices.logging.runtime.cdi.LoggingProducer;
@@ -34,7 +35,8 @@ public class LoggingBuildSteps {
     public UnremovableBeanBuildItem helperClasses() {
         return UnremovableBeanBuildItem.beanTypes(
                 TraceInfoExtractor.class,
-                LoggingConfiguration.class);
+                LoggingConfiguration.class,
+                LogRecordLabelExtractor.class);
     }
 
     @BuildStep
