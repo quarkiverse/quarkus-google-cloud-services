@@ -13,7 +13,7 @@
     <description>Use Google Cloud Firebase Admin to perform privileged actions</description>
 
     <properties>
-        <firebase-admin-sdk.version>9.4.0</firebase-admin-sdk.version>
+        <firebase-admin-sdk.version>9.4.1</firebase-admin-sdk.version>
         <microprofile-jwt-auth-api.version>2.1</microprofile-jwt-auth-api.version>
     </properties>
 
