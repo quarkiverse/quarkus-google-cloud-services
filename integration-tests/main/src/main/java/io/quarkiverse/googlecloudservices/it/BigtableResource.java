@@ -22,6 +22,7 @@ import com.google.cloud.bigtable.admin.v2.stub.BigtableTableAdminStubSettings;
 import com.google.cloud.bigtable.admin.v2.stub.EnhancedBigtableTableAdminStub;
 import com.google.cloud.bigtable.data.v2.BigtableDataClient;
 import com.google.cloud.bigtable.data.v2.BigtableDataSettings;
+import com.google.cloud.bigtable.data.v2.internal.TableAdminRequestContext;
 import com.google.cloud.bigtable.data.v2.models.Row;
 import com.google.cloud.bigtable.data.v2.models.RowCell;
 import com.google.cloud.bigtable.data.v2.models.RowMutation;
@@ -63,7 +64,8 @@ public class BigtableResource {
                             .newBuilder()
                             .setTransportChannelProvider(channelProvider)
                             .setCredentialsProvider(credentialsProvider)
-                            .build());
+                            .build(),
+                    TableAdminRequestContext.create(projectId, INSTANCE_ID));
 
             try (BigtableTableAdminClient adminClient = BigtableTableAdminClient.create(projectId, INSTANCE_ID, stub)) {
                 if (!adminClient.exists(TABLE_ID)) {
