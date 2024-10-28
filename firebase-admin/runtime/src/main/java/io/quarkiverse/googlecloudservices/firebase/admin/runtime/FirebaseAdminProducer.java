@@ -11,9 +11,12 @@ import com.google.auth.oauth2.GoogleCredentials;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.internal.Utils;
+import com.google.firebase.internal.FirebaseProcessEnvironment;
 
 import io.quarkiverse.googlecloudservices.common.GcpBootstrapConfiguration;
 import io.quarkiverse.googlecloudservices.common.GcpConfigHolder;
+import io.smallrye.config.ConfigMapping;
 
 @ApplicationScoped
 public class FirebaseAdminProducer {
@@ -27,7 +30,11 @@ public class FirebaseAdminProducer {
     @Produces
     @Singleton
     @Default
-    public FirebaseAuth firestoreAuth(FirebaseApp firebaseApp) {
+    public FirebaseAuth firestoreAuth(@ConfigMapping FirebaseAuthConfig firebaseAuthConfig, FirebaseApp firebaseApp) {
+
+        // Configure the Firebase emulator to use.
+        firebaseAuthConfig.emulatorHost().ifPresent(host -> FirebaseProcessEnvironment.setenv(Utils.AUTH_EMULATOR_HOST, host));
+
         return FirebaseAuth.getInstance(firebaseApp);
     }
 

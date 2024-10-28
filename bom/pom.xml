@@ -140,6 +140,16 @@
             </dependency>
             <dependency>
                 <groupId>io.quarkiverse.googlecloudservices</groupId>
+                <artifactId>quarkus-google-cloud-firebase</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.quarkiverse.googlecloudservices</groupId>
+                <artifactId>quarkus-google-cloud-firebase-deployment</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.quarkiverse.googlecloudservices</groupId>
                 <artifactId>quarkus-google-cloud-firestore</artifactId>
                 <version>${project.version}</version>
             </dependency>
