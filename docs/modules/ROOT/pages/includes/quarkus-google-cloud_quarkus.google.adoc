@@ -1,4 +1,3 @@
-:summaryTableId: quarkus-google-cloud_quarkus-google
 [.configuration-legend]
 icon:lock[title=Fixed at build time] Configuration property fixed at build time - All other configuration properties are overridable at runtime
 [.configuration-reference.searchable, cols="80,.^10,.^10"]
@@ -8,7 +7,7 @@ h|[.header-title]##Configuration property##
 h|Type
 h|Default
 
-a| [[quarkus-google-cloud_quarkus-google-cloud-enable-metadata-server]] [.property-path]##`quarkus.google.cloud.enable-metadata-server`##
+a| [[quarkus-google-cloud_quarkus-google-cloud-enable-metadata-server]] [.property-path]##link:#quarkus-google-cloud_quarkus-google-cloud-enable-metadata-server[`quarkus.google.cloud.enable-metadata-server`]##
 
 [.description]
 --
@@ -25,7 +24,7 @@ endif::add-copy-button-to-env-var[]
 |boolean
 |`true`
 
-a| [[quarkus-google-cloud_quarkus-google-cloud-project-id]] [.property-path]##`quarkus.google.cloud.project-id`##
+a| [[quarkus-google-cloud_quarkus-google-cloud-project-id]] [.property-path]##link:#quarkus-google-cloud_quarkus-google-cloud-project-id[`quarkus.google.cloud.project-id`]##
 
 [.description]
 --
@@ -42,7 +41,7 @@ endif::add-copy-button-to-env-var[]
 |string
 |
 
-a| [[quarkus-google-cloud_quarkus-google-cloud-service-account-location]] [.property-path]##`quarkus.google.cloud.service-account-location`##
+a| [[quarkus-google-cloud_quarkus-google-cloud-service-account-location]] [.property-path]##link:#quarkus-google-cloud_quarkus-google-cloud-service-account-location[`quarkus.google.cloud.service-account-location`]##
 
 [.description]
 --
@@ -59,7 +58,7 @@ endif::add-copy-button-to-env-var[]
 |string
 |
 
-a| [[quarkus-google-cloud_quarkus-google-cloud-service-account-encoded-key]] [.property-path]##`quarkus.google.cloud.service-account-encoded-key`##
+a| [[quarkus-google-cloud_quarkus-google-cloud-service-account-encoded-key]] [.property-path]##link:#quarkus-google-cloud_quarkus-google-cloud-service-account-encoded-key[`quarkus.google.cloud.service-account-encoded-key`]##
 
 [.description]
 --
@@ -76,7 +75,7 @@ endif::add-copy-button-to-env-var[]
 |string
 |
 
-a| [[quarkus-google-cloud_quarkus-google-cloud-access-token-enabled]] [.property-path]##`quarkus.google.cloud.access-token-enabled`##
+a| [[quarkus-google-cloud_quarkus-google-cloud-access-token-enabled]] [.property-path]##link:#quarkus-google-cloud_quarkus-google-cloud-access-token-enabled[`quarkus.google.cloud.access-token-enabled`]##
 
 [.description]
 --
@@ -93,7 +92,7 @@ endif::add-copy-button-to-env-var[]
 |boolean
 |`true`
 
-a| [[quarkus-google-cloud_quarkus-google-cloud-secret-manager-enabled]] [.property-path]##`quarkus.google.cloud.secret-manager-enabled`##
+a| [[quarkus-google-cloud_quarkus-google-cloud-secret-manager-enabled]] [.property-path]##link:#quarkus-google-cloud_quarkus-google-cloud-secret-manager-enabled[`quarkus.google.cloud.secret-manager-enabled`]##
 
 [.description]
 --
@@ -112,5 +111,3 @@ endif::add-copy-button-to-env-var[]
 
 |===
 
-
-:!summaryTableId:
