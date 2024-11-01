@@ -91,7 +91,7 @@ public class FirebaseDevServiceProcessor {
         }
 
         if (!dockerStatusBuildItem.isContainerRuntimeAvailable()) {
-            LOGGER.error("Not starting devservice because docker is not available");
+            LOGGER.info("Not starting devservice because docker is not available");
             return null;
         }
 
