@@ -75,6 +75,14 @@ public interface FirebaseDevServiceConfig {
         interface DevService {
 
             /**
+             * Indicates to use the dev service for Firebase. The default value is true. This indicator is used
+             * to detect the Firebase DevService and disable the DevServices for extensions which conflict with the
+             * Firebase DevService.
+             */
+            @WithDefault("true")
+            boolean preferFirebaseDevServices();
+
+            /**
              * Sets the Docker image name for the Google Cloud SDK.
              * This image is used to emulate the Pub/Sub service in the development environment.
              * The default value is 'gcr.io/google.com/cloudsdktool/google-cloud-cli'.

@@ -84,9 +84,16 @@ public class FirebaseDevServiceProcessor {
     private DevServicesResultBuildItem.RunningDevService startContainerIfAvailable(DockerStatusBuildItem dockerStatusBuildItem,
             FirebaseDevServiceConfig config,
             Optional<Duration> timeout) {
-        if (!isEnabled(config)) {
+
+        if (!config.firebase().devservice().preferFirebaseDevServices()) {
             // Firebase service explicitly disabled
-            LOGGER.error("Not starting Dev Services for Firebase as it has been disabled in the config");
+            LOGGER.info("Not starting Dev Services for Firebase as it has been disabled in the config.");
+            return null;
+        }
+
+        if (!isEnabled(config)) {
+            // Firebase service implicitly disabled, no emulators enabled.
+            LOGGER.info("Not starting Dev Services for Firebase as no emulators are enabled.");
             return null;
         }
 

@@ -35,6 +35,7 @@ public class PubSubDevServiceProcessor {
     @BuildStep
     public DevServicesResultBuildItem start(DockerStatusBuildItem dockerStatusBuildItem,
             PubSubBuildTimeConfig pubSubBuildTimeConfig,
+            FirebaseDevServiceConfig firebaseConfig,
             List<DevServicesSharedNetworkBuildItem> devServicesSharedNetworkBuildItem,
             Optional<ConsoleInstalledBuildItem> consoleInstalledBuildItem,
             CuratedApplicationShutdownBuildItem closeBuildItem,
@@ -57,7 +58,7 @@ public class PubSubDevServiceProcessor {
         // Try starting the container if conditions are met
         try {
             devService = startContainerIfAvailable(dockerStatusBuildItem, pubSubBuildTimeConfig.devservice(),
-                    globalDevServicesConfig.timeout);
+                    firebaseConfig, globalDevServicesConfig.timeout);
         } catch (Throwable t) {
             LOGGER.warn("Unable to start PubSub dev service", t);
             // Dump captured logs in case of an error
@@ -80,11 +81,17 @@ public class PubSubDevServiceProcessor {
      */
     private DevServicesResultBuildItem.RunningDevService startContainerIfAvailable(DockerStatusBuildItem dockerStatusBuildItem,
             PubSubDevServiceConfig config,
+            FirebaseDevServiceConfig firebaseConfig,
             Optional<Duration> timeout) {
         if (!config.enabled()) {
             // PubSub service explicitly disabled
             LOGGER.debug("Not starting Dev Services for PubSub as it has been disabled in the config");
             return null;
+        }
+
+        if (firebaseConfig.preferFirebaseDevServices().orElse(false)) {
+            // Firebase DevServices are included, use them instead
+            LOGGER.debug("Not starting Dev Services for Firestore as the Firebase DevServices are preferred");
         }
 
         if (!dockerStatusBuildItem.isContainerRuntimeAvailable()) {
