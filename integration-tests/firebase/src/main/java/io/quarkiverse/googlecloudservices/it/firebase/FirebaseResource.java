@@ -2,6 +2,7 @@ package io.quarkiverse.googlecloudservices.it.firebase;
 
 import com.google.cloud.firestore.Firestore;
 import com.google.cloud.pubsub.v1.Publisher;
+import com.google.protobuf.ByteString;
 import com.google.pubsub.v1.PubsubMessage;
 import io.quarkiverse.googlecloudservices.pubsub.QuarkusPubSub;
 import io.quarkus.runtime.StartupEvent;
@@ -13,6 +14,8 @@ import jakarta.ws.rs.Path;
 import jakarta.ws.rs.core.Response;
 
 import java.io.IOException;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
@@ -34,13 +37,16 @@ public class FirebaseResource {
     }
 
     @POST
-    public void createData() throws InterruptedException {
+    public void createData(String data) throws InterruptedException, ExecutionException {
         Object monitor = new Object();
 
-        quarkusPubSub.subscriber("test", (message, consumer) -> {
+        var subscriber = quarkusPubSub.subscriber("test", (message, consumer) -> {
             try {
                 var col = firestore.collection("test");
-                col.document("test").create(Map.of("test", "test")).get();
+                var msgData = message.getData().toString(StandardCharsets.UTF_8);
+                var fields = Map.of("test", msgData);
+
+                col.document("test").create(fields).get();
             } catch (InterruptedException | ExecutionException e) {
                 throw new RuntimeException(e);
             }
@@ -51,11 +57,17 @@ public class FirebaseResource {
                 monitor.notify();
             }
         });
+        subscriber.startAsync().awaitRunning();
 
-        publisher.publish(PubsubMessage.newBuilder().build());
+        publisher.publish(PubsubMessage
+                .newBuilder()
+                .setData(ByteString.copyFrom(data, StandardCharsets.UTF_8))
+                .build()).get();
         synchronized (monitor) {
             monitor.wait(5000);
         }
+
+        subscriber.stopAsync().awaitTerminated();
     }
 
     @GET

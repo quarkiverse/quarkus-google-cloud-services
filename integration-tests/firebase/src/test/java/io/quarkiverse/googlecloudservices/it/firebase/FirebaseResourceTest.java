@@ -11,22 +11,21 @@ import static org.hamcrest.Matchers.*;
 public class FirebaseResourceTest {
 
     @Test
-    void shouldCreateUser() {
+    void shouldCreateDataUsingPubsubInFirestore() {
         given()
-                .contentType(ContentType.JSON)
+                .body("some test string")
                 .post("/app")
                 .then()
                 .log().ifValidationFails()
                 .statusCode(204);
 
         given()
-                .contentType(ContentType.JSON)
                 .get("/app")
                 .then()
                 .log().ifValidationFails()
                 .statusCode(200)
                 .assertThat()
-                .body(is("test"));
+                .body(is("some test string"));
     }
 
 
