@@ -58,6 +58,10 @@ you need to set it instead of relying on the `quarkus.google.cloud.service-accou
 Another solution, is to inject a `CredentialsProvider` provided by the extension, and to use it inside the various PubSub
 builders and settings objects when, instantiating PubSub components.
 
+In case you are connecting to the emulator (and thus `quarkus.google.cloud.pubsub.emulator-host` is set), the
+extension will automatically use the `NoCredentialsProvider` for authentication. This behaviour can be disabled
+by setting the `quarkus.google.cloud.pubsub.use-emulator-credentials` to `false`.
+
 == Some example
 
 This is an example usage of the extension: we create a REST resource with a single endpoint that sends a message to the `test-topic` topic when hit.
