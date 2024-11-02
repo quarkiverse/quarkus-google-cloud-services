@@ -24,6 +24,23 @@ endif::add-copy-button-to-env-var[]
 |string
 |
 
+a|icon:lock[title=Fixed at build time] [[quarkus-google-cloud-firebase_quarkus-google-cloud-firebase-devservice-prefer-firebase-dev-services]] [.property-path]##link:#quarkus-google-cloud-firebase_quarkus-google-cloud-firebase-devservice-prefer-firebase-dev-services[`quarkus.google.cloud.firebase.devservice.prefer-firebase-dev-services`]##
+
+[.description]
+--
+Indicates to use the dev service for Firebase. The default value is true. This indicator is used to detect the Firebase DevService and disable the DevServices for extensions which conflict with the Firebase DevService.
+
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_GOOGLE_CLOUD_FIREBASE_DEVSERVICE_PREFER_FIREBASE_DEV_SERVICES+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_GOOGLE_CLOUD_FIREBASE_DEVSERVICE_PREFER_FIREBASE_DEV_SERVICES+++`
+endif::add-copy-button-to-env-var[]
+--
+|boolean
+|`true`
+
 a|icon:lock[title=Fixed at build time] [[quarkus-google-cloud-firebase_quarkus-google-cloud-firebase-devservice-image-name]] [.property-path]##link:#quarkus-google-cloud-firebase_quarkus-google-cloud-firebase-devservice-image-name[`quarkus.google.cloud.firebase.devservice.image-name`]##
 
 [.description]
