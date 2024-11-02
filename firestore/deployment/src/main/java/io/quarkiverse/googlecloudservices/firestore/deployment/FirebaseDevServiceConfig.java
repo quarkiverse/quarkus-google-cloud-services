@@ -1,8 +1,9 @@
 package io.quarkiverse.googlecloudservices.firestore.deployment;
 
+import java.util.Optional;
+
 import io.quarkus.runtime.annotations.ConfigRoot;
 import io.smallrye.config.ConfigMapping;
-import java.util.Optional;
 
 /**
  * Config mapping to detect if the Firebase Dev Services are running, in which case the PubSub dev service
