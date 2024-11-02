@@ -1,7 +1,9 @@
 package io.quarkiverse.googlecloudservices.firebase.admin.runtime;
 
+import com.google.firebase.internal.EmulatorCredentials;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.Default;
+import jakarta.enterprise.inject.Instance;
 import jakarta.enterprise.inject.Produces;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
@@ -22,10 +24,13 @@ import io.smallrye.config.ConfigMapping;
 public class FirebaseAdminProducer {
 
     @Inject
-    Credentials googleCredentials;
+    Instance<Credentials> googleCredentials;
 
     @Inject
     GcpConfigHolder gcpConfigHolder;
+
+    @Inject
+    FirebaseAuthConfig firebaseAuthConfig;
 
     @Produces
     @Singleton
@@ -45,7 +50,7 @@ public class FirebaseAdminProducer {
         GcpBootstrapConfiguration gcpConfiguration = gcpConfigHolder.getBootstrapConfig();
 
         FirebaseOptions firebaseOptions = FirebaseOptions.builder()
-                .setCredentials((GoogleCredentials) googleCredentials)
+                .setCredentials(googleCredentials())
                 .setProjectId(gcpConfiguration.projectId().orElse(null))
                 .build();
 
@@ -53,6 +58,14 @@ public class FirebaseAdminProducer {
                 .filter(app -> app.getName().equals(firebaseOptions.getProjectId()))
                 .findFirst()
                 .orElseGet(() -> initializeFirebaseApp(gcpConfiguration, firebaseOptions));
+    }
+
+    private GoogleCredentials googleCredentials() {
+        if (firebaseAuthConfig.emulatorHost().isPresent() && firebaseAuthConfig.useEmulatorCredentials()) {
+            return new EmulatorCredentials();
+        } else {
+            return (GoogleCredentials) googleCredentials.get();
+        }
     }
 
     private FirebaseApp initializeFirebaseApp(GcpBootstrapConfiguration gcpBootstrapConfiguration,
