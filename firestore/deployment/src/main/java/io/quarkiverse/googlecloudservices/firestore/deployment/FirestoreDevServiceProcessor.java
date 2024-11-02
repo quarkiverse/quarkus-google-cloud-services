@@ -92,6 +92,7 @@ public class FirestoreDevServiceProcessor {
         if (firebaseConfig.preferFirebaseDevServices().orElse(false)) {
             // Firebase DevServices are included, use them instead
             LOGGER.debug("Not starting Dev Services for Firestore as the Firebase DevServices are preferred");
+            return null;
         }
 
         if (!dockerStatusBuildItem.isContainerRuntimeAvailable()) {
