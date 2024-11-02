@@ -1,6 +1,5 @@
 package io.quarkiverse.googlecloudservices.firebase.admin.runtime;
 
-import com.google.firebase.internal.EmulatorCredentials;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.Default;
 import jakarta.enterprise.inject.Instance;
@@ -14,6 +13,7 @@ import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.internal.Utils;
+import com.google.firebase.internal.EmulatorCredentials;
 import com.google.firebase.internal.FirebaseProcessEnvironment;
 
 import io.quarkiverse.googlecloudservices.common.GcpBootstrapConfiguration;

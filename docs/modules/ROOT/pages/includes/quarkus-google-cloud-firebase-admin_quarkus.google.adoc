@@ -41,5 +41,25 @@ endif::add-copy-button-to-env-var[]
 |string
 |
 
+a| [[quarkus-google-cloud-firebase-admin_quarkus-google-cloud-firebase-auth-use-emulator-credentials]] [.property-path]##link:#quarkus-google-cloud-firebase-admin_quarkus-google-cloud-firebase-auth-use-emulator-credentials[`quarkus.google.cloud.firebase.auth.use-emulator-credentials`]##
+
+[.description]
+--
+Forces the usage of emulator credentials. The logic automatically uses emulator credentials in case the emulatorHost is set.
+
+ - If true: force usage of emulator credentials
+ - If false: force not using emulator credentials
+
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_GOOGLE_CLOUD_FIREBASE_AUTH_USE_EMULATOR_CREDENTIALS+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_GOOGLE_CLOUD_FIREBASE_AUTH_USE_EMULATOR_CREDENTIALS+++`
+endif::add-copy-button-to-env-var[]
+--
+|boolean
+|`true`
+
 |===
 
