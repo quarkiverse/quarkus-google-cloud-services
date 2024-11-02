@@ -1,11 +1,10 @@
 package io.quarkiverse.googlecloudservices.it.firebase;
 
-import com.google.cloud.firestore.Firestore;
-import com.google.cloud.pubsub.v1.Publisher;
-import com.google.protobuf.ByteString;
-import com.google.pubsub.v1.PubsubMessage;
-import io.quarkiverse.googlecloudservices.pubsub.QuarkusPubSub;
-import io.quarkus.runtime.StartupEvent;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.util.Map;
+import java.util.concurrent.ExecutionException;
+
 import jakarta.enterprise.event.Observes;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.GET;
@@ -13,11 +12,13 @@ import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.core.Response;
 
-import java.io.IOException;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
-import java.util.Map;
-import java.util.concurrent.ExecutionException;
+import com.google.cloud.firestore.Firestore;
+import com.google.cloud.pubsub.v1.Publisher;
+import com.google.protobuf.ByteString;
+import com.google.pubsub.v1.PubsubMessage;
+
+import io.quarkiverse.googlecloudservices.pubsub.QuarkusPubSub;
+import io.quarkus.runtime.StartupEvent;
 
 @Path("/app")
 public class FirebaseResource {

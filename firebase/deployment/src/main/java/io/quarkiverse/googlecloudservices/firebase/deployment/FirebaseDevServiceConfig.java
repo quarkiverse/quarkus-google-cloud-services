@@ -104,14 +104,21 @@ public interface FirebaseDevServiceConfig {
 
             /**
              * Indicate to use a custom firebase.json file instead of the automatically generated one. The custom
-             * firebase.json file MUST include a setting of <pre>"host" : "0.0.0.0"</pre> to ensure the ports of the
+             * firebase.json file MUST include a setting of
+             *
+             * <pre>
+             * "host" : "0.0.0.0"
+             * </pre>
+             *
+             * to ensure the ports of the
              * emulator are exposed correctly at the docker container level.
              */
             Optional<String> customFirebaseJson();
 
             /**
              * Sets the JAVA tool options for emulators based on the Java runtime environment.
-             * See also <a href="https://firebase.google.com/docs/emulator-suite/install_and_configure#specifying_java_options">here</a>
+             * See also
+             * <a href="https://firebase.google.com/docs/emulator-suite/install_and_configure#specifying_java_options">here</a>
              */
             Optional<String> javaToolOptions();
 
@@ -119,7 +126,8 @@ public interface FirebaseDevServiceConfig {
              * Allow to import and export data. Specify a path relative to the current working directory of the executable
              * (for most unit tests, this is the root of the build directory) to be used for import and export of emulator
              * data.
-             * See also <a href="https://firebase.google.com/docs/emulator-suite/install_and_configure#export_and_import_emulator_data">here</a>
+             * See also <a href=
+             * "https://firebase.google.com/docs/emulator-suite/install_and_configure#export_and_import_emulator_data">here</a>
              */
             Optional<String> emulatorData();
 

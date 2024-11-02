@@ -321,13 +321,11 @@ public class FirebaseDevServiceProcessor {
             }
 
             private void authenticateToFirebase() {
-                firebaseConfig.token().ifPresent(token ->
-                        dockerBuilder.env("FIREBASE_TOKEN", token));
+                firebaseConfig.token().ifPresent(token -> dockerBuilder.env("FIREBASE_TOKEN", token));
             }
 
             private void setupJavaToolOptions() {
-                firebaseConfig.javaToolOptions().ifPresent( toolOptions ->
-                        dockerBuilder.env("JAVA_TOOL_OPTIONS", toolOptions));
+                firebaseConfig.javaToolOptions().ifPresent(toolOptions -> dockerBuilder.env("JAVA_TOOL_OPTIONS", toolOptions));
             }
 
             private void addFirebaseJson() {
@@ -335,8 +333,7 @@ public class FirebaseDevServiceProcessor {
 
                 firebaseConfig.customFirebaseJson().ifPresentOrElse(
                         this::includeCustomFirebaseJson,
-                        this::generateFirebaseJson
-                );
+                        this::generateFirebaseJson);
 
                 this.dockerBuilder.add("firebase.json", "/srv/firebase/firebase.json");
             }
@@ -344,8 +341,7 @@ public class FirebaseDevServiceProcessor {
             private void includeCustomFirebaseJson(String customFilePath) {
                 this.result.withFileFromPath(
                         "firebase.json",
-                        new File(customFilePath).toPath()
-                );
+                        new File(customFilePath).toPath());
             }
 
             private void generateFirebaseJson() {
@@ -358,8 +354,7 @@ public class FirebaseDevServiceProcessor {
                         .keySet()
                         .stream()
                         .filter(e -> isEmulatorEnabled(devServices, e))
-                        .map((emulator ->
-                                "\t\t\"" + emulator.emulatorName + "\": {\n" +
+                        .map((emulator -> "\t\t\"" + emulator.emulatorName + "\": {\n" +
                                 "\t\t\t\"port\": " + emulator.internalPort + ",\n" +
                                 "\t\t\t\"host\": \"0.0.0.0\"\n" +
                                 "\t\t}"))
@@ -386,7 +381,7 @@ public class FirebaseDevServiceProcessor {
 
                 var importArgument = firebaseConfig
                         .emulatorData()
-                        .map( path -> " --import=/srv/firebase/data --export-on-exit")
+                        .map(path -> " --import=/srv/firebase/data --export-on-exit")
                         .orElse("");
 
                 dockerBuilder

@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.util.Optional;
 import java.util.stream.StreamSupport;
 
-import com.google.api.gax.core.NoCredentialsProvider;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -12,6 +11,7 @@ import jakarta.enterprise.inject.Instance;
 import jakarta.inject.Inject;
 
 import com.google.api.gax.core.CredentialsProvider;
+import com.google.api.gax.core.NoCredentialsProvider;
 import com.google.api.gax.grpc.GrpcTransportChannel;
 import com.google.api.gax.rpc.FixedTransportChannelProvider;
 import com.google.api.gax.rpc.TransportChannelProvider;
