@@ -155,7 +155,8 @@ public class FirebaseEmulatorContainer extends GenericContainer<FirebaseEmulator
             Optional<Path> customFirebaseJson,
             Optional<String> javaToolOptions,
             Optional<Path> emulatorData,
-            Optional<Path> hostingContentDir
+            Optional<Path> hostingContentDir,
+            Map<Emulators, ExposedPort> services
     ) {}
 
     private final Map<Emulators, ExposedPort> services;
@@ -163,13 +164,9 @@ public class FirebaseEmulatorContainer extends GenericContainer<FirebaseEmulator
     /**
      * Creates a new Firebase Emulator container
      * @param firebaseConfig The generic configuration of the firebase emulators
-     * @param services The various firebase services which are exposed.
      */
-    public FirebaseEmulatorContainer(EmulatorConfig firebaseConfig,
-                                     Map<Emulators, ExposedPort> services) {
-        super(new FirebaseDockerBuilder(
-                firebaseConfig,
-                services).build());
+    public FirebaseEmulatorContainer(EmulatorConfig firebaseConfig) {
+        super(new FirebaseDockerBuilder(firebaseConfig).build());
 
         firebaseConfig.emulatorData().ifPresent(path -> {
             // https://firebase.google.com/docs/emulator-suite/install_and_configure#export_and_import_emulator_data
@@ -182,7 +179,7 @@ public class FirebaseEmulatorContainer extends GenericContainer<FirebaseEmulator
             this.withFileSystemBind(hostingPath.toString(), FIREBASE_HOSTING_PATH, BindMode.READ_ONLY);
         });
 
-        this.services = services;
+        this.services = firebaseConfig.services;
     }
 
     private static class FirebaseDockerBuilder {
@@ -194,9 +191,8 @@ public class FirebaseEmulatorContainer extends GenericContainer<FirebaseEmulator
 
         private DockerfileBuilder dockerBuilder;
 
-        public FirebaseDockerBuilder(EmulatorConfig firebaseConfig,
-                                     Map<Emulators, ExposedPort> devServices) {
-            this.devServices = devServices;
+        public FirebaseDockerBuilder(EmulatorConfig firebaseConfig) {
+            this.devServices = firebaseConfig.services;
             this.firebaseConfig = firebaseConfig;
 
             this.result = new ImageFromDockerfile("localhost/testcontainers/firebase", false)

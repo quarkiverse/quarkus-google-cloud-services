@@ -91,10 +91,11 @@ public class FirebaseEmulatorContainerIntegrationTest {
                     Optional.empty(),
                     Optional.empty(),
                     Optional.of(tempEmulatorDataDir.toPath()),
-                    Optional.of(tempHostingContentDir.toPath())
+                    Optional.of(tempHostingContentDir.toPath()),
+                    SERVICES
             );
 
-            firebaseContainer = new FirebaseEmulatorContainer(config, SERVICES);
+            firebaseContainer = new FirebaseEmulatorContainer(config);
             firebaseContainer.start();
 
             emulatorHost = firebaseContainer.getHost();
