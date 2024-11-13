@@ -1,30 +1,6 @@
 package io.quarkiverse.googlecloudservices.firebase.deployment;
 
-import com.google.api.core.ApiFuture;
-import com.google.api.gax.core.NoCredentialsProvider;
-import com.google.api.gax.grpc.GrpcTransportChannel;
-import com.google.api.gax.rpc.FixedTransportChannelProvider;
-import com.google.cloud.NoCredentials;
-import com.google.cloud.firestore.*;
-import com.google.cloud.pubsub.v1.TopicAdminClient;
-import com.google.cloud.pubsub.v1.TopicAdminSettings;
-import com.google.cloud.storage.*;
-import com.google.cloud.storage.Blob;
-import com.google.firebase.auth.FirebaseAuthException;
-import com.google.firebase.database.*;
-import com.google.firebase.internal.EmulatorCredentials;
-import com.google.firebase.internal.FirebaseProcessEnvironment;
-import com.google.protobuf.ByteString;
-import io.grpc.ManagedChannel;
-import io.grpc.ManagedChannelBuilder;
-import io.quarkiverse.googlecloudservices.firebase.deployment.FirebaseEmulatorContainer.EmulatorConfig;
-import io.quarkiverse.googlecloudservices.firebase.deployment.FirebaseEmulatorContainer.Emulators;
-import io.quarkiverse.googlecloudservices.firebase.deployment.FirebaseEmulatorContainer.ExposedPort;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.api.Test;
-import org.testcontainers.junit.jupiter.Container;
-import org.testcontainers.junit.jupiter.Testcontainers;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.io.*;
 import java.net.HttpURLConnection;
@@ -37,14 +13,38 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+import org.testcontainers.junit.jupiter.Testcontainers;
+
+import com.google.api.core.ApiFuture;
+import com.google.api.gax.core.NoCredentialsProvider;
+import com.google.api.gax.grpc.GrpcTransportChannel;
+import com.google.api.gax.rpc.FixedTransportChannelProvider;
+import com.google.cloud.NoCredentials;
+import com.google.cloud.firestore.*;
+import com.google.cloud.pubsub.v1.Publisher;
+import com.google.cloud.pubsub.v1.TopicAdminClient;
+import com.google.cloud.pubsub.v1.TopicAdminSettings;
+import com.google.cloud.storage.*;
+import com.google.cloud.storage.Blob;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.auth.UserRecord;
-import com.google.cloud.pubsub.v1.Publisher;
+import com.google.firebase.database.*;
+import com.google.firebase.internal.EmulatorCredentials;
+import com.google.firebase.internal.FirebaseProcessEnvironment;
+import com.google.protobuf.ByteString;
 import com.google.pubsub.v1.PubsubMessage;
 
-import static org.junit.jupiter.api.Assertions.*;
+import io.grpc.ManagedChannel;
+import io.grpc.ManagedChannelBuilder;
+import io.quarkiverse.googlecloudservices.firebase.deployment.FirebaseEmulatorContainer.EmulatorConfig;
+import io.quarkiverse.googlecloudservices.firebase.deployment.FirebaseEmulatorContainer.Emulators;
+import io.quarkiverse.googlecloudservices.firebase.deployment.FirebaseEmulatorContainer.ExposedPort;
 
 @Testcontainers
 public class FirebaseEmulatorContainerIntegrationTest {
@@ -63,13 +63,12 @@ public class FirebaseEmulatorContainerIntegrationTest {
             Emulators.CLOUD_FIRESTORE_WS, new ExposedPort(6003),
             Emulators.PUB_SUB, new ExposedPort(6004),
             Emulators.CLOUD_STORAGE, new ExposedPort(6005),
-//            Emulators.FIREBASE_HOSTING, new ExposedPort(6006),
-//            Emulators.CLOUD_FUNCTIONS, new ExposedPort(6007),
-//            Emulators.EVENT_ARC, new ExposedPort(6008),
+            //            Emulators.FIREBASE_HOSTING, new ExposedPort(6006),
+            //            Emulators.CLOUD_FUNCTIONS, new ExposedPort(6007),
+            //            Emulators.EVENT_ARC, new ExposedPort(6008),
             Emulators.EMULATOR_SUITE_UI, new ExposedPort(6009),
             Emulators.EMULATOR_HUB, new ExposedPort(6010),
-            Emulators.LOGGING, new ExposedPort(6011)
-    );
+            Emulators.LOGGING, new ExposedPort(6011));
 
     static {
         try {
@@ -85,15 +84,14 @@ public class FirebaseEmulatorContainerIntegrationTest {
 
             EmulatorConfig config = new EmulatorConfig(
                     "node:23-alpine", // Default image
-                    "latest",         // Firebase version
+                    "latest", // Firebase version
                     Optional.of("demo-test-project"),
                     Optional.empty(),
                     Optional.empty(),
                     Optional.empty(),
                     Optional.of(tempEmulatorDataDir.toPath()),
                     Optional.of(tempHostingContentDir.toPath()),
-                    SERVICES
-            );
+                    SERVICES);
 
             firebaseContainer = new FirebaseEmulatorContainer(config);
             firebaseContainer.start();
@@ -227,7 +225,7 @@ public class FirebaseEmulatorContainerIntegrationTest {
 
         // Set up a listener and latch for asynchronous reading
         CountDownLatch latch = new CountDownLatch(1);
-        final String[] value = {null};
+        final String[] value = { null };
 
         ref.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -258,7 +256,8 @@ public class FirebaseEmulatorContainerIntegrationTest {
                 .build();
 
         // Set the channel provider for Pub/Sub client
-        FixedTransportChannelProvider channelProvider = FixedTransportChannelProvider.create(GrpcTransportChannel.create(channel));
+        FixedTransportChannelProvider channelProvider = FixedTransportChannelProvider
+                .create(GrpcTransportChannel.create(channel));
 
         TopicAdminSettings topicAdminSettings = TopicAdminSettings.newBuilder()
                 .setCredentialsProvider(new NoCredentialsProvider())
@@ -352,13 +351,13 @@ public class FirebaseEmulatorContainerIntegrationTest {
     }
 
     /*
-    CLOUD_FUNCTIONS(
-                5001,
-                        "quarkus.google.cloud.functions.emulator-host",
-                        "functions"),
-    EVENT_ARC(
-                9299,
-                        "quarkus.google.cloud.eventarc.emulator-host",
-                        "eventarc"),
+     * CLOUD_FUNCTIONS(
+     * 5001,
+     * "quarkus.google.cloud.functions.emulator-host",
+     * "functions"),
+     * EVENT_ARC(
+     * 9299,
+     * "quarkus.google.cloud.eventarc.emulator-host",
+     * "eventarc"),
      */
 }

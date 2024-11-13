@@ -31,16 +31,15 @@ public class FirebaseDevServiceProcessor {
     private static volatile FirebaseDevServiceConfig config;
 
     private static final Map<FirebaseEmulatorContainer.Emulators, String> CONFIG_PROPERTIES = Map.of(
-            FirebaseEmulatorContainer.Emulators.AUTHENTICATION,     "quarkus.google.cloud.firebase.auth.emulator-host",
-            FirebaseEmulatorContainer.Emulators.EMULATOR_SUITE_UI,  "quarkus.google.cloud.firebase.emulator-host",
-            FirebaseEmulatorContainer.Emulators.FIREBASE_HOSTING,   "quarkus.google.cloud.firebase.hosting.emulator-host",
-            FirebaseEmulatorContainer.Emulators.CLOUD_FUNCTIONS,    "quarkus.google.cloud.functions.emulator-host",
-            FirebaseEmulatorContainer.Emulators.EVENT_ARC,          "quarkus.google.cloud.eventarc.emulator-host",
-            FirebaseEmulatorContainer.Emulators.REALTIME_DATABASE,  "quarkus.google.cloud.database.emulator-host",
-            FirebaseEmulatorContainer.Emulators.CLOUD_FIRESTORE,    "quarkus.google.cloud.firestore.emulator-host",
-            FirebaseEmulatorContainer.Emulators.CLOUD_STORAGE,      "quarkus.google.cloud.storage.host-override",
-            FirebaseEmulatorContainer.Emulators.PUB_SUB,            "quarkus.google.cloud.pubsub.emulator-host"
-    );
+            FirebaseEmulatorContainer.Emulators.AUTHENTICATION, "quarkus.google.cloud.firebase.auth.emulator-host",
+            FirebaseEmulatorContainer.Emulators.EMULATOR_SUITE_UI, "quarkus.google.cloud.firebase.emulator-host",
+            FirebaseEmulatorContainer.Emulators.FIREBASE_HOSTING, "quarkus.google.cloud.firebase.hosting.emulator-host",
+            FirebaseEmulatorContainer.Emulators.CLOUD_FUNCTIONS, "quarkus.google.cloud.functions.emulator-host",
+            FirebaseEmulatorContainer.Emulators.EVENT_ARC, "quarkus.google.cloud.eventarc.emulator-host",
+            FirebaseEmulatorContainer.Emulators.REALTIME_DATABASE, "quarkus.google.cloud.database.emulator-host",
+            FirebaseEmulatorContainer.Emulators.CLOUD_FIRESTORE, "quarkus.google.cloud.firestore.emulator-host",
+            FirebaseEmulatorContainer.Emulators.CLOUD_STORAGE, "quarkus.google.cloud.storage.host-override",
+            FirebaseEmulatorContainer.Emulators.PUB_SUB, "quarkus.google.cloud.pubsub.emulator-host");
 
     @BuildStep
     public DevServicesResultBuildItem start(DockerStatusBuildItem dockerStatusBuildItem,
@@ -120,19 +119,17 @@ public class FirebaseDevServiceProcessor {
                 .reduce(Boolean.FALSE, Boolean::logicalOr);
     }
 
-
-
     /**
      * Starts the Pub/Sub emulator container with provided configuration.
      *
      * @param dockerStatusBuildItem, Docker status
-     * @param config,                Configuration for the Firebase service
-     * @param timeout,               Optional timeout for starting the service
+     * @param config, Configuration for the Firebase service
+     * @param timeout, Optional timeout for starting the service
      * @return Running service item, or null if the service couldn't be started
      */
     private DevServicesResultBuildItem.RunningDevService startContainer(DockerStatusBuildItem dockerStatusBuildItem,
-                                                                        FirebaseDevServiceConfig config,
-                                                                        Optional<Duration> timeout) {
+            FirebaseDevServiceConfig config,
+            Optional<Duration> timeout) {
 
         var emulatorConfig = new FirebaseEmulatorConfigBuilder(config).build();
 
@@ -150,13 +147,10 @@ public class FirebaseDevServiceProcessor {
 
         if (LOGGER.isInfoEnabled()) {
             var runningPorts = emulatorContainer.emulatorPorts();
-            runningPorts.forEach((e, p) ->
-                    LOGGER.info("Google Cloud Emulator " + e + " reachable on port " + p)
-            );
+            runningPorts.forEach((e, p) -> LOGGER.info("Google Cloud Emulator " + e + " reachable on port " + p));
 
-            emulatorContainerConfig.forEach((e, h) ->
-                    LOGGER.info("Google Cloud emulator config property " + e + " set to " + h)
-            );
+            emulatorContainerConfig
+                    .forEach((e, h) -> LOGGER.info("Google Cloud emulator config property " + e + " set to " + h));
         }
 
         // Return running service item with container details
@@ -166,7 +160,7 @@ public class FirebaseDevServiceProcessor {
                 emulatorContainerConfig);
     }
 
-    private Map<String, String> emulatorContainerConfig(FirebaseEmulatorContainer emulatorContainer ) {
+    private Map<String, String> emulatorContainerConfig(FirebaseEmulatorContainer emulatorContainer) {
         return emulatorContainer.emulatorEndpoints()
                 .entrySet()
                 .stream()
@@ -174,9 +168,7 @@ public class FirebaseDevServiceProcessor {
                 .collect(
                         Collectors.toMap(
                                 e -> configPropertyForEmulator(e.getKey()),
-                                Map.Entry::getValue
-                        )
-                );
+                                Map.Entry::getValue));
     }
 
     private String configPropertyForEmulator(FirebaseEmulatorContainer.Emulators emulator) {

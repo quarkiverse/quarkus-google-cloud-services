@@ -28,11 +28,11 @@ public class FirebaseEmulatorConfigBuilder {
                 devService.javaToolOptions(),
                 devService.emulatorData().map(File::new).map(File::toPath),
                 config.firebase().hosting().hostingPath().map(File::new).map(File::toPath),
-                exposedEmulators(devServices(config))
-        );
+                exposedEmulators(devServices(config)));
     }
 
-    public static Map<FirebaseEmulatorContainer.Emulators, FirebaseDevServiceConfig.GenericDevService> devServices(FirebaseDevServiceConfig config) {
+    public static Map<FirebaseEmulatorContainer.Emulators, FirebaseDevServiceConfig.GenericDevService> devServices(
+            FirebaseDevServiceConfig config) {
         return Map.of(
                 FirebaseEmulatorContainer.Emulators.AUTHENTICATION, config.firebase().auth().devservice(),
                 FirebaseEmulatorContainer.Emulators.EMULATOR_SUITE_UI, config.firebase().devservice().ui(),
@@ -58,22 +58,18 @@ public class FirebaseEmulatorConfigBuilder {
 
         uiService.hubPort().ifPresent(port -> emulators.put(
                 FirebaseEmulatorContainer.Emulators.EMULATOR_HUB,
-                new FirebaseEmulatorContainer.ExposedPort(port))
-        );
+                new FirebaseEmulatorContainer.ExposedPort(port)));
 
         uiService.loggingPort().ifPresent(port -> emulators.put(
                 FirebaseEmulatorContainer.Emulators.LOGGING,
-                new FirebaseEmulatorContainer.ExposedPort(port))
-        );
+                new FirebaseEmulatorContainer.ExposedPort(port)));
 
         var firestoreService = (FirebaseDevServiceConfig.Firestore.FirestoreDevService) devServices
                 .get(FirebaseEmulatorContainer.Emulators.CLOUD_FIRESTORE);
 
-        firestoreService.websocketPort().ifPresent(port ->
-                emulators.put(
-                        FirebaseEmulatorContainer.Emulators.CLOUD_FIRESTORE_WS,
-                        new FirebaseEmulatorContainer.ExposedPort(port))
-        );
+        firestoreService.websocketPort().ifPresent(port -> emulators.put(
+                FirebaseEmulatorContainer.Emulators.CLOUD_FIRESTORE_WS,
+                new FirebaseEmulatorContainer.ExposedPort(port)));
 
         // TODO: Event arc?
 
@@ -84,6 +80,5 @@ public class FirebaseEmulatorConfigBuilder {
         var port = devService.emulatorPort().orElse(null);
         return new FirebaseEmulatorContainer.ExposedPort(port);
     }
-
 
 }

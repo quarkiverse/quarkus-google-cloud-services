@@ -98,7 +98,7 @@ public interface FirebaseDevServiceConfig {
             String imageName();
 
             /**
-             *  The version of the firebase tools to use. Default is to use the latest available version.
+             * The version of the firebase tools to use. Default is to use the latest available version.
              */
             @WithDefault("latest")
             String firebaseVersion();

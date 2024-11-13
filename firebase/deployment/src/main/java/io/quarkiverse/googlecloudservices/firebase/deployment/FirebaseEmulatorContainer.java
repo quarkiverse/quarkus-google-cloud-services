@@ -1,18 +1,18 @@
 package io.quarkiverse.googlecloudservices.firebase.deployment;
 
-import org.jboss.logging.Logger;
-import org.testcontainers.containers.BindMode;
-import org.testcontainers.containers.GenericContainer;
-import org.testcontainers.containers.wait.strategy.Wait;
-import org.testcontainers.images.builder.ImageFromDockerfile;
-import org.testcontainers.images.builder.dockerfile.DockerfileBuilder;
-
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
+
+import org.jboss.logging.Logger;
+import org.testcontainers.containers.BindMode;
+import org.testcontainers.containers.GenericContainer;
+import org.testcontainers.containers.wait.strategy.Wait;
+import org.testcontainers.images.builder.ImageFromDockerfile;
+import org.testcontainers.images.builder.dockerfile.DockerfileBuilder;
 
 /**
  * Testcontainers container to run Firebase emulators from Docker.
@@ -53,8 +53,7 @@ public class FirebaseEmulatorContainer extends GenericContainer<FirebaseEmulator
         LOGGING(
                 4500,
                 "logging",
-                null
-        ),
+                null),
         /**
          * CLoud functions emulator
          */
@@ -126,6 +125,7 @@ public class FirebaseEmulatorContainer extends GenericContainer<FirebaseEmulator
 
     /**
      * Record to hold an exposed port of an emulator.
+     *
      * @param fixedPort The exposed port or null in case it is a random port
      */
     public record ExposedPort(Integer fixedPort) {
@@ -156,13 +156,14 @@ public class FirebaseEmulatorContainer extends GenericContainer<FirebaseEmulator
             Optional<String> javaToolOptions,
             Optional<Path> emulatorData,
             Optional<Path> hostingContentDir,
-            Map<Emulators, ExposedPort> services
-    ) {}
+            Map<Emulators, ExposedPort> services) {
+    }
 
     private final Map<Emulators, ExposedPort> services;
 
     /**
      * Creates a new Firebase Emulator container
+     *
      * @param firebaseConfig The generic configuration of the firebase emulators
      */
     public FirebaseEmulatorContainer(EmulatorConfig firebaseConfig) {
@@ -221,11 +222,13 @@ public class FirebaseEmulatorContainer extends GenericContainer<FirebaseEmulator
 
             if (isEmulatorEnabled(Emulators.EMULATOR_SUITE_UI)) {
                 if (!isEmulatorEnabled(Emulators.EMULATOR_HUB)) {
-                    LOGGER.info("Firebase Emulator UI is enabled, but no Hub port is specified. You will not be able to use the Hub API ");
+                    LOGGER.info(
+                            "Firebase Emulator UI is enabled, but no Hub port is specified. You will not be able to use the Hub API ");
                 }
 
                 if (!isEmulatorEnabled(Emulators.LOGGING)) {
-                    LOGGER.info("Firebase Emulator UI is enabled, but no Logging port is specified. You will not be able to see the logging ");
+                    LOGGER.info(
+                            "Firebase Emulator UI is enabled, but no Logging port is specified. You will not be able to see the logging ");
                 }
 
                 if (isEmulatorEnabled(Emulators.CLOUD_FIRESTORE)) {
@@ -308,7 +311,8 @@ public class FirebaseEmulatorContainer extends GenericContainer<FirebaseEmulator
                         if (emulator.equals(Emulators.CLOUD_FIRESTORE)) {
                             var wsService = this.devServices.get(Emulators.CLOUD_FIRESTORE_WS);
                             if (wsService != null) {
-                                var wsPort = Optional.ofNullable(wsService.fixedPort).orElse(Emulators.CLOUD_FIRESTORE.internalPort);
+                                var wsPort = Optional.ofNullable(wsService.fixedPort)
+                                        .orElse(Emulators.CLOUD_FIRESTORE.internalPort);
                                 additionalConfig = "\t\t\t\"websocketPort\": " + wsPort + ",\n";
                             }
                         }
@@ -378,7 +382,7 @@ public class FirebaseEmulatorContainer extends GenericContainer<FirebaseEmulator
                     .map(path -> "--export-on-exit")
                     .ifPresent(arguments::add);
 
-            dockerBuilder.entryPoint(new String[] {"/usr/local/bin/firebase"});
+            dockerBuilder.entryPoint(new String[] { "/usr/local/bin/firebase" });
             dockerBuilder.cmd(arguments.toArray(new String[0]));
         }
 
@@ -425,8 +429,7 @@ public class FirebaseEmulatorContainer extends GenericContainer<FirebaseEmulator
                 .stream()
                 .collect(Collectors.toMap(
                         e -> e,
-                        this::getEmulatorEndpoint
-                ));
+                        this::getEmulatorEndpoint));
     }
 
     public Integer emulatorPort(Emulators emulator) {
