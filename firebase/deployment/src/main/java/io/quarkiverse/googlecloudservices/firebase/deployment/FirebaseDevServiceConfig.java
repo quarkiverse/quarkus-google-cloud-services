@@ -52,7 +52,12 @@ public interface FirebaseDevServiceConfig {
     /**
      * Configure Google Cloud Pub/Sub
      */
-    PubSub pubSub();
+    PubSub pubsub();
+
+    /**
+     * Configure Google Cloud Storage
+     */
+    Storage storage();
 
     interface Firebase {
 
@@ -145,6 +150,18 @@ public interface FirebaseDevServiceConfig {
                 @WithDefault("true")
                 @Override
                 boolean enabled();
+
+                /**
+                 * Port on which to expose the logging endpoint port. This is needed in case you want to view the logging
+                 * via the Emulator UI.
+                 */
+                Optional<Integer> loggingPort();
+
+                /**
+                 * Port on which to expose the hub endpoint port. This is needed if you want to use the hub API of
+                 * the Emulator UI.
+                 */
+                Optional<Integer> hubPort();
             }
 
         }
@@ -171,7 +188,19 @@ public interface FirebaseDevServiceConfig {
         /**
          * Configuration for the Firestore emulator
          */
-        GenericDevService devservice();
+        FirestoreDevService devservice();
+
+        /**
+         * Extension for the Firestore dev service. This service can also configure the websocket port.
+         */
+        interface FirestoreDevService extends GenericDevService {
+
+            /**
+             * Port on which to expose the websocket port. This is needed in case the Firestore Emulator UI needs is
+             * used.
+             */
+            Optional<Integer> websocketPort();
+        }
     }
 
     interface Functions {
@@ -188,12 +217,25 @@ public interface FirebaseDevServiceConfig {
          * Configuration for the hosting emulator
          */
         GenericDevService devservice();
+
+        /**
+         * Path to the hosting files.
+         */
+        Optional<String> hostingPath();
     }
 
     interface PubSub {
 
         /**
          * Configuration for the pubsub emulator
+         */
+        GenericDevService devservice();
+    }
+
+    interface Storage {
+
+        /**
+         * Configuration for the storage emulator
          */
         GenericDevService devservice();
     }

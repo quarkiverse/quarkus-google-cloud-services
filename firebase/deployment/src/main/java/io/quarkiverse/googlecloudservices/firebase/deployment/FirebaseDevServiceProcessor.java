@@ -4,12 +4,8 @@ import java.io.File;
 import java.time.Duration;
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import org.jboss.logging.Logger;
-import org.testcontainers.containers.GenericContainer;
-import org.testcontainers.images.builder.ImageFromDockerfile;
-import org.testcontainers.images.builder.dockerfile.DockerfileBuilder;
 
 import io.quarkus.deployment.IsNormal;
 import io.quarkus.deployment.annotations.BuildStep;
@@ -34,6 +30,18 @@ public class FirebaseDevServiceProcessor {
     private static volatile DevServicesResultBuildItem.RunningDevService devService;
     // Configuration for the Firebase Dev service
     private static volatile FirebaseDevServiceConfig config;
+
+    private static final Map<FirebaseEmulatorContainer.Emulators, String> CONFIG_PROPERTIES = Map.of(
+            FirebaseEmulatorContainer.Emulators.AUTHENTICATION,     "quarkus.google.cloud.firebase.auth.emulator-host",
+            FirebaseEmulatorContainer.Emulators.EMULATOR_SUITE_UI,  "quarkus.google.cloud.firebase.emulator-host",
+            FirebaseEmulatorContainer.Emulators.FIREBASE_HOSTING,   "quarkus.google.cloud.firebase.hosting.emulator-host",
+            FirebaseEmulatorContainer.Emulators.CLOUD_FUNCTIONS,    "quarkus.google.cloud.functions.emulator-host",
+            FirebaseEmulatorContainer.Emulators.EVENT_ARC,          "quarkus.google.cloud.eventarc.emulator-host",
+            FirebaseEmulatorContainer.Emulators.REALTIME_DATABASE,  "quarkus.google.cloud.database.emulator-host",
+            FirebaseEmulatorContainer.Emulators.CLOUD_FIRESTORE,    "quarkus.google.cloud.firestore.emulator-host",
+            FirebaseEmulatorContainer.Emulators.CLOUD_STORAGE,      "quarkus.google.cloud.storage.host-override",
+            FirebaseEmulatorContainer.Emulators.PUB_SUB,            "quarkus.google.cloud.pubsub.emulator-host"
+    );
 
     @BuildStep
     public DevServicesResultBuildItem start(DockerStatusBuildItem dockerStatusBuildItem,
@@ -98,7 +106,7 @@ public class FirebaseDevServiceProcessor {
         }
 
         if (!dockerStatusBuildItem.isContainerRuntimeAvailable()) {
-            LOGGER.info("Not starting devservice because docker is not available");
+            LOGGER.info("Not starting DevService because docker is not available");
             return null;
         }
 
@@ -121,29 +129,86 @@ public class FirebaseDevServiceProcessor {
                 FirebaseEmulatorContainer.Emulators.REALTIME_DATABASE, config.database().devservice(),
                 FirebaseEmulatorContainer.Emulators.CLOUD_FIRESTORE, config.firestore().devservice(),
                 FirebaseEmulatorContainer.Emulators.CLOUD_FUNCTIONS, config.functions().devservice(),
+                FirebaseEmulatorContainer.Emulators.CLOUD_STORAGE, config.storage().devservice(),
                 FirebaseEmulatorContainer.Emulators.FIREBASE_HOSTING, config.firebase().hosting().devservice(),
-                FirebaseEmulatorContainer.Emulators.PUB_SUB, config.pubSub().devservice());
+                FirebaseEmulatorContainer.Emulators.PUB_SUB, config.pubsub().devservice());
+    }
+
+    private Map<FirebaseEmulatorContainer.Emulators, FirebaseEmulatorContainer.ExposedPort> exposedEmulators(
+            Map<FirebaseEmulatorContainer.Emulators, FirebaseDevServiceConfig.GenericDevService> devServices) {
+        var emulators = devServices
+                .entrySet()
+                .stream()
+                .filter(e -> e.getValue().enabled())
+                .map(e -> Map.entry(e.getKey(), portForService(e.getValue())))
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+
+        var uiService = (FirebaseDevServiceConfig.Firebase.DevService.UI) devServices
+                .get(FirebaseEmulatorContainer.Emulators.EMULATOR_SUITE_UI);
+
+        uiService.hubPort().ifPresent(port -> emulators.put(
+                FirebaseEmulatorContainer.Emulators.EMULATOR_HUB,
+                new FirebaseEmulatorContainer.ExposedPort(port))
+        );
+
+        uiService.loggingPort().ifPresent(port -> emulators.put(
+                FirebaseEmulatorContainer.Emulators.LOGGING,
+                new FirebaseEmulatorContainer.ExposedPort(port))
+        );
+
+        var firestoreService = (FirebaseDevServiceConfig.Firestore.FirestoreDevService) devServices
+                .get(FirebaseEmulatorContainer.Emulators.CLOUD_FIRESTORE);
+
+        firestoreService.websocketPort().ifPresent(port ->
+                emulators.put(
+                        FirebaseEmulatorContainer.Emulators.CLOUD_FIRESTORE_WS,
+                        new FirebaseEmulatorContainer.ExposedPort(port))
+        );
+
+        // TODO: Event arc?
+
+        return emulators;
+    }
+
+    private static FirebaseEmulatorContainer.ExposedPort portForService(FirebaseDevServiceConfig.GenericDevService devService) {
+        var port = devService.emulatorPort().orElse(null);
+        return new FirebaseEmulatorContainer.ExposedPort(port);
+    }
+
+    private FirebaseEmulatorContainer.EmulatorConfig emulatorConfig(FirebaseDevServiceConfig config) {
+        var devService = config.firebase().devservice();
+
+        return new FirebaseEmulatorContainer.EmulatorConfig(
+                devService.imageName(),
+                devService.firebaseVersion(),
+                config.projectId(),
+                devService.token(),
+                devService.customFirebaseJson().map(File::new).map(File::toPath),
+                devService.javaToolOptions(),
+                devService.emulatorData().map(File::new).map(File::toPath),
+                config.firebase().hosting().hostingPath().map(File::new).map(File::toPath)
+        );
     }
 
     /**
      * Starts the Pub/Sub emulator container with provided configuration.
      *
      * @param dockerStatusBuildItem, Docker status
-     * @param config, Configuration for the PubSub service
-     * @param timeout, Optional timeout for starting the service
+     * @param config,                Configuration for the Firebase service
+     * @param timeout,               Optional timeout for starting the service
      * @return Running service item, or null if the service couldn't be started
      */
     private DevServicesResultBuildItem.RunningDevService startContainer(DockerStatusBuildItem dockerStatusBuildItem,
-            FirebaseDevServiceConfig config,
-            Optional<Duration> timeout) {
+                                                                        FirebaseDevServiceConfig config,
+                                                                        Optional<Duration> timeout) {
 
         var devServices = devServices(config);
+        var emulatorConfig = emulatorConfig(config);
 
         // Create and configure Pub/Sub emulator container
         FirebaseEmulatorContainer emulatorContainer = new FirebaseEmulatorContainer(
-                config.firebase().devservice(),
-                devServices,
-                config.projectId());
+                emulatorConfig,
+                exposedEmulators(devServices));
 
         // Set container startup timeout if provided
         timeout.ifPresent(emulatorContainer::withStartupTimeout);
@@ -152,17 +217,17 @@ public class FirebaseDevServiceProcessor {
         // Set the config for the started container
         FirebaseDevServiceProcessor.config = config;
 
-        var emulatorContainerConfig = emulatorContainer.config();
+        var emulatorContainerConfig = emulatorContainerConfig(emulatorContainer);
 
         if (LOGGER.isInfoEnabled()) {
             var runningPorts = emulatorContainer.emulatorPorts();
-            runningPorts.forEach((e, p) -> {
-                LOGGER.info("Google Cloude Emulator " + e + " reachable on port " + p);
-            });
+            runningPorts.forEach((e, p) ->
+                    LOGGER.info("Google Cloud Emulator " + e + " reachable on port " + p)
+            );
 
-            emulatorContainerConfig.forEach((e, h) -> {
-                LOGGER.info("Google Cloud emulator config property " + e + " set to " + h);
-            });
+            emulatorContainerConfig.forEach((e, h) ->
+                    LOGGER.info("Google Cloud emulator config property " + e + " set to " + h)
+            );
         }
 
         // Return running service item with container details
@@ -170,6 +235,23 @@ public class FirebaseDevServiceProcessor {
                 emulatorContainer.getContainerId(),
                 emulatorContainer::close,
                 emulatorContainerConfig);
+    }
+
+    private Map<String, String> emulatorContainerConfig(FirebaseEmulatorContainer emulatorContainer ) {
+        return emulatorContainer.emulatorEndpoints()
+                .entrySet()
+                .stream()
+                .filter(e -> CONFIG_PROPERTIES.containsKey(e.getKey()))
+                .collect(
+                        Collectors.toMap(
+                                e -> configPropertyForEmulator(e.getKey()),
+                                Map.Entry::getValue
+                        )
+                );
+    }
+
+    private String configPropertyForEmulator(FirebaseEmulatorContainer.Emulators emulator) {
+        return CONFIG_PROPERTIES.get(emulator);
     }
 
     /**
@@ -185,262 +267,6 @@ public class FirebaseDevServiceProcessor {
             } finally {
                 devService = null;
             }
-        }
-    }
-
-    public static class FirebaseEmulatorContainer extends GenericContainer<FirebaseEmulatorContainer> {
-
-        public enum Emulators {
-            AUTHENTICATION(
-                    9099,
-                    "quarkus.google.cloud.firebase.auth.emulator-host",
-                    "auth"),
-            EMULATOR_SUITE_UI(
-                    4000,
-                    "quarkus.google.cloud.firebase.emulator-host",
-                    "ui"),
-            CLOUD_FUNCTIONS(
-                    5001,
-                    "quarkus.google.cloud.functions.emulator-host",
-                    "functions"),
-            EVENT_ARC(
-                    9299,
-                    "quarkus.google.cloud.eventarc.emulator-host",
-                    "eventarc"),
-            REALTIME_DATABASE(
-                    9000,
-                    "quarkus.google.cloud.realtimedb.emulator-host",
-                    "database"),
-            CLOUD_FIRESTORE(
-                    8080,
-                    "quarkus.google.cloud.firestore.emulator-host",
-                    "firestore"),
-            CLOUD_STORAGE(
-                    9199,
-                    "quarkus.google.cloud.storage.emulator-host",
-                    "storage"),
-            FIREBASE_HOSTING(
-                    5000,
-                    "quarkus.google.cloud.firebase.hosting.emulator-host",
-                    "hosting"),
-            PUB_SUB(
-                    8085,
-                    "quarkus.google.cloud.pubsub.emulator-host",
-                    "pubsub");
-
-            final int internalPort;
-            final String configProperty;
-            final String emulatorName;
-
-            Emulators(int internalPort, String configProperty, String onlyArgument) {
-                this.internalPort = internalPort;
-                this.configProperty = configProperty;
-                this.emulatorName = onlyArgument;
-            }
-
-            public String getConfigProperty() {
-                return configProperty;
-            }
-
-            public String getEmulatorName() {
-                return emulatorName;
-            }
-        }
-
-        private final Map<Emulators, FirebaseDevServiceConfig.GenericDevService> devServices;
-
-        public FirebaseEmulatorContainer(FirebaseDevServiceConfig.Firebase.DevService firebaseConfig,
-                Map<Emulators, FirebaseDevServiceConfig.GenericDevService> devServices,
-                Optional<String> projectId) {
-            super(new FirebaseDockerBuilder(
-                    firebaseConfig,
-                    devServices,
-                    projectId).build());
-
-            firebaseConfig.emulatorData().ifPresent(path -> {
-                // TODO: https://firebase.google.com/docs/emulator-suite/install_and_configure#export_and_import_emulator_data
-                // Mount the volume to the specified path
-            });
-
-            this.devServices = devServices;
-        }
-
-        private static class FirebaseDockerBuilder {
-
-            private final ImageFromDockerfile result;
-
-            private final FirebaseDevServiceConfig.Firebase.DevService firebaseConfig;
-            private final Map<Emulators, FirebaseDevServiceConfig.GenericDevService> devServices;
-            private final Optional<String> projectId;
-
-            private DockerfileBuilder dockerBuilder;
-
-            public FirebaseDockerBuilder(FirebaseDevServiceConfig.Firebase.DevService firebaseConfig,
-                    Map<Emulators, FirebaseDevServiceConfig.GenericDevService> devServices,
-                    Optional<String> projectId) {
-                this.projectId = projectId;
-                this.devServices = devServices;
-                this.firebaseConfig = firebaseConfig;
-
-                this.result = new ImageFromDockerfile()
-                        .withDockerfileFromBuilder(builder -> {
-                            this.dockerBuilder = builder;
-                        });
-            }
-
-            public ImageFromDockerfile build() {
-                this.validateConfiguration();
-                this.configureBaseImage();
-                this.installNeededSoftware();
-                this.authenticateToFirebase();
-                this.setupJavaToolOptions();
-                this.addFirebaseJson();
-                this.setupDataImportExport();
-                this.runExecutable();
-
-                return result;
-            }
-
-            private void validateConfiguration() {
-                if (isEmulatorEnabled(devServices, Emulators.AUTHENTICATION) && projectId.isEmpty()) {
-                    throw new IllegalStateException("Can't create Firebase Auth emulator. Google Project id is required");
-                }
-
-                // TODO: Validate if a custom firebase.json is defined, that the hosts are defined as 0.0.0.0
-            }
-
-            private void configureBaseImage() {
-                dockerBuilder.from(firebaseConfig.imageName());
-            }
-
-            private void installNeededSoftware() {
-                dockerBuilder
-                        .run("apk --no-cache add openjdk11-jre bash curl openssl gettext nano nginx sudo")
-                        .run("npm cache clean --force")
-                        .run("npm i -g firebase-tools@" + firebaseConfig.firebaseVersion());
-            }
-
-            private void authenticateToFirebase() {
-                firebaseConfig.token().ifPresent(token -> dockerBuilder.env("FIREBASE_TOKEN", token));
-            }
-
-            private void setupJavaToolOptions() {
-                firebaseConfig.javaToolOptions().ifPresent(toolOptions -> dockerBuilder.env("JAVA_TOOL_OPTIONS", toolOptions));
-            }
-
-            private void addFirebaseJson() {
-                dockerBuilder.workDir("/srv/firebase");
-
-                firebaseConfig.customFirebaseJson().ifPresentOrElse(
-                        this::includeCustomFirebaseJson,
-                        this::generateFirebaseJson);
-
-                this.dockerBuilder.add("firebase.json", "/srv/firebase/firebase.json");
-            }
-
-            private void includeCustomFirebaseJson(String customFilePath) {
-                this.result.withFileFromPath(
-                        "firebase.json",
-                        new File(customFilePath).toPath());
-            }
-
-            private void generateFirebaseJson() {
-                StringBuilder firebaseJson = new StringBuilder();
-
-                firebaseJson.append("{\n");
-                firebaseJson.append("\t\"emulators\": {\n");
-
-                var emulatorsJson = this.devServices
-                        .keySet()
-                        .stream()
-                        .filter(e -> isEmulatorEnabled(devServices, e))
-                        .map((emulator -> "\t\t\"" + emulator.emulatorName + "\": {\n" +
-                                "\t\t\t\"port\": " + emulator.internalPort + ",\n" +
-                                "\t\t\t\"host\": \"0.0.0.0\"\n" +
-                                "\t\t}"))
-                        .collect(Collectors.joining(",\n"));
-                firebaseJson.append(emulatorsJson).append("\n");
-
-                firebaseJson.append("\t}\n");
-                firebaseJson.append("}\n");
-
-                this.result.withFileFromString("firebase.json", firebaseJson.toString());
-            }
-
-            private void setupDataImportExport() {
-                firebaseConfig.emulatorData().ifPresent(emulator -> {
-                    this.dockerBuilder.run("mkdir -p /srv/firebase/data");
-                    this.dockerBuilder.volume("/srv/firebase/data");
-                });
-            }
-
-            private void runExecutable() {
-                var projectArgument = projectId
-                        .map(id -> " --project " + id)
-                        .orElse("");
-
-                var importArgument = firebaseConfig
-                        .emulatorData()
-                        .map(path -> " --import=/srv/firebase/data --export-on-exit")
-                        .orElse("");
-
-                dockerBuilder
-                        .cmd("firebase emulators:start" + projectArgument + importArgument);
-            }
-        }
-
-        /**
-         * Configures the Pub/Sub emulator container.
-         */
-        @Override
-        public void configure() {
-            super.configure();
-
-            enabledEmulators()
-                    .forEach(emulator -> {
-                        var fixedExposedPort = devServices.get(emulator).emulatorPort();
-                        // Expose emulatorPort
-                        if (fixedExposedPort.isPresent()) {
-                            addFixedExposedPort(fixedExposedPort.get(), emulator.internalPort);
-                        } else {
-                            addExposedPort(emulator.internalPort);
-                        }
-                    });
-        }
-
-        public Map<String, String> config() {
-            return enabledEmulators()
-                    .collect(Collectors.toMap(
-                            Emulators::getConfigProperty,
-                            this::getEmulatorEndpoint));
-
-        }
-
-        public Map<Emulators, Integer> emulatorPorts() {
-            return enabledEmulators()
-                    .collect(Collectors.toMap(
-                            e -> e,
-                            e -> this.getMappedPort(e.internalPort)));
-        }
-
-        private Stream<Emulators> enabledEmulators() {
-            return Arrays.stream(Emulators.values())
-                    .filter(this::isEmulatorEnabled);
-        }
-
-        private boolean isEmulatorEnabled(Emulators emulator) {
-            return isEmulatorEnabled(this.devServices, emulator);
-        }
-
-        private static boolean isEmulatorEnabled(Map<Emulators, FirebaseDevServiceConfig.GenericDevService> devServices,
-                Emulators emulator) {
-            return Optional.ofNullable(devServices.get(emulator))
-                    .map(FirebaseDevServiceConfig.GenericDevService::enabled)
-                    .orElse(false);
-        }
-
-        private String getEmulatorEndpoint(Emulators emulator) {
-            return this.getHost() + ":" + this.getMappedPort(emulator.internalPort);
         }
     }
 
