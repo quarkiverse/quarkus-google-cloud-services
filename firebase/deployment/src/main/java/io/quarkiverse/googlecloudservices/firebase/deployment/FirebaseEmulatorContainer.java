@@ -219,12 +219,6 @@ public class FirebaseEmulatorContainer extends GenericContainer<FirebaseEmulator
                 throw new IllegalStateException("Can't create Firebase Auth emulator. Google Project id is required");
             }
 
-            if (isEmulatorEnabled(Emulators.CLOUD_FIRESTORE) && isEmulatorEnabled(Emulators.EMULATOR_SUITE_UI)) {
-                if (!isEmulatorEnabled(Emulators.CLOUD_FIRESTORE_WS)) {
-                    throw new IllegalStateException("The Cloud Firestore WebSocket port needs to be configured ");
-                }
-            }
-
             if (isEmulatorEnabled(Emulators.EMULATOR_SUITE_UI)) {
                 if (!isEmulatorEnabled(Emulators.EMULATOR_HUB)) {
                     LOGGER.info("Firebase Emulator UI is enabled, but no Hub port is specified. You will not be able to use the Hub API ");
