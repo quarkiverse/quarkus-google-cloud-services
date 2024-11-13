@@ -13,7 +13,6 @@
     <description>Use Google Cloud Firebase Admin to perform privileged actions</description>
 
     <properties>
-        <firebase-admin-sdk.version>9.4.1</firebase-admin-sdk.version>
         <microprofile-jwt-auth-api.version>2.1</microprofile-jwt-auth-api.version>
     </properties>
 
@@ -25,7 +24,6 @@
         <dependency>
             <groupId>com.google.firebase</groupId>
             <artifactId>firebase-admin</artifactId>
-            <version>${firebase-admin-sdk.version}</version>
             <exclusions>
                 <!-- We exclude the grpc-netty-shaded library as grpc-netty is included via
 quarkus-google-cloud-common-grpc and Quarkus includes the netty library -->
