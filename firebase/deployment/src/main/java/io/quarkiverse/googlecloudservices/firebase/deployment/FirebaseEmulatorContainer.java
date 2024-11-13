@@ -374,9 +374,13 @@ public class FirebaseEmulatorContainer extends GenericContainer<FirebaseEmulator
                     .map(path -> "--import")
                     .ifPresent(arguments::add);
 
+            /*
+             * We write the data to a subdirectory of the mount point. The firebase emulator tries to remove and
+             * recreate the mount-point directory, which will obviously fail. By using a subdirectory, export succeeds.
+             */
             firebaseConfig
                     .emulatorData()
-                    .map(path -> EMULATOR_DATA_PATH)
+                    .map(path -> EMULATOR_DATA_PATH + "/emulator-data")
                     .ifPresent(arguments::add);
 
             firebaseConfig

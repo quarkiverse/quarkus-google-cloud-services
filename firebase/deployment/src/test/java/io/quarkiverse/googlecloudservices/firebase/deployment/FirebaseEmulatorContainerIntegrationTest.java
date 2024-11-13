@@ -49,7 +49,6 @@ import static org.junit.jupiter.api.Assertions.*;
 @Testcontainers
 public class FirebaseEmulatorContainerIntegrationTest {
 
-    @Container
     private static final FirebaseEmulatorContainer firebaseContainer;
     private static final File tempEmulatorDataDir;
     private static final File tempHostingContentDir;
@@ -145,8 +144,10 @@ public class FirebaseEmulatorContainerIntegrationTest {
     }
 
     private static void validateEmulatorDataWritten() {
+        var emulatorDataDir = new File(tempEmulatorDataDir, "emulator-data");
+
         // Verify that files were written to the emulator data directory
-        File[] files = tempEmulatorDataDir.listFiles();
+        File[] files = emulatorDataDir.listFiles();
         assertNotNull(files);
         assertTrue(files.length > 0, "Expected files to be present in the emulator data directory");
     }
