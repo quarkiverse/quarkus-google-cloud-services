@@ -91,12 +91,14 @@ public interface FirebaseDevServiceConfig {
              * Sets the Docker image name for the Google Cloud SDK.
              * This image is used to emulate the Pub/Sub service in the development environment.
              * The default value is 'gcr.io/google.com/cloudsdktool/google-cloud-cli'.
+             * <p>
+             * See also the documentation on Custom Docker images for more info about this image.
              */
             @WithDefault("node:23-alpine")
             String imageName();
 
             /**
-             * Sets the firebase version to use. Defaults to the latest version.
+             *  The version of the firebase tools to use. Default is to use the latest available version.
              */
             @WithDefault("latest")
             String firebaseVersion();
@@ -117,11 +119,13 @@ public interface FirebaseDevServiceConfig {
              *
              * to ensure the ports of the
              * emulator are exposed correctly at the docker container level.
+             * <p>
+             * See the section on Custom Firebase Json in the docs for more info.
              */
             Optional<String> customFirebaseJson();
 
             /**
-             * Sets the JAVA tool options for emulators based on the Java runtime environment.
+             * Sets the JAVA tool options for emulators based on the Java runtime environment like -Xmx.
              * See also
              * <a href="https://firebase.google.com/docs/emulator-suite/install_and_configure#specifying_java_options">here</a>
              */
@@ -130,7 +134,7 @@ public interface FirebaseDevServiceConfig {
             /**
              * Allow to import and export data. Specify a path relative to the current working directory of the executable
              * (for most unit tests, this is the root of the build directory) to be used for import and export of emulator
-             * data.
+             * data. The data will be written to a subdirectory called "emulator-data" of this directory.
              * See also <a href=
              * "https://firebase.google.com/docs/emulator-suite/install_and_configure#export_and_import_emulator_data">here</a>
              */
@@ -247,14 +251,15 @@ public interface FirebaseDevServiceConfig {
     interface GenericDevService {
 
         /**
-         * Indicates whether the service should be enabled or not.
+         * Indicates whether the DevService should be enabled or not.
          * The default value is 'false'.
          */
         @WithDefault("false")
         boolean enabled();
 
         /**
-         * Specifies the emulatorPort on which the service should run in the development environment.
+         * Specifies the emulatorPort on which the service should run in the development environment. The default
+         * is to expose the service on a random port.
          */
         Optional<Integer> emulatorPort();
     }

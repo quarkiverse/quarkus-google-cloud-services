@@ -7,19 +7,25 @@ Be sure to have read the https://quarkiverse.github.io/quarkiverse-docs/quarkus-
 == Current status
 
 The following emulators have been verified to work:
+
 * Firebase Auth
 * Firebase Firestore
 * Firebase Emulator UI
+* Realtime Database
+* PubSub
+* Cloud Storage
 
 The following emulators need additional work:
+
 * Firebase Hosting
-* Realtime Database
 * Functions
-* PubSub
 
 The following emulators are currently not supported:
 * EventArc
-* Cloud Storage
+
+Currently you can specify a custom `firebase.json` file but suport for this is limited. A
+future version will support reading the configuration from the `firebase.json` file
+instead of from the Quarkus configuration.
 
 == Bootstrapping the project
 
@@ -52,47 +58,6 @@ This will add the following to your pom.xml:
     <artifactId>quarkus-google-cloud-firebase</artifactId>
 </dependency>
 ----
-
-== Configuration
-
-* `quarkus.google.cloud.project-id` - The project ID is mandatory for projects using Firebase Auth (Firebase Admin).
-* `quarkus.google.cloud.firebase.devservice.image-name` - The base image name to use (see Custom Docker images below)
-* `quarkus.google.cloud.firebase.devservice.firebase-version` - The version of the firebase tools to use. Default is to use the latest available version.
-* `quarkus.google.cloud.firebase.devservice.token` - The firebase token to use. This is mandatory when using Hosting. This token can be generated using the firebase CLI.
-* `quarkus.google.cloud.firebase.devservice.custom-firebase-json` - The path to a custom `firebase.json` file to use instead of the auto generated one (see Custom Firebase.json)
-* `quarkus.google.cloud.firebase.devservice.java-tool-options` - Java tool options to pass to the Java based emulators (like -Xmx)
-* `quarkus.google.cloud.firebase.devservice.emulator-data` - Path to a directory where to import and export (on exit) the emulator data.
-* `quarkus.google.cloud.firebase.devservice.ui.enabled` - Whether to enable the Emulator UI. The default is true.
-
-*Firebase auth emulator*
-
-* `quarkus.google.cloud.firebase.auth.devservice.enabled` - Enable the Firebase Auth emulator. The default is false.
-* `quarkus.google.cloud.firebase.auth.devservice.emulatorPort` - The port on which to expose the emulator from the Docker container. The default is to expose the service on a random port.
-
-*Hosting emulator*
-
-* `quarkus.google.cloud.firebase.hosting.devservice.enabled` - Enable the Hosting emulator. The default is false.
-* `quarkus.google.cloud.firebase.hosting.devservice.emulatorPort` - The port on which to expose the emulator from the Docker container. The default is to expose the service on a random port.
-
-*Realtime database emulator*
-
-* `quarkus.google.cloud.database.devservice.enabled` - Enable the Realtime database emulator. The default is false.
-* `quarkus.google.cloud.database.devservice.emulatorPort` - The port on which to expose the emulator from the Docker container. The default is to expose the service on a random port.
-
-*Firestore emulator*
-
-* `quarkus.google.cloud.firestore.devservice.enabled` - Enable the Firestore emulator. The default is false.
-* `quarkus.google.cloud.firestore.devservice.emulatorPort` - The port on which to expose the emulator from the Docker container. The default is to expose the service on a random port.
-
-*Functions emulator*
-
-* `quarkus.google.cloud.functions.devservice.enabled` - Enable the Firestore emulator. The default is false.
-* `quarkus.google.cloud.functions.devservice.emulatorPort` - The port on which to expose the emulator from the Docker container. The default is to expose the service on a random port.
-
-*PubSub emulator*
-
-* `quarkus.google.cloud.pubsub.devservice.enabled` - Enable the Firestore emulator. The default is false.
-* `quarkus.google.cloud.pubsub.devservice.emulatorPort` - The port on which to expose the emulator from the Docker container. The default is to expose the service on a random port.
 
 == Custom Docker image
 
@@ -127,3 +92,7 @@ The following extensions support a DevService which conflicts with the DevServic
 * TODO: Verify Storage
 
 When including this module, these DevServices will automatically be disabled, as the Firebase emulator should feature wise be on-par or more extensive than the individual emulators.
+
+== Configuration Reference
+
+include::./includes/quarkus-google-cloud-firebase.adoc[]
