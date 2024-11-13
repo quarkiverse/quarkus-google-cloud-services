@@ -37,7 +37,7 @@ public class FirebaseDevServiceProcessor {
             FirebaseEmulatorContainer.Emulators.CLOUD_FUNCTIONS, "quarkus.google.cloud.functions.emulator-host",
             FirebaseEmulatorContainer.Emulators.EVENT_ARC, "quarkus.google.cloud.eventarc.emulator-host",
             FirebaseEmulatorContainer.Emulators.REALTIME_DATABASE, "quarkus.google.cloud.database.emulator-host",
-            FirebaseEmulatorContainer.Emulators.CLOUD_FIRESTORE, "quarkus.google.cloud.firestore.emulator-host",
+            FirebaseEmulatorContainer.Emulators.CLOUD_FIRESTORE, "quarkus.google.cloud.firestore.host-override",
             FirebaseEmulatorContainer.Emulators.CLOUD_STORAGE, "quarkus.google.cloud.storage.host-override",
             FirebaseEmulatorContainer.Emulators.PUB_SUB, "quarkus.google.cloud.pubsub.emulator-host");
 
