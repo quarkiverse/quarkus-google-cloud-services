@@ -1,10 +1,7 @@
 package io.quarkiverse.googlecloudservices.firebase.deployment;
 
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import org.jboss.logging.Logger;
@@ -201,6 +198,13 @@ public class FirebaseEmulatorContainer extends GenericContainer<FirebaseEmulator
 
     private static class FirebaseDockerBuilder {
 
+        private static final Map<Emulator, String> DOWNLOADABLE_EMULATORS = Map.of(
+                Emulator.REALTIME_DATABASE, "database",
+                Emulator.CLOUD_FIRESTORE, "firestore",
+                Emulator.PUB_SUB, "pubsub",
+                Emulator.CLOUD_STORAGE, "storage",
+                Emulator.EMULATOR_SUITE_UI, "ui");
+
         private final ImageFromDockerfile result;
 
         private final EmulatorConfig firebaseConfig;
@@ -223,10 +227,10 @@ public class FirebaseEmulatorContainer extends GenericContainer<FirebaseEmulator
             this.clearUnneededUsersAndGroups();
             this.authenticateToFirebase();
             this.setupJavaToolOptions();
-            this.addFirebaseJson();
             this.fixFilePermissions();
             this.setupUserAndGroup();
             this.downloadEmulators();
+            this.addFirebaseJson();
             this.setupDataImportExport();
             this.setupHosting();
             this.runExecutable();
@@ -269,7 +273,8 @@ public class FirebaseEmulatorContainer extends GenericContainer<FirebaseEmulator
             dockerBuilder
                     .run("apk --no-cache add openjdk11-jre bash curl openssl gettext nano nginx sudo && " +
                             "npm cache clean --force && " +
-                            "npm i -g firebase-tools@" + firebaseConfig.firebaseVersion());
+                            "npm i -g firebase-tools@" + firebaseConfig.firebaseVersion() + " &&" +
+                            "mkdir -p " + FIREBASE_ROOT);
         }
 
         private void clearUnneededUsersAndGroups() {
@@ -277,16 +282,21 @@ public class FirebaseEmulatorContainer extends GenericContainer<FirebaseEmulator
         }
 
         private void downloadEmulators() {
-            downloadEmulator(Emulator.REALTIME_DATABASE, "database");
-            downloadEmulator(Emulator.CLOUD_FIRESTORE, "firestore");
-            downloadEmulator(Emulator.PUB_SUB, "pubsub");
-            downloadEmulator(Emulator.CLOUD_STORAGE, "storage");
-            downloadEmulator(Emulator.EMULATOR_SUITE_UI, "ui");
+            var cmd = DOWNLOADABLE_EMULATORS
+                    .entrySet()
+                    .stream()
+                    .map(e -> downloadEmulatorCommand(e.getKey(), e.getValue()))
+                    .filter(Objects::nonNull)
+                    .collect(Collectors.joining(" && "));
+
+            dockerBuilder.run(cmd);
         }
 
-        private void downloadEmulator(Emulator emulator, String downloadId) {
+        private String downloadEmulatorCommand(Emulator emulator, String downloadId) {
             if (isEmulatorEnabled(emulator)) {
-                dockerBuilder.run("firebase setup:emulators:" + downloadId);
+                return "firebase setup:emulators:" + downloadId;
+            } else {
+                return null;
             }
         }
 
