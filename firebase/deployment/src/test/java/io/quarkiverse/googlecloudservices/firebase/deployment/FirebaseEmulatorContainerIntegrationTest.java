@@ -14,6 +14,7 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -167,7 +168,12 @@ public class FirebaseEmulatorContainerIntegrationTest {
 
         var emulatorDataDir = new File(tempEmulatorDataDir, "emulator-data");
         try {
-            Runtime.getRuntime().exec(new String[] { "ls", "-l", tempEmulatorDataDir.getAbsolutePath() });
+            var process = Runtime
+                    .getRuntime()
+                    .exec(new String[] { "ls", "-l", tempEmulatorDataDir.getAbsolutePath() });
+
+            IOUtils.copy(process.getInputStream(), System.out);
+            IOUtils.copy(process.getErrorStream(), System.err);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
