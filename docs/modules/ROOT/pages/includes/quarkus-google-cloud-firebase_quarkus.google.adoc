@@ -60,6 +60,40 @@ endif::add-copy-button-to-env-var[]
 |string
 |`node:23-alpine`
 
+a|icon:lock[title=Fixed at build time] [[quarkus-google-cloud-firebase_quarkus-google-cloud-firebase-devservice-docker-user]] [.property-path]##link:#quarkus-google-cloud-firebase_quarkus-google-cloud-firebase-devservice-docker-user[`quarkus.google.cloud.firebase.devservice.docker-user`]##
+
+[.description]
+--
+Id of the docker user to run the firebase executable. This is needed in environments where Docker does not perform a mapping to the user running Docker. In a Docker Desktop setup, Docker automatically performs this mapping and the data written by the emulator can be read by the user running the build. This is not the case in a regular (non-Desktop) setup, this is not the case and you may need to set the user id and `docker-group()`. This option is often needed in CI environments.
+
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_GOOGLE_CLOUD_FIREBASE_DEVSERVICE_DOCKER_USER+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_GOOGLE_CLOUD_FIREBASE_DEVSERVICE_DOCKER_USER+++`
+endif::add-copy-button-to-env-var[]
+--
+|int
+|
+
+a|icon:lock[title=Fixed at build time] [[quarkus-google-cloud-firebase_quarkus-google-cloud-firebase-devservice-docker-group]] [.property-path]##link:#quarkus-google-cloud-firebase_quarkus-google-cloud-firebase-devservice-docker-group[`quarkus.google.cloud.firebase.devservice.docker-group`]##
+
+[.description]
+--
+Id of the group to which the `docker-user()` belongs.
+
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_GOOGLE_CLOUD_FIREBASE_DEVSERVICE_DOCKER_GROUP+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_GOOGLE_CLOUD_FIREBASE_DEVSERVICE_DOCKER_GROUP+++`
+endif::add-copy-button-to-env-var[]
+--
+|int
+|
+
 a|icon:lock[title=Fixed at build time] [[quarkus-google-cloud-firebase_quarkus-google-cloud-firebase-devservice-firebase-version]] [.property-path]##link:#quarkus-google-cloud-firebase_quarkus-google-cloud-firebase-devservice-firebase-version[`quarkus.google.cloud.firebase.devservice.firebase-version`]##
 
 [.description]
