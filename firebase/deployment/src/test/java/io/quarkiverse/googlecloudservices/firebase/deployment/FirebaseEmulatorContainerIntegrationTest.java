@@ -171,10 +171,11 @@ public class FirebaseEmulatorContainerIntegrationTest {
             var process = Runtime
                     .getRuntime()
                     .exec(new String[] { "ls", "-l", tempEmulatorDataDir.getAbsolutePath() });
+            process.waitFor();
 
             IOUtils.copy(process.getInputStream(), System.out);
             IOUtils.copy(process.getErrorStream(), System.err);
-        } catch (IOException e) {
+        } catch (IOException | InterruptedException e) {
             throw new RuntimeException(e);
         }
         assertTrue(emulatorDataDir.exists());
