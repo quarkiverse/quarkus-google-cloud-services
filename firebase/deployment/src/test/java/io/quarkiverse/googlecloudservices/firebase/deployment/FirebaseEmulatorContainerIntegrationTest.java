@@ -166,6 +166,11 @@ public class FirebaseEmulatorContainerIntegrationTest {
         Arrays.stream(tempEmulatorDataDir.listFiles()).forEach(System.out::println);
 
         var emulatorDataDir = new File(tempEmulatorDataDir, "emulator-data");
+        try {
+            Runtime.getRuntime().exec(new String[]{"ls", "-l", tempEmulatorDataDir.getAbsolutePath()});
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
         assertTrue(emulatorDataDir.exists());
         assertTrue(emulatorDataDir.isDirectory());
         assertTrue(emulatorDataDir.canRead());
