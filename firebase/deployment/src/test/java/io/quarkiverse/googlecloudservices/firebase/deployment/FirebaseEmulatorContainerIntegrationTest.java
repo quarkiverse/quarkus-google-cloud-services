@@ -75,6 +75,15 @@ public class FirebaseEmulatorContainerIntegrationTest {
 
     static {
         try {
+            var user = Optional
+                    .ofNullable(System.getenv("CURRENT_USER"))
+                    .map(Integer::valueOf);
+            var group = Optional
+                    .ofNullable(System.getenv("CURRENT_GROUP"))
+                    .map(Integer::valueOf);
+
+            System.out.println("Running as user " + user + " and group " + group);
+
             // Create a temporary directory for emulator data
             tempEmulatorDataDir = Files.createTempDirectory("firebase-emulator-data").toFile();
             tempHostingContentDir = Files.createTempDirectory("firebase-hosting-content").toFile();
@@ -91,8 +100,8 @@ public class FirebaseEmulatorContainerIntegrationTest {
             EmulatorConfig config = new EmulatorConfig(
                     new FirebaseEmulatorContainer.DockerConfig(
                             "node:23-alpine",
-                            Optional.of(991),
-                            Optional.of(999)),
+                            user,
+                            group),
                     "latest", // Firebase version
                     Optional.of("demo-test-project"),
                     Optional.empty(),
