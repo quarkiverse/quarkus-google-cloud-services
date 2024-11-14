@@ -85,8 +85,14 @@ public class FirebaseEmulatorContainerIntegrationTest {
                 writer.write("<html><body><h1>Hello, Firebase Hosting!</h1></body></html>");
             }
 
+            /*
+             * We use user id = 991 & groupid = 999 by default, as these are the ids used by the gitlab runner.
+             */
             EmulatorConfig config = new EmulatorConfig(
-                    "node:23-alpine", // Default image
+                    new FirebaseEmulatorContainer.DockerConfig(
+                            "node:23-alpine",
+                            Optional.of(991),
+                            Optional.of(999)),
                     "latest", // Firebase version
                     Optional.of("demo-test-project"),
                     Optional.empty(),

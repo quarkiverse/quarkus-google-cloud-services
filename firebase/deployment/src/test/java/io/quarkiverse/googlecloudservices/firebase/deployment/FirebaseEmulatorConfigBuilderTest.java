@@ -22,6 +22,8 @@ class FirebaseEmulatorConfigBuilderTest {
                         new TestFirebaseDevService(
                                 true,
                                 "node:21-alpine",
+                                Optional.empty(),
+                                Optional.empty(),
                                 "11.0.0",
                                 Optional.of("MY_TOKEN"),
                                 Optional.of("firebase.json"),
@@ -67,7 +69,7 @@ class FirebaseEmulatorConfigBuilderTest {
         FirebaseEmulatorContainer.EmulatorConfig emulatorConfig = configBuilder.build();
 
         assertNotNull(emulatorConfig);
-        assertEquals("node:21-alpine", emulatorConfig.imageName());
+        assertEquals("node:21-alpine", emulatorConfig.dockerConfig().imageName());
         assertEquals("11.0.0", emulatorConfig.firebaseVersion());
         assertEquals("my-project-id", emulatorConfig.projectId().orElse(null));
         assertEquals("MY_TOKEN", emulatorConfig.token().orElse(null));
@@ -124,6 +126,8 @@ class FirebaseEmulatorConfigBuilderTest {
     record TestFirebaseDevService(
             boolean preferFirebaseDevServices,
             String imageName,
+            Optional<Integer> dockerUser,
+            Optional<Integer> dockerGroup,
             String firebaseVersion,
             Optional<String> token,
             Optional<String> customFirebaseJson,

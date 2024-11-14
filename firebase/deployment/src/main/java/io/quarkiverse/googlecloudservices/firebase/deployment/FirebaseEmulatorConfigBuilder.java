@@ -20,7 +20,10 @@ public class FirebaseEmulatorConfigBuilder {
         var devService = config.firebase().devservice();
 
         return new FirebaseEmulatorContainer.EmulatorConfig(
-                devService.imageName(),
+                new FirebaseEmulatorContainer.DockerConfig(
+                        devService.imageName(),
+                        devService.dockerUser(),
+                        devService.dockerGroup()),
                 devService.firebaseVersion(),
                 config.projectId(),
                 devService.token(),

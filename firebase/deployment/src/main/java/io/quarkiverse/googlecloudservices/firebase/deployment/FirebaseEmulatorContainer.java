@@ -139,9 +139,22 @@ public class FirebaseEmulatorContainer extends GenericContainer<FirebaseEmulator
     }
 
     /**
+     * The docker image configuration
+     *
+     * @param imageName The name of the docker image
+     * @param userId The user id to run the docker image
+     * @param groupId The group id to run the docker image
+     */
+    public record DockerConfig(
+            String imageName,
+            Optional<Integer> userId,
+            Optional<Integer> groupId) {
+    }
+
+    /**
      * Describes the Firebase emulator configuration.
      *
-     * @param imageName The name of the image to use
+     * @param dockerConfig The docker configuration
      * @param firebaseVersion The firebase version to use
      * @param projectId The project ID, needed when running with the auth emulator
      * @param token The Google Cloud CLI token to use for authentication. Needed for firebase hosting
@@ -151,7 +164,7 @@ public class FirebaseEmulatorContainer extends GenericContainer<FirebaseEmulator
      * @param hostingContentDir The path to the directory containing the hosting content
      */
     public record EmulatorConfig(
-            String imageName,
+            DockerConfig dockerConfig,
             String firebaseVersion,
             Optional<String> projectId,
             Optional<String> token,
@@ -207,10 +220,13 @@ public class FirebaseEmulatorContainer extends GenericContainer<FirebaseEmulator
             this.validateConfiguration();
             this.configureBaseImage();
             this.installNeededSoftware();
-            this.downloadEmulators();
+            this.clearUnneededUsersAndGroups();
             this.authenticateToFirebase();
             this.setupJavaToolOptions();
             this.addFirebaseJson();
+            this.fixFilePermissions();
+            this.setupUserAndGroup();
+            this.downloadEmulators();
             this.setupDataImportExport();
             this.setupHosting();
             this.runExecutable();
@@ -246,14 +262,18 @@ public class FirebaseEmulatorContainer extends GenericContainer<FirebaseEmulator
         }
 
         private void configureBaseImage() {
-            dockerBuilder.from(firebaseConfig.imageName());
+            dockerBuilder.from(firebaseConfig.dockerConfig().imageName());
         }
 
         private void installNeededSoftware() {
             dockerBuilder
-                    .run("apk --no-cache add openjdk11-jre bash curl openssl gettext nano nginx sudo")
-                    .run("npm cache clean --force")
-                    .run("npm i -g firebase-tools@" + firebaseConfig.firebaseVersion());
+                    .run("apk --no-cache add openjdk11-jre bash curl openssl gettext nano nginx sudo && " +
+                            "npm cache clean --force && " +
+                            "npm i -g firebase-tools@" + firebaseConfig.firebaseVersion());
+        }
+
+        private void clearUnneededUsersAndGroups() {
+            dockerBuilder.run("deluser nginx && delgroup abuild && delgroup ping");
         }
 
         private void downloadEmulators() {
@@ -352,6 +372,37 @@ public class FirebaseEmulatorContainer extends GenericContainer<FirebaseEmulator
             if (firebaseConfig.hostingContentDir().isPresent()) {
                 dockerBuilder.run("mkdir -p " + FIREBASE_HOSTING_PATH);
             }
+        }
+
+        private void fixFilePermissions() {
+            var group = dockerGroup();
+            var user = dockerUser();
+
+            dockerBuilder.run("chown " + user + ":" + group + " -R /srv/*");
+        }
+
+        private void setupUserAndGroup() {
+            firebaseConfig.dockerConfig.groupId().ifPresent(group -> {
+                dockerBuilder.run("addgroup -g " + group + " runner");
+            });
+
+            firebaseConfig.dockerConfig.userId().ifPresent(user -> {
+                var groupName = firebaseConfig.dockerConfig().groupId().map(i -> "runner").orElse("node");
+                dockerBuilder.run("adduser -u " + user + " -G " + groupName + " -D -h /srv/firebase runner");
+            });
+
+            var group = dockerGroup();
+            var user = dockerUser();
+
+            dockerBuilder.user(user + ":" + group);
+        }
+
+        private int dockerUser() {
+            return firebaseConfig.dockerConfig().userId().orElse(1000);
+        }
+
+        private int dockerGroup() {
+            return firebaseConfig.dockerConfig().groupId().orElse(1000);
         }
 
         private void runExecutable() {

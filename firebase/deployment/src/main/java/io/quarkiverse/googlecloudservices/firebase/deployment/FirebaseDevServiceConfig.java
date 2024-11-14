@@ -98,6 +98,16 @@ public interface FirebaseDevServiceConfig {
             String imageName();
 
             /**
+             * Id of the docker user to run the firebase executable.
+             */
+            Optional<Integer> dockerUser();
+
+            /**
+             * Id of the group to which the {@link #dockerUser()} belongs.
+             */
+            Optional<Integer> dockerGroup();
+
+            /**
              * The version of the firebase tools to use. Default is to use the latest available version.
              */
             @WithDefault("latest")
