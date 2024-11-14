@@ -166,6 +166,11 @@ public class FirebaseEmulatorContainerIntegrationTest {
         Arrays.stream(tempEmulatorDataDir.listFiles()).forEach(System.out::println);
 
         var emulatorDataDir = new File(tempEmulatorDataDir, "emulator-data");
+        assertTrue(emulatorDataDir.exists());
+        assertTrue(emulatorDataDir.isDirectory());
+        assertTrue(emulatorDataDir.canRead());
+        assertTrue(emulatorDataDir.canWrite());
+        assertTrue(emulatorDataDir.canExecute());
 
         // Verify that files were written to the emulator data directory
         File[] files = emulatorDataDir.listFiles();
