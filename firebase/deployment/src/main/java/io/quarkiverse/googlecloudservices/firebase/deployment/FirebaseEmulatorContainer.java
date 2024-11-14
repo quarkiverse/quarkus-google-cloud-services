@@ -21,6 +21,7 @@ public class FirebaseEmulatorContainer extends GenericContainer<FirebaseEmulator
     public static final String FIREBASE_ROOT = "/srv/firebase";
     public static final String FIREBASE_HOSTING_PATH = FIREBASE_ROOT + "/public";
     public static final String EMULATOR_DATA_PATH = FIREBASE_ROOT + "/data";
+    public static final String EMULATOR_EXPORT_PATH = EMULATOR_DATA_PATH + "/emulator-data";
 
     /**
      * Set of possible emulators (or components/services).
@@ -275,7 +276,9 @@ public class FirebaseEmulatorContainer extends GenericContainer<FirebaseEmulator
                             "deluser nginx && delgroup abuild && delgroup ping && " +
                             "mkdir -p " + FIREBASE_ROOT + " && " +
                             "mkdir -p " + FIREBASE_HOSTING_PATH + " && " +
-                            "mkdir -p " + EMULATOR_DATA_PATH);
+                            "mkdir -p " + EMULATOR_DATA_PATH + " && " +
+                            "mkdir -p " + EMULATOR_EXPORT_PATH + " && " +
+                            "chmod 777 -R /srv/*");
         }
 
         private void downloadEmulators() {
@@ -435,7 +438,7 @@ public class FirebaseEmulatorContainer extends GenericContainer<FirebaseEmulator
              */
             firebaseConfig
                     .emulatorData()
-                    .map(path -> EMULATOR_DATA_PATH + "/emulator-data")
+                    .map(path -> EMULATOR_EXPORT_PATH)
                     .ifPresent(arguments::add);
 
             firebaseConfig
