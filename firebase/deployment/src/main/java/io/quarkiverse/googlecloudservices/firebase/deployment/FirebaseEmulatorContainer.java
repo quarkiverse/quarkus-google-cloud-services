@@ -223,11 +223,9 @@ public class FirebaseEmulatorContainer extends GenericContainer<FirebaseEmulator
         public ImageFromDockerfile build() {
             this.validateConfiguration();
             this.configureBaseImage();
-            this.installNeededSoftware();
-            this.clearUnneededUsersAndGroups();
+            this.initialSetup();
             this.authenticateToFirebase();
             this.setupJavaToolOptions();
-            this.fixFilePermissions();
             this.setupUserAndGroup();
             this.downloadEmulators();
             this.addFirebaseJson();
@@ -269,16 +267,15 @@ public class FirebaseEmulatorContainer extends GenericContainer<FirebaseEmulator
             dockerBuilder.from(firebaseConfig.dockerConfig().imageName());
         }
 
-        private void installNeededSoftware() {
+        private void initialSetup() {
             dockerBuilder
                     .run("apk --no-cache add openjdk11-jre bash curl openssl gettext nano nginx sudo && " +
                             "npm cache clean --force && " +
-                            "npm i -g firebase-tools@" + firebaseConfig.firebaseVersion() + " &&" +
-                            "mkdir -p " + FIREBASE_ROOT);
-        }
-
-        private void clearUnneededUsersAndGroups() {
-            dockerBuilder.run("deluser nginx && delgroup abuild && delgroup ping");
+                            "npm i -g firebase-tools@" + firebaseConfig.firebaseVersion() + " && " +
+                            "deluser nginx && delgroup abuild && delgroup ping && " +
+                            "mkdir -p " + FIREBASE_ROOT + " && " +
+                            "mkdir -p " + FIREBASE_HOSTING_PATH + " && " +
+                            "mkdir -p " + EMULATOR_DATA_PATH);
         }
 
         private void downloadEmulators() {
@@ -372,7 +369,6 @@ public class FirebaseEmulatorContainer extends GenericContainer<FirebaseEmulator
 
         private void setupDataImportExport() {
             firebaseConfig.emulatorData().ifPresent(emulator -> {
-                this.dockerBuilder.run("mkdir -p " + EMULATOR_DATA_PATH);
                 this.dockerBuilder.volume(EMULATOR_DATA_PATH);
             });
         }
@@ -380,31 +376,32 @@ public class FirebaseEmulatorContainer extends GenericContainer<FirebaseEmulator
         private void setupHosting() {
             // Specify public directory if hosting is enabled
             if (firebaseConfig.hostingContentDir().isPresent()) {
-                dockerBuilder.run("mkdir -p " + FIREBASE_HOSTING_PATH);
+                this.dockerBuilder.volume(FIREBASE_HOSTING_PATH);
             }
         }
 
-        private void fixFilePermissions() {
-            var group = dockerGroup();
-            var user = dockerUser();
-
-            dockerBuilder.run("chown " + user + ":" + group + " -R /srv/*");
-        }
-
         private void setupUserAndGroup() {
+            var commands = new ArrayList<String>();
+
             firebaseConfig.dockerConfig.groupId().ifPresent(group -> {
-                dockerBuilder.run("addgroup -g " + group + " runner");
+                commands.add("addgroup -g " + group + " runner");
             });
 
             firebaseConfig.dockerConfig.userId().ifPresent(user -> {
                 var groupName = firebaseConfig.dockerConfig().groupId().map(i -> "runner").orElse("node");
-                dockerBuilder.run("adduser -u " + user + " -G " + groupName + " -D -h /srv/firebase runner");
+                commands.add("adduser -u " + user + " -G " + groupName + " -D -h /srv/firebase runner");
             });
 
             var group = dockerGroup();
             var user = dockerUser();
 
-            dockerBuilder.user(user + ":" + group);
+            commands.add("chown " + user + ":" + group + " -R /srv/*");
+
+            var runCmd = String.join(" && ", commands);
+
+            dockerBuilder
+                    .run(runCmd)
+                    .user(user + ":" + group);
         }
 
         private int dockerUser() {
