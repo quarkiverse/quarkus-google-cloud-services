@@ -43,8 +43,8 @@ import com.google.pubsub.v1.PubsubMessage;
 
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
-import io.quarkiverse.googlecloudservices.firebase.deployment.FirebaseEmulatorContainer.EmulatorConfig;
 import io.quarkiverse.googlecloudservices.firebase.deployment.FirebaseEmulatorContainer.Emulator;
+import io.quarkiverse.googlecloudservices.firebase.deployment.FirebaseEmulatorContainer.EmulatorConfig;
 import io.quarkiverse.googlecloudservices.firebase.deployment.FirebaseEmulatorContainer.ExposedPort;
 
 @Testcontainers
@@ -97,8 +97,10 @@ public class FirebaseEmulatorContainerIntegrationTest {
             firebaseContainer = new FirebaseEmulatorContainer(config);
             firebaseContainer.start();
 
-            firebaseContainer.followOutput(FirebaseEmulatorContainerIntegrationTest::writeToStdOut, OutputFrame.OutputType.STDOUT);
-            firebaseContainer.followOutput(FirebaseEmulatorContainerIntegrationTest::writeToStdErr, OutputFrame.OutputType.STDERR);
+            firebaseContainer.followOutput(FirebaseEmulatorContainerIntegrationTest::writeToStdOut,
+                    OutputFrame.OutputType.STDOUT);
+            firebaseContainer.followOutput(FirebaseEmulatorContainerIntegrationTest::writeToStdErr,
+                    OutputFrame.OutputType.STDERR);
 
             emulatorHost = firebaseContainer.getHost();
 
