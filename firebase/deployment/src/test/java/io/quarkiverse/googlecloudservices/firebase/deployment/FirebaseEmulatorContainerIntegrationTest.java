@@ -178,21 +178,7 @@ public class FirebaseEmulatorContainerIntegrationTest {
     }
 
     private static void validateEmulatorDataWritten() {
-        System.out.println(tempEmulatorDataDir.getAbsolutePath());
-        Arrays.stream(tempEmulatorDataDir.listFiles()).forEach(System.out::println);
-
         var emulatorDataDir = new File(tempEmulatorDataDir, "emulator-data");
-        try {
-            var process = Runtime
-                    .getRuntime()
-                    .exec(new String[] { "ls", "-l", tempEmulatorDataDir.getAbsolutePath() });
-            process.waitFor();
-
-            IOUtils.copy(process.getInputStream(), System.out);
-            IOUtils.copy(process.getErrorStream(), System.err);
-        } catch (IOException | InterruptedException e) {
-            throw new RuntimeException(e);
-        }
         assertTrue(emulatorDataDir.exists());
         assertTrue(emulatorDataDir.isDirectory());
         assertTrue(emulatorDataDir.canRead());
