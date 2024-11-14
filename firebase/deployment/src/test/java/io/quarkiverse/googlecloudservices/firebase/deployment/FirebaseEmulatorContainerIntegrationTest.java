@@ -7,6 +7,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.util.Arrays;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.CountDownLatch;
@@ -161,6 +162,9 @@ public class FirebaseEmulatorContainerIntegrationTest {
     }
 
     private static void validateEmulatorDataWritten() {
+        System.out.println(tempEmulatorDataDir.getAbsolutePath());
+        Arrays.stream(tempEmulatorDataDir.listFiles()).forEach(System.out::println);
+
         var emulatorDataDir = new File(tempEmulatorDataDir, "emulator-data");
 
         // Verify that files were written to the emulator data directory
