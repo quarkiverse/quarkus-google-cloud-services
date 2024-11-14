@@ -97,8 +97,8 @@ public class FirebaseEmulatorContainerIntegrationTest {
             firebaseContainer = new FirebaseEmulatorContainer(config);
             firebaseContainer.start();
 
-            firebaseContainer.followOutput(System.out::println, OutputFrame.OutputType.STDOUT);
-            firebaseContainer.followOutput(System.err::println, OutputFrame.OutputType.STDERR);
+            firebaseContainer.followOutput(FirebaseEmulatorContainerIntegrationTest::writeToStdOut, OutputFrame.OutputType.STDOUT);
+            firebaseContainer.followOutput(FirebaseEmulatorContainerIntegrationTest::writeToStdErr, OutputFrame.OutputType.STDERR);
 
             emulatorHost = firebaseContainer.getHost();
 
@@ -114,6 +114,18 @@ public class FirebaseEmulatorContainerIntegrationTest {
         } catch (IOException e) {
             throw new IllegalStateException(e);
         }
+    }
+
+    private static void writeToStdOut(OutputFrame frame) {
+        writeOutputFrame(frame, System.out);
+    }
+
+    private static void writeToStdErr(OutputFrame frame) {
+        writeOutputFrame(frame, System.err);
+    }
+
+    private static void writeOutputFrame(OutputFrame frame, PrintStream output) {
+        output.println(frame.getUtf8StringWithoutLineEnding());
     }
 
     @AfterAll
