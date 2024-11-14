@@ -75,6 +75,12 @@ public class FirebaseEmulatorContainerIntegrationTest {
 
     static {
         try {
+            /*
+             * We determine the current group and user using an env variable. This is set by the GitHub Actions runner.
+             * The user and group are used to set the user/group for the user in the docker container run by
+             * TestContainers for the Firebase Emulators. This way, the data exported by the Firebase Emulators
+             * can be read from the build.
+             */
             var user = Optional
                     .ofNullable(System.getenv("CURRENT_USER"))
                     .map(Integer::valueOf);
@@ -94,9 +100,6 @@ public class FirebaseEmulatorContainerIntegrationTest {
                 writer.write("<html><body><h1>Hello, Firebase Hosting!</h1></body></html>");
             }
 
-            /*
-             * We use user id = 991 & groupid = 999 by default, as these are the ids used by the gitlab runner.
-             */
             EmulatorConfig config = new EmulatorConfig(
                     new FirebaseEmulatorContainer.DockerConfig(
                             "node:23-alpine",

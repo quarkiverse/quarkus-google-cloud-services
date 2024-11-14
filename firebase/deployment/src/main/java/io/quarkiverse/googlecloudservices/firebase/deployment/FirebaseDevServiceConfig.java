@@ -98,7 +98,12 @@ public interface FirebaseDevServiceConfig {
             String imageName();
 
             /**
-             * Id of the docker user to run the firebase executable.
+             * Id of the docker user to run the firebase executable. This is needed in environments where Docker
+             * does not perform a mapping to the user running Docker. In a Docker Desktop setup, Docker
+             * automatically performs this mapping and the data written by the emulator can be read by the user
+             * running the build. This is not the case in a regular (non-Desktop) setup, this is not the case
+             * and you may need to set the user id and {@link #dockerGroup()}. This option is often needed in CI
+             * environments.
              */
             Optional<Integer> dockerUser();
 
