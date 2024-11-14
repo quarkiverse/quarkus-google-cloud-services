@@ -25,7 +25,10 @@ public class FirebaseEmulatorContainer extends GenericContainer<FirebaseEmulator
     public static final String FIREBASE_HOSTING_PATH = FIREBASE_ROOT + "/public";
     public static final String EMULATOR_DATA_PATH = FIREBASE_ROOT + "/data";
 
-    public enum Emulators {
+    /**
+     * Set of possible emulators (or components/services).
+     */
+    public enum Emulator {
         /**
          * Firebase Auth emulator
          */
@@ -115,7 +118,7 @@ public class FirebaseEmulatorContainer extends GenericContainer<FirebaseEmulator
         final String configProperty;
         final String emulatorName;
 
-        Emulators(int internalPort, String configProperty, String onlyArgument) {
+        Emulator(int internalPort, String configProperty, String onlyArgument) {
             this.internalPort = internalPort;
             this.configProperty = configProperty;
             this.emulatorName = onlyArgument;
@@ -156,10 +159,10 @@ public class FirebaseEmulatorContainer extends GenericContainer<FirebaseEmulator
             Optional<String> javaToolOptions,
             Optional<Path> emulatorData,
             Optional<Path> hostingContentDir,
-            Map<Emulators, ExposedPort> services) {
+            Map<Emulator, ExposedPort> services) {
     }
 
-    private final Map<Emulators, ExposedPort> services;
+    private final Map<Emulator, ExposedPort> services;
 
     /**
      * Creates a new Firebase Emulator container
@@ -188,7 +191,7 @@ public class FirebaseEmulatorContainer extends GenericContainer<FirebaseEmulator
         private final ImageFromDockerfile result;
 
         private final EmulatorConfig firebaseConfig;
-        private final Map<Emulators, ExposedPort> devServices;
+        private final Map<Emulator, ExposedPort> devServices;
 
         private DockerfileBuilder dockerBuilder;
 
@@ -216,23 +219,23 @@ public class FirebaseEmulatorContainer extends GenericContainer<FirebaseEmulator
         }
 
         private void validateConfiguration() {
-            if (isEmulatorEnabled(Emulators.AUTHENTICATION) && firebaseConfig.projectId().isEmpty()) {
+            if (isEmulatorEnabled(Emulator.AUTHENTICATION) && firebaseConfig.projectId().isEmpty()) {
                 throw new IllegalStateException("Can't create Firebase Auth emulator. Google Project id is required");
             }
 
-            if (isEmulatorEnabled(Emulators.EMULATOR_SUITE_UI)) {
-                if (!isEmulatorEnabled(Emulators.EMULATOR_HUB)) {
+            if (isEmulatorEnabled(Emulator.EMULATOR_SUITE_UI)) {
+                if (!isEmulatorEnabled(Emulator.EMULATOR_HUB)) {
                     LOGGER.info(
                             "Firebase Emulator UI is enabled, but no Hub port is specified. You will not be able to use the Hub API ");
                 }
 
-                if (!isEmulatorEnabled(Emulators.LOGGING)) {
+                if (!isEmulatorEnabled(Emulator.LOGGING)) {
                     LOGGER.info(
                             "Firebase Emulator UI is enabled, but no Logging port is specified. You will not be able to see the logging ");
                 }
 
-                if (isEmulatorEnabled(Emulators.CLOUD_FIRESTORE)) {
-                    if (!isEmulatorEnabled(Emulators.CLOUD_FIRESTORE_WS)) {
+                if (isEmulatorEnabled(Emulator.CLOUD_FIRESTORE)) {
+                    if (!isEmulatorEnabled(Emulator.CLOUD_FIRESTORE_WS)) {
                         LOGGER.warn("Firebase Firestore Emulator and Emulator UI are enabled but no Firestore Websocket " +
                                 "port is specified. You will not be able to use the Firestore UI");
                     }
@@ -254,14 +257,14 @@ public class FirebaseEmulatorContainer extends GenericContainer<FirebaseEmulator
         }
 
         private void downloadEmulators() {
-            downloadEmulator(Emulators.REALTIME_DATABASE, "database");
-            downloadEmulator(Emulators.CLOUD_FIRESTORE, "firestore");
-            downloadEmulator(Emulators.PUB_SUB, "pubsub");
-            downloadEmulator(Emulators.CLOUD_STORAGE, "storage");
-            downloadEmulator(Emulators.EMULATOR_SUITE_UI, "ui");
+            downloadEmulator(Emulator.REALTIME_DATABASE, "database");
+            downloadEmulator(Emulator.CLOUD_FIRESTORE, "firestore");
+            downloadEmulator(Emulator.PUB_SUB, "pubsub");
+            downloadEmulator(Emulator.CLOUD_STORAGE, "storage");
+            downloadEmulator(Emulator.EMULATOR_SUITE_UI, "ui");
         }
 
-        private void downloadEmulator(Emulators emulator, String downloadId) {
+        private void downloadEmulator(Emulator emulator, String downloadId) {
             if (isEmulatorEnabled(emulator)) {
                 dockerBuilder.run("firebase setup:emulators:" + downloadId);
             }
@@ -308,11 +311,11 @@ public class FirebaseEmulatorContainer extends GenericContainer<FirebaseEmulator
                                 .orElse(emulator.internalPort);
 
                         String additionalConfig = "";
-                        if (emulator.equals(Emulators.CLOUD_FIRESTORE)) {
-                            var wsService = this.devServices.get(Emulators.CLOUD_FIRESTORE_WS);
+                        if (emulator.equals(Emulator.CLOUD_FIRESTORE)) {
+                            var wsService = this.devServices.get(Emulator.CLOUD_FIRESTORE_WS);
                             if (wsService != null) {
                                 var wsPort = Optional.ofNullable(wsService.fixedPort)
-                                        .orElse(Emulators.CLOUD_FIRESTORE.internalPort);
+                                        .orElse(Emulator.CLOUD_FIRESTORE.internalPort);
                                 additionalConfig = "\t\t\t\"websocketPort\": " + wsPort + ",\n";
                             }
                         }
@@ -327,7 +330,7 @@ public class FirebaseEmulatorContainer extends GenericContainer<FirebaseEmulator
             firebaseJson.append(emulatorsJson).append("\n");
             firebaseJson.append("\t}\n");
 
-            if (isEmulatorEnabled(Emulators.CLOUD_FIRESTORE)) {
+            if (isEmulatorEnabled(Emulator.CLOUD_FIRESTORE)) {
                 var firestoreJson = ",\"firestore\": {}\n";
                 firebaseJson.append(firestoreJson);
             }
@@ -386,7 +389,7 @@ public class FirebaseEmulatorContainer extends GenericContainer<FirebaseEmulator
             dockerBuilder.cmd(arguments.toArray(new String[0]));
         }
 
-        private boolean isEmulatorEnabled(Emulators emulator) {
+        private boolean isEmulatorEnabled(Emulator emulator) {
             return this.devServices.containsKey(emulator);
         }
     }
@@ -424,7 +427,7 @@ public class FirebaseEmulatorContainer extends GenericContainer<FirebaseEmulator
         waitingFor(Wait.forLogMessage(".*Emulator Hub running at.*", 1));
     }
 
-    public Map<Emulators, String> emulatorEndpoints() {
+    public Map<Emulator, String> emulatorEndpoints() {
         return services.keySet()
                 .stream()
                 .collect(Collectors.toMap(
@@ -432,7 +435,7 @@ public class FirebaseEmulatorContainer extends GenericContainer<FirebaseEmulator
                         this::getEmulatorEndpoint));
     }
 
-    public Integer emulatorPort(Emulators emulator) {
+    public Integer emulatorPort(Emulator emulator) {
         var exposedPort = services.get(emulator);
         if (exposedPort.isFixed()) {
             return exposedPort.fixedPort();
@@ -441,7 +444,7 @@ public class FirebaseEmulatorContainer extends GenericContainer<FirebaseEmulator
         }
     }
 
-    public Map<Emulators, Integer> emulatorPorts() {
+    public Map<Emulator, Integer> emulatorPorts() {
         return services.keySet()
                 .stream()
                 .collect(Collectors.toMap(
@@ -449,7 +452,7 @@ public class FirebaseEmulatorContainer extends GenericContainer<FirebaseEmulator
                         this::emulatorPort));
     }
 
-    private String getEmulatorEndpoint(Emulators emulator) {
+    private String getEmulatorEndpoint(Emulator emulator) {
         return this.getHost() + ":" + emulatorPort(emulator);
     }
 }

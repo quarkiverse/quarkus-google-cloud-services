@@ -31,21 +31,21 @@ public class FirebaseEmulatorConfigBuilder {
                 exposedEmulators(devServices(config)));
     }
 
-    public static Map<FirebaseEmulatorContainer.Emulators, FirebaseDevServiceConfig.GenericDevService> devServices(
+    public static Map<FirebaseEmulatorContainer.Emulator, FirebaseDevServiceConfig.GenericDevService> devServices(
             FirebaseDevServiceConfig config) {
         return Map.of(
-                FirebaseEmulatorContainer.Emulators.AUTHENTICATION, config.firebase().auth().devservice(),
-                FirebaseEmulatorContainer.Emulators.EMULATOR_SUITE_UI, config.firebase().devservice().ui(),
-                FirebaseEmulatorContainer.Emulators.REALTIME_DATABASE, config.database().devservice(),
-                FirebaseEmulatorContainer.Emulators.CLOUD_FIRESTORE, config.firestore().devservice(),
-                FirebaseEmulatorContainer.Emulators.CLOUD_FUNCTIONS, config.functions().devservice(),
-                FirebaseEmulatorContainer.Emulators.CLOUD_STORAGE, config.storage().devservice(),
-                FirebaseEmulatorContainer.Emulators.FIREBASE_HOSTING, config.firebase().hosting().devservice(),
-                FirebaseEmulatorContainer.Emulators.PUB_SUB, config.pubsub().devservice());
+                FirebaseEmulatorContainer.Emulator.AUTHENTICATION, config.firebase().auth().devservice(),
+                FirebaseEmulatorContainer.Emulator.EMULATOR_SUITE_UI, config.firebase().devservice().ui(),
+                FirebaseEmulatorContainer.Emulator.REALTIME_DATABASE, config.database().devservice(),
+                FirebaseEmulatorContainer.Emulator.CLOUD_FIRESTORE, config.firestore().devservice(),
+                FirebaseEmulatorContainer.Emulator.CLOUD_FUNCTIONS, config.functions().devservice(),
+                FirebaseEmulatorContainer.Emulator.CLOUD_STORAGE, config.storage().devservice(),
+                FirebaseEmulatorContainer.Emulator.FIREBASE_HOSTING, config.firebase().hosting().devservice(),
+                FirebaseEmulatorContainer.Emulator.PUB_SUB, config.pubsub().devservice());
     }
 
-    private Map<FirebaseEmulatorContainer.Emulators, FirebaseEmulatorContainer.ExposedPort> exposedEmulators(
-            Map<FirebaseEmulatorContainer.Emulators, FirebaseDevServiceConfig.GenericDevService> devServices) {
+    private Map<FirebaseEmulatorContainer.Emulator, FirebaseEmulatorContainer.ExposedPort> exposedEmulators(
+            Map<FirebaseEmulatorContainer.Emulator, FirebaseDevServiceConfig.GenericDevService> devServices) {
         var emulators = devServices
                 .entrySet()
                 .stream()
@@ -54,21 +54,21 @@ public class FirebaseEmulatorConfigBuilder {
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 
         var uiService = (FirebaseDevServiceConfig.Firebase.DevService.UI) devServices
-                .get(FirebaseEmulatorContainer.Emulators.EMULATOR_SUITE_UI);
+                .get(FirebaseEmulatorContainer.Emulator.EMULATOR_SUITE_UI);
 
         uiService.hubPort().ifPresent(port -> emulators.put(
-                FirebaseEmulatorContainer.Emulators.EMULATOR_HUB,
+                FirebaseEmulatorContainer.Emulator.EMULATOR_HUB,
                 new FirebaseEmulatorContainer.ExposedPort(port)));
 
         uiService.loggingPort().ifPresent(port -> emulators.put(
-                FirebaseEmulatorContainer.Emulators.LOGGING,
+                FirebaseEmulatorContainer.Emulator.LOGGING,
                 new FirebaseEmulatorContainer.ExposedPort(port)));
 
         var firestoreService = (FirebaseDevServiceConfig.Firestore.FirestoreDevService) devServices
-                .get(FirebaseEmulatorContainer.Emulators.CLOUD_FIRESTORE);
+                .get(FirebaseEmulatorContainer.Emulator.CLOUD_FIRESTORE);
 
         firestoreService.websocketPort().ifPresent(port -> emulators.put(
-                FirebaseEmulatorContainer.Emulators.CLOUD_FIRESTORE_WS,
+                FirebaseEmulatorContainer.Emulator.CLOUD_FIRESTORE_WS,
                 new FirebaseEmulatorContainer.ExposedPort(port)));
 
         // TODO: Event arc?

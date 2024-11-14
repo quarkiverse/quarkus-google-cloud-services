@@ -30,16 +30,16 @@ public class FirebaseDevServiceProcessor {
     // Configuration for the Firebase Dev service
     private static volatile FirebaseDevServiceConfig config;
 
-    private static final Map<FirebaseEmulatorContainer.Emulators, String> CONFIG_PROPERTIES = Map.of(
-            FirebaseEmulatorContainer.Emulators.AUTHENTICATION, "quarkus.google.cloud.firebase.auth.emulator-host",
-            FirebaseEmulatorContainer.Emulators.EMULATOR_SUITE_UI, "quarkus.google.cloud.firebase.emulator-host",
-            FirebaseEmulatorContainer.Emulators.FIREBASE_HOSTING, "quarkus.google.cloud.firebase.hosting.emulator-host",
-            FirebaseEmulatorContainer.Emulators.CLOUD_FUNCTIONS, "quarkus.google.cloud.functions.emulator-host",
-            FirebaseEmulatorContainer.Emulators.EVENT_ARC, "quarkus.google.cloud.eventarc.emulator-host",
-            FirebaseEmulatorContainer.Emulators.REALTIME_DATABASE, "quarkus.google.cloud.database.emulator-host",
-            FirebaseEmulatorContainer.Emulators.CLOUD_FIRESTORE, "quarkus.google.cloud.firestore.host-override",
-            FirebaseEmulatorContainer.Emulators.CLOUD_STORAGE, "quarkus.google.cloud.storage.host-override",
-            FirebaseEmulatorContainer.Emulators.PUB_SUB, "quarkus.google.cloud.pubsub.emulator-host");
+    private static final Map<FirebaseEmulatorContainer.Emulator, String> CONFIG_PROPERTIES = Map.of(
+            FirebaseEmulatorContainer.Emulator.AUTHENTICATION, "quarkus.google.cloud.firebase.auth.emulator-host",
+            FirebaseEmulatorContainer.Emulator.EMULATOR_SUITE_UI, "quarkus.google.cloud.firebase.emulator-host",
+            FirebaseEmulatorContainer.Emulator.FIREBASE_HOSTING, "quarkus.google.cloud.firebase.hosting.emulator-host",
+            FirebaseEmulatorContainer.Emulator.CLOUD_FUNCTIONS, "quarkus.google.cloud.functions.emulator-host",
+            FirebaseEmulatorContainer.Emulator.EVENT_ARC, "quarkus.google.cloud.eventarc.emulator-host",
+            FirebaseEmulatorContainer.Emulator.REALTIME_DATABASE, "quarkus.google.cloud.database.emulator-host",
+            FirebaseEmulatorContainer.Emulator.CLOUD_FIRESTORE, "quarkus.google.cloud.firestore.host-override",
+            FirebaseEmulatorContainer.Emulator.CLOUD_STORAGE, "quarkus.google.cloud.storage.host-override",
+            FirebaseEmulatorContainer.Emulator.PUB_SUB, "quarkus.google.cloud.pubsub.emulator-host");
 
     @BuildStep
     public DevServicesResultBuildItem start(DockerStatusBuildItem dockerStatusBuildItem,
@@ -171,7 +171,7 @@ public class FirebaseDevServiceProcessor {
                                 Map.Entry::getValue));
     }
 
-    private String configPropertyForEmulator(FirebaseEmulatorContainer.Emulators emulator) {
+    private String configPropertyForEmulator(FirebaseEmulatorContainer.Emulator emulator) {
         return CONFIG_PROPERTIES.get(emulator);
     }
 

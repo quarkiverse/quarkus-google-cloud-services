@@ -86,22 +86,22 @@ class FirebaseEmulatorConfigBuilderTest {
     void testExposedEmulators() {
         FirebaseEmulatorContainer.EmulatorConfig emulatorConfig = configBuilder.build();
 
-        Map<FirebaseEmulatorContainer.Emulators, FirebaseEmulatorContainer.ExposedPort> exposedPorts = emulatorConfig
+        Map<FirebaseEmulatorContainer.Emulator, FirebaseEmulatorContainer.ExposedPort> exposedPorts = emulatorConfig
                 .services();
 
         assertEquals(10, exposedPorts.size());
-        assertEquals(6000, exposedPorts.get(FirebaseEmulatorContainer.Emulators.EMULATOR_SUITE_UI).fixedPort());
-        assertEquals(6001, exposedPorts.get(FirebaseEmulatorContainer.Emulators.LOGGING).fixedPort());
-        assertEquals(6002, exposedPorts.get(FirebaseEmulatorContainer.Emulators.EMULATOR_HUB).fixedPort());
-        assertEquals(6003, exposedPorts.get(FirebaseEmulatorContainer.Emulators.AUTHENTICATION).fixedPort());
-        assertEquals(6004, exposedPorts.get(FirebaseEmulatorContainer.Emulators.FIREBASE_HOSTING).fixedPort());
-        assertEquals(6006, exposedPorts.get(FirebaseEmulatorContainer.Emulators.CLOUD_FIRESTORE).fixedPort());
-        assertEquals(6007, exposedPorts.get(FirebaseEmulatorContainer.Emulators.CLOUD_FIRESTORE_WS).fixedPort());
-        assertEquals(6008, exposedPorts.get(FirebaseEmulatorContainer.Emulators.CLOUD_FUNCTIONS).fixedPort());
-        assertEquals(6009, exposedPorts.get(FirebaseEmulatorContainer.Emulators.PUB_SUB).fixedPort());
-        assertNull(exposedPorts.get(FirebaseEmulatorContainer.Emulators.CLOUD_STORAGE).fixedPort());
+        assertEquals(6000, exposedPorts.get(FirebaseEmulatorContainer.Emulator.EMULATOR_SUITE_UI).fixedPort());
+        assertEquals(6001, exposedPorts.get(FirebaseEmulatorContainer.Emulator.LOGGING).fixedPort());
+        assertEquals(6002, exposedPorts.get(FirebaseEmulatorContainer.Emulator.EMULATOR_HUB).fixedPort());
+        assertEquals(6003, exposedPorts.get(FirebaseEmulatorContainer.Emulator.AUTHENTICATION).fixedPort());
+        assertEquals(6004, exposedPorts.get(FirebaseEmulatorContainer.Emulator.FIREBASE_HOSTING).fixedPort());
+        assertEquals(6006, exposedPorts.get(FirebaseEmulatorContainer.Emulator.CLOUD_FIRESTORE).fixedPort());
+        assertEquals(6007, exposedPorts.get(FirebaseEmulatorContainer.Emulator.CLOUD_FIRESTORE_WS).fixedPort());
+        assertEquals(6008, exposedPorts.get(FirebaseEmulatorContainer.Emulator.CLOUD_FUNCTIONS).fixedPort());
+        assertEquals(6009, exposedPorts.get(FirebaseEmulatorContainer.Emulator.PUB_SUB).fixedPort());
+        assertNull(exposedPorts.get(FirebaseEmulatorContainer.Emulator.CLOUD_STORAGE).fixedPort());
 
-        assertNull(exposedPorts.get(FirebaseEmulatorContainer.Emulators.REALTIME_DATABASE));
+        assertNull(exposedPorts.get(FirebaseEmulatorContainer.Emulator.REALTIME_DATABASE));
     }
 
     // Record implementations for interfaces
