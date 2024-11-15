@@ -1,5 +1,6 @@
-package io.quarkiverse.googlecloudservices.firebase.deployment;
+package io.quarkiverse.googlecloudservices.firebase.deployment.testcontainers;
 
+import java.io.IOException;
 import java.nio.file.Path;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -112,9 +113,9 @@ public class FirebaseEmulatorContainer extends GenericContainer<FirebaseEmulator
                 "pubsub",
                 "pubsub");
 
-        final int internalPort;
-        final String configProperty;
-        final String emulatorName;
+        public final int internalPort;
+        public final String configProperty;
+        public final String emulatorName;
 
         Emulator(int internalPort, String configProperty, String onlyArgument) {
             this.internalPort = internalPort;
@@ -150,6 +151,35 @@ public class FirebaseEmulatorContainer extends GenericContainer<FirebaseEmulator
     }
 
     /**
+     * Firebase hosting configuration
+     *
+     * @param hostingContentDir The path to the directory containing the hosting content
+     */
+    public record HostingConfig(
+            Optional<Path> hostingContentDir) {
+    }
+
+    /**
+     * Cloud storage configuration
+     *
+     * @param rulesFile Cloud storage rules file
+     */
+    public record StorageConfig(
+            Optional<Path> rulesFile) {
+    }
+
+    /**
+     * Firestore configuration
+     *
+     * @param rulesFile The rules file
+     * @param indexesFile The indexes file
+     */
+    public record FirestoreConfig(
+            Optional<Path> rulesFile,
+            Optional<Path> indexesFile) {
+    }
+
+    /**
      * Describes the Firebase emulator configuration.
      *
      * @param dockerConfig The docker configuration
@@ -159,7 +189,10 @@ public class FirebaseEmulatorContainer extends GenericContainer<FirebaseEmulator
      * @param customFirebaseJson The path to a custom firebase
      * @param javaToolOptions The options to pass to the java based emulators
      * @param emulatorData The path to the directory where to store the emulator data
-     * @param hostingContentDir The path to the directory containing the hosting content
+     * @param hostingConfig The firebase hosting configuration
+     * @param storageConfig The storage configuration
+     * @param firestoreConfig The firestore configuration
+     * @param services The exposed services configuration
      */
     public record EmulatorConfig(
             DockerConfig dockerConfig,
@@ -169,7 +202,9 @@ public class FirebaseEmulatorContainer extends GenericContainer<FirebaseEmulator
             Optional<Path> customFirebaseJson,
             Optional<String> javaToolOptions,
             Optional<Path> emulatorData,
-            Optional<Path> hostingContentDir,
+            HostingConfig hostingConfig,
+            StorageConfig storageConfig,
+            FirestoreConfig firestoreConfig,
             Map<Emulator, ExposedPort> services) {
     }
 
@@ -189,7 +224,7 @@ public class FirebaseEmulatorContainer extends GenericContainer<FirebaseEmulator
             this.withFileSystemBind(path.toString(), EMULATOR_DATA_PATH, BindMode.READ_WRITE);
         });
 
-        firebaseConfig.hostingContentDir().ifPresent(hostingPath -> {
+        firebaseConfig.hostingConfig().hostingContentDir().ifPresent(hostingPath -> {
             // Mount volume for static hosting content
             this.withFileSystemBind(hostingPath.toString(), FIREBASE_HOSTING_PATH, BindMode.READ_ONLY);
         });
@@ -230,6 +265,8 @@ public class FirebaseEmulatorContainer extends GenericContainer<FirebaseEmulator
             this.setupUserAndGroup();
             this.downloadEmulators();
             this.addFirebaseJson();
+            this.includeFirestoreFiles();
+            this.includeStorageFiles();
             this.setupDataImportExport();
             this.setupHosting();
             this.runExecutable();
@@ -324,61 +361,112 @@ public class FirebaseEmulatorContainer extends GenericContainer<FirebaseEmulator
                     customFilePath);
         }
 
+        private void includeFirestoreFiles() {
+            firebaseConfig.firestoreConfig.rulesFile.ifPresent(rulesFile -> {
+                this.dockerBuilder.add("firestore.rules", FIREBASE_ROOT + "/firestore.rules");
+                this.result.withFileFromPath("firestore.rules", rulesFile);
+            });
+
+            firebaseConfig.firestoreConfig.indexesFile.ifPresent(indexesFile -> {
+                this.dockerBuilder.add("firestore.indexes.json", FIREBASE_ROOT + "/firestore.indexes.json");
+                this.result.withFileFromPath("firestore.indexes.json", indexesFile);
+            });
+        }
+
+        private void includeStorageFiles() {
+            firebaseConfig.storageConfig.rulesFile.ifPresent(rulesFile -> {
+                this.dockerBuilder.add("storage.rules", FIREBASE_ROOT + "/storage.rules");
+                this.result.withFileFromPath("storage.rules", rulesFile);
+            });
+        }
+
         private void generateFirebaseJson() {
-            StringBuilder firebaseJson = new StringBuilder();
-
-            firebaseJson.append("{\n");
-            firebaseJson.append("\t\"emulators\": {\n");
-
-            var emulatorsJson = this.devServices
-                    .entrySet()
-                    .stream()
-                    .filter(service -> service.getKey().configProperty != null)
-                    .map((service -> {
-                        var emulator = service.getKey();
-
-                        var port = Optional.ofNullable(service.getValue().fixedPort())
-                                .orElse(emulator.internalPort);
-
-                        String additionalConfig = "";
-                        if (emulator.equals(Emulator.CLOUD_FIRESTORE)) {
-                            var wsService = this.devServices.get(Emulator.CLOUD_FIRESTORE_WS);
-                            if (wsService != null) {
-                                var wsPort = Optional.ofNullable(wsService.fixedPort)
-                                        .orElse(Emulator.CLOUD_FIRESTORE.internalPort);
-                                additionalConfig = "\t\t\t\"websocketPort\": " + wsPort + ",\n";
-                            }
-                        }
-
-                        return "\t\t\"" + emulator.configProperty + "\": {\n" +
-                                "\t\t\t\"port\": " + port + ",\n" +
-                                additionalConfig +
-                                "\t\t\t\"host\": \"0.0.0.0\"\n" +
-                                "\t\t}";
-                    }))
-                    .collect(Collectors.joining(",\n"));
-            firebaseJson.append(emulatorsJson).append("\n");
-            firebaseJson.append("\t}\n");
-
-            if (isEmulatorEnabled(Emulator.CLOUD_FIRESTORE)) {
-                var firestoreJson = ",\"firestore\": {}\n";
-                firebaseJson.append(firestoreJson);
+            var firebaseJsonBuilder = new FirebaseJsonBuilder(this.firebaseConfig);
+            String firebaseJson = null;
+            try {
+                firebaseJson = firebaseJsonBuilder.buildFirebaseConfig();
+            } catch (IOException e) {
+                throw new IllegalStateException("Failed to generate firebase.json file", e);
             }
 
-            firebaseJson.append("}\n");
+            //            StringBuilder firebaseJson = new StringBuilder();
+            //
+            //            firebaseJson.append("{\n");
+            //            firebaseJson.append("\t\"emulators\": {\n");
+            //
+            //            var emulatorsJson = this.devServices
+            //                    .entrySet()
+            //                    .stream()
+            //                    .filter(service -> service.getKey().configProperty != null)
+            //                    .map((service -> {
+            //                        var emulator = service.getKey();
+            //
+            //                        var port = Optional.ofNullable(service.getValue().fixedPort())
+            //                                .orElse(emulator.internalPort);
+            //
+            //                        String additionalConfig = "";
+            //                        if (emulator.equals(Emulator.CLOUD_FIRESTORE)) {
+            //                            var wsService = this.devServices.get(Emulator.CLOUD_FIRESTORE_WS);
+            //                            if (wsService != null) {
+            //                                var wsPort = Optional.ofNullable(wsService.fixedPort)
+            //                                        .orElse(Emulator.CLOUD_FIRESTORE.internalPort);
+            //                                additionalConfig = "\t\t\t\"websocketPort\": " + wsPort + ",\n";
+            //                            }
+            //                        }
+            //
+            //                        return "\t\t\"" + emulator.configProperty + "\": {\n" +
+            //                                "\t\t\t\"port\": " + port + ",\n" +
+            //                                additionalConfig +
+            //                                "\t\t\t\"host\": \"0.0.0.0\"\n" +
+            //                                "\t\t}";
+            //                    }))
+            //                    .collect(Collectors.joining(",\n"));
+            //            firebaseJson.append(emulatorsJson).append("\n");
+            //            firebaseJson.append("\t}\n");
+            //
+            //            if (isEmulatorEnabled(Emulator.CLOUD_FIRESTORE)) {
+            //                var firestoreJson = ",\"firestore\": {";
+            //
+            //                var files = Stream.of(
+            //                        firebaseConfig.firestoreConfig()
+            //                                .rulesFile
+            //                                .map(rulesFile -> "\t\"rules\": \"" + rulesFile + "\""),
+            //                        firebaseConfig.firestoreConfig()
+            //                                .indexesFile
+            //                                .map(indexesFile -> "\t\"indexes\": \"" + indexesFile + "\"")
+            //                    )
+            //                    .filter(Optional::isPresent)
+            //                    .map(Optional::get)
+            //                    .collect(Collectors.joining(",\n"));
+            //
+            //                firestoreJson += files;
+            //                firestoreJson += "}\n";
+            //                firebaseJson.append(firestoreJson);
+            //            }
+            //
+            //            if (isEmulatorEnabled(Emulator.CLOUD_STORAGE)) {
+            //                var storageJson = ",\"storage\": {";
+            //
+            //                storageJson += firebaseConfig.storageConfig.rulesFile().map(rulesFile ->
+            //                    "\n\t\"rules\": \"" + rulesFile + "\"\n"
+            //                );
+            //
+            //                storageJson += "}\n";
+            //                firebaseJson.append(storageJson);
+            //            }
+            //
+            //            firebaseJson.append("}\n");
 
             this.result.withFileFromString("firebase.json", firebaseJson.toString());
         }
 
         private void setupDataImportExport() {
-            firebaseConfig.emulatorData().ifPresent(emulator -> {
-                this.dockerBuilder.volume(EMULATOR_DATA_PATH);
-            });
+            firebaseConfig.emulatorData().ifPresent(emulator -> this.dockerBuilder.volume(EMULATOR_DATA_PATH));
         }
 
         private void setupHosting() {
             // Specify public directory if hosting is enabled
-            if (firebaseConfig.hostingContentDir().isPresent()) {
+            if (firebaseConfig.hostingConfig().hostingContentDir().isPresent()) {
                 this.dockerBuilder.volume(FIREBASE_HOSTING_PATH);
             }
         }
@@ -386,9 +474,7 @@ public class FirebaseEmulatorContainer extends GenericContainer<FirebaseEmulator
         private void setupUserAndGroup() {
             var commands = new ArrayList<String>();
 
-            firebaseConfig.dockerConfig.groupId().ifPresent(group -> {
-                commands.add("addgroup -g " + group + " runner");
-            });
+            firebaseConfig.dockerConfig.groupId().ifPresent(group -> commands.add("addgroup -g " + group + " runner"));
 
             firebaseConfig.dockerConfig.userId().ifPresent(user -> {
                 var groupName = firebaseConfig.dockerConfig().groupId().map(i -> "runner").orElse("node");
