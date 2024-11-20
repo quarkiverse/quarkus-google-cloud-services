@@ -58,6 +58,9 @@ class LoggingHandlerTest {
 
         ArcContainer container = createArcContainer(traceId, spanId);
 
+        // There can be JVM logs before our log so we clean the output stream captor
+        outputStreamCaptor.reset();
+
         try (MockedStatic<Arc> arc = Mockito.mockStatic(Arc.class)) {
             arc.when(Arc::container).thenReturn(container);
 
