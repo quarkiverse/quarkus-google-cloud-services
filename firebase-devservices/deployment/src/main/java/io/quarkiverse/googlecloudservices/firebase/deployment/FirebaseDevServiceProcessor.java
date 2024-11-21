@@ -4,6 +4,7 @@ import java.time.Duration;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import io.quarkiverse.googlecloudservices.firebase.deployment.testcontainers.FirebaseEmulatorContainer;
 import org.jboss.logging.Logger;
 
 import io.quarkus.deployment.IsNormal;
