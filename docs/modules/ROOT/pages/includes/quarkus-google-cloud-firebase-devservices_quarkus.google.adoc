@@ -1,0 +1,531 @@
+[.configuration-legend]
+icon:lock[title=Fixed at build time] Configuration property fixed at build time - All other configuration properties are overridable at runtime
+[.configuration-reference.searchable, cols="80,.^10,.^10"]
+|===
+
+h|[.header-title]##Configuration property##
+h|Type
+h|Default
+
+a|icon:lock[title=Fixed at build time] [[quarkus-google-cloud-firebase-devservices_quarkus-google-cloud-project-id]] [.property-path]##link:#quarkus-google-cloud-firebase-devservices_quarkus-google-cloud-project-id[`quarkus.google.cloud.project-id`]##
+
+[.description]
+--
+Google Cloud project ID. The project is required to be set if you use the Firebase Auth Dev service.
+
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_GOOGLE_CLOUD_PROJECT_ID+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_GOOGLE_CLOUD_PROJECT_ID+++`
+endif::add-copy-button-to-env-var[]
+--
+|string
+|
+
+a|icon:lock[title=Fixed at build time] [[quarkus-google-cloud-firebase-devservices_quarkus-google-cloud-firebase-devservice-prefer-firebase-dev-services]] [.property-path]##link:#quarkus-google-cloud-firebase-devservices_quarkus-google-cloud-firebase-devservice-prefer-firebase-dev-services[`quarkus.google.cloud.firebase.devservice.prefer-firebase-dev-services`]##
+
+[.description]
+--
+Indicates to use the dev service for Firebase. The default value is true. This indicator is used to detect the Firebase DevService and disable the DevServices for extensions which conflict with the Firebase DevService.
+
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_GOOGLE_CLOUD_FIREBASE_DEVSERVICE_PREFER_FIREBASE_DEV_SERVICES+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_GOOGLE_CLOUD_FIREBASE_DEVSERVICE_PREFER_FIREBASE_DEV_SERVICES+++`
+endif::add-copy-button-to-env-var[]
+--
+|boolean
+|`true`
+
+a|icon:lock[title=Fixed at build time] [[quarkus-google-cloud-firebase-devservices_quarkus-google-cloud-firebase-devservice-image-name]] [.property-path]##link:#quarkus-google-cloud-firebase-devservices_quarkus-google-cloud-firebase-devservice-image-name[`quarkus.google.cloud.firebase.devservice.image-name`]##
+
+[.description]
+--
+Sets the Docker image name for the Google Cloud SDK. This image is used to emulate the Pub/Sub service in the development environment. The default value is 'node:23-alpine'.
+
+See also the documentation on Custom Docker images for more info about this image.
+
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_GOOGLE_CLOUD_FIREBASE_DEVSERVICE_IMAGE_NAME+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_GOOGLE_CLOUD_FIREBASE_DEVSERVICE_IMAGE_NAME+++`
+endif::add-copy-button-to-env-var[]
+--
+|string
+|`node:23-alpine`
+
+a|icon:lock[title=Fixed at build time] [[quarkus-google-cloud-firebase-devservices_quarkus-google-cloud-firebase-devservice-docker-user]] [.property-path]##link:#quarkus-google-cloud-firebase-devservices_quarkus-google-cloud-firebase-devservice-docker-user[`quarkus.google.cloud.firebase.devservice.docker-user`]##
+
+[.description]
+--
+Id of the docker user to run the firebase executable. This is needed in environments where Docker does not perform a mapping to the user running Docker. In a Docker Desktop setup, Docker automatically performs this mapping and the data written by the emulator can be read by the user running the build. This is not the case in a regular (non-Desktop) setup, this is not the case and you may need to set the user id and `docker-group()`. This option is often needed in CI environments.
+
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_GOOGLE_CLOUD_FIREBASE_DEVSERVICE_DOCKER_USER+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_GOOGLE_CLOUD_FIREBASE_DEVSERVICE_DOCKER_USER+++`
+endif::add-copy-button-to-env-var[]
+--
+|int
+|
+
+a|icon:lock[title=Fixed at build time] [[quarkus-google-cloud-firebase-devservices_quarkus-google-cloud-firebase-devservice-docker-group]] [.property-path]##link:#quarkus-google-cloud-firebase-devservices_quarkus-google-cloud-firebase-devservice-docker-group[`quarkus.google.cloud.firebase.devservice.docker-group`]##
+
+[.description]
+--
+Id of the group to which the `docker-user()` belongs.
+
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_GOOGLE_CLOUD_FIREBASE_DEVSERVICE_DOCKER_GROUP+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_GOOGLE_CLOUD_FIREBASE_DEVSERVICE_DOCKER_GROUP+++`
+endif::add-copy-button-to-env-var[]
+--
+|int
+|
+
+a|icon:lock[title=Fixed at build time] [[quarkus-google-cloud-firebase-devservices_quarkus-google-cloud-firebase-devservice-firebase-version]] [.property-path]##link:#quarkus-google-cloud-firebase-devservices_quarkus-google-cloud-firebase-devservice-firebase-version[`quarkus.google.cloud.firebase.devservice.firebase-version`]##
+
+[.description]
+--
+The version of the firebase tools to use. Default is to use the latest available version.
+
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_GOOGLE_CLOUD_FIREBASE_DEVSERVICE_FIREBASE_VERSION+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_GOOGLE_CLOUD_FIREBASE_DEVSERVICE_FIREBASE_VERSION+++`
+endif::add-copy-button-to-env-var[]
+--
+|string
+|`latest`
+
+a|icon:lock[title=Fixed at build time] [[quarkus-google-cloud-firebase-devservices_quarkus-google-cloud-firebase-devservice-token]] [.property-path]##link:#quarkus-google-cloud-firebase-devservices_quarkus-google-cloud-firebase-devservice-token[`quarkus.google.cloud.firebase.devservice.token`]##
+
+[.description]
+--
+The token to use for firebase authentication. Run `firebase login:ci` locally to get a new token. This option is mandatory if you use firebase hosting.
+
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_GOOGLE_CLOUD_FIREBASE_DEVSERVICE_TOKEN+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_GOOGLE_CLOUD_FIREBASE_DEVSERVICE_TOKEN+++`
+endif::add-copy-button-to-env-var[]
+--
+|string
+|
+
+a|icon:lock[title=Fixed at build time] [[quarkus-google-cloud-firebase-devservices_quarkus-google-cloud-firebase-devservice-custom-firebase-json]] [.property-path]##link:#quarkus-google-cloud-firebase-devservices_quarkus-google-cloud-firebase-devservice-custom-firebase-json[`quarkus.google.cloud.firebase.devservice.custom-firebase-json`]##
+
+[.description]
+--
+Indicate to use a custom firebase.json file instead of the automatically generated one. The custom firebase.json file MUST include a setting of
+
+```
+"host" : "0.0.0.0"
+```
+
+to ensure the ports of the emulator are exposed correctly at the docker container level.
+
+See the section on Custom Firebase Json in the docs for more info.
+
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_GOOGLE_CLOUD_FIREBASE_DEVSERVICE_CUSTOM_FIREBASE_JSON+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_GOOGLE_CLOUD_FIREBASE_DEVSERVICE_CUSTOM_FIREBASE_JSON+++`
+endif::add-copy-button-to-env-var[]
+--
+|string
+|
+
+a|icon:lock[title=Fixed at build time] [[quarkus-google-cloud-firebase-devservices_quarkus-google-cloud-firebase-devservice-java-tool-options]] [.property-path]##link:#quarkus-google-cloud-firebase-devservices_quarkus-google-cloud-firebase-devservice-java-tool-options[`quarkus.google.cloud.firebase.devservice.java-tool-options`]##
+
+[.description]
+--
+Sets the JAVA tool options for emulators based on the Java runtime environment like -Xmx. See also link:https://firebase.google.com/docs/emulator-suite/install_and_configure#specifying_java_options[here]
+
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_GOOGLE_CLOUD_FIREBASE_DEVSERVICE_JAVA_TOOL_OPTIONS+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_GOOGLE_CLOUD_FIREBASE_DEVSERVICE_JAVA_TOOL_OPTIONS+++`
+endif::add-copy-button-to-env-var[]
+--
+|string
+|
+
+a|icon:lock[title=Fixed at build time] [[quarkus-google-cloud-firebase-devservices_quarkus-google-cloud-firebase-devservice-emulator-data]] [.property-path]##link:#quarkus-google-cloud-firebase-devservices_quarkus-google-cloud-firebase-devservice-emulator-data[`quarkus.google.cloud.firebase.devservice.emulator-data`]##
+
+[.description]
+--
+Allow to import and export data. Specify a path relative to the current working directory of the executable (for most unit tests, this is the root of the build directory) to be used for import and export of emulator data. The data will be written to a subdirectory called "emulator-data" of this directory. See also link:https://firebase.google.com/docs/emulator-suite/install_and_configure#export_and_import_emulator_data[here]
+
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_GOOGLE_CLOUD_FIREBASE_DEVSERVICE_EMULATOR_DATA+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_GOOGLE_CLOUD_FIREBASE_DEVSERVICE_EMULATOR_DATA+++`
+endif::add-copy-button-to-env-var[]
+--
+|string
+|
+
+a|icon:lock[title=Fixed at build time] [[quarkus-google-cloud-firebase-devservices_quarkus-google-cloud-firebase-devservice-ui-enabled]] [.property-path]##link:#quarkus-google-cloud-firebase-devservices_quarkus-google-cloud-firebase-devservice-ui-enabled[`quarkus.google.cloud.firebase.devservice.ui.enabled`]##
+
+[.description]
+--
+Indicates whether the service should be enabled or not. The default value is 'false'.
+
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_GOOGLE_CLOUD_FIREBASE_DEVSERVICE_UI_ENABLED+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_GOOGLE_CLOUD_FIREBASE_DEVSERVICE_UI_ENABLED+++`
+endif::add-copy-button-to-env-var[]
+--
+|boolean
+|`true`
+
+a|icon:lock[title=Fixed at build time] [[quarkus-google-cloud-firebase-devservices_quarkus-google-cloud-firebase-devservice-ui-emulator-port]] [.property-path]##link:#quarkus-google-cloud-firebase-devservices_quarkus-google-cloud-firebase-devservice-ui-emulator-port[`quarkus.google.cloud.firebase.devservice.ui.emulator-port`]##
+
+[.description]
+--
+Specifies the emulatorPort on which the service should run in the development environment. The default is to expose the service on a random port.
+
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_GOOGLE_CLOUD_FIREBASE_DEVSERVICE_UI_EMULATOR_PORT+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_GOOGLE_CLOUD_FIREBASE_DEVSERVICE_UI_EMULATOR_PORT+++`
+endif::add-copy-button-to-env-var[]
+--
+|int
+|
+
+a|icon:lock[title=Fixed at build time] [[quarkus-google-cloud-firebase-devservices_quarkus-google-cloud-firebase-devservice-ui-logging-port]] [.property-path]##link:#quarkus-google-cloud-firebase-devservices_quarkus-google-cloud-firebase-devservice-ui-logging-port[`quarkus.google.cloud.firebase.devservice.ui.logging-port`]##
+
+[.description]
+--
+Port on which to expose the logging endpoint port. This is needed in case you want to view the logging via the Emulator UI.
+
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_GOOGLE_CLOUD_FIREBASE_DEVSERVICE_UI_LOGGING_PORT+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_GOOGLE_CLOUD_FIREBASE_DEVSERVICE_UI_LOGGING_PORT+++`
+endif::add-copy-button-to-env-var[]
+--
+|int
+|
+
+a|icon:lock[title=Fixed at build time] [[quarkus-google-cloud-firebase-devservices_quarkus-google-cloud-firebase-devservice-ui-hub-port]] [.property-path]##link:#quarkus-google-cloud-firebase-devservices_quarkus-google-cloud-firebase-devservice-ui-hub-port[`quarkus.google.cloud.firebase.devservice.ui.hub-port`]##
+
+[.description]
+--
+Port on which to expose the hub endpoint port. This is needed if you want to use the hub API of the Emulator UI.
+
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_GOOGLE_CLOUD_FIREBASE_DEVSERVICE_UI_HUB_PORT+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_GOOGLE_CLOUD_FIREBASE_DEVSERVICE_UI_HUB_PORT+++`
+endif::add-copy-button-to-env-var[]
+--
+|int
+|
+
+a|icon:lock[title=Fixed at build time] [[quarkus-google-cloud-firebase-devservices_quarkus-google-cloud-firebase-auth-devservice-enabled]] [.property-path]##link:#quarkus-google-cloud-firebase-devservices_quarkus-google-cloud-firebase-auth-devservice-enabled[`quarkus.google.cloud.firebase.auth.devservice.enabled`]##
+
+[.description]
+--
+Indicates whether the DevService should be enabled or not. The default value is 'false'.
+
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_GOOGLE_CLOUD_FIREBASE_AUTH_DEVSERVICE_ENABLED+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_GOOGLE_CLOUD_FIREBASE_AUTH_DEVSERVICE_ENABLED+++`
+endif::add-copy-button-to-env-var[]
+--
+|boolean
+|`false`
+
+a|icon:lock[title=Fixed at build time] [[quarkus-google-cloud-firebase-devservices_quarkus-google-cloud-firebase-auth-devservice-emulator-port]] [.property-path]##link:#quarkus-google-cloud-firebase-devservices_quarkus-google-cloud-firebase-auth-devservice-emulator-port[`quarkus.google.cloud.firebase.auth.devservice.emulator-port`]##
+
+[.description]
+--
+Specifies the emulatorPort on which the service should run in the development environment. The default is to expose the service on a random port.
+
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_GOOGLE_CLOUD_FIREBASE_AUTH_DEVSERVICE_EMULATOR_PORT+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_GOOGLE_CLOUD_FIREBASE_AUTH_DEVSERVICE_EMULATOR_PORT+++`
+endif::add-copy-button-to-env-var[]
+--
+|int
+|
+
+a|icon:lock[title=Fixed at build time] [[quarkus-google-cloud-firebase-devservices_quarkus-google-cloud-firebase-hosting-devservice-enabled]] [.property-path]##link:#quarkus-google-cloud-firebase-devservices_quarkus-google-cloud-firebase-hosting-devservice-enabled[`quarkus.google.cloud.firebase.hosting.devservice.enabled`]##
+
+[.description]
+--
+Indicates whether the DevService should be enabled or not. The default value is 'false'.
+
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_GOOGLE_CLOUD_FIREBASE_HOSTING_DEVSERVICE_ENABLED+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_GOOGLE_CLOUD_FIREBASE_HOSTING_DEVSERVICE_ENABLED+++`
+endif::add-copy-button-to-env-var[]
+--
+|boolean
+|`false`
+
+a|icon:lock[title=Fixed at build time] [[quarkus-google-cloud-firebase-devservices_quarkus-google-cloud-firebase-hosting-devservice-emulator-port]] [.property-path]##link:#quarkus-google-cloud-firebase-devservices_quarkus-google-cloud-firebase-hosting-devservice-emulator-port[`quarkus.google.cloud.firebase.hosting.devservice.emulator-port`]##
+
+[.description]
+--
+Specifies the emulatorPort on which the service should run in the development environment. The default is to expose the service on a random port.
+
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_GOOGLE_CLOUD_FIREBASE_HOSTING_DEVSERVICE_EMULATOR_PORT+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_GOOGLE_CLOUD_FIREBASE_HOSTING_DEVSERVICE_EMULATOR_PORT+++`
+endif::add-copy-button-to-env-var[]
+--
+|int
+|
+
+a|icon:lock[title=Fixed at build time] [[quarkus-google-cloud-firebase-devservices_quarkus-google-cloud-firebase-hosting-hosting-path]] [.property-path]##link:#quarkus-google-cloud-firebase-devservices_quarkus-google-cloud-firebase-hosting-hosting-path[`quarkus.google.cloud.firebase.hosting.hosting-path`]##
+
+[.description]
+--
+Path to the hosting files.
+
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_GOOGLE_CLOUD_FIREBASE_HOSTING_HOSTING_PATH+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_GOOGLE_CLOUD_FIREBASE_HOSTING_HOSTING_PATH+++`
+endif::add-copy-button-to-env-var[]
+--
+|string
+|
+
+a|icon:lock[title=Fixed at build time] [[quarkus-google-cloud-firebase-devservices_quarkus-google-cloud-database-devservice-enabled]] [.property-path]##link:#quarkus-google-cloud-firebase-devservices_quarkus-google-cloud-database-devservice-enabled[`quarkus.google.cloud.database.devservice.enabled`]##
+
+[.description]
+--
+Indicates whether the DevService should be enabled or not. The default value is 'false'.
+
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_GOOGLE_CLOUD_DATABASE_DEVSERVICE_ENABLED+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_GOOGLE_CLOUD_DATABASE_DEVSERVICE_ENABLED+++`
+endif::add-copy-button-to-env-var[]
+--
+|boolean
+|`false`
+
+a|icon:lock[title=Fixed at build time] [[quarkus-google-cloud-firebase-devservices_quarkus-google-cloud-database-devservice-emulator-port]] [.property-path]##link:#quarkus-google-cloud-firebase-devservices_quarkus-google-cloud-database-devservice-emulator-port[`quarkus.google.cloud.database.devservice.emulator-port`]##
+
+[.description]
+--
+Specifies the emulatorPort on which the service should run in the development environment. The default is to expose the service on a random port.
+
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_GOOGLE_CLOUD_DATABASE_DEVSERVICE_EMULATOR_PORT+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_GOOGLE_CLOUD_DATABASE_DEVSERVICE_EMULATOR_PORT+++`
+endif::add-copy-button-to-env-var[]
+--
+|int
+|
+
+a|icon:lock[title=Fixed at build time] [[quarkus-google-cloud-firebase-devservices_quarkus-google-cloud-firestore-devservice-enabled]] [.property-path]##link:#quarkus-google-cloud-firebase-devservices_quarkus-google-cloud-firestore-devservice-enabled[`quarkus.google.cloud.firestore.devservice.enabled`]##
+
+[.description]
+--
+Indicates whether the DevService should be enabled or not. The default value is 'false'.
+
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_GOOGLE_CLOUD_FIRESTORE_DEVSERVICE_ENABLED+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_GOOGLE_CLOUD_FIRESTORE_DEVSERVICE_ENABLED+++`
+endif::add-copy-button-to-env-var[]
+--
+|boolean
+|`false`
+
+a|icon:lock[title=Fixed at build time] [[quarkus-google-cloud-firebase-devservices_quarkus-google-cloud-firestore-devservice-emulator-port]] [.property-path]##link:#quarkus-google-cloud-firebase-devservices_quarkus-google-cloud-firestore-devservice-emulator-port[`quarkus.google.cloud.firestore.devservice.emulator-port`]##
+
+[.description]
+--
+Specifies the emulatorPort on which the service should run in the development environment. The default is to expose the service on a random port.
+
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_GOOGLE_CLOUD_FIRESTORE_DEVSERVICE_EMULATOR_PORT+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_GOOGLE_CLOUD_FIRESTORE_DEVSERVICE_EMULATOR_PORT+++`
+endif::add-copy-button-to-env-var[]
+--
+|int
+|
+
+a|icon:lock[title=Fixed at build time] [[quarkus-google-cloud-firebase-devservices_quarkus-google-cloud-firestore-devservice-websocket-port]] [.property-path]##link:#quarkus-google-cloud-firebase-devservices_quarkus-google-cloud-firestore-devservice-websocket-port[`quarkus.google.cloud.firestore.devservice.websocket-port`]##
+
+[.description]
+--
+Port on which to expose the websocket port. This is needed in case the Firestore Emulator UI needs is used.
+
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_GOOGLE_CLOUD_FIRESTORE_DEVSERVICE_WEBSOCKET_PORT+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_GOOGLE_CLOUD_FIRESTORE_DEVSERVICE_WEBSOCKET_PORT+++`
+endif::add-copy-button-to-env-var[]
+--
+|int
+|
+
+a|icon:lock[title=Fixed at build time] [[quarkus-google-cloud-firebase-devservices_quarkus-google-cloud-functions-devservice-enabled]] [.property-path]##link:#quarkus-google-cloud-firebase-devservices_quarkus-google-cloud-functions-devservice-enabled[`quarkus.google.cloud.functions.devservice.enabled`]##
+
+[.description]
+--
+Indicates whether the DevService should be enabled or not. The default value is 'false'.
+
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_GOOGLE_CLOUD_FUNCTIONS_DEVSERVICE_ENABLED+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_GOOGLE_CLOUD_FUNCTIONS_DEVSERVICE_ENABLED+++`
+endif::add-copy-button-to-env-var[]
+--
+|boolean
+|`false`
+
+a|icon:lock[title=Fixed at build time] [[quarkus-google-cloud-firebase-devservices_quarkus-google-cloud-functions-devservice-emulator-port]] [.property-path]##link:#quarkus-google-cloud-firebase-devservices_quarkus-google-cloud-functions-devservice-emulator-port[`quarkus.google.cloud.functions.devservice.emulator-port`]##
+
+[.description]
+--
+Specifies the emulatorPort on which the service should run in the development environment. The default is to expose the service on a random port.
+
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_GOOGLE_CLOUD_FUNCTIONS_DEVSERVICE_EMULATOR_PORT+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_GOOGLE_CLOUD_FUNCTIONS_DEVSERVICE_EMULATOR_PORT+++`
+endif::add-copy-button-to-env-var[]
+--
+|int
+|
+
+a|icon:lock[title=Fixed at build time] [[quarkus-google-cloud-firebase-devservices_quarkus-google-cloud-pubsub-devservice-enabled]] [.property-path]##link:#quarkus-google-cloud-firebase-devservices_quarkus-google-cloud-pubsub-devservice-enabled[`quarkus.google.cloud.pubsub.devservice.enabled`]##
+
+[.description]
+--
+Indicates whether the DevService should be enabled or not. The default value is 'false'.
+
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_GOOGLE_CLOUD_PUBSUB_DEVSERVICE_ENABLED+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_GOOGLE_CLOUD_PUBSUB_DEVSERVICE_ENABLED+++`
+endif::add-copy-button-to-env-var[]
+--
+|boolean
+|`false`
+
+a|icon:lock[title=Fixed at build time] [[quarkus-google-cloud-firebase-devservices_quarkus-google-cloud-pubsub-devservice-emulator-port]] [.property-path]##link:#quarkus-google-cloud-firebase-devservices_quarkus-google-cloud-pubsub-devservice-emulator-port[`quarkus.google.cloud.pubsub.devservice.emulator-port`]##
+
+[.description]
+--
+Specifies the emulatorPort on which the service should run in the development environment. The default is to expose the service on a random port.
+
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_GOOGLE_CLOUD_PUBSUB_DEVSERVICE_EMULATOR_PORT+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_GOOGLE_CLOUD_PUBSUB_DEVSERVICE_EMULATOR_PORT+++`
+endif::add-copy-button-to-env-var[]
+--
+|int
+|
+
+a|icon:lock[title=Fixed at build time] [[quarkus-google-cloud-firebase-devservices_quarkus-google-cloud-storage-devservice-enabled]] [.property-path]##link:#quarkus-google-cloud-firebase-devservices_quarkus-google-cloud-storage-devservice-enabled[`quarkus.google.cloud.storage.devservice.enabled`]##
+
+[.description]
+--
+Indicates whether the DevService should be enabled or not. The default value is 'false'.
+
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_GOOGLE_CLOUD_STORAGE_DEVSERVICE_ENABLED+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_GOOGLE_CLOUD_STORAGE_DEVSERVICE_ENABLED+++`
+endif::add-copy-button-to-env-var[]
+--
+|boolean
+|`false`
+
+a|icon:lock[title=Fixed at build time] [[quarkus-google-cloud-firebase-devservices_quarkus-google-cloud-storage-devservice-emulator-port]] [.property-path]##link:#quarkus-google-cloud-firebase-devservices_quarkus-google-cloud-storage-devservice-emulator-port[`quarkus.google.cloud.storage.devservice.emulator-port`]##
+
+[.description]
+--
+Specifies the emulatorPort on which the service should run in the development environment. The default is to expose the service on a random port.
+
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_GOOGLE_CLOUD_STORAGE_DEVSERVICE_EMULATOR_PORT+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_GOOGLE_CLOUD_STORAGE_DEVSERVICE_EMULATOR_PORT+++`
+endif::add-copy-button-to-env-var[]
+--
+|int
+|
+
+|===
+
