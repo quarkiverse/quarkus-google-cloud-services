@@ -64,7 +64,7 @@ a|icon:lock[title=Fixed at build time] [[quarkus-google-cloud-firebase-devservic
 
 [.description]
 --
-Id of the docker user to run the firebase executable. This is needed in environments where Docker does not perform a mapping to the user running Docker. In a Docker Desktop setup, Docker automatically performs this mapping and the data written by the emulator can be read by the user running the build. This is not the case in a regular (non-Desktop) setup, this is not the case and you may need to set the user id and `docker-group()`. This option is often needed in CI environments.
+Id of the docker user to run the firebase executable. This is needed in environments where Docker does not perform a mapping to the user running Docker. In a Docker Desktop setup, Docker automatically performs this mapping and the data written by the emulator can be read by the user running the build. This is not the case in a regular (non-Desktop) setup, so you may need to set the user id and `docker-group()`. This option is often needed in CI environments.
 
 
 ifdef::add-copy-button-to-env-var[]
