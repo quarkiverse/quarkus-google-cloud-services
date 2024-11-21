@@ -101,7 +101,7 @@ public interface FirebaseDevServiceConfig {
              * Id of the docker user to run the firebase executable. This is needed in environments where Docker
              * does not perform a mapping to the user running Docker. In a Docker Desktop setup, Docker
              * automatically performs this mapping and the data written by the emulator can be read by the user
-             * running the build. This is not the case in a regular (non-Desktop) setup, 
+             * running the build. This is not the case in a regular (non-Desktop) setup,
              * so you may need to set the user id and {@link #dockerGroup()}. This option is often needed in CI
              * environments.
              */
