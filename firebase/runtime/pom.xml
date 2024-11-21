@@ -12,11 +12,6 @@
     <name>Quarkus - Google Cloud Services - Firebase - Runtime</name>
     <description>Use Google Cloud Firebase</description>
 
-    <properties>
-        <firebase-admin-sdk.version>9.4.0</firebase-admin-sdk.version>
-        <microprofile-jwt-auth-api.version>2.1</microprofile-jwt-auth-api.version>
-    </properties>
-
     <dependencies>
         <dependency>
             <groupId>io.quarkiverse.googlecloudservices</groupId>
