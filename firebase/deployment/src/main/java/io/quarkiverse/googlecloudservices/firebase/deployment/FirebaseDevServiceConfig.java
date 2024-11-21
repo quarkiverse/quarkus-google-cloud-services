@@ -90,7 +90,7 @@ public interface FirebaseDevServiceConfig {
             /**
              * Sets the Docker image name for the Google Cloud SDK.
              * This image is used to emulate the Pub/Sub service in the development environment.
-             * The default value is 'gcr.io/google.com/cloudsdktool/google-cloud-cli'.
+             * The default value is 'node:23-alpine'.
              * <p>
              * See also the documentation on Custom Docker images for more info about this image.
              */
