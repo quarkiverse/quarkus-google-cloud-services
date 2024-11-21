@@ -219,6 +219,16 @@ public interface FirebaseDevServiceConfig {
              * used.
              */
             Optional<Integer> websocketPort();
+
+            /**
+             * Path to the firestore.rules file.
+             */
+            Optional<String> rulesFile();
+
+            /**
+             * Path to the firestore.indexes.json file.
+             */
+            Optional<String> indexesFile();
         }
     }
 
@@ -256,7 +266,15 @@ public interface FirebaseDevServiceConfig {
         /**
          * Configuration for the storage emulator
          */
-        GenericDevService devservice();
+        StorageDevService devservice();
+
+        interface StorageDevService extends GenericDevService{
+
+            /**
+             * Path to the storage.rules file.
+             */
+            Optional<String> rulesFile();
+        }
     }
 
     /**
