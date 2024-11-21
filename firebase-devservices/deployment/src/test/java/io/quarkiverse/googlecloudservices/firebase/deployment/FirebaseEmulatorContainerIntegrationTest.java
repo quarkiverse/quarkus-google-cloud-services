@@ -13,6 +13,7 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
+import io.quarkiverse.googlecloudservices.firebase.deployment.testcontainers.FirebaseEmulatorContainer;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -43,9 +44,9 @@ import com.google.pubsub.v1.PubsubMessage;
 
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
-import io.quarkiverse.googlecloudservices.firebase.deployment.FirebaseEmulatorContainer.Emulator;
-import io.quarkiverse.googlecloudservices.firebase.deployment.FirebaseEmulatorContainer.EmulatorConfig;
-import io.quarkiverse.googlecloudservices.firebase.deployment.FirebaseEmulatorContainer.ExposedPort;
+import io.quarkiverse.googlecloudservices.firebase.deployment.testcontainers.FirebaseEmulatorContainer.Emulator;
+import io.quarkiverse.googlecloudservices.firebase.deployment.testcontainers.FirebaseEmulatorContainer.EmulatorConfig;
+import io.quarkiverse.googlecloudservices.firebase.deployment.testcontainers.FirebaseEmulatorContainer.ExposedPort;
 
 @Testcontainers
 public class FirebaseEmulatorContainerIntegrationTest {
@@ -109,7 +110,16 @@ public class FirebaseEmulatorContainerIntegrationTest {
                     Optional.empty(),
                     Optional.empty(),
                     Optional.of(tempEmulatorDataDir.toPath()),
-                    Optional.of(tempHostingContentDir.toPath()),
+                    new FirebaseEmulatorContainer.HostingConfig(
+                            Optional.of(tempHostingContentDir.toPath())
+                    ),
+                    new FirebaseEmulatorContainer.StorageConfig(
+                            Optional.empty()
+                    ),
+                    new FirebaseEmulatorContainer.FirestoreConfig(
+                            Optional.empty(),
+                            Optional.empty()
+                    ),
                     SERVICES);
 
             firebaseContainer = new FirebaseEmulatorContainer(config);

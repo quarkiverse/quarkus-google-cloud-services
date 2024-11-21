@@ -1,6 +1,9 @@
 package io.quarkiverse.googlecloudservices.firebase.deployment;
 
+import io.quarkiverse.googlecloudservices.firebase.deployment.testcontainers.FirebaseEmulatorContainer;
+
 import java.io.File;
+import java.nio.file.Path;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -30,8 +33,21 @@ public class FirebaseEmulatorConfigBuilder {
                 devService.customFirebaseJson().map(File::new).map(File::toPath),
                 devService.javaToolOptions(),
                 devService.emulatorData().map(File::new).map(File::toPath),
-                config.firebase().hosting().hostingPath().map(File::new).map(File::toPath),
+                new FirebaseEmulatorContainer.HostingConfig(
+                        config.firebase().hosting().hostingPath().map(FirebaseEmulatorConfigBuilder::asPath)
+                ),
+                new FirebaseEmulatorContainer.StorageConfig(
+                        config.storage().devservice().rulesFile().map(FirebaseEmulatorConfigBuilder::asPath)
+                ),
+                new FirebaseEmulatorContainer.FirestoreConfig(
+                        config.firestore().devservice().rulesFile().map(FirebaseEmulatorConfigBuilder::asPath),
+                        config.firestore().devservice().indexesFile().map(FirebaseEmulatorConfigBuilder::asPath)
+                ),
                 exposedEmulators(devServices(config)));
+    }
+
+    private static Path asPath(String path) {
+        return new File(path).toPath();
     }
 
     public static Map<FirebaseEmulatorContainer.Emulator, FirebaseDevServiceConfig.GenericDevService> devServices(

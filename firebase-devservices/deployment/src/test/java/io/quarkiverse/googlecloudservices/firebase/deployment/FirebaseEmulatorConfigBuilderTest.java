@@ -6,6 +6,7 @@ import java.nio.file.Path;
 import java.util.Map;
 import java.util.Optional;
 
+import io.quarkiverse.googlecloudservices.firebase.deployment.testcontainers.FirebaseEmulatorContainer;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -47,7 +48,9 @@ class FirebaseEmulatorConfigBuilderTest {
                         new TestFirestoreDevService(
                                 true,
                                 Optional.of(6006),
-                                Optional.of(6007))),
+                                Optional.of(6007),
+                                Optional.of("firestore.rules"),
+                                Optional.of("firestore.indexes.json"))),
                 new TestFunctions(
                         new TestGenericDevService(
                                 true,
@@ -57,9 +60,10 @@ class FirebaseEmulatorConfigBuilderTest {
                                 true,
                                 Optional.of(6009))),
                 new TestStorage(
-                        new TestGenericDevService(
+                        new TestStorageDevService(
                                 true,
-                                Optional.empty()) // Storage
+                                Optional.empty(),
+                                Optional.of("storage.rules"))
                 ));
         configBuilder = new FirebaseEmulatorConfigBuilder(config);
     }
@@ -76,7 +80,11 @@ class FirebaseEmulatorConfigBuilderTest {
         assertPathEndsWith("firebase.json", emulatorConfig.customFirebaseJson().orElse(null));
         assertEquals("-Xmx", emulatorConfig.javaToolOptions().orElse(null));
         assertPathEndsWith("data", emulatorConfig.emulatorData().orElse(null));
-        assertPathEndsWith("public", emulatorConfig.hostingContentDir().orElse(null));
+        assertPathEndsWith("public", emulatorConfig.hostingConfig().hostingContentDir().orElse(null));
+        assertPathEndsWith("storage.rules", emulatorConfig.storageConfig().rulesFile().orElse(null));
+        assertPathEndsWith("firestore.rules", emulatorConfig.firestoreConfig().rulesFile().orElse(null));
+        assertPathEndsWith("firestore.indexes.json", emulatorConfig.firestoreConfig().indexesFile().orElse(null));
+
     }
 
     private void assertPathEndsWith(String expected, Path path) {
@@ -158,7 +166,9 @@ class FirebaseEmulatorConfigBuilderTest {
     record TestFirestoreDevService(
             boolean enabled,
             Optional<Integer> emulatorPort,
-            Optional<Integer> websocketPort) implements FirebaseDevServiceConfig.Firestore.FirestoreDevService {
+            Optional<Integer> websocketPort,
+            Optional<String> rulesFile,
+            Optional<String> indexesFile) implements FirebaseDevServiceConfig.Firestore.FirestoreDevService {
     }
 
     record TestFunctions(
@@ -175,7 +185,15 @@ class FirebaseEmulatorConfigBuilderTest {
     }
 
     record TestStorage(
-            FirebaseDevServiceConfig.GenericDevService devservice) implements FirebaseDevServiceConfig.Storage {
+            FirebaseDevServiceConfig.Storage.StorageDevService devservice) implements FirebaseDevServiceConfig.Storage {
+    }
+
+    record TestStorageDevService(
+            boolean enabled,
+            Optional<Integer> emulatorPort,
+            Optional<String> rulesFile
+    ) implements FirebaseDevServiceConfig.Storage.StorageDevService {
+
     }
 
     record TestGenericDevService(

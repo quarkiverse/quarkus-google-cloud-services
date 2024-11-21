@@ -2,6 +2,7 @@ package io.quarkiverse.googlecloudservices.firebase.deployment.testcontainers;
 
 import java.io.IOException;
 import java.io.StringWriter;
+import java.nio.file.Path;
 import java.util.Optional;
 import java.util.function.Consumer;
 
@@ -143,22 +144,41 @@ public class FirebaseJsonBuilder {
 
     private void configureFirestore() {
         if (isEmulatorEnabled(FirebaseEmulatorContainer.Emulator.CLOUD_FIRESTORE)) {
-            emulatorConfig.firestoreConfig().rulesFile().ifPresent(rules -> {
+            var firestore = new Firestore();
+            root.setFirestore(firestore);
 
+            emulatorConfig.firestoreConfig().rulesFile().ifPresent(rules -> {
+                var rulesFile = fileRelativeToCustomJsonOrDefault(rules, "firestore.rules");
+                // TODO: Add rules file
             });
 
             emulatorConfig.firestoreConfig().indexesFile().ifPresent(index -> {
-
+                var indexFile = fileRelativeToCustomJsonOrDefault(index, "firestore.indexes.json");
+                // TODO add index file
             });
         }
     }
 
     private void configureStorage() {
         if (isEmulatorEnabled(FirebaseEmulatorContainer.Emulator.CLOUD_STORAGE)) {
-            emulatorConfig.storageConfig().rulesFile().ifPresent(rules -> {
+            var storage = new Storage();
+            root.setStorage(storage);
 
+            emulatorConfig.storageConfig().rulesFile().ifPresent(rules -> {
+                var rulesFile = fileRelativeToCustomJsonOrDefault(rules, "storage.rules");
+                // TODO add rules file
             });
         }
+    }
+
+    private String fileRelativeToCustomJsonOrDefault(Path otherFile, String defaultFile) {
+        return emulatorConfig.customFirebaseJson()
+                .map(path -> relativePath(path, otherFile))
+                .orElse(defaultFile);
+    }
+
+    private String relativePath(Path firebaseJson, Path otherFile) {
+        return firebaseJson.getParent().relativize(otherFile).toString();
     }
 
     private boolean isEmulatorEnabled(FirebaseEmulatorContainer.Emulator emulator) {
