@@ -9,8 +9,6 @@ import io.smallrye.config.WithDefault;
 
 /**
  * Root configuration class for Google Cloud Firebase Auth setup.
- * This interface provides a nested structure for configuration, including
- * a separate group for the development service configuration.
  * <p>
  * This interface mostly provides access to validate whether the Firebase Auth
  * Emulator is running.
