@@ -95,4 +95,4 @@ When including this module, these DevServices will automatically be disabled, as
 
 == Configuration Reference
 
-include::./includes/quarkus-google-cloud-firebase.adoc[]
+include::./includes/quarkus-google-cloud-firebase-devservices.adoc[]
