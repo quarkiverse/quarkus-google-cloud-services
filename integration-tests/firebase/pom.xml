@@ -8,8 +8,8 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>quarkus-google-cloud-services-firebase-admin-it</artifactId>
-    <name>Quarkus - Google Cloud Services - Integration Tests - Firebase Admin</name>
+    <artifactId>quarkus-google-cloud-services-firebase-it</artifactId>
+    <name>Quarkus - Google Cloud Services - Integration Tests - Firebase</name>
 
     <properties>
         <maven.deploy.skip>true</maven.deploy.skip>
@@ -24,7 +24,15 @@
         </dependency>
         <dependency>
             <groupId>io.quarkiverse.googlecloudservices</groupId>
-            <artifactId>quarkus-google-cloud-firebase-admin</artifactId>
+            <artifactId>quarkus-google-cloud-firebase</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.quarkiverse.googlecloudservices</groupId>
+            <artifactId>quarkus-google-cloud-firestore</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.quarkiverse.googlecloudservices</groupId>
+            <artifactId>quarkus-google-cloud-pubsub</artifactId>
         </dependency>
 
         <dependency>
