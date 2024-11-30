@@ -13,11 +13,10 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
-import io.quarkiverse.googlecloudservices.firebase.deployment.testcontainers.FirebaseEmulatorContainer;
 import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-import org.testcontainers.containers.output.OutputFrame;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 import com.google.api.core.ApiFuture;
@@ -31,7 +30,6 @@ import com.google.cloud.pubsub.v1.TopicAdminClient;
 import com.google.cloud.pubsub.v1.TopicAdminSettings;
 import com.google.cloud.storage.*;
 import com.google.cloud.storage.Blob;
-import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthException;
@@ -44,6 +42,7 @@ import com.google.pubsub.v1.PubsubMessage;
 
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
+import io.quarkiverse.googlecloudservices.firebase.deployment.testcontainers.FirebaseEmulatorContainer;
 import io.quarkiverse.googlecloudservices.firebase.deployment.testcontainers.FirebaseEmulatorContainer.Emulator;
 import io.quarkiverse.googlecloudservices.firebase.deployment.testcontainers.FirebaseEmulatorContainer.EmulatorConfig;
 import io.quarkiverse.googlecloudservices.firebase.deployment.testcontainers.FirebaseEmulatorContainer.ExposedPort;
@@ -51,12 +50,25 @@ import io.quarkiverse.googlecloudservices.firebase.deployment.testcontainers.Fir
 @Testcontainers
 public class FirebaseEmulatorContainerIntegrationTest {
 
-    private static final FirebaseEmulatorContainer firebaseContainer;
     private static final File tempEmulatorDataDir;
     private static final File tempHostingContentDir;
 
-    private static final String emulatorHost;
-    private static final FirebaseApp app;
+    static {
+        try {
+            // Create a temporary directory for emulator data
+            tempEmulatorDataDir = Files.createTempDirectory("firebase-emulator-data").toFile();
+            tempHostingContentDir = Files.createTempDirectory("firebase-hosting-content").toFile();
+
+            // Create a static HTML file in the hosting directory
+            File indexFile = new File(tempHostingContentDir, "index.html");
+            try (FileWriter writer = new FileWriter(indexFile)) {
+                writer.write("<html><body><h1>Hello, Firebase Hosting!</h1></body></html>");
+            }
+
+        } catch (IOException e) {
+            throw new IllegalStateException(e);
+        }
+    }
 
     private static final Map<Emulator, ExposedPort> SERVICES = Map.of(
             Emulator.AUTHENTICATION, new ExposedPort(6000),
@@ -72,97 +84,45 @@ public class FirebaseEmulatorContainerIntegrationTest {
             Emulator.EMULATOR_HUB, new ExposedPort(6010),
             Emulator.LOGGING, new ExposedPort(6011));
 
-    static {
-        try {
-            /*
-             * We determine the current group and user using an env variable. This is set by the GitHub Actions runner.
-             * The user and group are used to set the user/group for the user in the docker container run by
-             * TestContainers for the Firebase Emulators. This way, the data exported by the Firebase Emulators
-             * can be read from the build.
-             */
-            var user = Optional
-                    .ofNullable(System.getenv("CURRENT_USER"))
-                    .map(Integer::valueOf);
-            var group = Optional
-                    .ofNullable(System.getenv("CURRENT_GROUP"))
-                    .map(Integer::valueOf);
-
-            System.out.println("Running as user " + user + " and group " + group);
-
-            // Create a temporary directory for emulator data
-            tempEmulatorDataDir = Files.createTempDirectory("firebase-emulator-data").toFile();
-            tempHostingContentDir = Files.createTempDirectory("firebase-hosting-content").toFile();
-
-            // Create a static HTML file in the hosting directory
-            File indexFile = new File(tempHostingContentDir, "index.html");
-            try (FileWriter writer = new FileWriter(indexFile)) {
-                writer.write("<html><body><h1>Hello, Firebase Hosting!</h1></body></html>");
-            }
-
-            EmulatorConfig config = new EmulatorConfig(
+    private static final TestableFirebaseEmulatorContainer firebaseContainer = new TestableFirebaseEmulatorContainer(
+            new EmulatorConfig(
                     new FirebaseEmulatorContainer.DockerConfig(
                             "node:23-alpine",
-                            user,
-                            group),
+                            TestableFirebaseEmulatorContainer.user,
+                            TestableFirebaseEmulatorContainer.group),
                     "latest", // Firebase version
                     Optional.of("demo-test-project"),
                     Optional.empty(),
                     Optional.empty(),
                     Optional.empty(),
                     Optional.of(tempEmulatorDataDir.toPath()),
-                    new FirebaseEmulatorContainer.HostingConfig(
-                            Optional.of(tempHostingContentDir.toPath())
-                    ),
-                    new FirebaseEmulatorContainer.StorageConfig(
-                            Optional.empty()
-                    ),
-                    new FirebaseEmulatorContainer.FirestoreConfig(
-                            Optional.empty(),
-                            Optional.empty()
-                    ),
-                    SERVICES);
+                    new FirebaseEmulatorContainer.FirebaseConfig(
+                            new FirebaseEmulatorContainer.HostingConfig(
+                                    Optional.of(tempHostingContentDir.toPath())),
+                            new FirebaseEmulatorContainer.StorageConfig(
+                                    Optional.empty()),
+                            new FirebaseEmulatorContainer.FirestoreConfig(
+                                    Optional.empty(),
+                                    Optional.empty()),
+                            SERVICES)),
+            "FirebaseEmulatorContainerIntegrationTest") {
+        @Override
+        protected void createFirebaseOptions(FirebaseOptions.Builder builder) {
+            var emulatorHost = firebaseContainer.getHost();
+            var dbPort = firebaseContainer.emulatorPort(Emulator.REALTIME_DATABASE);
 
-            firebaseContainer = new FirebaseEmulatorContainer(config);
-            firebaseContainer.start();
-
-            firebaseContainer.followOutput(FirebaseEmulatorContainerIntegrationTest::writeToStdOut,
-                    OutputFrame.OutputType.STDOUT);
-            firebaseContainer.followOutput(FirebaseEmulatorContainerIntegrationTest::writeToStdErr,
-                    OutputFrame.OutputType.STDERR);
-
-            emulatorHost = firebaseContainer.getHost();
-
-            int dbPort = firebaseContainer.emulatorPort(Emulator.REALTIME_DATABASE);
-
-            var firebaseBuilder = FirebaseOptions.builder()
-                    .setProjectId("demo-test-project")
-                    .setCredentials(new EmulatorCredentials())
-                    .setDatabaseUrl("http://" + emulatorHost + ":" + dbPort + "?ns=demo-test-project");
-
-            FirebaseOptions options = firebaseBuilder.build();
-            app = FirebaseApp.initializeApp(options);
-        } catch (IOException e) {
-            throw new IllegalStateException(e);
+            builder.setDatabaseUrl("http://" + emulatorHost + ":" + dbPort + "?ns=demo-test-project");
         }
-    }
+    };
 
-    private static void writeToStdOut(OutputFrame frame) {
-        writeOutputFrame(frame, System.out);
-    }
-
-    private static void writeToStdErr(OutputFrame frame) {
-        writeOutputFrame(frame, System.err);
-    }
-
-    private static void writeOutputFrame(OutputFrame frame, PrintStream output) {
-        output.println(frame.getUtf8StringWithoutLineEnding());
+    @BeforeAll
+    public static void setup() {
+        firebaseContainer.start();
     }
 
     @AfterAll
     public static void tearDown() {
-        if (firebaseContainer != null) {
-            firebaseContainer.stop();
-        }
+        firebaseContainer.stop();
 
         validateEmulatorDataWritten();
 
@@ -209,7 +169,7 @@ public class FirebaseEmulatorContainerIntegrationTest {
         int hostingPort = firebaseContainer.emulatorPort(Emulator.FIREBASE_HOSTING);
 
         // Construct URL for the hosted file
-        URL url = new URL("http://" + emulatorHost + ":" + hostingPort + "/index.html");
+        URL url = new URL("http://" + firebaseContainer.getHost() + ":" + hostingPort + "/index.html");
 
         // Fetch content from the URL
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
@@ -230,10 +190,10 @@ public class FirebaseEmulatorContainerIntegrationTest {
         int authPort = firebaseContainer.emulatorPort(Emulator.AUTHENTICATION);
 
         // Set the environment variable for the Firebase Authentication emulator
-        FirebaseProcessEnvironment.setenv("FIREBASE_AUTH_EMULATOR_HOST", emulatorHost + ":" + authPort);
+        FirebaseProcessEnvironment.setenv("FIREBASE_AUTH_EMULATOR_HOST", firebaseContainer.getHost() + ":" + authPort);
 
         // Initialize FirebaseOptions without setting the auth emulator host directly
-        FirebaseAuth auth = FirebaseAuth.getInstance(app);
+        FirebaseAuth auth = FirebaseAuth.getInstance(firebaseContainer.getApp());
 
         // Create a test user and verify it
         UserRecord.CreateRequest request = new UserRecord.CreateRequest()
@@ -254,7 +214,7 @@ public class FirebaseEmulatorContainerIntegrationTest {
 
         FirestoreOptions options = FirestoreOptions.newBuilder()
                 .setProjectId("demo-test-project")
-                .setEmulatorHost(emulatorHost + ":" + firestorePort)
+                .setEmulatorHost(firebaseContainer.getHost() + ":" + firestorePort)
                 .setCredentials(new EmulatorCredentials())
                 .build();
         Firestore firestore = options.getService();
@@ -269,7 +229,7 @@ public class FirebaseEmulatorContainerIntegrationTest {
 
     @Test
     public void testRealtimeDatabaseEmulatorConnection() throws ExecutionException, InterruptedException {
-        DatabaseReference ref = FirebaseDatabase.getInstance(app).getReference("testData");
+        DatabaseReference ref = FirebaseDatabase.getInstance(firebaseContainer.getApp()).getReference("testData");
 
         // Write data to the database
         ref.setValueAsync("testValue").get();
@@ -302,7 +262,7 @@ public class FirebaseEmulatorContainerIntegrationTest {
         int pubSubPort = firebaseContainer.emulatorPort(Emulator.PUB_SUB);
 
         // Set up a gRPC channel to the Pub/Sub emulator
-        ManagedChannel channel = ManagedChannelBuilder.forAddress(emulatorHost, pubSubPort)
+        ManagedChannel channel = ManagedChannelBuilder.forAddress(firebaseContainer.getHost(), pubSubPort)
                 .usePlaintext()
                 .build();
 
@@ -340,7 +300,7 @@ public class FirebaseEmulatorContainerIntegrationTest {
         int storagePort = firebaseContainer.emulatorPort(Emulator.CLOUD_STORAGE);
 
         Storage storage = StorageOptions.newBuilder()
-                .setHost("http://" + emulatorHost + ":" + storagePort)
+                .setHost("http://" + firebaseContainer.getHost() + ":" + storagePort)
                 .setProjectId("demo-test-project")
                 .setCredentials(NoCredentials.getInstance())
                 .build().getService();
@@ -367,7 +327,7 @@ public class FirebaseEmulatorContainerIntegrationTest {
         int uiPort = firebaseContainer.emulatorPort(Emulator.EMULATOR_SUITE_UI);
 
         // Construct the URL for the Emulator UI root (where index.html would be served)
-        URL url = new URL("http://" + emulatorHost + ":" + uiPort + "/");
+        URL url = new URL("http://" + firebaseContainer.getHost() + ":" + uiPort + "/");
 
         // Open a connection and send an HTTP GET request
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
@@ -387,7 +347,7 @@ public class FirebaseEmulatorContainerIntegrationTest {
         int uiPort = firebaseContainer.emulatorPort(Emulator.EMULATOR_HUB);
 
         // Construct the URL for the Emulator UI root (where index.html would be served)
-        URL url = new URL("http://" + emulatorHost + ":" + uiPort + "/emulators");
+        URL url = new URL("http://" + firebaseContainer.getHost() + ":" + uiPort + "/emulators");
 
         // Open a connection and send an HTTP GET request
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();

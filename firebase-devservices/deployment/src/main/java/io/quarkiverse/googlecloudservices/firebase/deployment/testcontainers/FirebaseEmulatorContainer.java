@@ -180,6 +180,20 @@ public class FirebaseEmulatorContainer extends GenericContainer<FirebaseEmulator
     }
 
     /**
+     *
+     * @param hostingConfig The firebase hosting configuration
+     * @param storageConfig The storage configuration
+     * @param firestoreConfig The firestore configuration
+     * @param services The exposed services configuration
+     */
+    public record FirebaseConfig(
+            HostingConfig hostingConfig,
+            StorageConfig storageConfig,
+            FirestoreConfig firestoreConfig,
+            Map<Emulator, ExposedPort> services) {
+    }
+
+    /**
      * Describes the Firebase emulator configuration.
      *
      * @param dockerConfig The docker configuration
@@ -189,10 +203,7 @@ public class FirebaseEmulatorContainer extends GenericContainer<FirebaseEmulator
      * @param customFirebaseJson The path to a custom firebase
      * @param javaToolOptions The options to pass to the java based emulators
      * @param emulatorData The path to the directory where to store the emulator data
-     * @param hostingConfig The firebase hosting configuration
-     * @param storageConfig The storage configuration
-     * @param firestoreConfig The firestore configuration
-     * @param services The exposed services configuration
+     * @param firebaseConfig The firebase configuration
      */
     public record EmulatorConfig(
             DockerConfig dockerConfig,
@@ -202,10 +213,7 @@ public class FirebaseEmulatorContainer extends GenericContainer<FirebaseEmulator
             Optional<Path> customFirebaseJson,
             Optional<String> javaToolOptions,
             Optional<Path> emulatorData,
-            HostingConfig hostingConfig,
-            StorageConfig storageConfig,
-            FirestoreConfig firestoreConfig,
-            Map<Emulator, ExposedPort> services) {
+            FirebaseConfig firebaseConfig) {
     }
 
     private final Map<Emulator, ExposedPort> services;
@@ -213,23 +221,23 @@ public class FirebaseEmulatorContainer extends GenericContainer<FirebaseEmulator
     /**
      * Creates a new Firebase Emulator container
      *
-     * @param firebaseConfig The generic configuration of the firebase emulators
+     * @param emulatorConfig The generic configuration of the firebase emulators
      */
-    public FirebaseEmulatorContainer(EmulatorConfig firebaseConfig) {
-        super(new FirebaseDockerBuilder(firebaseConfig).build());
+    public FirebaseEmulatorContainer(EmulatorConfig emulatorConfig) {
+        super(new FirebaseDockerBuilder(emulatorConfig).build());
 
-        firebaseConfig.emulatorData().ifPresent(path -> {
+        emulatorConfig.emulatorData().ifPresent(path -> {
             // https://firebase.google.com/docs/emulator-suite/install_and_configure#export_and_import_emulator_data
             // Mount the volume to the specified path
             this.withFileSystemBind(path.toString(), EMULATOR_DATA_PATH, BindMode.READ_WRITE);
         });
 
-        firebaseConfig.hostingConfig().hostingContentDir().ifPresent(hostingPath -> {
+        emulatorConfig.firebaseConfig().hostingConfig().hostingContentDir().ifPresent(hostingPath -> {
             // Mount volume for static hosting content
             this.withFileSystemBind(hostingPath.toString(), FIREBASE_HOSTING_PATH, BindMode.READ_ONLY);
         });
 
-        this.services = firebaseConfig.services;
+        this.services = emulatorConfig.firebaseConfig().services;
     }
 
     private static class FirebaseDockerBuilder {
@@ -243,14 +251,14 @@ public class FirebaseEmulatorContainer extends GenericContainer<FirebaseEmulator
 
         private final ImageFromDockerfile result;
 
-        private final EmulatorConfig firebaseConfig;
+        private final EmulatorConfig emulatorConfig;
         private final Map<Emulator, ExposedPort> devServices;
 
         private DockerfileBuilder dockerBuilder;
 
-        public FirebaseDockerBuilder(EmulatorConfig firebaseConfig) {
-            this.devServices = firebaseConfig.services;
-            this.firebaseConfig = firebaseConfig;
+        public FirebaseDockerBuilder(EmulatorConfig emulatorConfig) {
+            this.devServices = emulatorConfig.firebaseConfig().services;
+            this.emulatorConfig = emulatorConfig;
 
             this.result = new ImageFromDockerfile("localhost/testcontainers/firebase", false)
                     .withDockerfileFromBuilder(builder -> this.dockerBuilder = builder);
@@ -275,7 +283,7 @@ public class FirebaseEmulatorContainer extends GenericContainer<FirebaseEmulator
         }
 
         private void validateConfiguration() {
-            if (isEmulatorEnabled(Emulator.AUTHENTICATION) && firebaseConfig.projectId().isEmpty()) {
+            if (isEmulatorEnabled(Emulator.AUTHENTICATION) && emulatorConfig.projectId().isEmpty()) {
                 throw new IllegalStateException("Can't create Firebase Auth emulator. Google Project id is required");
             }
 
@@ -302,14 +310,14 @@ public class FirebaseEmulatorContainer extends GenericContainer<FirebaseEmulator
         }
 
         private void configureBaseImage() {
-            dockerBuilder.from(firebaseConfig.dockerConfig().imageName());
+            dockerBuilder.from(emulatorConfig.dockerConfig().imageName());
         }
 
         private void initialSetup() {
             dockerBuilder
                     .run("apk --no-cache add openjdk11-jre bash curl openssl gettext nano nginx sudo && " +
                             "npm cache clean --force && " +
-                            "npm i -g firebase-tools@" + firebaseConfig.firebaseVersion() + " && " +
+                            "npm i -g firebase-tools@" + emulatorConfig.firebaseVersion() + " && " +
                             "deluser nginx && delgroup abuild && delgroup ping && " +
                             "mkdir -p " + FIREBASE_ROOT + " && " +
                             "mkdir -p " + FIREBASE_HOSTING_PATH + " && " +
@@ -338,17 +346,17 @@ public class FirebaseEmulatorContainer extends GenericContainer<FirebaseEmulator
         }
 
         private void authenticateToFirebase() {
-            firebaseConfig.token().ifPresent(token -> dockerBuilder.env("FIREBASE_TOKEN", token));
+            emulatorConfig.token().ifPresent(token -> dockerBuilder.env("FIREBASE_TOKEN", token));
         }
 
         private void setupJavaToolOptions() {
-            firebaseConfig.javaToolOptions().ifPresent(toolOptions -> dockerBuilder.env("JAVA_TOOL_OPTIONS", toolOptions));
+            emulatorConfig.javaToolOptions().ifPresent(toolOptions -> dockerBuilder.env("JAVA_TOOL_OPTIONS", toolOptions));
         }
 
         private void addFirebaseJson() {
             dockerBuilder.workDir(FIREBASE_ROOT);
 
-            firebaseConfig.customFirebaseJson().ifPresentOrElse(
+            emulatorConfig.customFirebaseJson().ifPresentOrElse(
                     this::includeCustomFirebaseJson,
                     this::generateFirebaseJson);
 
@@ -362,111 +370,43 @@ public class FirebaseEmulatorContainer extends GenericContainer<FirebaseEmulator
         }
 
         private void includeFirestoreFiles() {
-            firebaseConfig.firestoreConfig.rulesFile.ifPresent(rulesFile -> {
+            emulatorConfig.firebaseConfig().firestoreConfig.rulesFile.ifPresent(rulesFile -> {
                 this.dockerBuilder.add("firestore.rules", FIREBASE_ROOT + "/firestore.rules");
                 this.result.withFileFromPath("firestore.rules", rulesFile);
             });
 
-            firebaseConfig.firestoreConfig.indexesFile.ifPresent(indexesFile -> {
+            emulatorConfig.firebaseConfig().firestoreConfig.indexesFile.ifPresent(indexesFile -> {
                 this.dockerBuilder.add("firestore.indexes.json", FIREBASE_ROOT + "/firestore.indexes.json");
                 this.result.withFileFromPath("firestore.indexes.json", indexesFile);
             });
         }
 
         private void includeStorageFiles() {
-            firebaseConfig.storageConfig.rulesFile.ifPresent(rulesFile -> {
+            emulatorConfig.firebaseConfig().storageConfig.rulesFile.ifPresent(rulesFile -> {
                 this.dockerBuilder.add("storage.rules", FIREBASE_ROOT + "/storage.rules");
                 this.result.withFileFromPath("storage.rules", rulesFile);
             });
         }
 
         private void generateFirebaseJson() {
-            var firebaseJsonBuilder = new FirebaseJsonBuilder(this.firebaseConfig);
-            String firebaseJson = null;
+            var firebaseJsonBuilder = new FirebaseJsonBuilder(this.emulatorConfig);
+            String firebaseJson;
             try {
                 firebaseJson = firebaseJsonBuilder.buildFirebaseConfig();
             } catch (IOException e) {
                 throw new IllegalStateException("Failed to generate firebase.json file", e);
             }
 
-            //            StringBuilder firebaseJson = new StringBuilder();
-            //
-            //            firebaseJson.append("{\n");
-            //            firebaseJson.append("\t\"emulators\": {\n");
-            //
-            //            var emulatorsJson = this.devServices
-            //                    .entrySet()
-            //                    .stream()
-            //                    .filter(service -> service.getKey().configProperty != null)
-            //                    .map((service -> {
-            //                        var emulator = service.getKey();
-            //
-            //                        var port = Optional.ofNullable(service.getValue().fixedPort())
-            //                                .orElse(emulator.internalPort);
-            //
-            //                        String additionalConfig = "";
-            //                        if (emulator.equals(Emulator.CLOUD_FIRESTORE)) {
-            //                            var wsService = this.devServices.get(Emulator.CLOUD_FIRESTORE_WS);
-            //                            if (wsService != null) {
-            //                                var wsPort = Optional.ofNullable(wsService.fixedPort)
-            //                                        .orElse(Emulator.CLOUD_FIRESTORE.internalPort);
-            //                                additionalConfig = "\t\t\t\"websocketPort\": " + wsPort + ",\n";
-            //                            }
-            //                        }
-            //
-            //                        return "\t\t\"" + emulator.configProperty + "\": {\n" +
-            //                                "\t\t\t\"port\": " + port + ",\n" +
-            //                                additionalConfig +
-            //                                "\t\t\t\"host\": \"0.0.0.0\"\n" +
-            //                                "\t\t}";
-            //                    }))
-            //                    .collect(Collectors.joining(",\n"));
-            //            firebaseJson.append(emulatorsJson).append("\n");
-            //            firebaseJson.append("\t}\n");
-            //
-            //            if (isEmulatorEnabled(Emulator.CLOUD_FIRESTORE)) {
-            //                var firestoreJson = ",\"firestore\": {";
-            //
-            //                var files = Stream.of(
-            //                        firebaseConfig.firestoreConfig()
-            //                                .rulesFile
-            //                                .map(rulesFile -> "\t\"rules\": \"" + rulesFile + "\""),
-            //                        firebaseConfig.firestoreConfig()
-            //                                .indexesFile
-            //                                .map(indexesFile -> "\t\"indexes\": \"" + indexesFile + "\"")
-            //                    )
-            //                    .filter(Optional::isPresent)
-            //                    .map(Optional::get)
-            //                    .collect(Collectors.joining(",\n"));
-            //
-            //                firestoreJson += files;
-            //                firestoreJson += "}\n";
-            //                firebaseJson.append(firestoreJson);
-            //            }
-            //
-            //            if (isEmulatorEnabled(Emulator.CLOUD_STORAGE)) {
-            //                var storageJson = ",\"storage\": {";
-            //
-            //                storageJson += firebaseConfig.storageConfig.rulesFile().map(rulesFile ->
-            //                    "\n\t\"rules\": \"" + rulesFile + "\"\n"
-            //                );
-            //
-            //                storageJson += "}\n";
-            //                firebaseJson.append(storageJson);
-            //            }
-            //
-            //            firebaseJson.append("}\n");
-
-            this.result.withFileFromString("firebase.json", firebaseJson.toString());
+            this.result.withFileFromString("firebase.json", firebaseJson);
         }
 
         private void setupDataImportExport() {
-            firebaseConfig.emulatorData().ifPresent(emulator -> this.dockerBuilder.volume(EMULATOR_DATA_PATH));
+            emulatorConfig.emulatorData().ifPresent(emulator -> this.dockerBuilder.volume(EMULATOR_DATA_PATH));
         }
 
         private void setupHosting() {
             // Specify public directory if hosting is enabled
-            if (firebaseConfig.hostingConfig().hostingContentDir().isPresent()) {
+            if (emulatorConfig.firebaseConfig().hostingConfig().hostingContentDir().isPresent()) {
                 this.dockerBuilder.volume(FIREBASE_HOSTING_PATH);
             }
         }
@@ -474,10 +414,10 @@ public class FirebaseEmulatorContainer extends GenericContainer<FirebaseEmulator
         private void setupUserAndGroup() {
             var commands = new ArrayList<String>();
 
-            firebaseConfig.dockerConfig.groupId().ifPresent(group -> commands.add("addgroup -g " + group + " runner"));
+            emulatorConfig.dockerConfig.groupId().ifPresent(group -> commands.add("addgroup -g " + group + " runner"));
 
-            firebaseConfig.dockerConfig.userId().ifPresent(user -> {
-                var groupName = firebaseConfig.dockerConfig().groupId().map(i -> "runner").orElse("node");
+            emulatorConfig.dockerConfig.userId().ifPresent(user -> {
+                var groupName = emulatorConfig.dockerConfig().groupId().map(i -> "runner").orElse("node");
                 commands.add("adduser -u " + user + " -G " + groupName + " -D -h /srv/firebase runner");
             });
 
@@ -494,11 +434,11 @@ public class FirebaseEmulatorContainer extends GenericContainer<FirebaseEmulator
         }
 
         private int dockerUser() {
-            return firebaseConfig.dockerConfig().userId().orElse(1000);
+            return emulatorConfig.dockerConfig().userId().orElse(1000);
         }
 
         private int dockerGroup() {
-            return firebaseConfig.dockerConfig().groupId().orElse(1000);
+            return emulatorConfig.dockerConfig().groupId().orElse(1000);
         }
 
         private void runExecutable() {
@@ -506,14 +446,14 @@ public class FirebaseEmulatorContainer extends GenericContainer<FirebaseEmulator
 
             arguments.add("emulators:start");
 
-            firebaseConfig.projectId()
+            emulatorConfig.projectId()
                     .map(id -> "--project")
                     .ifPresent(arguments::add);
 
-            firebaseConfig.projectId()
+            emulatorConfig.projectId()
                     .ifPresent(arguments::add);
 
-            firebaseConfig
+            emulatorConfig
                     .emulatorData()
                     .map(path -> "--import")
                     .ifPresent(arguments::add);
@@ -522,12 +462,12 @@ public class FirebaseEmulatorContainer extends GenericContainer<FirebaseEmulator
              * We write the data to a subdirectory of the mount point. The firebase emulator tries to remove and
              * recreate the mount-point directory, which will obviously fail. By using a subdirectory, export succeeds.
              */
-            firebaseConfig
+            emulatorConfig
                     .emulatorData()
                     .map(path -> EMULATOR_EXPORT_PATH)
                     .ifPresent(arguments::add);
 
-            firebaseConfig
+            emulatorConfig
                     .emulatorData()
                     .map(path -> "--export-on-exit")
                     .ifPresent(arguments::add);

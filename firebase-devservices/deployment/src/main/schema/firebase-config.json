@@ -544,7 +544,6 @@
             },
             "port": {
               "type": [
-                "string",
                 "integer"
               ]
             }

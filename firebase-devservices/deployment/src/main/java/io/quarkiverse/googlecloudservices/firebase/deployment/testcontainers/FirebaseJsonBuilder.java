@@ -1,8 +1,8 @@
 package io.quarkiverse.googlecloudservices.firebase.deployment.testcontainers;
 
-import java.io.IOException;
-import java.io.StringWriter;
+import java.io.*;
 import java.nio.file.Path;
+import java.util.HashMap;
 import java.util.Optional;
 import java.util.function.Consumer;
 
@@ -17,8 +17,9 @@ public class FirebaseJsonBuilder {
 
     private static final String ALL_IP = "0.0.0.0";
 
-    private final FirebaseConfig root;
+    private final ObjectMapper objectMapper = new ObjectMapper();
     private final FirebaseEmulatorContainer.EmulatorConfig emulatorConfig;
+    private final FirebaseConfig root;
 
     public FirebaseJsonBuilder(FirebaseEmulatorContainer.EmulatorConfig emulatorConfig) {
         this.emulatorConfig = emulatorConfig;
@@ -26,6 +27,14 @@ public class FirebaseJsonBuilder {
     }
 
     public String buildFirebaseConfig() throws IOException {
+        generateFirebaseConfig();
+
+        StringWriter writer = new StringWriter();
+        objectMapper.writeValue(writer, root);
+        return writer.toString();
+    }
+
+    private void generateFirebaseConfig() {
         //        private Object database;
         //        private Object dataconnect;
         configureEmulator();
@@ -35,11 +44,6 @@ public class FirebaseJsonBuilder {
         //        private Object hosting;
         //        private Remoteconfig remoteconfig;
         configureStorage();
-
-        StringWriter writer = new StringWriter();
-        ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.writeValue(writer, root);
-        return writer.toString();
     }
 
     private void configureEmulator() {
@@ -134,7 +138,7 @@ public class FirebaseJsonBuilder {
 
     private void withEmulator(FirebaseEmulatorContainer.Emulator emulator, Consumer<Integer> handler) {
         if (isEmulatorEnabled(emulator)) {
-            var exposedPort = emulatorConfig.services().get(emulator);
+            var exposedPort = emulatorConfig.firebaseConfig().services().get(emulator);
             var port = Optional.ofNullable(exposedPort.fixedPort())
                     .orElse(emulator.internalPort);
 
@@ -144,29 +148,29 @@ public class FirebaseJsonBuilder {
 
     private void configureFirestore() {
         if (isEmulatorEnabled(FirebaseEmulatorContainer.Emulator.CLOUD_FIRESTORE)) {
-            var firestore = new Firestore();
+            var firestore = new HashMap<String, String>(); // Generated sources can't handle anyOf yet
             root.setFirestore(firestore);
 
-            emulatorConfig.firestoreConfig().rulesFile().ifPresent(rules -> {
+            emulatorConfig.firebaseConfig().firestoreConfig().rulesFile().ifPresent(rules -> {
                 var rulesFile = fileRelativeToCustomJsonOrDefault(rules, "firestore.rules");
-                // TODO: Add rules file
+                firestore.put("rules", rulesFile);
             });
 
-            emulatorConfig.firestoreConfig().indexesFile().ifPresent(index -> {
+            emulatorConfig.firebaseConfig().firestoreConfig().indexesFile().ifPresent(index -> {
                 var indexFile = fileRelativeToCustomJsonOrDefault(index, "firestore.indexes.json");
-                // TODO add index file
+                firestore.put("indexes", indexFile);
             });
         }
     }
 
     private void configureStorage() {
         if (isEmulatorEnabled(FirebaseEmulatorContainer.Emulator.CLOUD_STORAGE)) {
-            var storage = new Storage();
-            root.setStorage(storage);
+            emulatorConfig.firebaseConfig().storageConfig().rulesFile().ifPresent(rules -> {
+                var storage = new HashMap<String, String>(); // Generated sources can't handle anyOf yet
+                root.setStorage(storage);
 
-            emulatorConfig.storageConfig().rulesFile().ifPresent(rules -> {
                 var rulesFile = fileRelativeToCustomJsonOrDefault(rules, "storage.rules");
-                // TODO add rules file
+                storage.put("rules", rulesFile);
             });
         }
     }
@@ -182,7 +186,7 @@ public class FirebaseJsonBuilder {
     }
 
     private boolean isEmulatorEnabled(FirebaseEmulatorContainer.Emulator emulator) {
-        return this.emulatorConfig.services().containsKey(emulator);
+        return this.emulatorConfig.firebaseConfig().services().containsKey(emulator);
     }
 
 }

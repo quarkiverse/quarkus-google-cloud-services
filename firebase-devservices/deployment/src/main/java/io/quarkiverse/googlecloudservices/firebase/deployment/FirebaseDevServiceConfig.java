@@ -268,7 +268,7 @@ public interface FirebaseDevServiceConfig {
          */
         StorageDevService devservice();
 
-        interface StorageDevService extends GenericDevService{
+        interface StorageDevService extends GenericDevService {
 
             /**
              * Path to the storage.rules file.

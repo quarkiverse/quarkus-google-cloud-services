@@ -6,9 +6,10 @@ import java.nio.file.Path;
 import java.util.Map;
 import java.util.Optional;
 
-import io.quarkiverse.googlecloudservices.firebase.deployment.testcontainers.FirebaseEmulatorContainer;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import io.quarkiverse.googlecloudservices.firebase.deployment.testcontainers.FirebaseEmulatorContainer;
 
 class FirebaseEmulatorConfigBuilderTest {
 
@@ -63,8 +64,7 @@ class FirebaseEmulatorConfigBuilderTest {
                         new TestStorageDevService(
                                 true,
                                 Optional.empty(),
-                                Optional.of("storage.rules"))
-                ));
+                                Optional.of("storage.rules"))));
         configBuilder = new FirebaseEmulatorConfigBuilder(config);
     }
 
@@ -80,10 +80,11 @@ class FirebaseEmulatorConfigBuilderTest {
         assertPathEndsWith("firebase.json", emulatorConfig.customFirebaseJson().orElse(null));
         assertEquals("-Xmx", emulatorConfig.javaToolOptions().orElse(null));
         assertPathEndsWith("data", emulatorConfig.emulatorData().orElse(null));
-        assertPathEndsWith("public", emulatorConfig.hostingConfig().hostingContentDir().orElse(null));
-        assertPathEndsWith("storage.rules", emulatorConfig.storageConfig().rulesFile().orElse(null));
-        assertPathEndsWith("firestore.rules", emulatorConfig.firestoreConfig().rulesFile().orElse(null));
-        assertPathEndsWith("firestore.indexes.json", emulatorConfig.firestoreConfig().indexesFile().orElse(null));
+        assertPathEndsWith("public", emulatorConfig.firebaseConfig().hostingConfig().hostingContentDir().orElse(null));
+        assertPathEndsWith("storage.rules", emulatorConfig.firebaseConfig().storageConfig().rulesFile().orElse(null));
+        assertPathEndsWith("firestore.rules", emulatorConfig.firebaseConfig().firestoreConfig().rulesFile().orElse(null));
+        assertPathEndsWith("firestore.indexes.json",
+                emulatorConfig.firebaseConfig().firestoreConfig().indexesFile().orElse(null));
 
     }
 
@@ -97,7 +98,7 @@ class FirebaseEmulatorConfigBuilderTest {
         FirebaseEmulatorContainer.EmulatorConfig emulatorConfig = configBuilder.build();
 
         Map<FirebaseEmulatorContainer.Emulator, FirebaseEmulatorContainer.ExposedPort> exposedPorts = emulatorConfig
-                .services();
+                .firebaseConfig().services();
 
         assertEquals(10, exposedPorts.size());
         assertEquals(6000, exposedPorts.get(FirebaseEmulatorContainer.Emulator.EMULATOR_SUITE_UI).fixedPort());
@@ -191,8 +192,7 @@ class FirebaseEmulatorConfigBuilderTest {
     record TestStorageDevService(
             boolean enabled,
             Optional<Integer> emulatorPort,
-            Optional<String> rulesFile
-    ) implements FirebaseDevServiceConfig.Storage.StorageDevService {
+            Optional<String> rulesFile) implements FirebaseDevServiceConfig.Storage.StorageDevService {
 
     }
 
