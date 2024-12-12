@@ -85,7 +85,7 @@ By default a `firebase.json` file is generated inside the image to configure the
 
 == Interaction with other extensions
 
-The following extensions support a DevService which conflicts with the DevService exposed by the Firebase Emulators.
+The following extensions support  Dev Services which conflicts with the  Dev Services exposed by the Firebase Emulators.
 
 * Firestore
 * PubSub
