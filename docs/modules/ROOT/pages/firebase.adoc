@@ -83,7 +83,7 @@ By default a `firebase.json` file is generated inside the image to configure the
 * Each of the emulators must be exposed on `0.0.0.0` as host as described https://firebase.google.com/docs/emulator-suite/use_hosting#emulators-no-local-host[here]. If this is not done, the Emulators will not be reachable from the Docker host.
 * Emulators need to be configured to use the default ports. Customizing the ports on which they run is currently not supported (this might change in a future version).
 
-== Interaction with other other extensions
+== Interaction with other extensions
 
 The following extensions support a DevService which conflicts with the DevService exposed by the Firebase Emulators.
 
