@@ -91,7 +91,7 @@ The following extensions support a DevService which conflicts with the DevServic
 * PubSub
 * TODO: Verify Storage
 
-When including this module, these DevServices will automatically be disabled, as the Firebase emulator should feature wise be on-par or more extensive than the individual emulators.
+When including this module, these  Dev Services will automatically be disabled, as the Firebase emulator should feature wise be on-par or more extensive than the individual emulators.
 
 == Configuration Reference
 
