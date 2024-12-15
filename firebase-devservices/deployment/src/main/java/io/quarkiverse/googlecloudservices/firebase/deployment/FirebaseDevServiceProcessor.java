@@ -44,6 +44,7 @@ public class FirebaseDevServiceProcessor {
 
     @BuildStep
     public DevServicesResultBuildItem start(DockerStatusBuildItem dockerStatusBuildItem,
+            FirebaseDevServiceProjectConfig projectConfig,
             FirebaseDevServiceConfig firebaseBuildTimeConfig,
             List<DevServicesSharedNetworkBuildItem> devServicesSharedNetworkBuildItem,
             Optional<ConsoleInstalledBuildItem> consoleInstalledBuildItem,
@@ -66,7 +67,7 @@ public class FirebaseDevServiceProcessor {
 
         // Try starting the container if conditions are met
         try {
-            devService = startContainerIfAvailable(dockerStatusBuildItem, firebaseBuildTimeConfig,
+            devService = startContainerIfAvailable(dockerStatusBuildItem, projectConfig, firebaseBuildTimeConfig,
                     globalDevServicesConfig.timeout);
         } catch (Throwable t) {
             LOGGER.warn("Unable to start Firebase dev service", t);
@@ -89,10 +90,11 @@ public class FirebaseDevServiceProcessor {
      * @return Running service item, or null if the service couldn't be started
      */
     private DevServicesResultBuildItem.RunningDevService startContainerIfAvailable(DockerStatusBuildItem dockerStatusBuildItem,
+            FirebaseDevServiceProjectConfig projectConfig,
             FirebaseDevServiceConfig config,
             Optional<Duration> timeout) {
 
-        if (!config.firebase().devservice().preferFirebaseDevServices()) {
+        if (!config.firebase().preferFirebaseDevServices()) {
             // Firebase service explicitly disabled
             LOGGER.info("Not starting Dev Services for Firebase as it has been disabled in the config.");
             return null;
@@ -109,7 +111,7 @@ public class FirebaseDevServiceProcessor {
             return null;
         }
 
-        return startContainer(dockerStatusBuildItem, config, timeout);
+        return startContainer(dockerStatusBuildItem, projectConfig, config, timeout);
     }
 
     private boolean isEnabled(FirebaseDevServiceConfig config) {
@@ -129,13 +131,12 @@ public class FirebaseDevServiceProcessor {
      * @return Running service item, or null if the service couldn't be started
      */
     private DevServicesResultBuildItem.RunningDevService startContainer(DockerStatusBuildItem dockerStatusBuildItem,
+            FirebaseDevServiceProjectConfig projectConfig,
             FirebaseDevServiceConfig config,
             Optional<Duration> timeout) {
 
-        var emulatorConfig = new FirebaseEmulatorConfigBuilder(config).build();
-
-        // Create and configure Pub/Sub emulator container
-        FirebaseEmulatorContainer emulatorContainer = new FirebaseEmulatorContainer(emulatorConfig);
+        // Create and configure Firebase emulator container
+        var emulatorContainer = new FirebaseEmulatorConfigBuilder(projectConfig, config).build();
 
         // Set container startup timeout if provided
         timeout.ifPresent(emulatorContainer::withStartupTimeout);

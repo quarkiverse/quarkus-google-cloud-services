@@ -2,6 +2,7 @@ package io.quarkiverse.googlecloudservices.firebase.deployment;
 
 import java.util.Optional;
 
+import io.quarkiverse.googlecloudservices.firebase.deployment.testcontainers.FirebaseEmulatorContainer;
 import io.quarkus.runtime.annotations.ConfigRoot;
 import io.smallrye.config.ConfigMapping;
 import io.smallrye.config.WithDefault;
@@ -20,109 +21,83 @@ import io.smallrye.config.WithDefault;
  * quarkus.google.cloud.pubsub.devservice.emulatorPort = 8085 # optional
  * </pre>
  */
-@ConfigMapping(prefix = "quarkus.google.cloud")
+@ConfigMapping(prefix = "quarkus.google.cloud.devservices")
 @ConfigRoot
 public interface FirebaseDevServiceConfig {
 
     /**
-     * Google Cloud project ID. The project is required to be set if you use the Firebase Auth Dev service.
-     */
-    Optional<String> projectId();
-
-    /**
-     * Configure the generic Firebase settings
+     * Configure the Firebase-based services
      */
     Firebase firebase();
 
     /**
-     * Configure the firestore
+     * Configuration for the Functions emulator
      */
-    Firestore firestore();
+    GenericDevService functions();
 
     /**
-     * Configure google cloud functions
+     * Configuration for the Google Cloud PubSub emulator
      */
-    Functions functions();
+    GenericDevService pubsub();
 
     /**
-     * Configure Google Cloud Pub/Sub
+     * Configuration for the storage emulator
      */
-    PubSub pubsub();
-
-    /**
-     * Configure Google Cloud Storage
-     */
-    Storage storage();
+    StorageDevService storage();
 
     interface Firebase {
+
+        /**
+         * Indicates to use the dev service for Firebase. The default value is true. This indicator is used
+         * to detect the Firebase DevService and disable the DevServices for extensions which conflict with the
+         * Firebase DevService.
+         */
+        @WithDefault("true")
+        boolean preferFirebaseDevServices();
 
         /**
          * Configuration for the firebase emulator devservice. This is the generic configuration for the firebase
          * emulator. THe specifics are handled in each of the other dev services.
          */
-        DevService devservice();
+        Emulator emulator();
 
         /**
-         * Configure the firebase auth settings
+         * Configuration for the firebase auth emulator
          */
-        Auth auth();
+        GenericDevService auth();
 
         /**
          * Configure Firebase Hosting
          */
-        Hosting hosting();
+        HostingDevService hosting();
 
         /**
-         * Configure the realtime database
+         * Configuration for the realtime database emulator
          */
-        Database database();
+        GenericDevService database();
 
-        interface DevService {
+        /**
+         * Configure the firestore
+         */
+        FirestoreDevService firestore();
 
-            /**
-             * Indicates to use the dev service for Firebase. The default value is true. This indicator is used
-             * to detect the Firebase DevService and disable the DevServices for extensions which conflict with the
-             * Firebase DevService.
-             */
-            @WithDefault("true")
-            boolean preferFirebaseDevServices();
-
-            /**
-             * Sets the Docker image name for the Google Cloud SDK.
-             * This image is used to emulate the Pub/Sub service in the development environment.
-             * The default value is 'node:23-alpine'.
-             * <p>
-             * See also the documentation on Custom Docker images for more info about this image.
-             */
-            @WithDefault("node:23-alpine")
-            String imageName();
-
-            /**
-             * Id of the docker user to run the firebase executable. This is needed in environments where Docker
-             * does not perform a mapping to the user running Docker. In a Docker Desktop setup, Docker
-             * automatically performs this mapping and the data written by the emulator can be read by the user
-             * running the build. This is not the case in a regular (non-Desktop) setup,
-             * so you may need to set the user id and {@link #dockerGroup()}. This option is often needed in CI
-             * environments.
-             */
-            Optional<Integer> dockerUser();
-
-            /**
-             * Id of the group to which the {@link #dockerUser()} belongs.
-             */
-            Optional<Integer> dockerGroup();
+        interface Emulator {
 
             /**
              * The version of the firebase tools to use. Default is to use the latest available version.
              */
-            @WithDefault("latest")
+            @WithDefault(FirebaseEmulatorContainer.DEFAULT_FIREBASE_VERSION)
             String firebaseVersion();
 
             /**
-             * The token to use for firebase authentication. Run `firebase login:ci` locally to get a new token. This
-             * option is mandatory if you use firebase hosting.
+             * Docker specific settings
              */
-            Optional<String> token();
+            Docker docker();
+
+            /**
+             * The ClI settings
+             */
+            Cli cli();
 
             /**
              * Indicate to use a custom firebase.json file instead of the automatically generated one. The custom
@@ -140,25 +115,95 @@ public interface FirebaseDevServiceConfig {
             Optional<String> customFirebaseJson();
 
             /**
-             * Sets the JAVA tool options for emulators based on the Java runtime environment like -Xmx.
-             * See also
-             * <a href="https://firebase.google.com/docs/emulator-suite/install_and_configure#specifying_java_options">here</a>
-             */
-            Optional<String> javaToolOptions();
-
-            /**
-             * Allow to import and export data. Specify a path relative to the current working directory of the executable
-             * (for most unit tests, this is the root of the build directory) to be used for import and export of emulator
-             * data. The data will be written to a subdirectory called "emulator-data" of this directory.
-             * See also <a href=
-             * "https://firebase.google.com/docs/emulator-suite/install_and_configure#export_and_import_emulator_data">here</a>
-             */
-            Optional<String> emulatorData();
-
-            /**
              * Settings for the emulator UI
              */
             UI ui();
+
+
+            interface Docker {
+                /**
+                 * Sets the Docker image name for the Google Cloud SDK.
+                 * This image is used to emulate the Pub/Sub service in the development environment.
+                 * The default value is 'node:23-alpine'.
+                 * <p>
+                 * See also the documentation on Custom Docker images for more info about this image.
+                 */
+                @WithDefault(FirebaseEmulatorContainer.DEFAULT_IMAGE_NAME)
+                String imageName();
+
+                /**
+                 * Id of the docker user to run the firebase executable. This is needed in environments where Docker
+                 * does not perform a mapping to the user running Docker. In a Docker Desktop setup, Docker
+                 * automatically performs this mapping and the data written by the emulator can be read by the user
+                 * running the build. This is not the case in a regular (non-Desktop) setup,
+                 * so you may need to set the user id and {@link #dockerGroup()}. This option is often needed in CI
+                 * environments.
+                 */
+                Optional<Integer> dockerUser();
+
+                /**
+                 * Id of the group to which the {@link #dockerUser()} belongs.
+                 */
+                Optional<Integer> dockerGroup();
+
+                /**
+                 * Try to read the {@link #dockerUser()} from an environment variable
+                 */
+                Optional<String> dockerUserEnv();
+
+                /**
+                 * Try to read the {@link #dockerGroup()} from an environment variable
+                 */
+                Optional<String> dockerGroupEnv();
+                /**
+                 * Pipe Stdout of the container to the Quarkus logging
+                 */
+                Optional<Boolean> followStdOut();
+
+                /**
+                 * Pipe Stedd of the container to the Quarkus logging
+                 */
+                Optional<Boolean> followStdErr();
+
+            }
+
+            /**
+             * Configuration options related to the Firebase emulators CLI
+             */
+            interface Cli {
+                /**
+                 * The token to use for firebase authentication. Run `firebase login:ci` locally to get a new token. This
+                 * option is mandatory if you use firebase hosting.
+                 */
+                Optional<String> token();
+
+                /**
+                 * Sets the JAVA tool options for emulators based on the Java runtime environment like -Xmx.
+                 * See also
+                 * <a href="https://firebase.google.com/docs/emulator-suite/install_and_configure#specifying_java_options">here</a>
+                 */
+                Optional<String> javaToolOptions();
+
+                /**
+                 * Allow to import and export data. Specify a path relative to the current working directory of the executable
+                 * (for most unit tests, this is the root of the build directory) to be used for import and export of emulator
+                 * data. The data will be written to a subdirectory called "emulator-data" of this directory.
+                 * See also <a href=
+                 * "https://firebase.google.com/docs/emulator-suite/install_and_configure#export_and_import_emulator_data">here</a>
+                 */
+                Optional<String> emulatorData();
+
+                /**
+                 * Indicate whether to import, export or both the data specified in {@link #emulatorData()}
+                 */
+                Optional<FirebaseEmulatorContainer.ImportExport> importExport();
+
+                /**
+                 * Enable firebase emulators debugging.
+                 */
+                Optional<Boolean> debug();
+
+            }
 
             interface UI extends GenericDevService {
 
@@ -185,43 +230,13 @@ public interface FirebaseDevServiceConfig {
 
         }
 
-        interface Auth {
-
-            /**
-             * Configuration for the firebase auth emulator
-             */
-            GenericDevService devservice();
-        }
-
-        interface Database {
-
-            /**
-             * Configuration for the realtime database emulator
-             */
-            GenericDevService devservice();
-        }
-
-        interface Hosting {
-
-            /**
-             * Configuration for the hosting emulator
-             */
-            GenericDevService devservice();
+        interface HostingDevService extends GenericDevService {
 
             /**
              * Path to the hosting files.
              */
             Optional<String> hostingPath();
         }
-
-    }
-
-    interface Firestore {
-
-        /**
-         * Configuration for the Firestore emulator
-         */
-        FirestoreDevService devservice();
 
         /**
          * Extension for the Firestore dev service. This service can also configure the websocket port.
@@ -246,36 +261,12 @@ public interface FirebaseDevServiceConfig {
         }
     }
 
-    interface Functions {
+    interface StorageDevService extends GenericDevService {
 
         /**
-         * Configuration for the Functions emulator
+         * Path to the storage.rules file.
          */
-        GenericDevService devservice();
-    }
-
-    interface PubSub {
-
-        /**
-         * Configuration for the pubsub emulator
-         */
-        GenericDevService devservice();
-    }
-
-    interface Storage {
-
-        /**
-         * Configuration for the storage emulator
-         */
-        StorageDevService devservice();
-
-        interface StorageDevService extends GenericDevService {
-
-            /**
-             * Path to the storage.rules file.
-             */
-            Optional<String> rulesFile();
-        }
+        Optional<String> rulesFile();
     }
 
     /**

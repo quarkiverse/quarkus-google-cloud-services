@@ -1,101 +1,168 @@
 package io.quarkiverse.googlecloudservices.firebase.deployment;
 
 import java.io.File;
+import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import io.quarkiverse.googlecloudservices.firebase.deployment.testcontainers.FirebaseEmulatorContainer;
 
 /**
  * This class translates the Quarkus Firebase extension configuration to the {@link FirebaseEmulatorContainer}
- * configuration.
+ * instance.
  */
 public class FirebaseEmulatorConfigBuilder {
 
+    private final FirebaseDevServiceProjectConfig projectConfig;
     private final FirebaseDevServiceConfig config;
-
-    public FirebaseEmulatorConfigBuilder(FirebaseDevServiceConfig config) {
-        this.config = config;
-    }
-
-    public FirebaseEmulatorContainer.EmulatorConfig build() {
-        var devService = config.firebase().devservice();
-
-        return new FirebaseEmulatorContainer.EmulatorConfig(
-                new FirebaseEmulatorContainer.DockerConfig(
-                        devService.imageName(),
-                        devService.dockerUser(),
-                        devService.dockerGroup()),
-                devService.firebaseVersion(),
-                config.projectId(),
-                devService.token(),
-                devService.customFirebaseJson().map(File::new).map(File::toPath),
-                devService.javaToolOptions(),
-                devService.emulatorData().map(File::new).map(File::toPath),
-                new FirebaseEmulatorContainer.FirebaseConfig(
-                        new FirebaseEmulatorContainer.HostingConfig(
-                                config.firebase().hosting().hostingPath().map(FirebaseEmulatorConfigBuilder::asPath)),
-                        new FirebaseEmulatorContainer.StorageConfig(
-                                config.storage().devservice().rulesFile().map(FirebaseEmulatorConfigBuilder::asPath)),
-                        new FirebaseEmulatorContainer.FirestoreConfig(
-                                config.firestore().devservice().rulesFile().map(FirebaseEmulatorConfigBuilder::asPath),
-                                config.firestore().devservice().indexesFile().map(FirebaseEmulatorConfigBuilder::asPath)),
-                        exposedEmulators(devServices(config))));
-    }
-
-    private static Path asPath(String path) {
-        return new File(path).toPath();
-    }
 
     public static Map<FirebaseEmulatorContainer.Emulator, FirebaseDevServiceConfig.GenericDevService> devServices(
             FirebaseDevServiceConfig config) {
         return Map.of(
-                FirebaseEmulatorContainer.Emulator.AUTHENTICATION, config.firebase().auth().devservice(),
-                FirebaseEmulatorContainer.Emulator.EMULATOR_SUITE_UI, config.firebase().devservice().ui(),
-                FirebaseEmulatorContainer.Emulator.REALTIME_DATABASE, config.firebase().database().devservice(),
-                FirebaseEmulatorContainer.Emulator.CLOUD_FIRESTORE, config.firestore().devservice(),
-                FirebaseEmulatorContainer.Emulator.CLOUD_FUNCTIONS, config.functions().devservice(),
-                FirebaseEmulatorContainer.Emulator.CLOUD_STORAGE, config.storage().devservice(),
-                FirebaseEmulatorContainer.Emulator.FIREBASE_HOSTING, config.firebase().hosting().devservice(),
-                FirebaseEmulatorContainer.Emulator.PUB_SUB, config.pubsub().devservice());
+                FirebaseEmulatorContainer.Emulator.AUTHENTICATION, config.firebase().auth(),
+                FirebaseEmulatorContainer.Emulator.EMULATOR_SUITE_UI, config.firebase().emulator().ui(),
+                FirebaseEmulatorContainer.Emulator.CLOUD_FUNCTIONS, config.functions(),
+                FirebaseEmulatorContainer.Emulator.REALTIME_DATABASE, config.firebase().database(),
+                FirebaseEmulatorContainer.Emulator.CLOUD_FIRESTORE, config.firebase().firestore(),
+                FirebaseEmulatorContainer.Emulator.CLOUD_STORAGE, config.storage(),
+                FirebaseEmulatorContainer.Emulator.FIREBASE_HOSTING, config.firebase().hosting(),
+                FirebaseEmulatorContainer.Emulator.PUB_SUB, config.pubsub());
     }
 
-    private Map<FirebaseEmulatorContainer.Emulator, FirebaseEmulatorContainer.ExposedPort> exposedEmulators(
-            Map<FirebaseEmulatorContainer.Emulator, FirebaseDevServiceConfig.GenericDevService> devServices) {
-        var emulators = devServices
+    public FirebaseEmulatorConfigBuilder(FirebaseDevServiceProjectConfig projectConfig, FirebaseDevServiceConfig config) {
+        this.projectConfig = projectConfig;
+        this.config = config;
+    }
+
+    public FirebaseEmulatorContainer build() {
+        return configureBuilder().build();
+    }
+
+    FirebaseEmulatorContainer.EmulatorConfig buildConfig() {
+        return configureBuilder().buildConfig();
+    }
+
+    private FirebaseEmulatorContainer.Builder configureBuilder() {
+        var builder = FirebaseEmulatorContainer.builder();
+
+        builder.withFirebaseVersion(config.firebase().emulator().firebaseVersion());
+
+        handleDockerConfig(config.firebase().emulator().docker(), builder);
+        handleCliConfig(config.firebase().emulator().cli(), builder);
+        handleEmulators(builder);
+
+        return builder;
+    }
+
+    private void handleDockerConfig(FirebaseDevServiceConfig.Firebase.Emulator.Docker docker, FirebaseEmulatorContainer.Builder builder) {
+        var dockerConfig = builder.withDockerConfig();
+
+        dockerConfig.withImage(docker.imageName());
+        docker.dockerUser().ifPresent(dockerConfig::withUserId);
+        docker.dockerGroup().ifPresent(dockerConfig::withGroupId);
+        docker.dockerUserEnv().ifPresent(dockerConfig::withUserIdFromEnv);
+        docker.dockerGroupEnv().ifPresent(dockerConfig::withGroupIdFromEnv);
+        docker.followStdOut().ifPresent(dockerConfig::followStdOut);
+        docker.followStdErr().ifPresent(dockerConfig::followStdErr);
+
+        dockerConfig.done();
+    }
+
+    private void handleCliConfig(FirebaseDevServiceConfig.Firebase.Emulator.Cli cli, FirebaseEmulatorContainer.Builder builder) {
+        var cliConfig = builder.withCliArguments();
+
+        projectConfig.projectId().ifPresent(cliConfig::withProjectId);
+
+        cli.token().ifPresent(cliConfig::withToken);
+        cli.javaToolOptions().ifPresent(cliConfig::withJavaToolOptions);
+        cli.emulatorData().map(FirebaseEmulatorConfigBuilder::asPath).ifPresent(cliConfig::withEmulatorData);
+        cli.importExport().ifPresent(cliConfig::withImportExport);
+        cli.debug().ifPresent(cliConfig::withDebug);
+
+        cliConfig.done();
+    }
+
+    private void handleEmulators(FirebaseEmulatorContainer.Builder builder) {
+        config.firebase().emulator().customFirebaseJson().ifPresentOrElse(
+                (firebaseJson) -> configureCustomFirebaseJson(builder, firebaseJson),
+                () -> configureEmulators(builder)
+        );
+    }
+
+    private void configureCustomFirebaseJson(FirebaseEmulatorContainer.Builder builder, String firebaseJson) {
+        try {
+            builder.readFromFirebaseJson(asPath(firebaseJson));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private void configureEmulators(FirebaseEmulatorContainer.Builder builder) {
+        var firebaseConfigBuilder = builder.withFirebaseConfig();
+        var devServices = devServices(config);
+
+        devServices
                 .entrySet()
                 .stream()
                 .filter(e -> e.getValue().enabled())
-                .map(e -> Map.entry(e.getKey(), portForService(e.getValue())))
-                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+                .forEach(e ->
+                    e.getValue().emulatorPort().ifPresentOrElse(
+                            p -> firebaseConfigBuilder.withEmulatorOnFixedPort(e.getKey(), p),
+                            () -> firebaseConfigBuilder.withEmulator(e.getKey())
+                    )
+                );
 
-        var uiService = (FirebaseDevServiceConfig.Firebase.DevService.UI) devServices
-                .get(FirebaseEmulatorContainer.Emulator.EMULATOR_SUITE_UI);
+        config.firebase()
+                .hosting()
+                .hostingPath()
+                .map(FirebaseEmulatorConfigBuilder::asPath)
+                .ifPresent(firebaseConfigBuilder::withHostingPath);
 
-        uiService.hubPort().ifPresent(port -> emulators.put(
-                FirebaseEmulatorContainer.Emulator.EMULATOR_HUB,
-                new FirebaseEmulatorContainer.ExposedPort(port)));
+        config.firebase()
+                .firestore()
+                .indexesFile()
+                .map(FirebaseEmulatorConfigBuilder::asPath)
+                .ifPresent(firebaseConfigBuilder::withFirestoreIndexes);
 
-        uiService.loggingPort().ifPresent(port -> emulators.put(
-                FirebaseEmulatorContainer.Emulator.LOGGING,
-                new FirebaseEmulatorContainer.ExposedPort(port)));
+        config.firebase()
+                .firestore()
+                .rulesFile()
+                .map(FirebaseEmulatorConfigBuilder::asPath)
+                .ifPresent(firebaseConfigBuilder::withFirestoreRules);
 
-        var firestoreService = (FirebaseDevServiceConfig.Firestore.FirestoreDevService) devServices
-                .get(FirebaseEmulatorContainer.Emulator.CLOUD_FIRESTORE);
+        config.firebase()
+                .firestore()
+                .websocketPort()
+                .ifPresent(p ->
+                        firebaseConfigBuilder.withEmulatorOnFixedPort(FirebaseEmulatorContainer.Emulator.CLOUD_FIRESTORE_WS, p)
+                );
 
-        firestoreService.websocketPort().ifPresent(port -> emulators.put(
-                FirebaseEmulatorContainer.Emulator.CLOUD_FIRESTORE_WS,
-                new FirebaseEmulatorContainer.ExposedPort(port)));
+        config.firebase()
+                .emulator()
+                .ui()
+                .hubPort()
+                .ifPresent(p ->
+                        firebaseConfigBuilder.withEmulatorOnFixedPort(FirebaseEmulatorContainer.Emulator.EMULATOR_HUB, p)
+                );
 
-        // TODO: Event arc?
+        config.firebase()
+                .emulator()
+                .ui()
+                .loggingPort()
+                .ifPresent(p ->
+                        firebaseConfigBuilder.withEmulatorOnFixedPort(FirebaseEmulatorContainer.Emulator.LOGGING, p)
+                );
 
-        return emulators;
+        config.storage()
+                .rulesFile()
+                .map(FirebaseEmulatorConfigBuilder::asPath)
+                .ifPresent(firebaseConfigBuilder::withStorageRules);
+
+        firebaseConfigBuilder.done();
     }
 
-    private static FirebaseEmulatorContainer.ExposedPort portForService(FirebaseDevServiceConfig.GenericDevService devService) {
-        var port = devService.emulatorPort().orElse(null);
-        return new FirebaseEmulatorContainer.ExposedPort(port);
+    private static Path asPath(String path) {
+        return new File(path).toPath();
     }
 
 }
