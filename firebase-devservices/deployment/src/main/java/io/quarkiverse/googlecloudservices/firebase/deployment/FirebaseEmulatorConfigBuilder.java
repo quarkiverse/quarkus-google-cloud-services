@@ -3,6 +3,7 @@ package io.quarkiverse.googlecloudservices.firebase.deployment;
 import java.io.File;
 import java.nio.file.Path;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import io.quarkiverse.googlecloudservices.firebase.deployment.testcontainers.FirebaseEmulatorContainer;
@@ -53,7 +54,7 @@ public class FirebaseEmulatorConfigBuilder {
         return Map.of(
                 FirebaseEmulatorContainer.Emulator.AUTHENTICATION, config.firebase().auth().devservice(),
                 FirebaseEmulatorContainer.Emulator.EMULATOR_SUITE_UI, config.firebase().devservice().ui(),
-                FirebaseEmulatorContainer.Emulator.REALTIME_DATABASE, config.database().devservice(),
+                FirebaseEmulatorContainer.Emulator.REALTIME_DATABASE, config.firebase().database().devservice(),
                 FirebaseEmulatorContainer.Emulator.CLOUD_FIRESTORE, config.firestore().devservice(),
                 FirebaseEmulatorContainer.Emulator.CLOUD_FUNCTIONS, config.functions().devservice(),
                 FirebaseEmulatorContainer.Emulator.CLOUD_STORAGE, config.storage().devservice(),

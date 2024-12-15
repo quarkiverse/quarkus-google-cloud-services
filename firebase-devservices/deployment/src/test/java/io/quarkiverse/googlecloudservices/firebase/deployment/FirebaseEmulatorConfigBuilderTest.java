@@ -38,13 +38,13 @@ class FirebaseEmulatorConfigBuilderTest {
                                         Optional.of(6002))),
                         new TestAuth(
                                 new TestGenericDevService(true, Optional.of(6003))),
+                        new TestDatabase(
+                                new TestGenericDevService(
+                                        false,
+                                        Optional.of(6005))),
                         new TestHosting(
                                 new TestGenericDevService(true, Optional.of(6004)),
                                 Optional.of("public"))),
-                new TestDatabase(
-                        new TestGenericDevService(
-                                false,
-                                Optional.of(6005))),
                 new TestFirestore(
                         new TestFirestoreDevService(
                                 true,
@@ -119,7 +119,6 @@ class FirebaseEmulatorConfigBuilderTest {
     record TestFirebaseDevServiceConfig(
             Optional<String> projectId,
             Firebase firebase,
-            Database database,
             Firestore firestore,
             Functions functions,
             PubSub pubsub,
@@ -128,8 +127,9 @@ class FirebaseEmulatorConfigBuilderTest {
 
     record TestFirebase(
             DevService devservice,
-            FirebaseDevServiceConfig.Auth auth,
-            FirebaseDevServiceConfig.Hosting hosting) implements FirebaseDevServiceConfig.Firebase {
+            FirebaseDevServiceConfig.Firebase.Auth auth,
+            FirebaseDevServiceConfig.Firebase.Database database,
+            FirebaseDevServiceConfig.Firebase.Hosting hosting) implements FirebaseDevServiceConfig.Firebase {
     }
 
     record TestFirebaseDevService(
@@ -153,11 +153,11 @@ class FirebaseEmulatorConfigBuilderTest {
     }
 
     record TestAuth(
-            FirebaseDevServiceConfig.GenericDevService devservice) implements FirebaseDevServiceConfig.Auth {
+            FirebaseDevServiceConfig.GenericDevService devservice) implements FirebaseDevServiceConfig.Firebase.Auth {
     }
 
     record TestDatabase(
-            FirebaseDevServiceConfig.GenericDevService devservice) implements FirebaseDevServiceConfig.Database {
+            FirebaseDevServiceConfig.GenericDevService devservice) implements FirebaseDevServiceConfig.Firebase.Database {
     }
 
     record TestFirestore(
@@ -178,7 +178,7 @@ class FirebaseEmulatorConfigBuilderTest {
 
     record TestHosting(
             FirebaseDevServiceConfig.GenericDevService devservice,
-            Optional<String> hostingPath) implements FirebaseDevServiceConfig.Hosting {
+            Optional<String> hostingPath) implements FirebaseDevServiceConfig.Firebase.Hosting {
     }
 
     record TestPubSub(
