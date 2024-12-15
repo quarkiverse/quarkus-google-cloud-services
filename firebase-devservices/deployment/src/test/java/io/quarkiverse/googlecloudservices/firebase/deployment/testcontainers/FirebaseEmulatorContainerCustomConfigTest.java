@@ -1,4 +1,4 @@
-package io.quarkiverse.googlecloudservices.firebase.deployment;
+package io.quarkiverse.googlecloudservices.firebase.deployment.testcontainers;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -12,9 +12,6 @@ import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 import com.google.firebase.FirebaseOptions;
-
-import io.quarkiverse.googlecloudservices.firebase.deployment.testcontainers.CustomFirebaseConfigReader;
-import io.quarkiverse.googlecloudservices.firebase.deployment.testcontainers.FirebaseEmulatorContainer;
 
 @Testcontainers
 public class FirebaseEmulatorContainerCustomConfigTest {

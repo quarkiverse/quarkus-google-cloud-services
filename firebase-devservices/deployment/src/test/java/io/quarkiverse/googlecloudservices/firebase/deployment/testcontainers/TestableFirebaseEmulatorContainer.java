@@ -1,4 +1,4 @@
-package io.quarkiverse.googlecloudservices.firebase.deployment;
+package io.quarkiverse.googlecloudservices.firebase.deployment.testcontainers;
 
 import java.io.PrintStream;
 import java.util.Optional;
@@ -8,8 +8,6 @@ import org.testcontainers.containers.output.OutputFrame;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
 import com.google.firebase.internal.EmulatorCredentials;
-
-import io.quarkiverse.googlecloudservices.firebase.deployment.testcontainers.FirebaseEmulatorContainer;
 
 /**
  * Subclass of {@link FirebaseEmulatorContainer} which has some extra facilities to ease testing. Functionally

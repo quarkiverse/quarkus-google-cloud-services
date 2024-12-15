@@ -1,4 +1,4 @@
-package io.quarkiverse.googlecloudservices.firebase.deployment;
+package io.quarkiverse.googlecloudservices.firebase.deployment.testcontainers;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -42,7 +42,6 @@ import com.google.pubsub.v1.PubsubMessage;
 
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
-import io.quarkiverse.googlecloudservices.firebase.deployment.testcontainers.FirebaseEmulatorContainer;
 import io.quarkiverse.googlecloudservices.firebase.deployment.testcontainers.FirebaseEmulatorContainer.Emulator;
 import io.quarkiverse.googlecloudservices.firebase.deployment.testcontainers.FirebaseEmulatorContainer.EmulatorConfig;
 import io.quarkiverse.googlecloudservices.firebase.deployment.testcontainers.FirebaseEmulatorContainer.ExposedPort;
