@@ -78,7 +78,7 @@ You can configure a custom image if needed as base image to run the Firebase Emu
 
 == Custom Firebase JSON
 
-By default a `firebase.json` file is generated inside the image to configure the various emulators. You can configure the DevService to use your own custom firebase.json file (e.g generated using the Firebase tools CLI). The following requirements are defined for this file:
+By default a `firebase.json` file is generated inside the image to configure the various emulators. You can configure the  Dev Services to use your own custom firebase.json file (e.g generated using the Firebase tools CLI). The following requirements are defined for this file:
 
 * Each of the emulators must be exposed on `0.0.0.0` as host as described https://firebase.google.com/docs/emulator-suite/use_hosting#emulators-no-local-host[here]. If this is not done, the Emulators will not be reachable from the Docker host.
 * Emulators need to be configured to use the default ports. Customizing the ports on which they run is currently not supported (this might change in a future version).
