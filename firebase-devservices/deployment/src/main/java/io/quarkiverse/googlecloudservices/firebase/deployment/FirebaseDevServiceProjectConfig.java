@@ -1,9 +1,9 @@
 package io.quarkiverse.googlecloudservices.firebase.deployment;
 
+import java.util.Optional;
+
 import io.quarkus.runtime.annotations.ConfigRoot;
 import io.smallrye.config.ConfigMapping;
-
-import java.util.Optional;
 
 /**
  * Temporary Config root to retrieve the project id for the Firebase Emulator Container. We will remove this interface

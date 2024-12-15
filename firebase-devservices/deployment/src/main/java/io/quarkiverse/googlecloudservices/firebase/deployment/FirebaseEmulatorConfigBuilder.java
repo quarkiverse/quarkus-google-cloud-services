@@ -54,7 +54,8 @@ public class FirebaseEmulatorConfigBuilder {
         return builder;
     }
 
-    private void handleDockerConfig(FirebaseDevServiceConfig.Firebase.Emulator.Docker docker, FirebaseEmulatorContainer.Builder builder) {
+    private void handleDockerConfig(FirebaseDevServiceConfig.Firebase.Emulator.Docker docker,
+            FirebaseEmulatorContainer.Builder builder) {
         var dockerConfig = builder.withDockerConfig();
 
         dockerConfig.withImage(docker.imageName());
@@ -68,7 +69,8 @@ public class FirebaseEmulatorConfigBuilder {
         dockerConfig.done();
     }
 
-    private void handleCliConfig(FirebaseDevServiceConfig.Firebase.Emulator.Cli cli, FirebaseEmulatorContainer.Builder builder) {
+    private void handleCliConfig(FirebaseDevServiceConfig.Firebase.Emulator.Cli cli,
+            FirebaseEmulatorContainer.Builder builder) {
         var cliConfig = builder.withCliArguments();
 
         projectConfig.projectId().ifPresent(cliConfig::withProjectId);
@@ -85,8 +87,7 @@ public class FirebaseEmulatorConfigBuilder {
     private void handleEmulators(FirebaseEmulatorContainer.Builder builder) {
         config.firebase().emulator().customFirebaseJson().ifPresentOrElse(
                 (firebaseJson) -> configureCustomFirebaseJson(builder, firebaseJson),
-                () -> configureEmulators(builder)
-        );
+                () -> configureEmulators(builder));
     }
 
     private void configureCustomFirebaseJson(FirebaseEmulatorContainer.Builder builder, String firebaseJson) {
@@ -105,12 +106,9 @@ public class FirebaseEmulatorConfigBuilder {
                 .entrySet()
                 .stream()
                 .filter(e -> e.getValue().enabled())
-                .forEach(e ->
-                    e.getValue().emulatorPort().ifPresentOrElse(
-                            p -> firebaseConfigBuilder.withEmulatorOnFixedPort(e.getKey(), p),
-                            () -> firebaseConfigBuilder.withEmulator(e.getKey())
-                    )
-                );
+                .forEach(e -> e.getValue().emulatorPort().ifPresentOrElse(
+                        p -> firebaseConfigBuilder.withEmulatorOnFixedPort(e.getKey(), p),
+                        () -> firebaseConfigBuilder.withEmulator(e.getKey())));
 
         config.firebase()
                 .hosting()
@@ -133,25 +131,21 @@ public class FirebaseEmulatorConfigBuilder {
         config.firebase()
                 .firestore()
                 .websocketPort()
-                .ifPresent(p ->
-                        firebaseConfigBuilder.withEmulatorOnFixedPort(FirebaseEmulatorContainer.Emulator.CLOUD_FIRESTORE_WS, p)
-                );
+                .ifPresent(p -> firebaseConfigBuilder
+                        .withEmulatorOnFixedPort(FirebaseEmulatorContainer.Emulator.CLOUD_FIRESTORE_WS, p));
 
         config.firebase()
                 .emulator()
                 .ui()
                 .hubPort()
-                .ifPresent(p ->
-                        firebaseConfigBuilder.withEmulatorOnFixedPort(FirebaseEmulatorContainer.Emulator.EMULATOR_HUB, p)
-                );
+                .ifPresent(
+                        p -> firebaseConfigBuilder.withEmulatorOnFixedPort(FirebaseEmulatorContainer.Emulator.EMULATOR_HUB, p));
 
         config.firebase()
                 .emulator()
                 .ui()
                 .loggingPort()
-                .ifPresent(p ->
-                        firebaseConfigBuilder.withEmulatorOnFixedPort(FirebaseEmulatorContainer.Emulator.LOGGING, p)
-                );
+                .ifPresent(p -> firebaseConfigBuilder.withEmulatorOnFixedPort(FirebaseEmulatorContainer.Emulator.LOGGING, p));
 
         config.storage()
                 .rulesFile()

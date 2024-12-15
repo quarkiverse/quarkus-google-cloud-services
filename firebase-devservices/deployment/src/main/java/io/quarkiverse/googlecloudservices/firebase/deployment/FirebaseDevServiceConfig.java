@@ -119,7 +119,6 @@ public interface FirebaseDevServiceConfig {
              */
             UI ui();
 
-
             interface Docker {
                 /**
                  * Sets the Docker image name for the Google Cloud SDK.
@@ -155,6 +154,7 @@ public interface FirebaseDevServiceConfig {
                  * Try to read the {@link #dockerGroup()} from an environment variable
                  */
                 Optional<String> dockerGroupEnv();
+
                 /**
                  * Pipe Stdout of the container to the Quarkus logging
                  */
@@ -180,7 +180,8 @@ public interface FirebaseDevServiceConfig {
                 /**
                  * Sets the JAVA tool options for emulators based on the Java runtime environment like -Xmx.
                  * See also
-                 * <a href="https://firebase.google.com/docs/emulator-suite/install_and_configure#specifying_java_options">here</a>
+                 * <a href=
+                 * "https://firebase.google.com/docs/emulator-suite/install_and_configure#specifying_java_options">here</a>
                  */
                 Optional<String> javaToolOptions();
 

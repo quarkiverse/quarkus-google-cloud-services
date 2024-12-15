@@ -17,9 +17,8 @@ class FirebaseEmulatorConfigBuilderTest {
 
     @BeforeEach
     void setUp() {
-        var projectConfig= new TestProjectConfig(
-                Optional.of("my-project-id")
-        );
+        var projectConfig = new TestProjectConfig(
+                Optional.of("my-project-id"));
         var config = new TestFirebaseDevServiceConfig(
                 new TestFirebase(
                         true,
@@ -32,55 +31,43 @@ class FirebaseEmulatorConfigBuilderTest {
                                         Optional.empty(),
                                         Optional.empty(),
                                         Optional.of(false),
-                                        Optional.of(true)
-                                ),
+                                        Optional.of(true)),
                                 new TestCli(
                                         Optional.of("MY_TOKEN"),
                                         Optional.of("-Xmx"),
                                         Optional.of("data"),
                                         Optional.of(FirebaseEmulatorContainer.ImportExport.EXPORT_ONLY),
-                                        Optional.of(true)
-                                ),
+                                        Optional.of(true)),
                                 Optional.empty(),
                                 new TestUI(
                                         true,
                                         Optional.of(6000),
                                         Optional.of(6001),
-                                        Optional.of(6002)
-                                )
-                        ),
+                                        Optional.of(6002))),
                         new TestGenericDevService(true, Optional.of(6003)),
                         new TestHosting(
                                 true,
                                 Optional.of(6004),
-                                Optional.of("public")
-                        ),
+                                Optional.of("public")),
                         new TestGenericDevService(
                                 false,
-                                Optional.of(6005)
-                        ),
+                                Optional.of(6005)),
                         new TestFirestoreDevService(
                                 true,
                                 Optional.of(6006),
                                 Optional.of(6007),
                                 Optional.of("firestore.rules"),
-                                Optional.of("firestore.indexes.json")
-                        )
-                    ),
-                    new TestGenericDevService(
-                            true,
-                            Optional.of(6008)
-                    ),
-                    new TestGenericDevService(
-                            true,
-                            Optional.of(6009)
-                    ),
-                    new TestStorageDevService(
-                            true,
-                            Optional.empty(),
-                            Optional.of("storage.rules")
-                    )
-                );
+                                Optional.of("firestore.indexes.json"))),
+                new TestGenericDevService(
+                        true,
+                        Optional.of(6008)),
+                new TestGenericDevService(
+                        true,
+                        Optional.of(6009)),
+                new TestStorageDevService(
+                        true,
+                        Optional.empty(),
+                        Optional.of("storage.rules")));
         configBuilder = new FirebaseEmulatorConfigBuilder(projectConfig, config);
     }
 
@@ -144,8 +131,7 @@ class FirebaseEmulatorConfigBuilderTest {
 
     // Record implementations for interfaces
     record TestProjectConfig(
-            Optional<String> projectId
-    ) implements FirebaseDevServiceProjectConfig {
+            Optional<String> projectId) implements FirebaseDevServiceProjectConfig {
     }
 
     record TestFirebaseDevServiceConfig(
@@ -161,8 +147,7 @@ class FirebaseEmulatorConfigBuilderTest {
             FirebaseDevServiceConfig.GenericDevService auth,
             FirebaseDevServiceConfig.Firebase.HostingDevService hosting,
             FirebaseDevServiceConfig.GenericDevService database,
-            FirebaseDevServiceConfig.Firebase.FirestoreDevService firestore
-            ) implements FirebaseDevServiceConfig.Firebase {
+            FirebaseDevServiceConfig.Firebase.FirestoreDevService firestore) implements FirebaseDevServiceConfig.Firebase {
 
     }
 
@@ -181,8 +166,7 @@ class FirebaseEmulatorConfigBuilderTest {
             Optional<String> dockerUserEnv,
             Optional<String> dockerGroupEnv,
             Optional<Boolean> followStdOut,
-            Optional<Boolean> followStdErr
-    ) implements FirebaseDevServiceConfig.Firebase.Emulator.Docker {
+            Optional<Boolean> followStdErr) implements FirebaseDevServiceConfig.Firebase.Emulator.Docker {
     }
 
     record TestCli(
@@ -190,8 +174,7 @@ class FirebaseEmulatorConfigBuilderTest {
             Optional<String> javaToolOptions,
             Optional<String> emulatorData,
             Optional<FirebaseEmulatorContainer.ImportExport> importExport,
-            Optional<Boolean> debug
-    ) implements FirebaseDevServiceConfig.Firebase.Emulator.Cli {
+            Optional<Boolean> debug) implements FirebaseDevServiceConfig.Firebase.Emulator.Cli {
     }
 
     record TestUI(
