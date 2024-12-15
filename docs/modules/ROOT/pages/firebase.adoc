@@ -1,4 +1,4 @@
-= Google Cloud Services - Firebase
+= Google Cloud Services - Firebase Dev Services
 
 This extension implements DevServices for applications developed on with the Google Firebase platform. The DevService runs the appropriate emulators of the Firebase platform based on your configuration.
 
