@@ -9,6 +9,8 @@ import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import io.quarkiverse.googlecloudservices.firebase.deployment.testcontainers.FirebaseEmulatorContainer;
+
 class FirebaseEmulatorConfigBuilderTest {
 
     private FirebaseEmulatorConfigBuilder configBuilder;
@@ -36,18 +38,20 @@ class FirebaseEmulatorConfigBuilderTest {
                                         Optional.of(6002))),
                         new TestAuth(
                                 new TestGenericDevService(true, Optional.of(6003))),
+                        new TestDatabase(
+                                new TestGenericDevService(
+                                        false,
+                                        Optional.of(6005))),
                         new TestHosting(
                                 new TestGenericDevService(true, Optional.of(6004)),
                                 Optional.of("public"))),
-                new TestDatabase(
-                        new TestGenericDevService(
-                                false,
-                                Optional.of(6005))),
                 new TestFirestore(
                         new TestFirestoreDevService(
                                 true,
                                 Optional.of(6006),
-                                Optional.of(6007))),
+                                Optional.of(6007),
+                                Optional.of("firestore.rules"),
+                                Optional.of("firestore.indexes.json"))),
                 new TestFunctions(
                         new TestGenericDevService(
                                 true,
@@ -57,10 +61,10 @@ class FirebaseEmulatorConfigBuilderTest {
                                 true,
                                 Optional.of(6009))),
                 new TestStorage(
-                        new TestGenericDevService(
+                        new TestStorageDevService(
                                 true,
-                                Optional.empty()) // Storage
-                ));
+                                Optional.empty(),
+                                Optional.of("storage.rules"))));
         configBuilder = new FirebaseEmulatorConfigBuilder(config);
     }
 
@@ -76,7 +80,12 @@ class FirebaseEmulatorConfigBuilderTest {
         assertPathEndsWith("firebase.json", emulatorConfig.customFirebaseJson().orElse(null));
         assertEquals("-Xmx", emulatorConfig.javaToolOptions().orElse(null));
         assertPathEndsWith("data", emulatorConfig.emulatorData().orElse(null));
-        assertPathEndsWith("public", emulatorConfig.hostingContentDir().orElse(null));
+        assertPathEndsWith("public", emulatorConfig.firebaseConfig().hostingConfig().hostingContentDir().orElse(null));
+        assertPathEndsWith("storage.rules", emulatorConfig.firebaseConfig().storageConfig().rulesFile().orElse(null));
+        assertPathEndsWith("firestore.rules", emulatorConfig.firebaseConfig().firestoreConfig().rulesFile().orElse(null));
+        assertPathEndsWith("firestore.indexes.json",
+                emulatorConfig.firebaseConfig().firestoreConfig().indexesFile().orElse(null));
+
     }
 
     private void assertPathEndsWith(String expected, Path path) {
@@ -89,7 +98,7 @@ class FirebaseEmulatorConfigBuilderTest {
         FirebaseEmulatorContainer.EmulatorConfig emulatorConfig = configBuilder.build();
 
         Map<FirebaseEmulatorContainer.Emulator, FirebaseEmulatorContainer.ExposedPort> exposedPorts = emulatorConfig
-                .services();
+                .firebaseConfig().services();
 
         assertEquals(10, exposedPorts.size());
         assertEquals(6000, exposedPorts.get(FirebaseEmulatorContainer.Emulator.EMULATOR_SUITE_UI).fixedPort());
@@ -110,7 +119,6 @@ class FirebaseEmulatorConfigBuilderTest {
     record TestFirebaseDevServiceConfig(
             Optional<String> projectId,
             Firebase firebase,
-            Database database,
             Firestore firestore,
             Functions functions,
             PubSub pubsub,
@@ -119,8 +127,9 @@ class FirebaseEmulatorConfigBuilderTest {
 
     record TestFirebase(
             DevService devservice,
-            FirebaseDevServiceConfig.Auth auth,
-            FirebaseDevServiceConfig.Hosting hosting) implements FirebaseDevServiceConfig.Firebase {
+            FirebaseDevServiceConfig.Firebase.Auth auth,
+            FirebaseDevServiceConfig.Firebase.Database database,
+            FirebaseDevServiceConfig.Firebase.Hosting hosting) implements FirebaseDevServiceConfig.Firebase {
     }
 
     record TestFirebaseDevService(
@@ -144,11 +153,11 @@ class FirebaseEmulatorConfigBuilderTest {
     }
 
     record TestAuth(
-            FirebaseDevServiceConfig.GenericDevService devservice) implements FirebaseDevServiceConfig.Auth {
+            FirebaseDevServiceConfig.GenericDevService devservice) implements FirebaseDevServiceConfig.Firebase.Auth {
     }
 
     record TestDatabase(
-            FirebaseDevServiceConfig.GenericDevService devservice) implements FirebaseDevServiceConfig.Database {
+            FirebaseDevServiceConfig.GenericDevService devservice) implements FirebaseDevServiceConfig.Firebase.Database {
     }
 
     record TestFirestore(
@@ -158,7 +167,9 @@ class FirebaseEmulatorConfigBuilderTest {
     record TestFirestoreDevService(
             boolean enabled,
             Optional<Integer> emulatorPort,
-            Optional<Integer> websocketPort) implements FirebaseDevServiceConfig.Firestore.FirestoreDevService {
+            Optional<Integer> websocketPort,
+            Optional<String> rulesFile,
+            Optional<String> indexesFile) implements FirebaseDevServiceConfig.Firestore.FirestoreDevService {
     }
 
     record TestFunctions(
@@ -167,7 +178,7 @@ class FirebaseEmulatorConfigBuilderTest {
 
     record TestHosting(
             FirebaseDevServiceConfig.GenericDevService devservice,
-            Optional<String> hostingPath) implements FirebaseDevServiceConfig.Hosting {
+            Optional<String> hostingPath) implements FirebaseDevServiceConfig.Firebase.Hosting {
     }
 
     record TestPubSub(
@@ -175,7 +186,14 @@ class FirebaseEmulatorConfigBuilderTest {
     }
 
     record TestStorage(
-            FirebaseDevServiceConfig.GenericDevService devservice) implements FirebaseDevServiceConfig.Storage {
+            FirebaseDevServiceConfig.Storage.StorageDevService devservice) implements FirebaseDevServiceConfig.Storage {
+    }
+
+    record TestStorageDevService(
+            boolean enabled,
+            Optional<Integer> emulatorPort,
+            Optional<String> rulesFile) implements FirebaseDevServiceConfig.Storage.StorageDevService {
+
     }
 
     record TestGenericDevService(

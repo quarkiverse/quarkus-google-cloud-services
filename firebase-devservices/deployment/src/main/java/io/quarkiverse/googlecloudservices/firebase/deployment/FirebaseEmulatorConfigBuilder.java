@@ -1,8 +1,12 @@
 package io.quarkiverse.googlecloudservices.firebase.deployment;
 
 import java.io.File;
+import java.nio.file.Path;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
+
+import io.quarkiverse.googlecloudservices.firebase.deployment.testcontainers.FirebaseEmulatorContainer;
 
 /**
  * This class translates the Quarkus Firebase extension configuration to the {@link FirebaseEmulatorContainer}
@@ -30,8 +34,19 @@ public class FirebaseEmulatorConfigBuilder {
                 devService.customFirebaseJson().map(File::new).map(File::toPath),
                 devService.javaToolOptions(),
                 devService.emulatorData().map(File::new).map(File::toPath),
-                config.firebase().hosting().hostingPath().map(File::new).map(File::toPath),
-                exposedEmulators(devServices(config)));
+                new FirebaseEmulatorContainer.FirebaseConfig(
+                        new FirebaseEmulatorContainer.HostingConfig(
+                                config.firebase().hosting().hostingPath().map(FirebaseEmulatorConfigBuilder::asPath)),
+                        new FirebaseEmulatorContainer.StorageConfig(
+                                config.storage().devservice().rulesFile().map(FirebaseEmulatorConfigBuilder::asPath)),
+                        new FirebaseEmulatorContainer.FirestoreConfig(
+                                config.firestore().devservice().rulesFile().map(FirebaseEmulatorConfigBuilder::asPath),
+                                config.firestore().devservice().indexesFile().map(FirebaseEmulatorConfigBuilder::asPath)),
+                        exposedEmulators(devServices(config))));
+    }
+
+    private static Path asPath(String path) {
+        return new File(path).toPath();
     }
 
     public static Map<FirebaseEmulatorContainer.Emulator, FirebaseDevServiceConfig.GenericDevService> devServices(
@@ -39,7 +54,7 @@ public class FirebaseEmulatorConfigBuilder {
         return Map.of(
                 FirebaseEmulatorContainer.Emulator.AUTHENTICATION, config.firebase().auth().devservice(),
                 FirebaseEmulatorContainer.Emulator.EMULATOR_SUITE_UI, config.firebase().devservice().ui(),
-                FirebaseEmulatorContainer.Emulator.REALTIME_DATABASE, config.database().devservice(),
+                FirebaseEmulatorContainer.Emulator.REALTIME_DATABASE, config.firebase().database().devservice(),
                 FirebaseEmulatorContainer.Emulator.CLOUD_FIRESTORE, config.firestore().devservice(),
                 FirebaseEmulatorContainer.Emulator.CLOUD_FUNCTIONS, config.functions().devservice(),
                 FirebaseEmulatorContainer.Emulator.CLOUD_STORAGE, config.storage().devservice(),

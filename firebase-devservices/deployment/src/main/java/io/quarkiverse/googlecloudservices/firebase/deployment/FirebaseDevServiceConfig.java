@@ -35,11 +35,6 @@ public interface FirebaseDevServiceConfig {
     Firebase firebase();
 
     /**
-     * Configure the realtime database
-     */
-    Database database();
-
-    /**
      * Configure the firestore
      */
     Firestore firestore();
@@ -76,6 +71,11 @@ public interface FirebaseDevServiceConfig {
          * Configure Firebase Hosting
          */
         Hosting hosting();
+
+        /**
+         * Configure the realtime database
+         */
+        Database database();
 
         interface DevService {
 
@@ -184,22 +184,36 @@ public interface FirebaseDevServiceConfig {
             }
 
         }
-    }
 
-    interface Auth {
+        interface Auth {
 
-        /**
-         * Configuration for the firebase auth emulator
-         */
-        GenericDevService devservice();
-    }
+            /**
+             * Configuration for the firebase auth emulator
+             */
+            GenericDevService devservice();
+        }
 
-    interface Database {
+        interface Database {
 
-        /**
-         * Configuration for the realtime database emulator
-         */
-        GenericDevService devservice();
+            /**
+             * Configuration for the realtime database emulator
+             */
+            GenericDevService devservice();
+        }
+
+        interface Hosting {
+
+            /**
+             * Configuration for the hosting emulator
+             */
+            GenericDevService devservice();
+
+            /**
+             * Path to the hosting files.
+             */
+            Optional<String> hostingPath();
+        }
+
     }
 
     interface Firestore {
@@ -219,6 +233,16 @@ public interface FirebaseDevServiceConfig {
              * used.
              */
             Optional<Integer> websocketPort();
+
+            /**
+             * Path to the firestore.rules file.
+             */
+            Optional<String> rulesFile();
+
+            /**
+             * Path to the firestore.indexes.json file.
+             */
+            Optional<String> indexesFile();
         }
     }
 
@@ -228,19 +252,6 @@ public interface FirebaseDevServiceConfig {
          * Configuration for the Functions emulator
          */
         GenericDevService devservice();
-    }
-
-    interface Hosting {
-
-        /**
-         * Configuration for the hosting emulator
-         */
-        GenericDevService devservice();
-
-        /**
-         * Path to the hosting files.
-         */
-        Optional<String> hostingPath();
     }
 
     interface PubSub {
@@ -256,7 +267,15 @@ public interface FirebaseDevServiceConfig {
         /**
          * Configuration for the storage emulator
          */
-        GenericDevService devservice();
+        StorageDevService devservice();
+
+        interface StorageDevService extends GenericDevService {
+
+            /**
+             * Path to the storage.rules file.
+             */
+            Optional<String> rulesFile();
+        }
     }
 
     /**
