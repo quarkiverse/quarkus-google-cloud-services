@@ -153,29 +153,6 @@ public class FirebaseEmulatorContainerIntegrationTest {
     }
 
     @Test
-    @Disabled
-    public void testFirebaseHostingEmulatorConnection() throws Exception {
-        // Validate that the static HTML file is accessible via HTTP
-        int hostingPort = firebaseContainer.emulatorPort(FirebaseEmulatorContainer.Emulator.FIREBASE_HOSTING);
-
-        // Construct URL for the hosted file
-        URL url = new URI("http://" + firebaseContainer.getHost() + ":" + hostingPort + "/index.html").toURL();
-
-        // Fetch content from the URL
-        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-        connection.setRequestMethod("GET");
-        int responseCode = connection.getResponseCode();
-
-        assertEquals(200, responseCode, "Expected HTTP status 200 for index.html");
-
-        try (BufferedReader reader = new BufferedReader(
-                new InputStreamReader(connection.getInputStream(), Charset.defaultCharset()))) {
-            String line = reader.readLine();
-            assertTrue(line.contains("Hello, Firebase Hosting!"), "Expected content in index.html");
-        }
-    }
-
-    @Test
     public void testFirebaseAuthenticationEmulatorConnection() throws FirebaseAuthException {
         // Retrieve the host and port for the Authentication emulator
         int authPort = firebaseContainer.emulatorPort(FirebaseEmulatorContainer.Emulator.AUTHENTICATION);
