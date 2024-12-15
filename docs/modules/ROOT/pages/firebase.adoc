@@ -36,7 +36,7 @@ First, we need a new project. Create a new project with the following command (r
 mvn io.quarkus:quarkus-maven-plugin:${quarkusVersion}:create \
     -DprojectGroupId=org.acme \
     -DprojectArtifactId=firebase-admin-quickstart \
-    -Dextensions="quarkus-google-cloud-firebase"
+    -Dextensions="quarkus-google-cloud-firebase-devservices"
 cd firebase-admin-quickstart
 ----
 
