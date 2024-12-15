@@ -1,17 +1,20 @@
-package io.quarkiverse.googlecloudservices.firebase.deployment.testcontainers;
+package nl.group9.testcontainers.firebase;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.nio.file.Files;
-import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
-
-import com.google.firebase.FirebaseOptions;
 
 @Testcontainers
 public class FirebaseEmulatorContainerCustomConfigTest {
@@ -22,25 +25,13 @@ public class FirebaseEmulatorContainerCustomConfigTest {
         try {
             // Create a temporary directory for emulator data
             tempEmulatorDataDir = Files.createTempDirectory("firebase-emulator-data").toFile();
-            firebaseContainer = new TestableFirebaseEmulatorContainer(
-                    new FirebaseEmulatorContainer.EmulatorConfig(
-                            new FirebaseEmulatorContainer.DockerConfig(
-                                    "node:23-alpine",
-                                    TestableFirebaseEmulatorContainer.user,
-                                    TestableFirebaseEmulatorContainer.group),
-                            "latest", // Firebase version
-                            Optional.of("demo-test-project"),
-                            Optional.empty(),
-                            Optional.of(new File("firebase.json").toPath()),
-                            Optional.empty(),
-                            Optional.of(tempEmulatorDataDir.toPath()),
-                            new CustomFirebaseConfigReader().readFromFirebase(new File("firebase.json").toPath())),
-                    "FirebaseEmulatorContainerCustomConfigTest") {
-
-                @Override
-                protected void createFirebaseOptions(FirebaseOptions.Builder builder) {
-                }
-            };
+            var testContainer = new TestableFirebaseEmulatorContainer("FirebaseEmulatorContainerCustomConfigTest");
+            firebaseContainer = testContainer.testBuilder()
+                    .withCliArguments()
+                    .withEmulatorData(tempEmulatorDataDir.toPath())
+                    .done()
+                    .readFromFirebaseJson(new File("firebase.json").toPath())
+                    .build();
 
         } catch (IOException e) {
             throw new IllegalStateException(e);
@@ -68,6 +59,32 @@ public class FirebaseEmulatorContainerCustomConfigTest {
         String storageRulesCheck = firebaseContainer.execInContainer("cat", "/srv/firebase/storage.rules").getStdout();
         assertTrue(storageRulesCheck.contains("service firebase.storage"),
                 "Expected storage.rules to be present in the container");
+    }
+
+    @Test
+    public void testHosting() throws IOException, InterruptedException, URISyntaxException {
+        try (HttpClient httpClient = HttpClient.newHttpClient()) {
+            var request = HttpRequest.newBuilder()
+                    .GET()
+                    .uri(new URI("http://localhost:7006/test.me"))
+                    .build();
+            var response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+            var body = response.body();
+            assertEquals("This is a test file for hosting", body);
+        }
+    }
+
+    @Test
+    public void testFunctions() throws IOException, InterruptedException, URISyntaxException {
+        try (HttpClient httpClient = HttpClient.newHttpClient()) {
+            var request = HttpRequest.newBuilder()
+                    .GET()
+                    .uri(new URI("http://localhost:7007/demo-test-project/us-central1/helloworld"))
+                    .build();
+            var response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+            var body = response.body();
+            assertEquals("Hello world", body);
+        }
     }
 
 }

@@ -139,7 +139,7 @@ quarkus-google-cloud-common-grpc and Quarkus includes the netty library -->
                 <version>1.2.2</version>
                 <configuration>
                     <sourceDirectory>${basedir}/src/main/schema</sourceDirectory>
-                    <targetPackage>io.quarkiverse.googlecloudservices.firebase.deployment.firebase.json</targetPackage>
+                    <targetPackage>io.quarkiverse.googlecloudservices.firebase.deployment.testcontainers.json</targetPackage>
                     <annotationStyle>jackson2</annotationStyle>
                     <generateBuilders>true</generateBuilders>
 

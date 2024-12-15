@@ -3,7 +3,6 @@ package io.quarkiverse.googlecloudservices.firebase.deployment;
 import java.io.File;
 import java.nio.file.Path;
 import java.util.Map;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import io.quarkiverse.googlecloudservices.firebase.deployment.testcontainers.FirebaseEmulatorContainer;

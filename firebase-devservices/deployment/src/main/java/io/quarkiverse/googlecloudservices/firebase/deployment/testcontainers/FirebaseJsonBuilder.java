@@ -1,6 +1,7 @@
 package io.quarkiverse.googlecloudservices.firebase.deployment.testcontainers;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.StringWriter;
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Optional;
@@ -8,14 +9,16 @@ import java.util.function.Consumer;
 
 import org.testcontainers.shaded.com.fasterxml.jackson.databind.ObjectMapper;
 
-import io.quarkiverse.googlecloudservices.firebase.deployment.firebase.json.*;
+import io.quarkiverse.googlecloudservices.firebase.deployment.testcontainers.json.*;
 
 /**
  * This class is responsible to generate the Firebase.json file which controls the emulators.
  */
-public class FirebaseJsonBuilder {
+class FirebaseJsonBuilder {
 
     private static final String ALL_IP = "0.0.0.0";
+    public static final String FIREBASE_HOSTING_SUBPATH = "public";
+    public static final String FIREBASE_FUNCTIONS_SUBPATH = "functions";
 
     private final ObjectMapper objectMapper = new ObjectMapper();
     private final FirebaseEmulatorContainer.EmulatorConfig emulatorConfig;
@@ -40,8 +43,8 @@ public class FirebaseJsonBuilder {
         configureEmulator();
         //        private ExtensionsConfig extensions;
         configureFirestore();
-        //        private Object functions;
-        //        private Object hosting;
+        configureFunctions();
+        configureHosting();
         //        private Remoteconfig remoteconfig;
         configureStorage();
     }
@@ -160,6 +163,39 @@ public class FirebaseJsonBuilder {
                 var indexFile = fileRelativeToCustomJsonOrDefault(index, "firestore.indexes.json");
                 firestore.put("indexes", indexFile);
             });
+        }
+    }
+
+    private void configureFunctions() {
+        if (isEmulatorEnabled(FirebaseEmulatorContainer.Emulator.CLOUD_FUNCTIONS)) {
+            var functions = new HashMap<String, Object>();
+            root.setFunctions(functions);
+
+            var functionsPath = emulatorConfig
+                    .firebaseConfig()
+                    .functionsConfig()
+                    .functionsPath()
+                    .map(Path::toString)
+                    .orElseThrow();
+
+            functions.put("source", functionsPath);
+            functions.put("ignores", new String[] { "node_modules" });
+        }
+    }
+
+    private void configureHosting() {
+        if (isEmulatorEnabled(FirebaseEmulatorContainer.Emulator.FIREBASE_HOSTING)) {
+            var hosting = new HashMap<String, String>();
+            root.setHosting(hosting);
+
+            var hostingPath = emulatorConfig
+                    .firebaseConfig()
+                    .hostingConfig()
+                    .hostingContentDir()
+                    .map(path -> path.isAbsolute() ? FIREBASE_HOSTING_SUBPATH : path.toString())
+                    .orElseThrow();
+
+            hosting.put("public", hostingPath);
         }
     }
 

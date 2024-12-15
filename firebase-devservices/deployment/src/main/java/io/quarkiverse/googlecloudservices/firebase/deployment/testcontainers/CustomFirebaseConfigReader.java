@@ -12,13 +12,24 @@ import java.util.stream.Collectors;
 
 import org.testcontainers.shaded.com.fasterxml.jackson.databind.ObjectMapper;
 
-import io.quarkiverse.googlecloudservices.firebase.deployment.firebase.json.Emulators;
-import io.quarkiverse.googlecloudservices.firebase.deployment.firebase.json.FirebaseConfig;
+import io.quarkiverse.googlecloudservices.firebase.deployment.testcontainers.json.Emulators;
+import io.quarkiverse.googlecloudservices.firebase.deployment.testcontainers.json.FirebaseConfig;
 
-public class CustomFirebaseConfigReader {
+/**
+ * Reader for the firebase.json file to convert it to the
+ * {@link io.quarkiverse.googlecloudservices.firebase.deployment.testcontainers.FirebaseEmulatorContainer.FirebaseConfig}
+ */
+class CustomFirebaseConfigReader {
 
     private final ObjectMapper objectMapper = new ObjectMapper();
 
+    /**
+     * Read the firebase config from a firebase.json file
+     *
+     * @param customFirebaseJson The path to the file
+     * @return The configuration
+     * @throws IOException In case the file could not be read
+     */
     public FirebaseEmulatorContainer.FirebaseConfig readFromFirebase(Path customFirebaseJson) throws IOException {
         var root = readCustomFirebaseJson(customFirebaseJson);
 
@@ -26,6 +37,7 @@ public class CustomFirebaseConfigReader {
                 readHosting(root.getHosting()),
                 readStorage(root.getStorage()),
                 readFirestore(root.getFirestore()),
+                readFunctions(root.getFunctions()),
                 readEmulators(root.getEmulators()));
     }
 
@@ -125,9 +137,7 @@ public class CustomFirebaseConfigReader {
                     rulesFile,
                     indexesFile);
         } else {
-            return new FirebaseEmulatorContainer.FirestoreConfig(
-                    Optional.empty(),
-                    Optional.empty());
+            return FirebaseEmulatorContainer.FirestoreConfig.DEFAULT;
         }
     }
 
@@ -143,8 +153,7 @@ public class CustomFirebaseConfigReader {
             return new FirebaseEmulatorContainer.HostingConfig(
                     publicDir);
         } else {
-            return new FirebaseEmulatorContainer.HostingConfig(
-                    Optional.empty());
+            return FirebaseEmulatorContainer.HostingConfig.DEFAULT;
         }
     }
 
@@ -160,8 +169,30 @@ public class CustomFirebaseConfigReader {
             return new FirebaseEmulatorContainer.StorageConfig(
                     rulesFile);
         } else {
-            return new FirebaseEmulatorContainer.StorageConfig(
-                    Optional.empty());
+            return FirebaseEmulatorContainer.StorageConfig.DEFAULT;
+        }
+    }
+
+    private FirebaseEmulatorContainer.FunctionsConfig readFunctions(Object functions) {
+        if (functions instanceof Map) {
+            @SuppressWarnings("unchecked")
+            Map<String, Object> functionsMap = (Map<String, Object>) functions;
+
+            var functionsPath = Optional
+                    .ofNullable(functionsMap.get("source"))
+                    .map(String.class::cast)
+                    .map(this::resolvePath);
+
+            var ignores = Optional
+                    .ofNullable(functionsMap.get("ignores"))
+                    .map(String[].class::cast)
+                    .orElse(new String[0]);
+
+            return new FirebaseEmulatorContainer.FunctionsConfig(
+                    functionsPath,
+                    ignores);
+        } else {
+            return FirebaseEmulatorContainer.FunctionsConfig.DEFAULT;
         }
     }
 
