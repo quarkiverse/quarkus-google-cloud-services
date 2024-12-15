@@ -14,9 +14,6 @@ The following emulators have been verified to work:
 * Realtime Database
 * PubSub
 * Cloud Storage
-
-The following emulators need additional work:
-
 * Firebase Hosting
 * Functions
 
