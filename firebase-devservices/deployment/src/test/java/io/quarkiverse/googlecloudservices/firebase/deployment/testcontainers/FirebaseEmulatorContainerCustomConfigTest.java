@@ -1,4 +1,4 @@
-package nl.group9.testcontainers.firebase;
+package io.quarkiverse.googlecloudservices.firebase.deployment.testcontainers;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -63,28 +63,26 @@ public class FirebaseEmulatorContainerCustomConfigTest {
 
     @Test
     public void testHosting() throws IOException, InterruptedException, URISyntaxException {
-        try (HttpClient httpClient = HttpClient.newHttpClient()) {
-            var request = HttpRequest.newBuilder()
-                    .GET()
-                    .uri(new URI("http://localhost:7006/test.me"))
-                    .build();
-            var response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
-            var body = response.body();
-            assertEquals("This is a test file for hosting", body);
-        }
+        HttpClient httpClient = HttpClient.newHttpClient();
+        var request = HttpRequest.newBuilder()
+                .GET()
+                .uri(new URI("http://localhost:7006/test.me"))
+                .build();
+        var response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+        var body = response.body();
+        assertEquals("This is a test file for hosting", body);
     }
 
     @Test
     public void testFunctions() throws IOException, InterruptedException, URISyntaxException {
-        try (HttpClient httpClient = HttpClient.newHttpClient()) {
-            var request = HttpRequest.newBuilder()
-                    .GET()
-                    .uri(new URI("http://localhost:7007/demo-test-project/us-central1/helloworld"))
-                    .build();
-            var response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
-            var body = response.body();
-            assertEquals("Hello world", body);
-        }
+        HttpClient httpClient = HttpClient.newHttpClient();
+        var request = HttpRequest.newBuilder()
+                .GET()
+                .uri(new URI("http://localhost:7007/demo-test-project/us-central1/helloworld"))
+                .build();
+        var response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+        var body = response.body();
+        assertEquals("Hello world", body);
     }
 
 }

@@ -1,4 +1,4 @@
-package nl.group9.testcontainers.firebase;
+package io.quarkiverse.googlecloudservices.firebase.deployment.testcontainers;
 
 import java.util.function.Consumer;
 
