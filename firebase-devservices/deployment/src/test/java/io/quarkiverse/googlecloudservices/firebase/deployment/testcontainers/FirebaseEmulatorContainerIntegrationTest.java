@@ -10,6 +10,8 @@ import java.net.URL;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.nio.ByteBuffer;
+import java.nio.channels.Channels;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -264,8 +266,7 @@ public class FirebaseEmulatorContainerIntegrationTest {
     }
 
     @Test
-    @Disabled
-    public void testStorageEmulatorConnection() {
+    public void testStorageEmulatorConnection() throws IOException {
         int storagePort = firebaseContainer.emulatorPort(FirebaseEmulatorContainer.Emulator.CLOUD_STORAGE);
 
         Storage storage = StorageOptions.newBuilder()
@@ -274,21 +275,23 @@ public class FirebaseEmulatorContainerIntegrationTest {
                 .setCredentials(NoCredentials.getInstance())
                 .build().getService();
 
-        var bucketName = "quarkus-hello";
+        var bucketName = "demo-test-project.appspot.com";
 
-        Bucket bucket = storage.get(bucketName);
-        if (bucket == null) {
-            bucket = storage.create(BucketInfo.newBuilder(bucketName).build());
+        BlobInfo blobInfo = BlobInfo.newBuilder(bucketName, "test-upload")
+                .setContentType("application/json")
+                .setContentDisposition("attachment; filename=\"test-upload\"")
+                .build();
+
+        try (var writer = storage.writer(blobInfo)) {
+            writer.write(ByteBuffer.wrap( "{\"test\": 1}".getBytes(StandardCharsets.UTF_8)));
         }
-        bucket.create("hello.txt", "{\"success\": true}".getBytes(StandardCharsets.UTF_8));
 
-        BlobInfo blobInfo = BlobInfo.newBuilder(bucketName, "test-upload").build();
-        storage.create(blobInfo, "test".getBytes(StandardCharsets.UTF_8));
-
-        // Verify the content of the uploaded file
-        Blob blob = bucket.get("hello.txt");
-        assertEquals("{\"success\": true}", new String(blob.getContent(), Charset.defaultCharset()),
-                "Expected blob content to match");
+        try (var reader = storage.reader(blobInfo.getBlobId())) {
+            try (var bufReader = new BufferedReader(Channels.newReader(reader, StandardCharsets.UTF_8))) {
+                var contents = bufReader.readLine();
+                assertEquals("{\"test\": 1}", contents, "Expected blob content to match");
+            }
+        }
     }
 
     @Test
