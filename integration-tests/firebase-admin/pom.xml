@@ -37,6 +37,10 @@
             <artifactId>rest-assured</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>io.quarkiverse.googlecloudservices</groupId>
+            <artifactId>quarkus-google-cloud-firebase-devservices</artifactId>
+        </dependency>
     </dependencies>
 
     <build>
