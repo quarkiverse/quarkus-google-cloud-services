@@ -99,9 +99,23 @@ public class FirebaseEmulatorConfigBuilder {
     }
 
     private void configureEmulators(FirebaseEmulatorContainer.Builder builder) {
-        var firebaseConfigBuilder = builder.withFirebaseConfig();
         var devServices = devServices(config);
 
+        var noEmulatorsConfigured = devServices
+                .entrySet()
+                .stream()
+                .filter(e -> e.getValue().enabled())
+                // Emulator Suite UI is enabled by default, so ignore it.
+                .filter(e -> !e.getKey().equals(FirebaseEmulatorContainer.Emulator.EMULATOR_SUITE_UI))
+                .findAny()
+                .isEmpty();
+
+        // No emulators configured via configuration, we will fallback to the automatic detection of a firebase.json file.
+        if (noEmulatorsConfigured) {
+            return;
+        }
+
+        var firebaseConfigBuilder = builder.withFirebaseConfig();
         devServices
                 .entrySet()
                 .stream()
