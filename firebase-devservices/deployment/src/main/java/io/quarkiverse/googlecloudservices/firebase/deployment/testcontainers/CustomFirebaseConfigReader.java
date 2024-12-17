@@ -88,6 +88,10 @@ class CustomFirebaseConfigReader {
                 new EmulatorMergeStrategy<>(
                         FirebaseEmulatorContainer.Emulator.FIREBASE_HOSTING,
                         em::getHosting,
+                        h -> h::getPort),
+                new EmulatorMergeStrategy<>(
+                        FirebaseEmulatorContainer.Emulator.PUB_SUB,
+                        em::getPubsub,
                         h -> h::getPort)
         };
 
