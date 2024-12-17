@@ -46,10 +46,6 @@ quarkus-google-cloud-common-grpc and Quarkus includes the netty library -->
             <artifactId>quarkus-security</artifactId>
         </dependency>
         <dependency>
-            <groupId>io.quarkiverse.googlecloudservices</groupId>
-            <artifactId>quarkus-google-cloud-firebase-devservices</artifactId>
-        </dependency>
-        <dependency>
             <groupId>org.eclipse.microprofile.jwt</groupId>
             <artifactId>microprofile-jwt-auth-api</artifactId>
             <version>${microprofile-jwt-auth-api.version}</version>
