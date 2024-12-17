@@ -22,7 +22,6 @@ import java.util.concurrent.TimeUnit;
 
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
@@ -36,7 +35,6 @@ import com.google.cloud.pubsub.v1.Publisher;
 import com.google.cloud.pubsub.v1.TopicAdminClient;
 import com.google.cloud.pubsub.v1.TopicAdminSettings;
 import com.google.cloud.storage.*;
-import com.google.cloud.storage.Blob;
 import com.google.firebase.FirebaseOptions;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthException;
@@ -283,7 +281,7 @@ public class FirebaseEmulatorContainerIntegrationTest {
                 .build();
 
         try (var writer = storage.writer(blobInfo)) {
-            writer.write(ByteBuffer.wrap( "{\"test\": 1}".getBytes(StandardCharsets.UTF_8)));
+            writer.write(ByteBuffer.wrap("{\"test\": 1}".getBytes(StandardCharsets.UTF_8)));
         }
 
         try (var reader = storage.reader(blobInfo.getBlobId())) {
