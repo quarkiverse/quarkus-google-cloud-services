@@ -14,24 +14,32 @@ import io.smallrye.config.WithDefault;
  * Emulator is running.
  *
  */
-@ConfigMapping(prefix = "quarkus.google.cloud.firebase.auth")
+@ConfigMapping(prefix = "quarkus.google.cloud.firebase")
 @ConfigRoot(phase = ConfigPhase.RUN_TIME)
 public interface FirebaseAuthConfig {
 
     /**
-     * Sets the emulator host to use.
+     * Returns the auth configuration
      */
-    Optional<String> emulatorHost();
+    AuthConfig auth();
 
-    /**
-     * Forces the usage of emulator credentials. The logic automatically uses emulator credentials in case
-     * the emulatorHost is set.
-     * <ul>
-     * <li>If true: force usage of emulator credentials</li>
-     * <li>If false: force not using emulator credentials</li>
-     * </ul>
-     */
-    @WithDefault("true")
-    boolean useEmulatorCredentials();
+    public interface AuthConfig {
+        /**
+         * Sets the emulator host to use.
+         */
+        Optional<String> emulatorHost();
+
+        /**
+         * Forces the usage of emulator credentials. The logic automatically uses emulator credentials in case
+         * the emulatorHost is set.
+         * <ul>
+         * <li>If true: force usage of emulator credentials</li>
+         * <li>If false: force not using emulator credentials</li>
+         * </ul>
+         */
+        @WithDefault("true")
+        boolean useEmulatorCredentials();
+
+    }
 
 }

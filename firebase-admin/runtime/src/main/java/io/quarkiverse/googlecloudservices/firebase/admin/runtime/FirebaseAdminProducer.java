@@ -38,7 +38,8 @@ public class FirebaseAdminProducer {
     public FirebaseAuth firestoreAuth(@ConfigMapping FirebaseAuthConfig firebaseAuthConfig, FirebaseApp firebaseApp) {
 
         // Configure the Firebase emulator to use.
-        firebaseAuthConfig.emulatorHost().ifPresent(host -> FirebaseProcessEnvironment.setenv(Utils.AUTH_EMULATOR_HOST, host));
+        firebaseAuthConfig.auth().emulatorHost()
+                .ifPresent(host -> FirebaseProcessEnvironment.setenv(Utils.AUTH_EMULATOR_HOST, host));
 
         return FirebaseAuth.getInstance(firebaseApp);
     }
@@ -61,7 +62,7 @@ public class FirebaseAdminProducer {
     }
 
     private GoogleCredentials googleCredentials() {
-        if (firebaseAuthConfig.emulatorHost().isPresent() && firebaseAuthConfig.useEmulatorCredentials()) {
+        if (firebaseAuthConfig.auth().emulatorHost().isPresent() && firebaseAuthConfig.auth().useEmulatorCredentials()) {
             return new EmulatorCredentials();
         } else {
             return (GoogleCredentials) googleCredentials.get();
