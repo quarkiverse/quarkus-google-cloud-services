@@ -96,6 +96,16 @@ If you already have a firebase project (which you can create using the firebase 
 ----
   * For both entries, you can of course use your own custom ports, where needed.
 
+The extension will try to read the `firebase.json` file from the current working directory the
+process was started in (it will not attempt to traverse the directory upwards to try to find the
+file). In some cases you may need to specify this working directory. E.g. when using Gradle:
+
+[source,text]
+----
+quarkusDev {
+    workingDirectory = rootProject.projectDir
+}
+----
 
 == Custom Docker image
 

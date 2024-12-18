@@ -413,7 +413,9 @@ public class FirebaseEmulatorContainer extends GenericContainer<FirebaseEmulator
         public EmulatorConfig buildConfig() {
             if (firebaseConfig == null) {
                 // Try to autoload the firebase.json configuration
-                var defaultFirebaseJson = new File("firebase.json").toPath();
+                var defaultFirebaseJson = new File("firebase.json").getAbsoluteFile().toPath();
+
+                LOGGER.info("Trying to automatically read firebase config from {}", defaultFirebaseJson);
 
                 try {
                     readFromFirebaseJson(defaultFirebaseJson);
