@@ -1,5 +1,6 @@
 package io.quarkiverse.googlecloudservices.it.firebaseadmin;
 
+import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
@@ -29,6 +30,14 @@ public class FirebaseAppResource {
     @Path("/secret-options")
     @Produces(MediaType.APPLICATION_JSON)
     public FirebaseOptions getSecretOptions() {
+        return firebaseApp.getOptions();
+    }
+
+    @GET
+    @RolesAllowed({ "admin" })
+    @Path("/admin-options")
+    @Produces(MediaType.APPLICATION_JSON)
+    public FirebaseOptions getAdminOptions() {
         return firebaseApp.getOptions();
     }
 

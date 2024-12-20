@@ -1,0 +1,40 @@
+{
+  "emulators": {
+    "firestore": {
+      "host": "0.0.0.0",
+      "port": 7002,
+      "websocketPort": 7003
+    },
+    "storage": {
+      "host": "0.0.0.0",
+      "port": 7005
+    },
+    "hosting": {
+      "host": "0.0.0.0",
+      "port": 7006
+    },
+    "functions": {
+      "host": "0.0.0.0",
+      "port": 7007
+    },
+    "ui": {
+      "host": "0.0.0.0",
+      "enabled": true,
+      "port": 7009
+    },
+    "singleProjectMode": true
+  },
+  "hosting": {
+    "public": "hosting"
+  },
+  "functions": {
+    "source": "functions"
+  },
+  "firestore": {
+    "rules": "firestore.rules",
+    "indexes": "firestore.indexes.json"
+  },
+  "storage": {
+    "rules": "storage.rules"
+  }
+}
