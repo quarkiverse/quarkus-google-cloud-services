@@ -51,14 +51,19 @@ import io.grpc.ManagedChannelBuilder;
 @Testcontainers
 public class FirebaseEmulatorContainerIntegrationTest {
 
+    private static final File tempDataParent;
     private static final File tempEmulatorDataDir;
     private static final File tempHostingContentDir;
 
     static {
         try {
+            tempDataParent = new File("target/firebase-emulator-it");
+
             // Create a temporary directory for emulator data
-            tempEmulatorDataDir = Files.createTempDirectory("firebase-emulator-data").toFile();
-            tempHostingContentDir = Files.createTempDirectory("firebase-hosting-content").toFile();
+            tempEmulatorDataDir = new File(tempDataParent, "firebase-emulator-data");
+            tempEmulatorDataDir.mkdirs();
+            tempHostingContentDir = new File(tempDataParent, "firebase-hosting-content");
+            tempHostingContentDir.mkdirs();
 
             // Create a static HTML file in the hosting directory
             File indexFile = new File(tempHostingContentDir, "index.html");
@@ -117,8 +122,7 @@ public class FirebaseEmulatorContainerIntegrationTest {
         validateEmulatorDataWritten();
 
         // Recursively delete the contents of the directories and then delete the directories
-        deleteDirectoryRecursively(tempEmulatorDataDir);
-        deleteDirectoryRecursively(tempHostingContentDir);
+        deleteDirectoryRecursively(tempDataParent);
     }
 
     // Helper method to recursively delete all files and directories

@@ -24,7 +24,8 @@ public class FirebaseEmulatorContainerCustomConfigTest {
     static {
         try {
             // Create a temporary directory for emulator data
-            tempEmulatorDataDir = Files.createTempDirectory("firebase-emulator-data").toFile();
+            tempEmulatorDataDir = new File("target/firebase-emulator-container-data");
+            tempEmulatorDataDir.mkdirs();
             var testContainer = new TestableFirebaseEmulatorContainer("FirebaseEmulatorContainerCustomConfigTest");
             firebaseContainer = testContainer.testBuilder()
                     .withCliArguments()
