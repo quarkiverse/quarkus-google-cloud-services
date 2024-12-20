@@ -942,9 +942,7 @@ public class FirebaseEmulatorContainer extends GenericContainer<FirebaseEmulator
         var hostingPath = emulatorConfig.firebaseConfig().hostingConfig().hostingContentDir();
         if (emulatorConfig.customFirebaseJson().isPresent()) {
             var firebaseJsonDir = emulatorConfig.customFirebaseJson().get().getParent();
-            hostingPath = hostingPath.map(path ->
-                path.subpath(firebaseJsonDir.getNameCount(), path.getNameCount())
-            );
+            hostingPath = hostingPath.map(path -> path.subpath(firebaseJsonDir.getNameCount(), path.getNameCount()));
         }
 
         if (hostingPath.isPresent()) {
@@ -963,9 +961,7 @@ public class FirebaseEmulatorContainer extends GenericContainer<FirebaseEmulator
         var functionsPath = emulatorConfig.firebaseConfig().functionsConfig().functionsPath();
         if (emulatorConfig.customFirebaseJson().isPresent()) {
             var firebaseJsonDir = emulatorConfig.customFirebaseJson().get().getParent();
-            functionsPath = functionsPath.map(path ->
-                    path.subpath(firebaseJsonDir.getNameCount(), path.getNameCount())
-            );
+            functionsPath = functionsPath.map(path -> path.subpath(firebaseJsonDir.getNameCount(), path.getNameCount()));
         }
         return FIREBASE_ROOT + "/" + functionsPath
                 .map(Path::toString)
