@@ -24,6 +24,16 @@ jobs:
       with:
         java-version: 17
 
+    - uses: actions/setup-node@v4
+      with:
+        node-version: 20
+        cache: 'npm'
+        cache-dependency-path: src/test/functions/package-lock.json
+
+    - uses: bahmutov/npm-install@v1
+      with:
+        working-directory: src/test/functions
+
     - name: Cache local Maven repository
       uses: actions/cache@v2
       with:
