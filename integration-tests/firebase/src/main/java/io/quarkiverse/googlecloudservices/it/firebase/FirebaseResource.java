@@ -5,6 +5,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
+import com.google.firebase.database.FirebaseDatabase;
 import jakarta.enterprise.event.Observes;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.GET;
@@ -29,6 +30,9 @@ public class FirebaseResource {
     @Inject
     QuarkusPubSub quarkusPubSub;
 
+    @Inject
+    FirebaseDatabase firebaseDatabase;
+
     Publisher publisher;
 
     public void init(@Observes StartupEvent event) throws IOException {
@@ -48,15 +52,23 @@ public class FirebaseResource {
                 var fields = Map.of("test", msgData);
 
                 col.document("test").create(fields).get();
+
+                var dbRef = firebaseDatabase.getReference("test");
+                dbRef.setValue(fields, (err, ref)-> {
+                    if (err == null) {
+                        // Not pretty, but we just let the consumer timeout.
+                        consumer.ack();
+                    }
+
+                    synchronized (monitor) {
+                        monitor.notify();
+                    }
+                });
+
             } catch (InterruptedException | ExecutionException e) {
                 throw new RuntimeException(e);
             }
 
-            consumer.ack();
-
-            synchronized (monitor) {
-                monitor.notify();
-            }
         });
         subscriber.startAsync().awaitRunning();
 
@@ -80,6 +92,7 @@ public class FirebaseResource {
         if (iter.hasNext()) {
             var docRef = iter.next();
             var snapshot = docRef.get().get();
+
             return Response.ok(snapshot.getString("test")).build();
         } else {
             return Response.status(Response.Status.NOT_FOUND).build();
