@@ -34,10 +34,10 @@ class CustomFirebaseConfigReader {
         var root = readCustomFirebaseJson(customFirebaseJson);
 
         return new FirebaseEmulatorContainer.FirebaseConfig(
-                readHosting(root.getHosting()),
-                readStorage(root.getStorage()),
-                readFirestore(root.getFirestore()),
-                readFunctions(root.getFunctions()),
+                readHosting(root.getHosting(), customFirebaseJson),
+                readStorage(root.getStorage(), customFirebaseJson),
+                readFirestore(root.getFirestore(), customFirebaseJson),
+                readFunctions(root.getFunctions(), customFirebaseJson),
                 readEmulators(root.getEmulators()));
     }
 
@@ -125,17 +125,17 @@ class CustomFirebaseConfigReader {
         }
     }
 
-    private FirebaseEmulatorContainer.FirestoreConfig readFirestore(Object firestore) {
+    private FirebaseEmulatorContainer.FirestoreConfig readFirestore(Object firestore, Path customFirebaseJson) {
         if (firestore instanceof Map) {
             @SuppressWarnings("unchecked")
             Map<String, String> firestoreMap = (Map<String, String>) firestore;
 
             var rulesFile = Optional
                     .ofNullable(firestoreMap.get("rules"))
-                    .map(this::resolvePath);
+                    .map(f -> this.resolvePath(f, customFirebaseJson));
             var indexesFile = Optional
                     .ofNullable(firestoreMap.get("indexes"))
-                    .map(this::resolvePath);
+                    .map(f -> this.resolvePath(f, customFirebaseJson));
 
             return new FirebaseEmulatorContainer.FirestoreConfig(
                     rulesFile,
@@ -145,14 +145,14 @@ class CustomFirebaseConfigReader {
         }
     }
 
-    private FirebaseEmulatorContainer.HostingConfig readHosting(Object hosting) {
+    private FirebaseEmulatorContainer.HostingConfig readHosting(Object hosting, Path customFirebaseJson) {
         if (hosting instanceof Map) {
             @SuppressWarnings("unchecked")
             Map<String, String> hostingMap = (Map<String, String>) hosting;
 
             var publicDir = Optional
                     .ofNullable(hostingMap.get("public"))
-                    .map(this::resolvePath);
+                    .map(f -> this.resolvePath(f, customFirebaseJson));
 
             return new FirebaseEmulatorContainer.HostingConfig(
                     publicDir);
@@ -161,14 +161,14 @@ class CustomFirebaseConfigReader {
         }
     }
 
-    private FirebaseEmulatorContainer.StorageConfig readStorage(Object storage) {
+    private FirebaseEmulatorContainer.StorageConfig readStorage(Object storage, Path customFirebaseJson) {
         if (storage instanceof Map) {
             @SuppressWarnings("unchecked")
             Map<String, String> storageMap = (Map<String, String>) storage;
 
             var rulesFile = Optional
                     .ofNullable(storageMap.get("rules"))
-                    .map(this::resolvePath);
+                    .map(f -> this.resolvePath(f, customFirebaseJson));
 
             return new FirebaseEmulatorContainer.StorageConfig(
                     rulesFile);
@@ -177,7 +177,7 @@ class CustomFirebaseConfigReader {
         }
     }
 
-    private FirebaseEmulatorContainer.FunctionsConfig readFunctions(Object functions) {
+    private FirebaseEmulatorContainer.FunctionsConfig readFunctions(Object functions, Path customFirebaseJson) {
         if (functions instanceof Map) {
             @SuppressWarnings("unchecked")
             Map<String, Object> functionsMap = (Map<String, Object>) functions;
@@ -185,7 +185,7 @@ class CustomFirebaseConfigReader {
             var functionsPath = Optional
                     .ofNullable(functionsMap.get("source"))
                     .map(String.class::cast)
-                    .map(this::resolvePath);
+                    .map(f -> this.resolvePath(f, customFirebaseJson));
 
             var ignores = Optional
                     .ofNullable(functionsMap.get("ignores"))
@@ -200,8 +200,10 @@ class CustomFirebaseConfigReader {
         }
     }
 
-    private Path resolvePath(String filename) {
-        return new File(filename).toPath();
+    private Path resolvePath(String filename, Path customFirebaseJson) {
+        File firebaseJson = customFirebaseJson.toFile();
+        File firebaseDir = firebaseJson.getParentFile();
+        return new File(firebaseDir, filename).toPath();
     }
 
     private FirebaseConfig readCustomFirebaseJson(Path customFirebaseJson) throws IOException {

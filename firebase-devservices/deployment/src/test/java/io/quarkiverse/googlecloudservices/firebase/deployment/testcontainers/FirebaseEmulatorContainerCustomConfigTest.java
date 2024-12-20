@@ -30,7 +30,7 @@ public class FirebaseEmulatorContainerCustomConfigTest {
                     .withCliArguments()
                     .withEmulatorData(tempEmulatorDataDir.toPath())
                     .done()
-                    .readFromFirebaseJson(new File("firebase.json").toPath())
+                    .readFromFirebaseJson(new File("src/test/firebase.json").toPath())
                     .build();
 
         } catch (IOException e) {

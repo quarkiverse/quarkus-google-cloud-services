@@ -940,23 +940,34 @@ public class FirebaseEmulatorContainer extends GenericContainer<FirebaseEmulator
 
     static String containerHostingPath(EmulatorConfig emulatorConfig) {
         var hostingPath = emulatorConfig.firebaseConfig().hostingConfig().hostingContentDir();
+        if (emulatorConfig.customFirebaseJson().isPresent()) {
+            var firebaseJsonDir = emulatorConfig.customFirebaseJson().get().getParent();
+            hostingPath = hostingPath.map(path ->
+                path.subpath(firebaseJsonDir.getNameCount(), path.getNameCount())
+            );
+        }
 
-        return hostingPath
-                .map(Path::isAbsolute)
-                .map(absolute -> {
-                    if (absolute) {
-                        return FIREBASE_HOSTING_PATH;
-                    } else {
-                        return FIREBASE_ROOT + "/" + hostingPath.get();
-                    }
-                }).orElse(FIREBASE_HOSTING_PATH);
+        if (hostingPath.isPresent()) {
+            var path = hostingPath.get();
+            if (path.isAbsolute()) {
+                return FIREBASE_HOSTING_PATH;
+            } else {
+                return FIREBASE_ROOT + "/" + hostingPath.get();
+            }
+        } else {
+            return FIREBASE_HOSTING_PATH;
+        }
     }
 
     static String containerFunctionsPath(EmulatorConfig emulatorConfig) {
-        return FIREBASE_ROOT + "/" + emulatorConfig
-                .firebaseConfig()
-                .functionsConfig()
-                .functionsPath()
+        var functionsPath = emulatorConfig.firebaseConfig().functionsConfig().functionsPath();
+        if (emulatorConfig.customFirebaseJson().isPresent()) {
+            var firebaseJsonDir = emulatorConfig.customFirebaseJson().get().getParent();
+            functionsPath = functionsPath.map(path ->
+                    path.subpath(firebaseJsonDir.getNameCount(), path.getNameCount())
+            );
+        }
+        return FIREBASE_ROOT + "/" + functionsPath
                 .map(Path::toString)
                 .orElse(FirebaseJsonBuilder.FIREBASE_FUNCTIONS_SUBPATH);
     }
