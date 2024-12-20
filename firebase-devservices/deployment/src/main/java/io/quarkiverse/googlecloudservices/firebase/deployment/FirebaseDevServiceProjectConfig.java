@@ -9,7 +9,7 @@ import io.smallrye.config.ConfigMapping;
  * Temporary Config root to retrieve the project id for the Firebase Emulator Container. We will remove this interface
  * in the future in favour of using the common setup.
  */
-@ConfigMapping(prefix = "quarkus.google.cloud")
+@ConfigMapping(prefix = "quarkus.google.cloud.devservices")
 @ConfigRoot
 public interface FirebaseDevServiceProjectConfig {
 
