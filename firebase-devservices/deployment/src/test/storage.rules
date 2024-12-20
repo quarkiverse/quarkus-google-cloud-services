@@ -1,0 +1,10 @@
+service firebase.storage {
+    match /b/{bucket}/o {
+        match /company/{allPaths=**} {
+            allow read: if true
+        }
+        match /building/{allPaths=**} {
+            allow read: if true
+        }
+    }
+}
