@@ -58,6 +58,23 @@ endif::add-copy-button-to-env-var[]
 |int
 |
 
+a|icon:lock[title=Fixed at build time] [[quarkus-google-cloud-pubsub_quarkus-google-cloud-firebase-devservice-prefer-firebase-dev-services]] [.property-path]##link:#quarkus-google-cloud-pubsub_quarkus-google-cloud-firebase-devservice-prefer-firebase-dev-services[`quarkus.google.cloud.firebase.devservice.prefer-firebase-dev-services`]##
+
+[.description]
+--
+Indicates to use the dev service for Firebase. The default value is not setup unless the firebase module is included. In that case, the Firebase devservices will by default be preferred and the DevService for PubSub will be disabled.
+
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_GOOGLE_CLOUD_FIREBASE_DEVSERVICE_PREFER_FIREBASE_DEV_SERVICES+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_GOOGLE_CLOUD_FIREBASE_DEVSERVICE_PREFER_FIREBASE_DEV_SERVICES+++`
+endif::add-copy-button-to-env-var[]
+--
+|boolean
+|
+
 a| [[quarkus-google-cloud-pubsub_quarkus-google-cloud-pubsub-emulator-host]] [.property-path]##link:#quarkus-google-cloud-pubsub_quarkus-google-cloud-pubsub-emulator-host[`quarkus.google.cloud.pubsub.emulator-host`]##
 
 [.description]
