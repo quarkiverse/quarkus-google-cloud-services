@@ -1,0 +1,146 @@
+= Google Cloud Services - Firebase Dev Services
+
+This extension implements DevServices for applications developed on with the Google Firebase platform. The DevService runs the appropriate emulators of the Firebase platform based on your configuration.
+
+Be sure to have read the https://quarkiverse.github.io/quarkiverse-docs/quarkus-google-cloud-services/main/index.html[Google Cloud Services extension pack global documentation] before this one, it contains general configuration and information.
+
+== Current status
+
+The following emulators have been verified to work:
+
+* Firebase Auth
+* Firebase Firestore
+* Firebase Emulator UI
+* Realtime Database
+* PubSub
+* Cloud Storage
+* Firebase Hosting
+* Functions
+
+The following emulators are currently not supported:
+* EventArc
+
+Currently you can specify a custom `firebase.json` file but suport for this is limited. A
+future version will support reading the configuration from the `firebase.json` file
+instead of from the Quarkus configuration.
+
+== Bootstrapping the project
+
+First, we need a new project. Create a new project with the following command (replace the version placeholder with the correct one):
+
+[source, shell script]
+----
+mvn io.quarkus:quarkus-maven-plugin:${quarkusVersion}:create \
+    -DprojectGroupId=org.acme \
+    -DprojectArtifactId=firebase-admin-quickstart \
+    -Dextensions="quarkus-google-cloud-firebase-devservices"
+cd firebase-admin-quickstart
+----
+
+This command generates a Maven project, importing the Google Cloud Firebase extension.
+
+If you already have your Quarkus project configured, you can add the `quarkus-google-cloud-firebase` extension to your project by running the following command in your project base directory:
+
+[source, shell script]
+----
+./mvnw quarkus:add-extension -Dextensions="quarkus-google-cloud-firebase"
+----
+
+This will add the following to your pom.xml:
+
+[source, xml]
+----
+<dependency>
+    <groupId>io.quarkiverse.googlecloudservices</groupId>
+    <artifactId>quarkus-google-cloud-firebase</artifactId>
+</dependency>
+----
+
+If you already have a firebase project (which you can create using the firebase tools by running `firebase init`), you need to make the following changes to get going:
+* Add `"host" : "0.0.0.0"` to all emulator entries
+* Add the hub, logging and UI emulators to the emulators configuration
+
+[source,json]
+----
+{
+
+  "emulators" : {
+    "ui": {
+      "port": 4000,
+      "enabled": true,
+      "host": "0.0.0.0"
+    },
+    "hub": {
+      "port": 4400,
+      "host": "0.0.0.0"
+    },
+    "logging": {
+      "port": 4500,
+      "host": "0.0.0.0"
+    }
+  }
+}
+----
+  * If you use Firestore, also set the Firestore Websocket port
+[source,json]
+----
+{
+  "emulators" : {
+    "firestore": {
+      "port": 8080,
+      "websocketPort" : 9150,
+      "host": "0.0.0.0"
+    }
+  }
+}
+----
+  * For both entries, you can of course use your own custom ports, where needed.
+
+The extension will try to read the `firebase.json` file from the current working directory the
+process was started in (it will not attempt to traverse the directory upwards to try to find the
+file). In some cases you may need to specify this working directory. E.g. when using Gradle:
+
+[source,text]
+----
+quarkusDev {
+    workingDirectory = rootProject.projectDir
+}
+----
+
+== Custom Docker image
+
+To run the emulators, a custom Docker image is build on the fly to run the Firebase emulators. This image is based on a NodeJS based image (refer to the configuration of the default value of `quarkus.google.cloud.firebase.devservice.image-name` to see the base image).
+
+You can configure a custom image if needed as base image to run the Firebase Emulators in. This image has the following requirements:
+
+* The image must support NodeJS in a version compatible with the required Firebase Tools
+* The image must be `alpine` based (or at least able to install the following packages using `apk`: )
+** openjdk17-jre
+** bash
+** curl
+** openssl
+** gettext
+** nano
+** nginx
+** sudo
+
+== Custom Firebase JSON
+
+If emulators are configured via the configuration options, a `firebase.json` file is generated inside the image to configure the various emulators. You can configure the  Dev Services to use your own custom firebase.json file (e.g generated using the Firebase tools CLI). The following requirements are defined for this file:
+
+* Each of the emulators must be exposed on `0.0.0.0` as host as described https://firebase.google.com/docs/emulator-suite/use_hosting#emulators-no-local-host[here]. If this is not done, the Emulators will not be reachable from the Docker host.
+* Emulators need to be configured to use the default ports. Customizing the ports on which they run is currently not supported (this might change in a future version).
+
+== Interaction with other extensions
+
+The following extensions support  Dev Services which conflicts with the  Dev Services exposed by the Firebase Emulators.
+
+* Firestore
+* PubSub
+* TODO: Verify Storage
+
+When including this module, these  Dev Services will automatically be disabled, as the Firebase emulator should feature wise be on-par or more extensive than the individual emulators.
+
+== Configuration Reference
+
+include::./includes/quarkus-google-cloud-firebase-devservices.adoc[]

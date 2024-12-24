@@ -30,6 +30,7 @@
     <module>pubsub</module>
     <module>spanner</module>
     <module>storage</module>
+    <module>firebase-devservices</module>
     <module>firebase-admin</module>
     <module>firestore</module>
     <module>bigtable</module>
