@@ -10,10 +10,12 @@ import static org.hamcrest.Matchers.not;
 import java.util.Map;
 import java.util.Set;
 
+import jakarta.inject.Inject;
+
+import org.junit.jupiter.api.Test;
+
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthException;
-import jakarta.inject.Inject;
-import org.junit.jupiter.api.Test;
 
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.http.ContentType;

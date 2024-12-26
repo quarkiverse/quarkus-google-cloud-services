@@ -3,13 +3,13 @@ package io.quarkiverse.googlecloudservices.firebase.admin.runtime.authentication
 import java.security.Principal;
 import java.util.*;
 
-import io.quarkiverse.googlecloudservices.firebase.admin.runtime.FirebaseAuthConfig;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseToken;
 
+import io.quarkiverse.googlecloudservices.firebase.admin.runtime.FirebaseAuthConfig;
 import io.quarkus.security.identity.AuthenticationRequestContext;
 import io.quarkus.security.identity.IdentityProvider;
 import io.quarkus.security.identity.SecurityIdentity;
