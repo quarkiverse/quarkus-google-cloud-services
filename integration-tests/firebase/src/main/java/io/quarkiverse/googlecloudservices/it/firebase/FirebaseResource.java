@@ -5,7 +5,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
-import com.google.firebase.database.FirebaseDatabase;
 import jakarta.enterprise.event.Observes;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.GET;
@@ -15,6 +14,7 @@ import jakarta.ws.rs.core.Response;
 
 import com.google.cloud.firestore.Firestore;
 import com.google.cloud.pubsub.v1.Publisher;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.protobuf.ByteString;
 import com.google.pubsub.v1.PubsubMessage;
 
@@ -54,7 +54,7 @@ public class FirebaseResource {
                 col.document("test").create(fields).get();
 
                 var dbRef = firebaseDatabase.getReference("test");
-                dbRef.setValue(fields, (err, ref)-> {
+                dbRef.setValue(fields, (err, ref) -> {
                     if (err == null) {
                         // Not pretty, but we just let the consumer timeout.
                         consumer.ack();
