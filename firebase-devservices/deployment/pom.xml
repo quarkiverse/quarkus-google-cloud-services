@@ -138,7 +138,7 @@ quarkus-google-cloud-common-grpc and Quarkus includes the netty library -->
                 <artifactId>jsonschema2pojo-maven-plugin</artifactId>
                 <version>1.2.2</version>
                 <configuration>
-                    <sourceDirectory>${basedir}/src/main/schema</sourceDirectory>
+                    <sourceDirectory>${basedir}/src/main/resources/META-INF/schema</sourceDirectory>
                     <targetPackage>io.quarkiverse.googlecloudservices.firebase.deployment.testcontainers.json</targetPackage>
                     <annotationStyle>jackson2</annotationStyle>
                     <generateBuilders>true</generateBuilders>

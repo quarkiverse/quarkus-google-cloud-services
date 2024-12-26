@@ -25,10 +25,10 @@
     "singleProjectMode": true
   },
   "hosting": {
-    "public": "src/test/hosting"
+    "public": "hosting"
   },
   "functions": {
-    "source": "src/test/functions"
+    "source": "functions"
   },
   "firestore": {
     "rules": "firestore.rules",

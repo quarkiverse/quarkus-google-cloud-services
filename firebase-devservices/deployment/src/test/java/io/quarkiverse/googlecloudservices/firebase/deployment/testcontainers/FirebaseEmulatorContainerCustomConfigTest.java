@@ -10,7 +10,6 @@ import java.net.URISyntaxException;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.nio.file.Files;
 
 import org.junit.jupiter.api.Test;
 import org.testcontainers.junit.jupiter.Container;
@@ -24,13 +23,14 @@ public class FirebaseEmulatorContainerCustomConfigTest {
     static {
         try {
             // Create a temporary directory for emulator data
-            tempEmulatorDataDir = Files.createTempDirectory("firebase-emulator-data").toFile();
+            tempEmulatorDataDir = new File("target/firebase-emulator-container-data");
+            tempEmulatorDataDir.mkdirs();
             var testContainer = new TestableFirebaseEmulatorContainer("FirebaseEmulatorContainerCustomConfigTest");
             firebaseContainer = testContainer.testBuilder()
                     .withCliArguments()
                     .withEmulatorData(tempEmulatorDataDir.toPath())
                     .done()
-                    .readFromFirebaseJson(new File("firebase.json").toPath())
+                    .readFromFirebaseJson(new File("src/test/firebase.json").toPath())
                     .build();
 
         } catch (IOException e) {
