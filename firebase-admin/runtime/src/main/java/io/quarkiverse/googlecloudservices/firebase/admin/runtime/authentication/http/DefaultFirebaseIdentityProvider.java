@@ -1,7 +1,7 @@
 package io.quarkiverse.googlecloudservices.firebase.admin.runtime.authentication.http;
 
 import java.security.Principal;
-import java.util.Optional;
+import java.util.*;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -9,6 +9,7 @@ import jakarta.inject.Inject;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseToken;
 
+import io.quarkiverse.googlecloudservices.firebase.admin.runtime.FirebaseAuthConfig;
 import io.quarkus.security.identity.AuthenticationRequestContext;
 import io.quarkus.security.identity.IdentityProvider;
 import io.quarkus.security.identity.SecurityIdentity;
@@ -24,6 +25,9 @@ public class DefaultFirebaseIdentityProvider implements IdentityProvider<Firebas
 
     @Inject
     FirebaseAuth auth;
+
+    @Inject
+    FirebaseAuthConfig config;
 
     /**
      * Retrieves the request type that this provider supports.
@@ -65,11 +69,37 @@ public class DefaultFirebaseIdentityProvider implements IdentityProvider<Firebas
      * @param token The FirebaseToken to be authenticated.
      * @return A SecurityIdentity representing the authenticated user or null if authentication fails.
      */
-    public static SecurityIdentity authenticate(FirebaseToken token) {
+    public SecurityIdentity authenticate(FirebaseToken token) {
         var builder = QuarkusSecurityIdentity.builder()
                 .setPrincipal(getPrincipal(token));
 
+        config.auth().rolesClaim().ifPresent(claim -> {
+            var claims = token.getClaims();
+            if (claims.containsKey(claim)) {
+                var value = claims.get(claim);
+                var roles = getRolesFromClaimsValue(value);
+                builder.addRoles(roles);
+            }
+        });
+
         return builder.build();
+    }
+
+    @SuppressWarnings("unchecked")
+    private Set<String> getRolesFromClaimsValue(Object value) {
+        if (value instanceof String) {
+            return Set.of((String) value);
+        }
+
+        if (value instanceof Collection) {
+            return new HashSet<>((Collection<String>) value);
+        }
+
+        if (value instanceof String[]) {
+            return Set.of((String[]) value);
+        }
+
+        throw new IllegalArgumentException("Unsupported value type: " + value.getClass());
     }
 
     /**

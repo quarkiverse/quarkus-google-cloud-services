@@ -40,6 +40,13 @@ public interface FirebaseAuthConfig {
         @WithDefault("true")
         boolean useEmulatorCredentials();
 
+        /**
+         * When set, the values in this claim in the Firebase JWT will be mapped to the roles in the Quarkus
+         * {@link io.quarkus.security.identity.SecurityIdentity}. This claim can either be a set of roles
+         * (i.e. an array in the JWT) or a single value.
+         */
+        Optional<String> rolesClaim();
+
     }
 
 }
