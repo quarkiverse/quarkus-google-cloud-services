@@ -921,6 +921,8 @@ public class FirebaseEmulatorContainer extends GenericContainer<FirebaseEmulator
                     .map(Path::toString)
                     .orElse(new File(FirebaseJsonBuilder.FIREBASE_HOSTING_SUBPATH).getAbsolutePath());
 
+            LOGGER.debug("Mounting {} to the container hosting path", hostingPath);
+
             // Mount volume for static hosting content
             this.withFileSystemBind(hostingPath, containerHostingPath(emulatorConfig), BindMode.READ_ONLY);
         }
@@ -932,6 +934,8 @@ public class FirebaseEmulatorContainer extends GenericContainer<FirebaseEmulator
                     .functionsPath()
                     .map(Path::toString)
                     .orElse(new File(FirebaseJsonBuilder.FIREBASE_FUNCTIONS_SUBPATH).getAbsolutePath());
+
+            LOGGER.debug("Mounting {} to the container functions sources path", functionsPath);
 
             // Mount volume for functions
             this.withFileSystemBind(functionsPath, containerFunctionsPath(emulatorConfig), BindMode.READ_ONLY);
@@ -1036,9 +1040,13 @@ public class FirebaseEmulatorContainer extends GenericContainer<FirebaseEmulator
             }
 
             if (emulatorConfig.customFirebaseJson.isPresent()) {
-                var hostingDirIsAbsolute = emulatorConfig.firebaseConfig.hostingConfig.hostingContentDir
+                var hostingDir = emulatorConfig.firebaseConfig.hostingConfig.hostingContentDir;
+
+                var hostingDirIsAbsolute = hostingDir
                         .map(Path::isAbsolute)
                         .orElse(false);
+
+                LOGGER.debug("Checking if path {} is absolute --> {}", hostingDir, hostingDirIsAbsolute);
 
                 if (hostingDirIsAbsolute) {
                     throw new IllegalStateException(
@@ -1047,10 +1055,13 @@ public class FirebaseEmulatorContainer extends GenericContainer<FirebaseEmulator
 
                 var firebasePath = emulatorConfig.customFirebaseJson.get().toAbsolutePath().getParent();
 
-                var hostingDirIsChildOfFirebaseJsonParent = emulatorConfig.firebaseConfig.hostingConfig.hostingContentDir
+                var hostingDirIsChildOfFirebaseJsonParent = hostingDir
                         .map(Path::toAbsolutePath)
                         .map(h -> h.startsWith(firebasePath))
                         .orElse(true);
+
+                LOGGER.debug("Checking if the hosting path {} is relative to the firebase.json file --> {}", hostingDir,
+                        hostingDirIsChildOfFirebaseJsonParent);
 
                 if (!hostingDirIsChildOfFirebaseJsonParent) {
                     throw new IllegalStateException(
@@ -1059,9 +1070,13 @@ public class FirebaseEmulatorContainer extends GenericContainer<FirebaseEmulator
             }
 
             if (emulatorConfig.firebaseConfig.functionsConfig.functionsPath.isPresent()) {
-                var functionsDirIsAbsolute = emulatorConfig.firebaseConfig.functionsConfig.functionsPath
+                var functionsDir = emulatorConfig.firebaseConfig.functionsConfig.functionsPath;
+                var functionsDirIsAbsolute = functionsDir
                         .map(Path::isAbsolute)
                         .orElse(false);
+
+                LOGGER.debug("Checking if the functions sources dir {} is absolute --> {}", functionsDir,
+                        functionsDirIsAbsolute);
 
                 if (functionsDirIsAbsolute) {
                     throw new IllegalStateException("Functions path cannot be absolute");
