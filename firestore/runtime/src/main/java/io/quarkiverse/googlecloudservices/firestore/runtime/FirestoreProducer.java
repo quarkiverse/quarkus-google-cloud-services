@@ -78,12 +78,18 @@ public class FirestoreProducer {
     }
 
     /**
-     * Determine if we need to use emulator credentials. Emulator credentials are used in case the host-override is set
-     * and we don't have accessTokens enabled.
+     * Determine if we need to use emulator credentials. Emulator credentials are used in case the host-override is set,
+     * and we don't have accessTokens enabled. The behaviour can be overridden using the useEmulatorCredentials
+     * configuration property.
      *
      * @return whether to use the emulator credentials
      */
     private boolean useEmulatorCredentials() {
+        return this.firestoreConfiguration.useEmulatorCredentials()
+                .orElseGet(this::automaticEmulatorCredentials);
+    }
+
+    private boolean automaticEmulatorCredentials() {
         return !this.gcpBootstrapConfiguration.accessTokenEnabled()
                 && this.firestoreConfiguration.hostOverride().isPresent()
                 && this.firestoreConfiguration.hostOverride().get().contains("localhost");

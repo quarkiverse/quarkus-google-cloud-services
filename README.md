@@ -1,6 +1,6 @@
 # Quarkiverse - Quarkus Google Cloud Services
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-21-orange.svg?style=flat-square)](#contributors-)
+[![All Contributors](https://img.shields.io/badge/all_contributors-22-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 [![version](https://img.shields.io/maven-central/v/io.quarkiverse.googlecloudservices/quarkus-google-cloud-services-bom)](https://repo1.maven.org/maven2/io/quarkiverse/googlecloudservices/)
 [![Build](https://github.com/quarkiverse/quarkus-google-cloud-services/workflows/Build/badge.svg)](https://github.com/quarkiverse/quarkus-google-cloud-services/actions?query=workflow%3ABuild)
@@ -68,6 +68,9 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/geoand"><img src="https://avatars.githubusercontent.com/u/4374975?v=4?s=100" width="100px;" alt="Georgios Andrianakis"/><br /><sub><b>Georgios Andrianakis</b></sub></a><br /><a href="https://github.com/quarkiverse/quarkus-google-cloud-services/commits?author=geoand" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/snazy"><img src="https://avatars.githubusercontent.com/u/957468?v=4?s=100" width="100px;" alt="Robert Stupp"/><br /><sub><b>Robert Stupp</b></sub></a><br /><a href="https://github.com/quarkiverse/quarkus-google-cloud-services/commits?author=snazy" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://uk.linkedin.com/in/hchigadani"><img src="https://avatars.githubusercontent.com/u/12896715?v=4?s=100" width="100px;" alt="Hemantkumar Chigadani"/><br /><sub><b>Hemantkumar Chigadani</b></sub></a><br /><a href="https://github.com/quarkiverse/quarkus-google-cloud-services/commits?author=Hemantkumar-Chigadani" title="Code">💻</a></td>
+    </tr>
+    <tr>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/wabrit"><img src="https://avatars.githubusercontent.com/u/4264910?v=4?s=100" width="100px;" alt="wabrit"/><br /><sub><b>wabrit</b></sub></a><br /><a href="https://github.com/quarkiverse/quarkus-google-cloud-services/commits?author=wabrit" title="Code">💻</a></td>
     </tr>
   </tbody>
 </table>

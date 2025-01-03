@@ -35,6 +35,7 @@ public class FirestoreDevServiceProcessor {
     @BuildStep
     public DevServicesResultBuildItem start(DockerStatusBuildItem dockerStatusBuildItem,
             FirestoreBuildTimeConfig buildTimeConfig,
+            FirebaseDevServiceConfig firebaseConfig,
             List<DevServicesSharedNetworkBuildItem> devServicesSharedNetworkBuildItem,
             Optional<ConsoleInstalledBuildItem> consoleInstalledBuildItem,
             CuratedApplicationShutdownBuildItem closeBuildItem,
@@ -56,7 +57,7 @@ public class FirestoreDevServiceProcessor {
 
         // Try starting the container if conditions are met
         try {
-            devService = startContainerIfAvailable(dockerStatusBuildItem, buildTimeConfig.devservice(),
+            devService = startContainerIfAvailable(dockerStatusBuildItem, buildTimeConfig.devservice(), firebaseConfig,
                     globalDevServicesConfig.timeout);
         } catch (Throwable t) {
             LOGGER.warn("Unable to start Firestore dev service", t);
@@ -80,10 +81,17 @@ public class FirestoreDevServiceProcessor {
      */
     private DevServicesResultBuildItem.RunningDevService startContainerIfAvailable(DockerStatusBuildItem dockerStatusBuildItem,
             FirestoreDevServiceConfig config,
+            FirebaseDevServiceConfig firebaseConfig,
             Optional<Duration> timeout) {
         if (!config.enabled()) {
             // Firestore service explicitly disabled
             LOGGER.debug("Not starting Dev Services for Firestore as it has been disabled in the config");
+            return null;
+        }
+
+        if (firebaseConfig.preferFirebaseDevServices().orElse(false)) {
+            // Firebase DevServices are included, use them instead
+            LOGGER.debug("Not starting Dev Services for Firestore as the Firebase DevServices are preferred");
             return null;
         }
 

@@ -1,6 +1,7 @@
 package io.quarkiverse.googlecloudservices.logging.runtime;
 
 import java.util.Collections;
+import java.util.Map;
 import java.util.logging.ErrorManager;
 
 import org.jboss.logmanager.ExtHandler;
@@ -33,6 +34,7 @@ public class LoggingHandler extends ExtHandler {
     private WriteOption[] defaultWriteOptions;
     private InternalHandler internalHandler;
     private TraceInfoExtractor traceExtractor;
+    private LogRecordLabelExtractor logRecordLabelExtractor;
 
     public LoggingHandler(LoggingConfiguration config) {
         this.config = config;
@@ -82,8 +84,20 @@ public class LoggingHandler extends ExtHandler {
             com.google.cloud.logging.LogEntry.Builder builder = LogEntry.newBuilder(payload)
                     .setSeverity(LevelTransformer.toSeverity(record.getLevel()))
                     .setTimestamp(record.getInstant());
+
+            final Map<String, String> customLabels = logRecordLabelExtractor.getCustomLabels(record);
+
+            if (customLabels != null) {
+                for (Map.Entry<String, String> entry : customLabels.entrySet()) {
+                    builder = builder.addLabel(entry.getKey(), entry.getValue());
+                }
+            }
+
             if (this.config.gcpTracing().enabled() && trace != null && !Strings.isNullOrEmpty(trace.getTraceId())) {
-                builder = builder.setTrace(composeTraceString(trace.getTraceId()));
+                builder = builder
+                        .setTrace(composeTraceString(trace.getTraceId()))
+                        .setSpanId(trace.getSpanId())
+                        .setTraceSampled(true);
             }
             return builder.build();
         } else {
@@ -100,7 +114,7 @@ public class LoggingHandler extends ExtHandler {
         try {
             initGetLogging().flush();
         } catch (Exception ex) {
-            getErrorManager().error("Failed to fluch GCP logger", ex, ErrorManager.FLUSH_FAILURE);
+            getErrorManager().error("Failed to flush GCP logger", ex, ErrorManager.FLUSH_FAILURE);
         }
     }
 
@@ -116,8 +130,19 @@ public class LoggingHandler extends ExtHandler {
             initInternalHandler();
             // init trace extractor
             initTraceExtractor();
+            // init log record label extractor
+            initLogRecordLabelExtractor();
         }
         return log;
+    }
+
+    private void initLogRecordLabelExtractor() {
+        InstanceHandle<LogRecordLabelExtractor> handle = Arc.container().instance(LogRecordLabelExtractor.class);
+        if (handle.isAvailable()) {
+            this.logRecordLabelExtractor = handle.get();
+        } else {
+            this.logRecordLabelExtractor = s -> Collections.emptyMap();
+        }
     }
 
     private void initInternalHandler() {

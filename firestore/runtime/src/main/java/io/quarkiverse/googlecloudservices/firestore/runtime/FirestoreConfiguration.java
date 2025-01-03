@@ -19,6 +19,18 @@ public interface FirestoreConfiguration {
     Optional<String> hostOverride();
 
     /**
+     * Forces the usage of emulator credentials. The logic automatically uses emulator credentials in case
+     * the host running the library uses "localhost". This behaviour can be overridden by specifying this
+     * configuration property:
+     * <ul>
+     * <li>If true: force usage of emulator credentials</li>
+     * <li>If false: force not using emulator credentials</li>
+     * <i>If not present: keep the automatic behaviour</i>
+     * </ul>
+     */
+    Optional<Boolean> useEmulatorCredentials();
+
+    /**
      * Controls the retry settings for Firestore requests.
      */
     Optional<RetryConfiguration> retry();

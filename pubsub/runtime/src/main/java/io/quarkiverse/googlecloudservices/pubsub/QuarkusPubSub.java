@@ -9,9 +9,11 @@ import jakarta.annotation.PreDestroy;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.Disposes;
 import jakarta.enterprise.inject.Produces;
+import jakarta.enterprise.inject.Instance;
 import jakarta.inject.Inject;
 
 import com.google.api.gax.core.CredentialsProvider;
+import com.google.api.gax.core.NoCredentialsProvider;
 import com.google.api.gax.grpc.GrpcTransportChannel;
 import com.google.api.gax.rpc.FixedTransportChannelProvider;
 import com.google.api.gax.rpc.TransportChannelProvider;
@@ -25,7 +27,7 @@ import io.quarkiverse.googlecloudservices.common.GcpConfigHolder;
 @ApplicationScoped
 public class QuarkusPubSub {
     @Inject
-    CredentialsProvider credentialsProvider;
+    Instance<CredentialsProvider> credentialsProvider;
 
     @Inject
     GcpConfigHolder gcpConfigHolder;
@@ -66,7 +68,7 @@ public class QuarkusPubSub {
     public Subscriber subscriber(String subscription, String projectId, MessageReceiver receiver) {
         ProjectSubscriptionName subscriptionName = ProjectSubscriptionName.of(projectId, subscription);
         var builder = Subscriber.newBuilder(subscriptionName, receiver)
-                .setCredentialsProvider(credentialsProvider);
+                .setCredentialsProvider(credentialsProvider());
         channelProvider.ifPresent(builder::setChannelProvider);
         return builder.build();
 
@@ -85,7 +87,7 @@ public class QuarkusPubSub {
     public Publisher publisher(String topic, String projectId) throws IOException {
         TopicName topicName = TopicName.of(projectId, topic);
         var builder = Publisher.newBuilder(topicName)
-                .setCredentialsProvider(credentialsProvider);
+                .setCredentialsProvider(credentialsProvider());
         channelProvider.ifPresent(builder::setChannelProvider);
         return builder.build();
     }
@@ -95,7 +97,7 @@ public class QuarkusPubSub {
      */
     public SubscriptionAdminSettings subscriptionAdminSettings() throws IOException {
         var builder = SubscriptionAdminSettings.newBuilder()
-                .setCredentialsProvider(credentialsProvider);
+                .setCredentialsProvider(credentialsProvider());
         channelProvider.ifPresent(builder::setTransportChannelProvider);
         return builder.build();
     }
@@ -120,7 +122,7 @@ public class QuarkusPubSub {
      */
     public TopicAdminSettings topicAdminSettings() throws IOException {
         var builder = TopicAdminSettings.newBuilder()
-                .setCredentialsProvider(credentialsProvider);
+                .setCredentialsProvider(credentialsProvider());
         channelProvider.ifPresent(builder::setTransportChannelProvider);
         return builder.build();
     }
@@ -176,6 +178,14 @@ public class QuarkusPubSub {
                     .findFirst();
             return existing.orElseGet(() -> subscriptionAdminClient.createSubscription(subscriptionName, topicName,
                     PushConfig.getDefaultInstance(), 0));
+        }
+    }
+
+    private CredentialsProvider credentialsProvider() {
+        if (pubSubConfiguration.emulatorHost().isPresent() && pubSubConfiguration.useEmulatorCredentials()) {
+            return new NoCredentialsProvider();
+        } else {
+            return credentialsProvider.get();
         }
     }
 }
