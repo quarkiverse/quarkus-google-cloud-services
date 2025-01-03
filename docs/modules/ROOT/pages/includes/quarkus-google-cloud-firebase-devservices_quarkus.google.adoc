@@ -7,7 +7,7 @@ h|[.header-title]##Configuration property##
 h|Type
 h|Default
 
-a|icon:lock[title=Fixed at build time] [[quarkus-google-cloud-firebase-devservices_quarkus-google-cloud-project-id]] [.property-path]##link:#quarkus-google-cloud-firebase-devservices_quarkus-google-cloud-project-id[`quarkus.google.cloud.project-id`]##
+a|icon:lock[title=Fixed at build time] [[quarkus-google-cloud-firebase-devservices_quarkus-google-cloud-devservices-project-id]] [.property-path]##link:#quarkus-google-cloud-firebase-devservices_quarkus-google-cloud-devservices-project-id[`quarkus.google.cloud.devservices.project-id`]##
 
 [.description]
 --
@@ -15,10 +15,10 @@ Google Cloud project ID. The project is required to be set if you use the Fireba
 
 
 ifdef::add-copy-button-to-env-var[]
-Environment variable: env_var_with_copy_button:+++QUARKUS_GOOGLE_CLOUD_PROJECT_ID+++[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_GOOGLE_CLOUD_DEVSERVICES_PROJECT_ID+++[]
 endif::add-copy-button-to-env-var[]
 ifndef::add-copy-button-to-env-var[]
-Environment variable: `+++QUARKUS_GOOGLE_CLOUD_PROJECT_ID+++`
+Environment variable: `+++QUARKUS_GOOGLE_CLOUD_DEVSERVICES_PROJECT_ID+++`
 endif::add-copy-button-to-env-var[]
 --
 |string
