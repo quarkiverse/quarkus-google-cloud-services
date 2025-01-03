@@ -10,6 +10,8 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.testcontainers.shaded.com.fasterxml.jackson.databind.ObjectMapper;
 
 import io.quarkiverse.googlecloudservices.firebase.deployment.testcontainers.json.Emulators;
@@ -20,6 +22,8 @@ import io.quarkiverse.googlecloudservices.firebase.deployment.testcontainers.jso
  * {@link io.quarkiverse.googlecloudservices.firebase.deployment.testcontainers.FirebaseEmulatorContainer.FirebaseConfig}
  */
 class CustomFirebaseConfigReader {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(CustomFirebaseConfigReader.class);
 
     private final ObjectMapper objectMapper = new ObjectMapper();
 
@@ -110,6 +114,8 @@ class CustomFirebaseConfigReader {
             map = Map.copyOf(map);
         }
 
+        LOGGER.debug("Found the following emulators configured in firebase.json {}", map.keySet());
+
         return map;
     }
 
@@ -137,6 +143,9 @@ class CustomFirebaseConfigReader {
                     .ofNullable(firestoreMap.get("indexes"))
                     .map(f -> this.resolvePath(f, customFirebaseJson));
 
+            LOGGER.debug("Firestore configured with rules file {}", rulesFile);
+            LOGGER.debug("Firestore configured with indexes file {}", indexesFile);
+
             return new FirebaseEmulatorContainer.FirestoreConfig(
                     rulesFile,
                     indexesFile);
@@ -154,6 +163,8 @@ class CustomFirebaseConfigReader {
                     .ofNullable(hostingMap.get("public"))
                     .map(f -> this.resolvePath(f, customFirebaseJson));
 
+            LOGGER.debug("Hosting configured with public directory {}", publicDir);
+
             return new FirebaseEmulatorContainer.HostingConfig(
                     publicDir);
         } else {
@@ -169,6 +180,8 @@ class CustomFirebaseConfigReader {
             var rulesFile = Optional
                     .ofNullable(storageMap.get("rules"))
                     .map(f -> this.resolvePath(f, customFirebaseJson));
+
+            LOGGER.debug("Storage configured with rules file {}", rulesFile);
 
             return new FirebaseEmulatorContainer.StorageConfig(
                     rulesFile);
@@ -191,6 +204,9 @@ class CustomFirebaseConfigReader {
                     .ofNullable(functionsMap.get("ignores"))
                     .map(String[].class::cast)
                     .orElse(new String[0]);
+
+            LOGGER.debug("Functions will be read from source directory {}", functionsPath);
+            LOGGER.debug("Functions configured with ignore file {}", (Object) ignores);
 
             return new FirebaseEmulatorContainer.FunctionsConfig(
                     functionsPath,
