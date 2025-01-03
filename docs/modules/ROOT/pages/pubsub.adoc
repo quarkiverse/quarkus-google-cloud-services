@@ -155,6 +155,28 @@ public class PubSubResource {
 }
 ----
 
+== AdminClient beans
+
+If you need to perform admin actions on PubSub, you can inject the `com.google.cloud.pubsub.v1.SubscriptionAdminClient` and
+`com.google.cloud.pubsub.v1.TopicAdminClient` as CDI beans as shown in the example below. This is usefull if the basic
+facilities offered by `io.quarkiverse.googlecloudservices.pubsub.QuarkusPubSub` are not sufficient:
+
+[source, java]
+----
+    @Inject
+    SubscriptionAdminClient subscriptionAdminClient;
+
+    @Inject
+    TopicAdminClient topicAdminClient;
+
+    public someMethod() {
+        var pushConfig = ...; // Create com.google.pubsub.v1.PushConfig
+        subscriptionAdminClient.createSubscription("subscription-name", "topic-name", pushConfig, 10 /* ACK deadline */);
+
+        var topics = topicAdminClient.listTopics("my-google-project");
+    }
+----
+
 == Dev Service
 
 === Configuring the Dev Service

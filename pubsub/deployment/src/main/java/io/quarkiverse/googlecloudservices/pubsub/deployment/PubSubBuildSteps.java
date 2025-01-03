@@ -1,5 +1,6 @@
 package io.quarkiverse.googlecloudservices.pubsub.deployment;
 
+import io.quarkiverse.googlecloudservices.pubsub.PubSubProducer;
 import io.quarkiverse.googlecloudservices.pubsub.QuarkusPubSub;
 import io.quarkus.arc.deployment.AdditionalBeanBuildItem;
 import io.quarkus.deployment.annotations.BuildStep;
@@ -15,6 +16,6 @@ public class PubSubBuildSteps {
 
     @BuildStep
     public AdditionalBeanBuildItem producer() {
-        return new AdditionalBeanBuildItem(QuarkusPubSub.class);
+        return new AdditionalBeanBuildItem(QuarkusPubSub.class, PubSubProducer.class);
     }
 }
