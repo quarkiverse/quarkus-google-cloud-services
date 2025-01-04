@@ -161,6 +161,7 @@ class CustomFirebaseConfigReader {
 
             var publicDir = Optional
                     .ofNullable(hostingMap.get("public"))
+                    .or(() -> Optional.ofNullable(hostingMap.get("source")))
                     .map(f -> this.resolvePath(f, customFirebaseJson));
 
             LOGGER.debug("Hosting configured with public directory {}", publicDir);
