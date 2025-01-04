@@ -185,6 +185,7 @@ public class FirebaseEmulatorContainer extends GenericContainer<FirebaseEmulator
      * @param javaToolOptions The options to pass to the java based emulators
      * @param emulatorData The path to the directory where to store the emulator data
      * @param importExport Specify whether to import, export or do both with the emulator data
+     * @param experiments Firebase experiments to enable on the docker image
      * @param debug Whether to run with the --debug flag
      */
     public record CliArgumentsConfig(
@@ -193,6 +194,7 @@ public class FirebaseEmulatorContainer extends GenericContainer<FirebaseEmulator
             Optional<String> javaToolOptions,
             Optional<Path> emulatorData,
             ImportExport importExport,
+            Optional<Set<String>> experiments,
             boolean debug) {
         public static final CliArgumentsConfig DEFAULT = new CliArgumentsConfig(
                 Optional.empty(),
@@ -200,6 +202,7 @@ public class FirebaseEmulatorContainer extends GenericContainer<FirebaseEmulator
                 Optional.empty(),
                 Optional.empty(),
                 ImportExport.IMPORT_EXPORT,
+                Optional.of(Set.of()),
                 false);
     }
 
@@ -609,6 +612,7 @@ public class FirebaseEmulatorContainer extends GenericContainer<FirebaseEmulator
             private String javaToolOptions;
             private Path emulatorData;
             private ImportExport importExport;
+            private Set<String> experiments;
             private boolean debug;
 
             /**
@@ -620,6 +624,7 @@ public class FirebaseEmulatorContainer extends GenericContainer<FirebaseEmulator
                 this.javaToolOptions = Builder.this.cliArguments.javaToolOptions.orElse(null);
                 this.emulatorData = Builder.this.cliArguments.emulatorData.orElse(null);
                 this.importExport = Builder.this.cliArguments.importExport;
+                this.experiments = Builder.this.cliArguments.experiments.orElse(new HashSet<>());
                 this.debug = Builder.this.cliArguments.debug;
             }
 
@@ -691,6 +696,28 @@ public class FirebaseEmulatorContainer extends GenericContainer<FirebaseEmulator
             }
 
             /**
+             * Add the firebase experiments setting
+             *
+             * @param experiments The experiments to enable
+             * @return The builder
+             */
+            public CliBuilder withExperiments(Set<String> experiments) {
+                this.experiments = new HashSet<>(experiments);
+                return this;
+            }
+
+            /**
+             * Add a single firebase experiment to the set
+             *
+             * @param experiment The experiment to add
+             * @return The builder
+             */
+            public CliBuilder addExperiment(String experiment) {
+                this.experiments.add(experiment);
+                return this;
+            }
+
+            /**
              * Finish the builder
              *
              * @return The parent builder
@@ -702,6 +729,7 @@ public class FirebaseEmulatorContainer extends GenericContainer<FirebaseEmulator
                         Optional.ofNullable(this.javaToolOptions),
                         Optional.ofNullable(this.emulatorData),
                         this.importExport,
+                        Optional.of(this.experiments),
                         this.debug);
                 return Builder.this;
             }
@@ -1122,6 +1150,18 @@ public class FirebaseEmulatorContainer extends GenericContainer<FirebaseEmulator
                             "mkdir -p " + EMULATOR_DATA_PATH + " && " +
                             "mkdir -p " + EMULATOR_EXPORT_PATH + " && " +
                             "chmod 777 -R /srv/*");
+
+            emulatorConfig.cliArguments()
+                    .experiments()
+                    .ifPresent(experiments -> {
+                        if (!experiments.isEmpty()) {
+                            var enableExperiments = experiments
+                                    .stream()
+                                    .map(e -> "firebase experiments:enable " + e)
+                                    .collect(Collectors.joining(" && "));
+                            dockerBuilder.run(enableExperiments);
+                        }
+                    });
         }
 
         private void downloadEmulators() {
