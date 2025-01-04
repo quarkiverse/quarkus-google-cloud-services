@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import java.nio.file.Path;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -37,6 +38,7 @@ class FirebaseEmulatorConfigBuilderTest {
                                         Optional.of("-Xmx"),
                                         Optional.of("data"),
                                         Optional.of(FirebaseEmulatorContainer.ImportExport.EXPORT_ONLY),
+                                        Optional.of(Set.of("webframeworks")),
                                         Optional.of(true)),
                                 Optional.empty(),
                                 new TestUI(
@@ -89,6 +91,7 @@ class FirebaseEmulatorConfigBuilderTest {
         assertEquals("MY_TOKEN", emulatorConfig.cliArguments().token().orElse(null));
         assertEquals("-Xmx", emulatorConfig.cliArguments().javaToolOptions().orElse(null));
         assertPathEndsWith("data", emulatorConfig.cliArguments().emulatorData().orElse(null));
+        assertEquals(Set.of("webframeworks"), emulatorConfig.cliArguments().experiments().orElse(null));
         assertEquals(FirebaseEmulatorContainer.ImportExport.EXPORT_ONLY, emulatorConfig.cliArguments().importExport());
         assertTrue(emulatorConfig.cliArguments().debug());
 
@@ -174,6 +177,7 @@ class FirebaseEmulatorConfigBuilderTest {
             Optional<String> javaToolOptions,
             Optional<String> emulatorData,
             Optional<FirebaseEmulatorContainer.ImportExport> importExport,
+            Optional<Set<String>> experiments,
             Optional<Boolean> debug) implements FirebaseDevServiceConfig.Firebase.Emulator.Cli {
     }
 
