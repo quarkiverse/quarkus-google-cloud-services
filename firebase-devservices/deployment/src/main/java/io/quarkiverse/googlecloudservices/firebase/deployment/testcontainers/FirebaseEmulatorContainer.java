@@ -202,7 +202,7 @@ public class FirebaseEmulatorContainer extends GenericContainer<FirebaseEmulator
                 Optional.empty(),
                 Optional.empty(),
                 ImportExport.IMPORT_EXPORT,
-                Optional.of(Set.of()),
+                Optional.of(new HashSet<>()),
                 false);
     }
 
@@ -1155,6 +1155,8 @@ public class FirebaseEmulatorContainer extends GenericContainer<FirebaseEmulator
                     .experiments()
                     .ifPresent(experiments -> {
                         if (!experiments.isEmpty()) {
+                            LOGGER.debug("Firebase experiments found, enabling experiments: {}", String.join(",", experiments));
+
                             var enableExperiments = experiments
                                     .stream()
                                     .map(e -> "firebase experiments:enable " + e)
