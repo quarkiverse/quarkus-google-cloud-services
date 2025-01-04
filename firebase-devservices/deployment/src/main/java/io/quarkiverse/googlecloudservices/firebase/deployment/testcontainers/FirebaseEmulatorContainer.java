@@ -1051,6 +1051,7 @@ public class FirebaseEmulatorContainer extends GenericContainer<FirebaseEmulator
             this.initialSetup();
             this.authenticateToFirebase();
             this.setupJavaToolOptions();
+            this.setupExperiments();
             this.setupUserAndGroup();
             this.downloadEmulators();
             this.addFirebaseJson();
@@ -1150,20 +1151,6 @@ public class FirebaseEmulatorContainer extends GenericContainer<FirebaseEmulator
                             "mkdir -p " + EMULATOR_DATA_PATH + " && " +
                             "mkdir -p " + EMULATOR_EXPORT_PATH + " && " +
                             "chmod 777 -R /srv/*");
-
-            emulatorConfig.cliArguments()
-                    .experiments()
-                    .ifPresent(experiments -> {
-                        if (!experiments.isEmpty()) {
-                            LOGGER.debug("Firebase experiments found, enabling experiments: {}", String.join(",", experiments));
-
-                            var enableExperiments = experiments
-                                    .stream()
-                                    .map(e -> "firebase experiments:enable " + e)
-                                    .collect(Collectors.joining(" && "));
-                            dockerBuilder.run(enableExperiments);
-                        }
-                    });
         }
 
         private void downloadEmulators() {
@@ -1193,6 +1180,15 @@ public class FirebaseEmulatorContainer extends GenericContainer<FirebaseEmulator
         private void setupJavaToolOptions() {
             emulatorConfig.cliArguments().javaToolOptions().ifPresent(
                     toolOptions -> dockerBuilder.env("JAVA_TOOL_OPTIONS", toolOptions));
+        }
+
+        private void setupExperiments() {
+            emulatorConfig.cliArguments.experiments().ifPresent(
+                    experimentsSet -> {
+                        var experiments = String.join(",", experimentsSet);
+                        LOGGER.debug("Firebase experiments found, enabling experiments: {}", experiments);
+                        dockerBuilder.env("FIREBASE_CLI_EXPERIMENTS", String.join(",", experiments));
+                    });
         }
 
         private void addFirebaseJson() {
