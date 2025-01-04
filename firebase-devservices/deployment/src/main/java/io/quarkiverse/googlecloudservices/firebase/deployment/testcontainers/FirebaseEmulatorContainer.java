@@ -952,7 +952,7 @@ public class FirebaseEmulatorContainer extends GenericContainer<FirebaseEmulator
             LOGGER.debug("Mounting {} to the container hosting path", hostingPath);
 
             // Mount volume for static hosting content
-            this.withFileSystemBind(hostingPath, containerHostingPath(emulatorConfig), BindMode.READ_ONLY);
+            this.withFileSystemBind(hostingPath, containerHostingPath(emulatorConfig), BindMode.READ_WRITE);
         }
 
         if (this.services.containsKey(Emulator.CLOUD_FUNCTIONS)) {
@@ -966,7 +966,7 @@ public class FirebaseEmulatorContainer extends GenericContainer<FirebaseEmulator
             LOGGER.debug("Mounting {} to the container functions sources path", functionsPath);
 
             // Mount volume for functions
-            this.withFileSystemBind(functionsPath, containerFunctionsPath(emulatorConfig), BindMode.READ_ONLY);
+            this.withFileSystemBind(functionsPath, containerFunctionsPath(emulatorConfig), BindMode.READ_WRITE);
         }
     }
 
