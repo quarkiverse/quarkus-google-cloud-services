@@ -1051,15 +1051,15 @@ public class FirebaseEmulatorContainer extends GenericContainer<FirebaseEmulator
             this.initialSetup();
             this.authenticateToFirebase();
             this.setupJavaToolOptions();
-            this.setupExperiments();
-            this.setupUserAndGroup();
             this.downloadEmulators();
-            this.addFirebaseJson();
-            this.includeFirestoreFiles();
-            this.includeStorageFiles();
+            this.setupExperiments();
             this.setupDataImportExport();
             this.setupHosting();
             this.setupFunctions();
+            this.addFirebaseJson();
+            this.includeFirestoreFiles();
+            this.includeStorageFiles();
+            this.setupUserAndGroup();
             this.runExecutable();
 
             return result;
@@ -1192,7 +1192,26 @@ public class FirebaseEmulatorContainer extends GenericContainer<FirebaseEmulator
         }
 
         private void addFirebaseJson() {
-            dockerBuilder.workDir(FIREBASE_ROOT);
+            /*
+             * Workaround for https://github.com/firebase/firebase-tools/issues/5903#issuecomment-1568239576
+             *
+             * Remove the conditional and just set FIREBASE_ROOT as workdir once the upstream bug is fixed.
+             */
+            if (isEmulatorEnabled(Emulator.FIREBASE_HOSTING)) {
+                var hostingPath = containerHostingPath(emulatorConfig);
+
+                LOGGER.debug(
+                        "Hosting emulator detected. Setting workdir to {} as a workaround for an upstream bug in firebase-tools",
+                        hostingPath);
+
+                dockerBuilder.workDir(hostingPath);
+            } else {
+                LOGGER.debug("No hosting emulator detected. Using default workdir");
+                dockerBuilder.workDir(FIREBASE_ROOT);
+            }
+            /*
+             * Workaround ends <-- https://github.com/firebase/firebase-tools/issues/5903#issuecomment-1568239576
+             */
 
             emulatorConfig.customFirebaseJson().ifPresentOrElse(
                     this::includeCustomFirebaseJson,
@@ -1294,6 +1313,8 @@ public class FirebaseEmulatorContainer extends GenericContainer<FirebaseEmulator
             List<String> arguments = new ArrayList<>();
 
             arguments.add("emulators:start");
+            arguments.add("--config");
+            arguments.add(FIREBASE_ROOT + "/firebase.json");
 
             emulatorConfig.cliArguments().projectId()
                     .map(id -> "--project")
