@@ -1,12 +1,13 @@
 package io.quarkiverse.googlecloudservices.pubsub;
 
-import com.google.cloud.pubsub.v1.SubscriptionAdminClient;
-import com.google.cloud.pubsub.v1.TopicAdminClient;
+import java.io.IOException;
+
 import jakarta.enterprise.inject.Disposes;
 import jakarta.enterprise.inject.Produces;
 import jakarta.inject.Inject;
 
-import java.io.IOException;
+import com.google.cloud.pubsub.v1.SubscriptionAdminClient;
+import com.google.cloud.pubsub.v1.TopicAdminClient;
 
 /**
  * Producer class for PubSub beans.
