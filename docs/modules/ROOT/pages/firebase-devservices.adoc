@@ -131,13 +131,43 @@ If emulators are configured via the configuration options, a `firebase.json` fil
 * Each of the emulators must be exposed on `0.0.0.0` as host as described https://firebase.google.com/docs/emulator-suite/use_hosting#emulators-no-local-host[here]. If this is not done, the Emulators will not be reachable from the Docker host.
 * Emulators need to be configured to use the default ports. Customizing the ports on which they run is currently not supported (this might change in a future version).
 
+== Details on specific Devservices
+
+The following sections provide documentation in interaction with specific emulators.
+
+=== Hosting emulator
+
+If you use the hosting emulator, where Quarkus is the backend, you will need to include a CORS configuration, as REST
+requests will originate from another Origin (host). See the https://quarkus.io/guides/security-cors[Quarkus CORS]
+documentation for more info.
+
+A simple setup would be
+[source,properties]
+----
+"%dev".quarkus.http.cors=true
+"%dev".quarkus.http.cors.origins: /.*/
+----
+
+Note that a redirect from the hosting emulator to the Quarkus instance is currently not supported by the emulator.
+
+=== Auth emulator
+
+You can use the features provided by Mircoprofile JWT (e.g. injecting a `@Claim` value) by including the smallrye-jwt
+extension and disabling smallrye-jwt using the following property. This will prevent SmallRye JWT from handling the JWT
+validation (leaving that to the Firebase Auth module and the Auth emulator), but using the provided JWT to allow injecting
+of these beans.
+
+[source,properties]
+----
+quarkus.smallrye-jwt.enabled=false
+----
+
 == Interaction with other extensions
 
 The following extensions support  Dev Services which conflicts with the  Dev Services exposed by the Firebase Emulators.
 
 * Firestore
 * PubSub
-* TODO: Verify Storage
 
 When including this module, these  Dev Services will automatically be disabled, as the Firebase emulator should feature wise be on-par or more extensive than the individual emulators.
 
