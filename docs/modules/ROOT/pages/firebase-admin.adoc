@@ -73,7 +73,7 @@ public class FirebaseAuthResourceTest {
 This extension also supports Firebase Authentication, allowing you to secure your endpoints using Firebase's authentication mechanisms.
 This section describes how to use Firebase Authentication in your Quarkus application.
 
-Remember that you need to enable the Firebase Authentication service in your Firebase project. `quarkus.google.cloud.firebase.auth.enable` must be set to `true` in your application configuration.
+Remember that you need to enable the Firebase Authentication service in your Firebase project. `quarkus.google.cloud.firebase.auth.enabled` must be set to `true` in your application configuration.
 
 === Configuration
 
