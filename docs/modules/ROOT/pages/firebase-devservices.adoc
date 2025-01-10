@@ -148,7 +148,7 @@ A simple setup would be
 "%dev".quarkus.http.cors.origins: /.*/
 ----
 
-Note that a redirect from the hosting emulator to the Quarkus instance is currently not support by the emulator.
+Note that a redirect from the hosting emulator to the Quarkus instance is currently not supported by the emulator.
 
 === Auth emulator
 
