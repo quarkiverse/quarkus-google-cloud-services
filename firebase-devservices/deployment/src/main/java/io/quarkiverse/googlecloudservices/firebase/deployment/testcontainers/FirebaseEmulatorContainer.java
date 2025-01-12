@@ -1327,7 +1327,9 @@ public class FirebaseEmulatorContainer extends GenericContainer<FirebaseEmulator
                 arguments.add("--debug");
             }
 
-            if (emulatorConfig.cliArguments().importExport.isDoExport()) {
+            if (emulatorConfig.cliArguments().importExport.isDoImport()) {
+                LOGGER.debug("Import requested. Importing data on startup");
+
                 emulatorConfig
                         .cliArguments()
                         .emulatorData()
@@ -1346,6 +1348,8 @@ public class FirebaseEmulatorContainer extends GenericContainer<FirebaseEmulator
             }
 
             if (emulatorConfig.cliArguments().importExport.isDoExport()) {
+                LOGGER.debug("Export requested. Saving data on exit");
+
                 emulatorConfig
                         .cliArguments()
                         .emulatorData()
