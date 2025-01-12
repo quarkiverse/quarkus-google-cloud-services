@@ -1403,9 +1403,20 @@ public class FirebaseEmulatorContainer extends GenericContainer<FirebaseEmulator
          * kill (SIGKILL) command instead of a stop (SIGTERM) command. This will kill the container instantly
          * and prevent firebase from writing the "--export-on-exit" data to the mounted directory.
          */
+        LOGGER.debug("Requesting to stopping the container to give export a chance to finish");
+
         this.getDockerClient().stopContainerCmd(this.getContainerId()).exec();
 
+        LOGGER.debug("Stopping abd removing the container");
+
         super.stop();
+    }
+
+    @Override
+    public void close() {
+        LOGGER.debug("Emulator is being closed");
+
+        this.stop();
     }
 
     /**

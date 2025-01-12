@@ -67,7 +67,11 @@ public class FirebaseDevServiceProcessor {
 
         // Try starting the container if conditions are met
         try {
-            devService = startContainerIfAvailable(dockerStatusBuildItem, projectConfig, firebaseBuildTimeConfig,
+            devService = startContainerIfAvailable(
+                    dockerStatusBuildItem,
+                    closeBuildItem,
+                    projectConfig,
+                    firebaseBuildTimeConfig,
                     globalDevServicesConfig.timeout);
         } catch (Throwable t) {
             LOGGER.warn("Unable to start Firebase dev service", t);
@@ -87,9 +91,11 @@ public class FirebaseDevServiceProcessor {
      * @param dockerStatusBuildItem, Docker status
      * @param config, Configuration for the Firebase service
      * @param timeout, Optional timeout for starting the service
+     * @param closeBuildItem
      * @return Running service item, or null if the service couldn't be started
      */
     private DevServicesResultBuildItem.RunningDevService startContainerIfAvailable(DockerStatusBuildItem dockerStatusBuildItem,
+            CuratedApplicationShutdownBuildItem closeBuildItem,
             FirebaseDevServiceProjectConfig projectConfig,
             FirebaseDevServiceConfig config,
             Optional<Duration> timeout) {
@@ -111,7 +117,7 @@ public class FirebaseDevServiceProcessor {
             return null;
         }
 
-        return startContainer(dockerStatusBuildItem, projectConfig, config, timeout);
+        return startContainer(closeBuildItem, projectConfig, config, timeout);
     }
 
     private boolean isEnabled(FirebaseDevServiceConfig config) {
@@ -125,12 +131,12 @@ public class FirebaseDevServiceProcessor {
     /**
      * Starts the Pub/Sub emulator container with provided configuration.
      *
-     * @param dockerStatusBuildItem, Docker status
+     * @param closeBuildItem The close build item to handle shutdown of the container
      * @param config, Configuration for the Firebase service
      * @param timeout, Optional timeout for starting the service
      * @return Running service item, or null if the service couldn't be started
      */
-    private DevServicesResultBuildItem.RunningDevService startContainer(DockerStatusBuildItem dockerStatusBuildItem,
+    private DevServicesResultBuildItem.RunningDevService startContainer(CuratedApplicationShutdownBuildItem closeBuildItem,
             FirebaseDevServiceProjectConfig projectConfig,
             FirebaseDevServiceConfig config,
             Optional<Duration> timeout) {
@@ -154,6 +160,8 @@ public class FirebaseDevServiceProcessor {
             emulatorContainerConfig
                     .forEach((e, h) -> LOGGER.info("Google Cloud emulator config property " + e + " set to " + h));
         }
+
+        closeBuildItem.addCloseTask(emulatorContainer::close, true);
 
         // Return running service item with container details
         return new DevServicesResultBuildItem.RunningDevService(FirebaseBuildSteps.FEATURE,
