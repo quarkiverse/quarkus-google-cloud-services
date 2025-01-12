@@ -153,6 +153,11 @@ public class FirebaseEmulatorContainerIntegrationTest {
         File[] files = emulatorDataDir.listFiles();
         assertNotNull(files);
         assertTrue(files.length > 0, "Expected files to be present in the emulator data directory");
+
+        // Verify storage files are written
+        File[] storageFiles = new File(emulatorDataDir, "storage_export/blobs").listFiles();
+        assertNotNull(storageFiles);
+        assertTrue(storageFiles.length > 0, "Expected storage files to be present in the storage data directory");
     }
 
     @Test
