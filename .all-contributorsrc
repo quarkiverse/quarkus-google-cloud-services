@@ -205,6 +205,15 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "xperjon",
+      "name": "Jon-Erik Liw",
+      "avatar_url": "https://avatars.githubusercontent.com/u/965777?v=4",
+      "profile": "https://github.com/xperjon",
+      "contributions": [
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 7,
