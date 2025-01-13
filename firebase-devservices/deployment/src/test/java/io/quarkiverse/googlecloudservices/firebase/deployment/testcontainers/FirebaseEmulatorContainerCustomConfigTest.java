@@ -10,6 +10,7 @@ import java.net.URISyntaxException;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.util.Set;
 
 import org.junit.jupiter.api.Test;
 import org.testcontainers.junit.jupiter.Container;
@@ -29,6 +30,7 @@ public class FirebaseEmulatorContainerCustomConfigTest {
             firebaseContainer = testContainer.testBuilder()
                     .withCliArguments()
                     .withEmulatorData(tempEmulatorDataDir.toPath())
+                    .withExperiments(Set.of("webframeworks"))
                     .done()
                     .readFromFirebaseJson(new File("src/test/firebase.json").toPath())
                     .build();

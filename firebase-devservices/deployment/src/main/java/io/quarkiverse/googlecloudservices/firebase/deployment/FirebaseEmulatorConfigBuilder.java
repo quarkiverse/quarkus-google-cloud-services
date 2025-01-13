@@ -79,6 +79,7 @@ public class FirebaseEmulatorConfigBuilder {
         cli.javaToolOptions().ifPresent(cliConfig::withJavaToolOptions);
         cli.emulatorData().map(FirebaseEmulatorConfigBuilder::asPath).ifPresent(cliConfig::withEmulatorData);
         cli.importExport().ifPresent(cliConfig::withImportExport);
+        cli.experiments().ifPresent(cliConfig::withExperiments);
         cli.debug().ifPresent(cliConfig::withDebug);
 
         cliConfig.done();

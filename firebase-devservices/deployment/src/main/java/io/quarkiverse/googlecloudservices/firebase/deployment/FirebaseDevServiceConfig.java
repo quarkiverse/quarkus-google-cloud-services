@@ -1,6 +1,7 @@
 package io.quarkiverse.googlecloudservices.firebase.deployment;
 
 import java.util.Optional;
+import java.util.Set;
 
 import io.quarkiverse.googlecloudservices.firebase.deployment.testcontainers.FirebaseEmulatorContainer;
 import io.quarkus.runtime.annotations.ConfigRoot;
@@ -198,6 +199,12 @@ public interface FirebaseDevServiceConfig {
                  * Indicate whether to import, export or both the data specified in {@link #emulatorData()}
                  */
                 Optional<FirebaseEmulatorContainer.ImportExport> importExport();
+
+                /**
+                 * Indicates the set of experimental features from firebase to enable (using the firebase experiment:enable
+                 * command line option).
+                 */
+                Optional<Set<String>> experiments();
 
                 /**
                  * Enable firebase emulators debugging.

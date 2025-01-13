@@ -185,6 +185,7 @@ public class FirebaseEmulatorContainer extends GenericContainer<FirebaseEmulator
      * @param javaToolOptions The options to pass to the java based emulators
      * @param emulatorData The path to the directory where to store the emulator data
      * @param importExport Specify whether to import, export or do both with the emulator data
+     * @param experiments Firebase experiments to enable on the docker image
      * @param debug Whether to run with the --debug flag
      */
     public record CliArgumentsConfig(
@@ -193,6 +194,7 @@ public class FirebaseEmulatorContainer extends GenericContainer<FirebaseEmulator
             Optional<String> javaToolOptions,
             Optional<Path> emulatorData,
             ImportExport importExport,
+            Optional<Set<String>> experiments,
             boolean debug) {
         public static final CliArgumentsConfig DEFAULT = new CliArgumentsConfig(
                 Optional.empty(),
@@ -200,6 +202,7 @@ public class FirebaseEmulatorContainer extends GenericContainer<FirebaseEmulator
                 Optional.empty(),
                 Optional.empty(),
                 ImportExport.IMPORT_EXPORT,
+                Optional.of(new HashSet<>()),
                 false);
     }
 
@@ -609,6 +612,7 @@ public class FirebaseEmulatorContainer extends GenericContainer<FirebaseEmulator
             private String javaToolOptions;
             private Path emulatorData;
             private ImportExport importExport;
+            private Set<String> experiments;
             private boolean debug;
 
             /**
@@ -620,6 +624,7 @@ public class FirebaseEmulatorContainer extends GenericContainer<FirebaseEmulator
                 this.javaToolOptions = Builder.this.cliArguments.javaToolOptions.orElse(null);
                 this.emulatorData = Builder.this.cliArguments.emulatorData.orElse(null);
                 this.importExport = Builder.this.cliArguments.importExport;
+                this.experiments = Builder.this.cliArguments.experiments.orElse(new HashSet<>());
                 this.debug = Builder.this.cliArguments.debug;
             }
 
@@ -691,6 +696,28 @@ public class FirebaseEmulatorContainer extends GenericContainer<FirebaseEmulator
             }
 
             /**
+             * Add the firebase experiments setting
+             *
+             * @param experiments The experiments to enable
+             * @return The builder
+             */
+            public CliBuilder withExperiments(Set<String> experiments) {
+                this.experiments = new HashSet<>(experiments);
+                return this;
+            }
+
+            /**
+             * Add a single firebase experiment to the set
+             *
+             * @param experiment The experiment to add
+             * @return The builder
+             */
+            public CliBuilder addExperiment(String experiment) {
+                this.experiments.add(experiment);
+                return this;
+            }
+
+            /**
              * Finish the builder
              *
              * @return The parent builder
@@ -702,6 +729,7 @@ public class FirebaseEmulatorContainer extends GenericContainer<FirebaseEmulator
                         Optional.ofNullable(this.javaToolOptions),
                         Optional.ofNullable(this.emulatorData),
                         this.importExport,
+                        Optional.of(this.experiments),
                         this.debug);
                 return Builder.this;
             }
@@ -924,7 +952,7 @@ public class FirebaseEmulatorContainer extends GenericContainer<FirebaseEmulator
             LOGGER.debug("Mounting {} to the container hosting path", hostingPath);
 
             // Mount volume for static hosting content
-            this.withFileSystemBind(hostingPath, containerHostingPath(emulatorConfig), BindMode.READ_ONLY);
+            this.withFileSystemBind(hostingPath, containerHostingPath(emulatorConfig), BindMode.READ_WRITE);
         }
 
         if (this.services.containsKey(Emulator.CLOUD_FUNCTIONS)) {
@@ -938,7 +966,7 @@ public class FirebaseEmulatorContainer extends GenericContainer<FirebaseEmulator
             LOGGER.debug("Mounting {} to the container functions sources path", functionsPath);
 
             // Mount volume for functions
-            this.withFileSystemBind(functionsPath, containerFunctionsPath(emulatorConfig), BindMode.READ_ONLY);
+            this.withFileSystemBind(functionsPath, containerFunctionsPath(emulatorConfig), BindMode.READ_WRITE);
         }
     }
 
@@ -1023,14 +1051,15 @@ public class FirebaseEmulatorContainer extends GenericContainer<FirebaseEmulator
             this.initialSetup();
             this.authenticateToFirebase();
             this.setupJavaToolOptions();
-            this.setupUserAndGroup();
             this.downloadEmulators();
-            this.addFirebaseJson();
-            this.includeFirestoreFiles();
-            this.includeStorageFiles();
+            this.setupExperiments();
             this.setupDataImportExport();
             this.setupHosting();
             this.setupFunctions();
+            this.addFirebaseJson();
+            this.includeFirestoreFiles();
+            this.includeStorageFiles();
+            this.setupUserAndGroup();
             this.runExecutable();
 
             return result;
@@ -1153,8 +1182,36 @@ public class FirebaseEmulatorContainer extends GenericContainer<FirebaseEmulator
                     toolOptions -> dockerBuilder.env("JAVA_TOOL_OPTIONS", toolOptions));
         }
 
+        private void setupExperiments() {
+            emulatorConfig.cliArguments.experiments().ifPresent(
+                    experimentsSet -> {
+                        var experiments = String.join(",", experimentsSet);
+                        LOGGER.debug("Firebase experiments found, enabling experiments: {}", experiments);
+                        dockerBuilder.env("FIREBASE_CLI_EXPERIMENTS", String.join(",", experiments));
+                    });
+        }
+
         private void addFirebaseJson() {
-            dockerBuilder.workDir(FIREBASE_ROOT);
+            /*
+             * Workaround for https://github.com/firebase/firebase-tools/issues/5903#issuecomment-1568239576
+             *
+             * Remove the conditional and just set FIREBASE_ROOT as workdir once the upstream bug is fixed.
+             */
+            if (isEmulatorEnabled(Emulator.FIREBASE_HOSTING)) {
+                var hostingPath = containerHostingPath(emulatorConfig);
+
+                LOGGER.debug(
+                        "Hosting emulator detected. Setting workdir to {} as a workaround for an upstream bug in firebase-tools",
+                        hostingPath);
+
+                dockerBuilder.workDir(hostingPath);
+            } else {
+                LOGGER.debug("No hosting emulator detected. Using default workdir");
+                dockerBuilder.workDir(FIREBASE_ROOT);
+            }
+            /*
+             * Workaround ends <-- https://github.com/firebase/firebase-tools/issues/5903#issuecomment-1568239576
+             */
 
             emulatorConfig.customFirebaseJson().ifPresentOrElse(
                     this::includeCustomFirebaseJson,
@@ -1256,6 +1313,8 @@ public class FirebaseEmulatorContainer extends GenericContainer<FirebaseEmulator
             List<String> arguments = new ArrayList<>();
 
             arguments.add("emulators:start");
+            arguments.add("--config");
+            arguments.add(FIREBASE_ROOT + "/firebase.json");
 
             emulatorConfig.cliArguments().projectId()
                     .map(id -> "--project")
@@ -1268,7 +1327,9 @@ public class FirebaseEmulatorContainer extends GenericContainer<FirebaseEmulator
                 arguments.add("--debug");
             }
 
-            if (emulatorConfig.cliArguments().importExport.isDoExport()) {
+            if (emulatorConfig.cliArguments().importExport.isDoImport()) {
+                LOGGER.debug("Import requested. Importing data on startup");
+
                 emulatorConfig
                         .cliArguments()
                         .emulatorData()
@@ -1287,6 +1348,8 @@ public class FirebaseEmulatorContainer extends GenericContainer<FirebaseEmulator
             }
 
             if (emulatorConfig.cliArguments().importExport.isDoExport()) {
+                LOGGER.debug("Export requested. Saving data on exit");
+
                 emulatorConfig
                         .cliArguments()
                         .emulatorData()
@@ -1340,9 +1403,20 @@ public class FirebaseEmulatorContainer extends GenericContainer<FirebaseEmulator
          * kill (SIGKILL) command instead of a stop (SIGTERM) command. This will kill the container instantly
          * and prevent firebase from writing the "--export-on-exit" data to the mounted directory.
          */
+        LOGGER.debug("Requesting to stopping the container to give export a chance to finish");
+
         this.getDockerClient().stopContainerCmd(this.getContainerId()).exec();
 
+        LOGGER.debug("Stopping abd removing the container");
+
         super.stop();
+    }
+
+    @Override
+    public void close() {
+        LOGGER.debug("Emulator is being closed");
+
+        this.stop();
     }
 
     /**
@@ -1420,6 +1494,10 @@ public class FirebaseEmulatorContainer extends GenericContainer<FirebaseEmulator
     }
 
     private String getEmulatorEndpoint(Emulator emulator) {
+        if (emulator.equals(Emulator.CLOUD_STORAGE)) {
+            return "http://" + this.getHost() + ":" + emulatorPort(emulator);
+        }
+
         return this.getHost() + ":" + emulatorPort(emulator);
     }
 }

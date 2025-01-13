@@ -247,6 +247,23 @@ endif::add-copy-button-to-env-var[]
 a|`import-only`, `export-only`, `import-export`
 |
 
+a|icon:lock[title=Fixed at build time] [[quarkus-google-cloud-firebase-devservices_quarkus-google-cloud-devservices-firebase-emulator-cli-experiments]] [.property-path]##link:#quarkus-google-cloud-firebase-devservices_quarkus-google-cloud-devservices-firebase-emulator-cli-experiments[`quarkus.google.cloud.devservices.firebase.emulator.cli.experiments`]##
+
+[.description]
+--
+Indicates the set of experimental features from firebase to enable (using the firebase experiment:enable command line option).
+
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_GOOGLE_CLOUD_DEVSERVICES_FIREBASE_EMULATOR_CLI_EXPERIMENTS+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_GOOGLE_CLOUD_DEVSERVICES_FIREBASE_EMULATOR_CLI_EXPERIMENTS+++`
+endif::add-copy-button-to-env-var[]
+--
+|list of string
+|
+
 a|icon:lock[title=Fixed at build time] [[quarkus-google-cloud-firebase-devservices_quarkus-google-cloud-devservices-firebase-emulator-cli-debug]] [.property-path]##link:#quarkus-google-cloud-firebase-devservices_quarkus-google-cloud-devservices-firebase-emulator-cli-debug[`quarkus.google.cloud.devservices.firebase.emulator.cli.debug`]##
 
 [.description]
