@@ -42,7 +42,20 @@ jobs:
           repository: ${{ env.ECOSYSTEM_CI_REPO }}
           path: ecosystem-ci
 
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+          cache-dependency-path: firebase-devservices/deployment/src/test/functions/package-lock.json
+
+      - uses: bahmutov/npm-install@v1
+        with:
+          working-directory: firebase-devservices/deployment/src/test/functions
+
       - name: Setup and Run Tests
-        run: ./ecosystem-ci/setup-and-test
+        run: |
+          export CURRENT_USER=$(id -u)
+          export CURRENT_GROUP=$(id -g)
+          ./ecosystem-ci/setup-and-test
         env:
           ECOSYSTEM_CI_TOKEN: ${{ secrets.ECOSYSTEM_CI_TOKEN }}
