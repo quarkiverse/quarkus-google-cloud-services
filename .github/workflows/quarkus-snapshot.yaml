@@ -45,8 +45,6 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: 'npm'
-          cache-dependency-path: firebase-devservices/deployment/src/test/functions/package-lock.json
 
       - uses: bahmutov/npm-install@v1
         with:
