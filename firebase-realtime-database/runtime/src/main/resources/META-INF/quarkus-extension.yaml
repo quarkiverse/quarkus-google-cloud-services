@@ -1,0 +1,17 @@
+---
+name: "Google Cloud Firebase Realtime Database"
+artifact: ${project.groupId}:${project.artifactId}:${project.version}
+metadata:
+  keywords:
+  - "realtime database"
+  - "firebase"
+  - "google cloud"
+  - "gcloud"
+  - "gcp"
+  categories:
+  - "cloud"
+  - "data"
+  guide: "https://quarkiverse.github.io/quarkiverse-docs/quarkus-google-cloud-services/main/firebase-realtime-database.html"
+  status: "experimental"
+  config: 
+  - "quarkus.google.cloud.firebase.database"

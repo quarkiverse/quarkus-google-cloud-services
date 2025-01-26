@@ -14,6 +14,7 @@ import jakarta.ws.rs.core.Response;
 
 import com.google.cloud.firestore.Firestore;
 import com.google.cloud.pubsub.v1.Publisher;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.protobuf.ByteString;
 import com.google.pubsub.v1.PubsubMessage;
 
@@ -28,6 +29,9 @@ public class FirebaseResource {
 
     @Inject
     QuarkusPubSub quarkusPubSub;
+
+    @Inject
+    FirebaseDatabase firebaseDatabase;
 
     Publisher publisher;
 
@@ -48,15 +52,23 @@ public class FirebaseResource {
                 var fields = Map.of("test", msgData);
 
                 col.document("test").create(fields).get();
+
+                var dbRef = firebaseDatabase.getReference("test");
+                dbRef.setValue(fields, (err, ref) -> {
+                    if (err == null) {
+                        // Not pretty, but we just let the consumer timeout.
+                        consumer.ack();
+                    }
+
+                    synchronized (monitor) {
+                        monitor.notify();
+                    }
+                });
+
             } catch (InterruptedException | ExecutionException e) {
                 throw new RuntimeException(e);
             }
 
-            consumer.ack();
-
-            synchronized (monitor) {
-                monitor.notify();
-            }
         });
         subscriber.startAsync().awaitRunning();
 
@@ -80,6 +92,7 @@ public class FirebaseResource {
         if (iter.hasNext()) {
             var docRef = iter.next();
             var snapshot = docRef.get().get();
+
             return Response.ok(snapshot.getString("test")).build();
         } else {
             return Response.status(Response.Status.NOT_FOUND).build();
