@@ -14,7 +14,7 @@
   <properties>
     <quarkus.version>3.17.2</quarkus.version>
     <enforcer-plugin.version>3.5.0</enforcer-plugin.version>
-    <assertj.version>3.27.2</assertj.version>
+    <assertj.version>3.27.3</assertj.version>
     <opentelemetry-alpha.version>1.46.0-alpha</opentelemetry-alpha.version>
   </properties>
   <scm>
