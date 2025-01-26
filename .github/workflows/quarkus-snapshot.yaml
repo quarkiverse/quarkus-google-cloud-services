@@ -48,7 +48,7 @@ jobs:
 
       - uses: bahmutov/npm-install@v1
         with:
-          working-directory: firebase-devservices/deployment/src/test/functions
+          working-directory: current-repo/firebase-devservices/deployment/src/test/functions
 
       - name: Setup and Run Tests
         run: |
