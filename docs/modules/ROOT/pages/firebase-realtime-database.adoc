@@ -1,0 +1,76 @@
+= Google Cloud Services - Firebase Realtime Database
+
+This extension allows to inject a `com.google.firebase.database.FirebaseDatabase` object inside your Quarkus application.
+
+This extension will pickup on any available `com.google.firebase.FirebaseApp` (see https://quarkiverse.github.io/quarkiverse-docs/quarkus-google-cloud-services/main/firebase-admin.html[Firebase Admin extension] for more info) to configure the Realtime Database.
+
+Be sure to have read the https://quarkiverse.github.io/quarkiverse-docs/quarkus-google-cloud-services/main/index.html[Google Cloud Services extension pack global documentation] before this one, it contains general configuration and information.
+
+== Bootstrapping the project
+
+First, we need a new project. Create a new project with the following command (replace the version placeholder with the correct one):
+
+[source, shell script]
+----
+mvn io.quarkus:quarkus-maven-plugin:${quarkusVersion}:create \
+    -DprojectGroupId=org.acme \
+    -DprojectArtifactId=firebase-realtime-database-quickstart \
+    -Dextensions="resteasy-reactive-jackson,quarkus-google-cloud-firebase-realtime-database"
+cd firebase-admin-quickstart
+----
+
+This command generates a Maven project, importing the Google Cloud Firebase Realtime Database extension.)
+
+If you already have your Quarkus project configured, you can add the `quarkus-google-cloud-firebase-realtime-database` extension to your project by running the following command in your project base directory:
+
+[source, shell script]
+----
+./mvnw quarkus:add-extension -Dextensions="quarkus-google-cloud-firebase-realtime-database"
+----
+
+This will add the following to your pom.xml:
+
+[source, xml]
+----
+<dependency>
+    <groupId>io.quarkiverse.googlecloudservices</groupId>
+    <artifactId>quarkus-google-cloud-firebase-realtime-database</artifactId>
+</dependency>
+----
+
+== Some example
+
+This is an example usage of the extension: we create a REST resource with a single endpoint that creates a 'persons' collection, inserts three persons in it, then search for persons with last name Doe and returns them.
+
+[source,java]
+----
+import javax.inject.Inject;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.core.MediaType;
+
+import com.google.firebase.database.FirebaseDatabase;
+
+@Path("/database")
+public class RealtimeDatabaseResource {
+
+    @Inject
+    FirebaseDatabase database; // Inject database
+
+    @POST
+    @Consumes(MediaType.TEXT_PLAIN)
+    public void database(String data)  {
+        var dbRef = firebaseDatabase.getReference("test");
+        dbRef.setValueAsync(fields);
+    }
+}
+----
+
+== Dev Service
+
+This extension uses the https://quarkiverse.github.io/quarkiverse-docs/quarkus-google-cloud-services/main/firebase-devservices.html[Firebase Devservices] extension to provide a Dev Service. Refer the documentation of this extension for more info.
+
+== Configuration Reference
+
+include::./includes/quarkus-google-cloud-firebase-realtime-database.adoc[]
