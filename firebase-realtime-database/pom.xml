@@ -9,7 +9,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>quarkus-google-cloud-firebase-realtime-database-parent</artifactId>
-    <name>Quarkus - Google Cloud Services - Firebas Realtime Database</name>
+    <name>Quarkus - Google Cloud Services - Firebase Realtime Database</name>
     <packaging>pom</packaging>
 
     <modules>
