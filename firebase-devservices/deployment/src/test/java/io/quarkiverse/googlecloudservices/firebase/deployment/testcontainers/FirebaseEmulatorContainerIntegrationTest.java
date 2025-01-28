@@ -21,7 +21,6 @@ import java.util.concurrent.TimeUnit;
 
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
@@ -49,7 +48,6 @@ import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 
 @Testcontainers
-@Disabled("Temporarily for the release, see https://github.com/quarkiverse/quarkus-google-cloud-services/issues/754")
 public class FirebaseEmulatorContainerIntegrationTest {
 
     private static final File tempDataParent;
