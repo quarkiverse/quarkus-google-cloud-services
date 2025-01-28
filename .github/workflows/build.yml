@@ -30,10 +30,6 @@ jobs:
         cache: 'npm'
         cache-dependency-path: firebase-devservices/deployment/src/test/functions/package-lock.json
 
-    - uses: bahmutov/npm-install@v1
-      with:
-        working-directory: firebase-devservices/deployment/src/test/functions
-
     - name: Cache local Maven repository
       uses: actions/cache@v2
       with:
