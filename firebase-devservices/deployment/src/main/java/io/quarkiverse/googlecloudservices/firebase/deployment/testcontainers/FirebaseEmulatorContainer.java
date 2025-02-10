@@ -546,7 +546,7 @@ public class FirebaseEmulatorContainer extends GenericContainer<FirebaseEmulator
                     var uid = (int) unix.getUid();
                     var gid = (int) unix.getGid();
 
-                    LOGGER.debug("Auto-ddetected docker uid: {} and gid: {}", uid, gid);
+                    LOGGER.info("Auto-ddetected docker uid: {} and gid: {}", uid, gid);
 
                     withUserId(uid);
                     withGroupId(gid);
