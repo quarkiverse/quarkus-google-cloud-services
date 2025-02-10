@@ -543,8 +543,13 @@ public class FirebaseEmulatorContainer extends GenericContainer<FirebaseEmulator
             public DockerConfigBuilder detectUidGid() {
                 if (SystemUtils.IS_OS_UNIX) {
                     var unix = new UnixSystem();
-                    withUserId((int) unix.getUid());
-                    withGroupId((int) unix.getGid());
+                    var uid = (int) unix.getUid();
+                    var gid = (int) unix.getGid();
+
+                    LOGGER.debug("Auto-ddetected docker uid: {} and gid: {}", uid, gid);
+
+                    withUserId(uid);
+                    withGroupId(gid);
                 } else {
                     LOGGER.debug("Not running on a UNIX OS, silently ignoring uid/gid detection");
                 }
