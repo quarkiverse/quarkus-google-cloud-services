@@ -44,13 +44,9 @@ jobs:
 
     - name: Build with Maven
       run: |
-        export CURRENT_USER=$(id -u)
-        export CURRENT_GROUP=$(id -g)
         mvn -B formatter:validate install --file pom.xml
 
     - name: Build in native
       run: |
-        export CURRENT_USER=$(id -u)
-        export CURRENT_GROUP=$(id -g)
         mvn -B -Pnative package --file integration-tests/main/pom.xml
 
