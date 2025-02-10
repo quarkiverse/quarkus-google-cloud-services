@@ -28,6 +28,11 @@
             <groupId>org.testcontainers</groupId>
             <artifactId>testcontainers</artifactId>
         </dependency>
+        <!-- Used to detect current OS for automatic uid/gid detection -->
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+        </dependency>
 
         <!-- Test dependencies -->
         <!-- https://mvnrepository.com/artifact/org.testcontainers/junit-jupiter -->

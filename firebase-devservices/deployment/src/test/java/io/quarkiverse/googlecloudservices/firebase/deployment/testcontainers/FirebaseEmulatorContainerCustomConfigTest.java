@@ -12,7 +12,6 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.Set;
 
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
