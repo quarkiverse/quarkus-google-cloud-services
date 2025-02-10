@@ -536,6 +536,7 @@ public class FirebaseEmulatorContainer extends GenericContainer<FirebaseEmulator
 
             /**
              * Try to automatiically detect and set the UID and GID
+             *
              * @return The builder
              */
             public DockerConfigBuilder detectUidGid() {
