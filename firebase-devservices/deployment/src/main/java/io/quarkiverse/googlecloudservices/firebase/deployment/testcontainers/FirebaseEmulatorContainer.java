@@ -541,6 +541,7 @@ public class FirebaseEmulatorContainer extends GenericContainer<FirebaseEmulator
              * @return The builder
              */
             public DockerConfigBuilder detectUidGid() {
+                LOGGER.debug("Detecting uid and gid from OS");
                 if (SystemUtils.IS_OS_UNIX) {
                     var unix = new UnixSystem();
                     var uid = (int) unix.getUid();
@@ -1319,7 +1320,7 @@ public class FirebaseEmulatorContainer extends GenericContainer<FirebaseEmulator
 
             var runCmd = String.join(" && ", commands);
 
-            LOGGER.error("Running docker container as user/group: {}:{}", user, group);
+            LOGGER.info("Running docker container as user/group: {}:{}", user, group);
 
             dockerBuilder
                     .run(runCmd)

@@ -41,6 +41,7 @@ public class TestableFirebaseEmulatorContainer {
         var builder = FirebaseEmulatorContainer.builder();
 
         builder.withDockerConfig()
+                .detectUidGid()
                 .afterStart(this::afterStart)
                 .done()
                 .withFirebaseVersion("latest")
