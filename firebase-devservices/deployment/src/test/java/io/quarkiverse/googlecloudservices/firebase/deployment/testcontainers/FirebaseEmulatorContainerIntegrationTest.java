@@ -49,7 +49,6 @@ import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 
 @Testcontainers
-@Disabled("Temporarily for the release, see https://github.com/quarkiverse/quarkus-google-cloud-services/issues/754")
 public class FirebaseEmulatorContainerIntegrationTest {
 
     private static final File tempDataParent;
