@@ -18,7 +18,6 @@ import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 @Testcontainers
-@Disabled("Temporarily for the release, see https://github.com/quarkiverse/quarkus-google-cloud-services/issues/754")
 public class FirebaseEmulatorContainerCustomConfigTest {
 
     private static final File tempEmulatorDataDir;
