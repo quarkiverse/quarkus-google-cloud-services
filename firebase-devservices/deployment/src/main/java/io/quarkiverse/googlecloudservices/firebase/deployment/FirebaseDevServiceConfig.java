@@ -157,6 +157,14 @@ public interface FirebaseDevServiceConfig {
                 Optional<String> dockerGroupEnv();
 
                 /**
+                 * Automatically try to detect the {@link #dockerUser()} and {@link #dockerGroup()} based on the
+                 * current user. This is the default. Note that this setting is overridden by any of the previous ways
+                 * to set the uid/gid.
+                 */
+                @WithDefault("true")
+                boolean autoDetectUserAndGroup();
+
+                /**
                  * Pipe Stdout of the container to the Quarkus logging
                  */
                 Optional<Boolean> followStdOut();

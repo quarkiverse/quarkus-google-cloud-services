@@ -59,6 +59,9 @@ public class FirebaseEmulatorConfigBuilder {
         var dockerConfig = builder.withDockerConfig();
 
         dockerConfig.withImage(docker.imageName());
+        if (docker.autoDetectUserAndGroup()) {
+            dockerConfig.detectUidGid();
+        }
         docker.dockerUser().ifPresent(dockerConfig::withUserId);
         docker.dockerGroup().ifPresent(dockerConfig::withGroupId);
         docker.dockerUserEnv().ifPresent(dockerConfig::withUserIdFromEnv);

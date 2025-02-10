@@ -12,13 +12,11 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.Set;
 
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 @Testcontainers
-@Disabled("Temporarily for the release, see https://github.com/quarkiverse/quarkus-google-cloud-services/issues/754")
 public class FirebaseEmulatorContainerCustomConfigTest {
 
     private static final File tempEmulatorDataDir;
