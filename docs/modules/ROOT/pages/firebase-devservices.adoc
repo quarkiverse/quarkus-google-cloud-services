@@ -112,7 +112,7 @@ quarkusDev {
 This extension builds a custom Docker image to execute the firebase emulators. To reduce startup times, an aggressive
 caching strategy is used. The extension will build an internal base image (called
 `localhost/testcontainers/firebase-base:{firebase-version}`) and will only rebuild this image if it cannot be found.
-This means if you need to image to be regenerated, you manually need remove the docker image.
+If you need the image to be regenerated, you manually need to remove the docker image.
 
 Currently the base image builder uses the following steps:
 - Select the base image (based on the image name, see below)
