@@ -7,8 +7,13 @@ import java.util.Locale;
 import java.util.Set;
 
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.inject.Instance;
+import jakarta.inject.Inject;
+
+import org.eclipse.microprofile.config.inject.ConfigProperty;
 
 import io.netty.handler.codec.http.HttpHeaderNames;
+import io.quarkiverse.googlecloudservices.firebase.admin.runtime.FirebaseSessionCookieManager;
 import io.quarkus.security.identity.IdentityProviderManager;
 import io.quarkus.security.identity.SecurityIdentity;
 import io.quarkus.security.identity.request.AuthenticationRequest;
@@ -36,6 +41,12 @@ public class FirebaseSecurityAuthMechanism implements HttpAuthenticationMechanis
     // The length of the prefix of the Authorization header
     private static final int PREFIX_LENGTH = BEARER_PREFIX.length();
 
+    @Inject
+    Instance<FirebaseSessionCookieManager> cookieManagerInstance;
+
+    @ConfigProperty(name = "quarkus.google.cloud.firebase.auth.session-cookie.enabled")
+    boolean sessionCookiesEnabled;
+
     /**
      * Authenticates the user using the provided token in the Authorization header of the request.
      *
@@ -56,9 +67,16 @@ public class FirebaseSecurityAuthMechanism implements HttpAuthenticationMechanis
                     String tokenChallenge = current.substring(PREFIX_LENGTH);
 
                     // We have found a suitable header, so try to authenticate
-                    return identityProviderManager.authenticate(new FirebaseAuthenticationRequest(tokenChallenge));
+                    return identityProviderManager.authenticate(new FirebaseAuthenticationRequest(tokenChallenge, false));
                 }
             }
+        }
+
+        if (sessionCookiesEnabled) {
+            var manager = cookieManagerInstance.get();
+            var cookie = manager.getSessionCookie(context);
+            return cookie.map(c -> identityProviderManager
+                    .authenticate(new FirebaseAuthenticationRequest(c, true))).orElse(Uni.createFrom().nullItem());
         }
 
         // No suitable header has been found in this request,

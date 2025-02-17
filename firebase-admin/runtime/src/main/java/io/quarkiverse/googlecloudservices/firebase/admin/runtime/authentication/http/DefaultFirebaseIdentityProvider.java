@@ -2,14 +2,18 @@ package io.quarkiverse.googlecloudservices.firebase.admin.runtime.authentication
 
 import java.security.Principal;
 import java.util.*;
+import java.util.concurrent.Future;
 
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.inject.Instance;
 import jakarta.inject.Inject;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseToken;
 
 import io.quarkiverse.googlecloudservices.firebase.admin.runtime.FirebaseAuthConfig;
+import io.quarkiverse.googlecloudservices.firebase.admin.runtime.FirebaseSessionCookieManager;
+import io.quarkus.security.credential.TokenCredential;
 import io.quarkus.security.identity.AuthenticationRequestContext;
 import io.quarkus.security.identity.IdentityProvider;
 import io.quarkus.security.identity.SecurityIdentity;
@@ -28,6 +32,9 @@ public class DefaultFirebaseIdentityProvider implements IdentityProvider<Firebas
 
     @Inject
     FirebaseAuthConfig config;
+
+    @Inject
+    Instance<FirebaseSessionCookieManager> sessionCookieManagerInstance;
 
     /**
      * Retrieves the request type that this provider supports.
@@ -48,11 +55,17 @@ public class DefaultFirebaseIdentityProvider implements IdentityProvider<Firebas
      */
     @Override
     public Uni<SecurityIdentity> authenticate(FirebaseAuthenticationRequest request, AuthenticationRequestContext context) {
+        Future<FirebaseToken> tokenFuture;
+        if (request.isCookie()) {
+            tokenFuture = sessionCookieManagerInstance.get().verifySessionToken(request.getToken());
+        } else {
+            tokenFuture = auth.verifyIdTokenAsync(request.getToken());
+        }
+
         return Uni.createFrom()
-                .future(auth.verifyIdTokenAsync(request.getToken()))
-                .onItem().transformToUni(idToken -> {
+                .future(tokenFuture).onItem().transformToUni(idToken -> {
                     // Authenticate the token and create a SecurityIdentity
-                    SecurityIdentity identity = authenticate(idToken);
+                    SecurityIdentity identity = authenticate(idToken, request.getToken());
 
                     // If the token is invalid, return an empty optional
                     if (identity == null) {
@@ -67,11 +80,13 @@ public class DefaultFirebaseIdentityProvider implements IdentityProvider<Firebas
      * Authenticates the provided FirebaseToken and creates a SecurityIdentity.
      *
      * @param token The FirebaseToken to be authenticated.
+     * @param rawToken The raw JWT token
      * @return A SecurityIdentity representing the authenticated user or null if authentication fails.
      */
-    public SecurityIdentity authenticate(FirebaseToken token) {
+    public SecurityIdentity authenticate(FirebaseToken token, String rawToken) {
         var builder = QuarkusSecurityIdentity.builder()
-                .setPrincipal(getPrincipal(token));
+                .setPrincipal(getPrincipal(token, rawToken))
+                .addCredential(new TokenCredential(rawToken, "Firebase"));
 
         config.auth().rolesClaim().ifPresent(claim -> {
             var claims = token.getClaims();
@@ -106,9 +121,10 @@ public class DefaultFirebaseIdentityProvider implements IdentityProvider<Firebas
      * Creates a FirebasePrincipal from the provided FirebaseToken.
      *
      * @param token The FirebaseToken to be used for creating the principal.
+     * @param rawToken The raw JWT token
      * @return A FirebasePrincipal object representing the authenticated user.
      */
-    public static Principal getPrincipal(FirebaseToken token) {
-        return new FirebasePrincipal(token);
+    public static Principal getPrincipal(FirebaseToken token, String rawToken) {
+        return new FirebasePrincipal(token, rawToken);
     }
 }
