@@ -4,6 +4,7 @@ import java.io.IOException;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.Default;
+import jakarta.enterprise.inject.Disposes;
 import jakarta.enterprise.inject.Instance;
 import jakarta.enterprise.inject.Produces;
 import jakarta.inject.Inject;
@@ -93,6 +94,10 @@ public class FirestoreProducer {
         return !this.gcpBootstrapConfiguration.accessTokenEnabled()
                 && this.firestoreConfiguration.hostOverride().isPresent()
                 && this.firestoreConfiguration.hostOverride().get().contains("localhost");
+    }
+
+    public void close(@Disposes Firestore firestore) throws Exception {
+        firestore.close();
     }
 
 }
