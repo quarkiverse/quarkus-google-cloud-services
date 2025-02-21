@@ -2,6 +2,7 @@ package io.quarkiverse.googlecloudservices.pubsub.deployment;
 
 import io.quarkus.runtime.annotations.ConfigRoot;
 import io.smallrye.config.ConfigMapping;
+import io.smallrye.config.WithDefault;
 
 /**
  * Root configuration class for Google Cloud Pub/Sub that operates at build time.
@@ -18,4 +19,18 @@ public interface PubSubBuildTimeConfig {
      * for development purposes.
      */
     PubSubDevServiceConfig devservice();
+
+    /**
+     * The pub sub push configuration
+     */
+    Push push();
+
+    interface Push {
+
+        /**
+         * Enable push configuration
+         */
+        @WithDefault("false")
+        boolean enabled();
+    }
 }
