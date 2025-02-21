@@ -1039,10 +1039,20 @@ public class FirebaseEmulatorContainer extends GenericContainer<FirebaseEmulator
         private final Map<Emulator, ExposedPort> devServices;
 
         private DockerfileBuilder dockerBuilder;
+        private String firebaseVersion;
 
         public FirebaseDockerBuilder(EmulatorConfig emulatorConfig) {
             this.devServices = emulatorConfig.firebaseConfig().services;
             this.emulatorConfig = emulatorConfig;
+
+            try {
+                var resolver = new FirebaseVersionResolver();
+                firebaseVersion = resolver.resolveVersion(emulatorConfig.firebaseVersion());
+
+                LOGGER.info("Resolved firebase-tools version: {}", firebaseVersion);
+            } catch (IOException e) {
+                throw new IllegalStateException("Failed to resolve firebase version for base image", e);
+            }
 
             buildBaseImageIfNeeded();
 
@@ -1103,7 +1113,7 @@ public class FirebaseEmulatorContainer extends GenericContainer<FirebaseEmulator
         }
 
         private String baseImageName() {
-            return BASE_IMAGE_NAME + ":" + emulatorConfig.firebaseVersion();
+            return BASE_IMAGE_NAME + ":" + firebaseVersion;
         }
 
         private void validateConfiguration() {
@@ -1189,7 +1199,7 @@ public class FirebaseEmulatorContainer extends GenericContainer<FirebaseEmulator
             dockerBuilder
                     .run("apk --no-cache add openjdk17-jre bash curl openssl gettext nano nginx sudo && " +
                             "npm cache clean --force && " +
-                            "npm i -g firebase-tools@" + emulatorConfig.firebaseVersion() + " && " +
+                            "npm i -g firebase-tools@" + firebaseVersion + " && " +
                             "deluser nginx && delgroup abuild && delgroup ping && " +
                             "mkdir -p " + FIREBASE_ROOT + " && " +
 
