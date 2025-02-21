@@ -42,10 +42,6 @@ jobs:
           repository: ${{ env.ECOSYSTEM_CI_REPO }}
           path: ecosystem-ci
 
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 20
-
       - uses: bahmutov/npm-install@v1
         with:
           working-directory: current-repo/firebase-devservices/deployment/src/test/functions

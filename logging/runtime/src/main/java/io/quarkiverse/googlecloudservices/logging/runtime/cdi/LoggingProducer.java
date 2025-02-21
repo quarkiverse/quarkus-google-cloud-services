@@ -36,7 +36,7 @@ public class LoggingProducer {
     public Logging create() {
         GcpBootstrapConfiguration gcpConfiguration = gcpConfigHolder.getBootstrapConfig();
         String projectId = gcpConfiguration.projectId().orElse(null);
-        Logging log = LoggingOptions.getDefaultInstance().toBuilder()
+        Logging log = LoggingOptions.newBuilder()
                 .setCredentials(googleCredentials)
                 .setProjectId(projectId)
                 .build()
