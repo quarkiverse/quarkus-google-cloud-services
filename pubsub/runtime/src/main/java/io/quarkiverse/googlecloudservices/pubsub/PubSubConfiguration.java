@@ -25,4 +25,5 @@ public interface PubSubConfiguration {
      */
     @WithDefault("true")
     boolean useEmulatorCredentials();
+
 }

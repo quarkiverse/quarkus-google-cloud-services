@@ -20,6 +20,8 @@ import com.google.pubsub.v1.*;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 import io.quarkiverse.googlecloudservices.common.GcpConfigHolder;
+import io.quarkiverse.googlecloudservices.pubsub.push.PubSubPushBuildTimeConfig;
+import io.quarkiverse.googlecloudservices.pubsub.push.PubSubPushManager;
 
 @ApplicationScoped
 public class QuarkusPubSub {
@@ -31,6 +33,12 @@ public class QuarkusPubSub {
 
     @Inject
     PubSubConfiguration pubSubConfiguration;
+
+    @Inject
+    Instance<PubSubPushManager> pushManager;
+
+    @Inject
+    PubSubPushBuildTimeConfig pushConfig;
 
     private Optional<TransportChannelProvider> channelProvider;
 
@@ -48,20 +56,31 @@ public class QuarkusPubSub {
     /**
      * Creates a PubSub Subscriber using the configured project ID.
      */
-    public Subscriber subscriber(String subscription, MessageReceiver receiver) {
+    public SubscriberInterface subscriber(String subscription, MessageReceiver receiver) {
         return subscriber(subscription, gcpConfigHolder.getBootstrapConfig().projectId().orElseThrow(), receiver);
     }
 
     /**
      * Creates a PubSub Subscriber using the specified project ID.
      */
-    public Subscriber subscriber(String subscription, String projectId, MessageReceiver receiver) {
+    public SubscriberInterface subscriber(String subscription, String projectId, MessageReceiver receiver) {
         ProjectSubscriptionName subscriptionName = ProjectSubscriptionName.of(projectId, subscription);
+        if (pushConfig.enabled()) {
+            return pushSubscriber(subscriptionName, receiver);
+        } else {
+            return pullSubscriber(subscriptionName, receiver);
+        }
+    }
+
+    private Subscriber pullSubscriber(ProjectSubscriptionName subscriptionName, MessageReceiver receiver) {
         var builder = Subscriber.newBuilder(subscriptionName, receiver)
                 .setCredentialsProvider(credentialsProvider());
         channelProvider.ifPresent(builder::setChannelProvider);
         return builder.build();
+    }
 
+    private SubscriberInterface pushSubscriber(ProjectSubscriptionName subscriptionName, MessageReceiver receiver) {
+        return pushManager.get().registerListener(subscriptionName, receiver);
     }
 
     /**
