@@ -7,6 +7,7 @@ import java.util.*;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.SystemUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.event.Level;
@@ -16,6 +17,8 @@ import org.testcontainers.containers.output.OutputFrame;
 import org.testcontainers.containers.wait.strategy.Wait;
 import org.testcontainers.images.builder.ImageFromDockerfile;
 import org.testcontainers.images.builder.dockerfile.DockerfileBuilder;
+
+import com.sun.security.auth.module.UnixSystem;
 
 /**
  * Testcontainers container to run Firebase emulators from Docker.
@@ -529,6 +532,29 @@ public class FirebaseEmulatorContainer extends GenericContainer<FirebaseEmulator
                         Builder.this.dockerConfig.followStdOut(),
                         Builder.this.dockerConfig.followStdErr(),
                         Builder.this.dockerConfig.afterStart());
+                return this;
+            }
+
+            /**
+             * Try to automatiically detect and set the UID and GID
+             *
+             * @return The builder
+             */
+            public DockerConfigBuilder detectUidGid() {
+                LOGGER.debug("Detecting uid and gid from OS");
+                if (SystemUtils.IS_OS_UNIX) {
+                    var unix = new UnixSystem();
+                    var uid = (int) unix.getUid();
+                    var gid = (int) unix.getGid();
+
+                    LOGGER.info("Auto-ddetected docker uid: {} and gid: {}", uid, gid);
+
+                    withUserId(uid);
+                    withGroupId(gid);
+                } else {
+                    LOGGER.debug("Not running on a UNIX OS, silently ignoring uid/gid detection");
+                }
+
                 return this;
             }
 

@@ -31,6 +31,7 @@ class FirebaseEmulatorConfigBuilderTest {
                                         Optional.of(1002),
                                         Optional.empty(),
                                         Optional.empty(),
+                                        false,
                                         Optional.of(false),
                                         Optional.of(true)),
                                 new TestCli(
@@ -168,6 +169,7 @@ class FirebaseEmulatorConfigBuilderTest {
             Optional<Integer> dockerGroup,
             Optional<String> dockerUserEnv,
             Optional<String> dockerGroupEnv,
+            boolean autoDetectUserAndGroup,
             Optional<Boolean> followStdOut,
             Optional<Boolean> followStdErr) implements FirebaseDevServiceConfig.Firebase.Emulator.Docker {
     }

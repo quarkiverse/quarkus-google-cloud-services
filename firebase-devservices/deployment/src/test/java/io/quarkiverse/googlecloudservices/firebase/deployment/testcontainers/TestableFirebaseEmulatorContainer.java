@@ -40,15 +40,8 @@ public class TestableFirebaseEmulatorContainer {
     public FirebaseEmulatorContainer.Builder testBuilder() {
         var builder = FirebaseEmulatorContainer.builder();
 
-        /*
-         * We determine the current group and user using an env variable. This is set by the GitHub Actions runner.
-         * The user and group are used to set the user/group for the user in the docker container run by
-         * TestContainers for the Firebase Emulators. This way, the data exported by the Firebase Emulators
-         * can be read from the build.
-         */
         builder.withDockerConfig()
-                .withUserIdFromEnv("CURRENT_USER")
-                .withGroupIdFromEnv("CURRENT_GROUP")
+                .detectUidGid()
                 .afterStart(this::afterStart)
                 .done()
                 .withFirebaseVersion("latest")

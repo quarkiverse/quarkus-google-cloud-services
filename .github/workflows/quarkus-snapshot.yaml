@@ -49,8 +49,6 @@ jobs:
 
       - name: Setup and Run Tests
         run: |
-          export CURRENT_USER=$(id -u)
-          export CURRENT_GROUP=$(id -g)
           ./ecosystem-ci/setup-and-test
         env:
           ECOSYSTEM_CI_TOKEN: ${{ secrets.ECOSYSTEM_CI_TOKEN }}
