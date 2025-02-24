@@ -3,6 +3,7 @@ package io.quarkiverse.googlecloudservices.secretmanager.runtime;
 import java.io.IOException;
 
 import jakarta.enterprise.inject.Default;
+import jakarta.enterprise.inject.Disposes;
 import jakarta.enterprise.inject.Produces;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
@@ -39,5 +40,9 @@ public class SecretManagerProducer {
         builder.setQuotaProjectId(gcpConfiguration.projectId().orElse(null));
 
         return SecretManagerServiceClient.create(builder.build());
+    }
+
+    public void close(@Disposes SecretManagerServiceClient secretManagerClient) {
+        secretManagerClient.close();
     }
 }

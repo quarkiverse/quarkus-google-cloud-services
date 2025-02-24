@@ -4,6 +4,7 @@ import java.io.IOException;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.Default;
+import jakarta.enterprise.inject.Disposes;
 import jakarta.enterprise.inject.Produces;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
@@ -37,5 +38,9 @@ public class StorageProducer {
                 .setProjectId(gcpConfiguration.projectId().orElse(null));
         storageConfiguration.hostOverride().ifPresent(builder::setHost);
         return builder.build().getService();
+    }
+
+    public void close(@Disposes Storage storage) throws Exception {
+        storage.close();
     }
 }
