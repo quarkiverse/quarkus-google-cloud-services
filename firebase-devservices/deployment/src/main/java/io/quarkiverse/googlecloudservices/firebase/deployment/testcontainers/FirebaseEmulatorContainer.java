@@ -20,7 +20,6 @@ import org.testcontainers.images.builder.ImageFromDockerfile;
 import org.testcontainers.images.builder.dockerfile.DockerfileBuilder;
 
 import com.github.dockerjava.api.DockerClient;
-
 import com.sun.security.auth.module.UnixSystem;
 
 /**

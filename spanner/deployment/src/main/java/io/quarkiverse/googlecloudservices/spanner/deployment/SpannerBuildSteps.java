@@ -6,7 +6,7 @@ import io.quarkus.deployment.annotations.BuildStep;
 import io.quarkus.deployment.builditem.FeatureBuildItem;
 
 public class SpannerBuildSteps {
-    private static final String FEATURE = "google-cloud-spanner";
+    protected static final String FEATURE = "google-cloud-spanner";
 
     @BuildStep
     public FeatureBuildItem feature() {
