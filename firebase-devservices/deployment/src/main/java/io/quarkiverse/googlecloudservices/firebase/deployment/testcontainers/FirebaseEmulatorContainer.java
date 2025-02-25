@@ -11,12 +11,15 @@ import org.apache.commons.lang3.SystemUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.event.Level;
+import org.testcontainers.DockerClientFactory;
 import org.testcontainers.containers.BindMode;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.output.OutputFrame;
 import org.testcontainers.containers.wait.strategy.Wait;
 import org.testcontainers.images.builder.ImageFromDockerfile;
 import org.testcontainers.images.builder.dockerfile.DockerfileBuilder;
+
+import com.github.dockerjava.api.DockerClient;
 
 import com.sun.security.auth.module.UnixSystem;
 
@@ -1062,10 +1065,22 @@ public class FirebaseEmulatorContainer extends GenericContainer<FirebaseEmulator
         private final Map<Emulator, ExposedPort> devServices;
 
         private DockerfileBuilder dockerBuilder;
+        private String firebaseVersion;
 
         public FirebaseDockerBuilder(EmulatorConfig emulatorConfig) {
             this.devServices = emulatorConfig.firebaseConfig().services;
             this.emulatorConfig = emulatorConfig;
+
+            try {
+                var resolver = new FirebaseVersionResolver();
+                firebaseVersion = resolver.resolveVersion(emulatorConfig.firebaseVersion());
+
+                LOGGER.info("Resolved firebase-tools version: {}", firebaseVersion);
+            } catch (IOException e) {
+                throw new IllegalStateException("Failed to resolve firebase version for base image", e);
+            }
+
+            buildBaseImageIfNeeded();
 
             this.result = new ImageFromDockerfile("localhost/testcontainers/firebase", false)
                     .withDockerfileFromBuilder(builder -> this.dockerBuilder = builder);
@@ -1073,22 +1088,58 @@ public class FirebaseEmulatorContainer extends GenericContainer<FirebaseEmulator
 
         public ImageFromDockerfile build() {
             this.validateConfiguration();
+
             this.configureBaseImage();
-            this.initialSetup();
             this.authenticateToFirebase();
             this.setupJavaToolOptions();
-            this.downloadEmulators();
             this.setupExperiments();
             this.setupDataImportExport();
             this.setupHosting();
             this.setupFunctions();
+
             this.addFirebaseJson();
             this.includeFirestoreFiles();
             this.includeStorageFiles();
-            this.setupUserAndGroup();
             this.runExecutable();
 
             return result;
+        }
+
+        private void buildBaseImageIfNeeded() {
+            if (!baseImageExists()) {
+                var baseImage = new ImageFromDockerfile(baseImageName(), false)
+                        .withDockerfileFromBuilder(builder -> {
+                            this.dockerBuilder = builder;
+                        });
+
+                this.configureBaseBaseImage();
+                this.initialSetup();
+                this.createUserIfNeeded();
+                this.fixOwnership();
+
+                this.switchToUser();
+                this.downloadEmulators();
+
+                baseImage.get();
+                this.dockerBuilder = null;
+            }
+        }
+
+        private static final String BASE_IMAGE_NAME = "localhost/testcontainers/firebase-base";
+
+        private boolean baseImageExists() {
+            // Don't autoclose the global docker client
+            DockerClient dockerClient = DockerClientFactory.instance().client();
+            var images = dockerClient
+                    .listImagesCmd()
+                    .withReferenceFilter(baseImageName())
+                    .exec();
+
+            return !images.isEmpty();
+        }
+
+        private String baseImageName() {
+            return BASE_IMAGE_NAME + ":" + firebaseVersion;
         }
 
         private void validateConfiguration() {
@@ -1162,15 +1213,19 @@ public class FirebaseEmulatorContainer extends GenericContainer<FirebaseEmulator
             // TODO: Validate if a custom firebase.json is defined, that the hosts are defined as 0.0.0.0
         }
 
-        private void configureBaseImage() {
+        private void configureBaseBaseImage() {
             dockerBuilder.from(emulatorConfig.dockerConfig().imageName());
+        }
+
+        private void configureBaseImage() {
+            dockerBuilder.from(baseImageName());
         }
 
         private void initialSetup() {
             dockerBuilder
                     .run("apk --no-cache add openjdk17-jre bash curl openssl gettext nano nginx sudo && " +
                             "npm cache clean --force && " +
-                            "npm i -g firebase-tools@" + emulatorConfig.firebaseVersion() + " && " +
+                            "npm i -g firebase-tools@" + firebaseVersion + " && " +
                             "deluser nginx && delgroup abuild && delgroup ping && " +
                             "mkdir -p " + FIREBASE_ROOT + " && " +
 
@@ -1179,23 +1234,43 @@ public class FirebaseEmulatorContainer extends GenericContainer<FirebaseEmulator
                             "chmod 777 -R /srv/*");
         }
 
+        private void createUserIfNeeded() {
+            var commands = new ArrayList<String>();
+
+            emulatorConfig.dockerConfig.groupId().ifPresent(group -> commands.add("addgroup -g " + group + " runner"));
+
+            emulatorConfig.dockerConfig.userId().ifPresent(user -> {
+                var groupName = emulatorConfig.dockerConfig().groupId().map(i -> "runner").orElse("node");
+                commands.add("adduser -u " + user + " -G " + groupName + " -D -h /srv/firebase runner");
+            });
+
+            LOGGER.info("Running docker container as user/group: {}", dockerUserAndGroup());
+
+            if (!commands.isEmpty()) {
+                var runCmd = String.join(" && ", commands);
+                dockerBuilder.run(runCmd);
+            }
+        }
+
         private void downloadEmulators() {
-            var cmd = DOWNLOADABLE_EMULATORS
+            DOWNLOADABLE_EMULATORS
                     .entrySet()
                     .stream()
                     .map(e -> downloadEmulatorCommand(e.getKey(), e.getValue()))
-                    .filter(Objects::nonNull)
-                    .collect(Collectors.joining(" && "));
-
-            dockerBuilder.run(cmd);
+                    .forEach(dockerBuilder::run);
         }
 
         private String downloadEmulatorCommand(Emulator emulator, String downloadId) {
-            if (isEmulatorEnabled(emulator)) {
-                return "firebase setup:emulators:" + downloadId;
-            } else {
-                return null;
-            }
+            return "firebase setup:emulators:" + downloadId;
+        }
+
+        private void switchToUser() {
+            dockerBuilder.user(dockerUserAndGroup());
+        }
+
+        private void fixOwnership() {
+            dockerBuilder
+                    .run("chown " + dockerUserAndGroup() + " -R /srv/*");
         }
 
         private void authenticateToFirebase() {
@@ -1303,38 +1378,6 @@ public class FirebaseEmulatorContainer extends GenericContainer<FirebaseEmulator
             }
         }
 
-        private void setupUserAndGroup() {
-            var commands = new ArrayList<String>();
-
-            emulatorConfig.dockerConfig.groupId().ifPresent(group -> commands.add("addgroup -g " + group + " runner"));
-
-            emulatorConfig.dockerConfig.userId().ifPresent(user -> {
-                var groupName = emulatorConfig.dockerConfig().groupId().map(i -> "runner").orElse("node");
-                commands.add("adduser -u " + user + " -G " + groupName + " -D -h /srv/firebase runner");
-            });
-
-            var group = dockerGroup();
-            var user = dockerUser();
-
-            commands.add("chown " + user + ":" + group + " -R /srv/*");
-
-            var runCmd = String.join(" && ", commands);
-
-            LOGGER.info("Running docker container as user/group: {}:{}", user, group);
-
-            dockerBuilder
-                    .run(runCmd)
-                    .user(user + ":" + group);
-        }
-
-        private int dockerUser() {
-            return emulatorConfig.dockerConfig().userId().orElse(1000);
-        }
-
-        private int dockerGroup() {
-            return emulatorConfig.dockerConfig().groupId().orElse(1000);
-        }
-
         private void runExecutable() {
             List<String> arguments = new ArrayList<>();
 
@@ -1400,6 +1443,21 @@ public class FirebaseEmulatorContainer extends GenericContainer<FirebaseEmulator
         private boolean isEmulatorEnabled(Emulator emulator) {
             return this.devServices.containsKey(emulator);
         }
+
+        private String dockerUserAndGroup() {
+            var group = dockerGroup();
+            var user = dockerUser();
+            return user + ":" + group;
+        }
+
+        private int dockerUser() {
+            return emulatorConfig.dockerConfig().userId().orElse(1000);
+        }
+
+        private int dockerGroup() {
+            return emulatorConfig.dockerConfig().groupId().orElse(1000);
+        }
+
     }
 
     /**
@@ -1431,9 +1489,11 @@ public class FirebaseEmulatorContainer extends GenericContainer<FirebaseEmulator
          */
         LOGGER.debug("Requesting to stopping the container to give export a chance to finish");
 
-        this.getDockerClient().stopContainerCmd(this.getContainerId()).exec();
+        if (this.getContainerId() != null) {
+            this.getDockerClient().stopContainerCmd(this.getContainerId()).exec();
 
-        LOGGER.debug("Stopping abd removing the container");
+            LOGGER.debug("Stopping abd removing the container");
+        }
 
         super.stop();
     }
