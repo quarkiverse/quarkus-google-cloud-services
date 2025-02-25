@@ -8,6 +8,10 @@ h|Type
 h|Default
 
 a| [[quarkus-google-cloud-firebase-realtime-database_quarkus-google-cloud-firebase-database-host-override]] [.property-path]##link:#quarkus-google-cloud-firebase-realtime-database_quarkus-google-cloud-firebase-database-host-override[`quarkus.google.cloud.firebase.database.host-override`]##
+ifdef::add-copy-button-to-config-props[]
+config_property_copy_button:+++quarkus.google.cloud.firebase.database.host-override+++[]
+endif::add-copy-button-to-config-props[]
+
 
 [.description]
 --

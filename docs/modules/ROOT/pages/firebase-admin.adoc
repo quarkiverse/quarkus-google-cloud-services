@@ -120,6 +120,18 @@ public class FirebaseAppResource {
 }
 ----
 
+== Cookie based authentication
+
+As per https://firebase.google.com/docs/auth/admin/manage-cookies#java_2[the firebase cookie documentation] you can also authenticate to Firebase using cookies. In this flow, there is no need to send additional headers after setting
+up the cookie in the browser, as the browser will automatically send the appropriate cookies. When using this approach the flow is as follows:
+
+1. The browser performs a regular login (using the firebase Oauth flow) to retrieve a JWT token
+2. The browser performs a `login` using the configured login endpoint. This endpoint responds with a Cookie (HTTP Only, Secure, SameSite) which the browser stores
+3. For every subsequent call, the browser sends along the cookie with the requests which the extension can use to authenticate the user. Note that if both headers and cookies are present, currently the headers take precedence.
+4. If a logout is needed, the browser can call the `logout` endpoint which effectively clears the cookie.
+
+Note: this approach is e.g. conventient when you want to retrieve images in a secure way, as `<img>` tags don't support a way to specify headers.
+
 == Configuration Reference
 
 include::./includes/quarkus-google-cloud-firebase-admin.adoc[]
