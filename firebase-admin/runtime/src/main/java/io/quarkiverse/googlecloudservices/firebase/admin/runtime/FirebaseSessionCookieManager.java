@@ -1,6 +1,5 @@
 package io.quarkiverse.googlecloudservices.firebase.admin.runtime;
 
-import java.time.Duration;
 import java.util.Optional;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
@@ -9,7 +8,6 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.event.Observes;
 import jakarta.inject.Inject;
 
-import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.jboss.logging.Logger;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -34,26 +32,8 @@ public class FirebaseSessionCookieManager {
 
     private static final Logger LOG = Logger.getLogger(FirebaseSessionCookieManager.class.getName());
 
-    @ConfigProperty(name = "quarkus.google.cloud.firebase.auth.session-cookie.name")
-    String sessionCookieName;
-
-    @ConfigProperty(name = "quarkus.google.cloud.firebase.auth.session-cookie.check-revoked")
-    boolean checkRevoked;
-
-    @ConfigProperty(name = "quarkus.google.cloud.firebase.auth.session-cookie.expiration-duration")
-    String expirationDuration;
-
-    @ConfigProperty(name = "quarkus.google.cloud.firebase.auth.session-cookie.validate-token")
-    boolean validateToken;
-
-    @ConfigProperty(name = "quarkus.google.cloud.firebase.auth.session-cookie.minimum-token-validity")
-    Optional<String> minimumTokenValidity;
-
-    @ConfigProperty(name = "quarkus.google.cloud.firebase.auth.session-cookie.login-api-path")
-    Optional<String> loginPath;
-
-    @ConfigProperty(name = "quarkus.google.cloud.firebase.auth.session-cookie.logout-api-path")
-    Optional<String> logoutPath;
+    @Inject
+    FirebaseAuthConfig config;
 
     @Inject
     FirebaseAuth firebaseAuth;
@@ -68,6 +48,9 @@ public class FirebaseSessionCookieManager {
      * @param router The router
      */
     public void registerRoutes(@Observes Router router) {
+        var loginPath = config.auth().sessionCookie().loginApiPath();
+        var logoutPath = config.auth().sessionCookie().logoutApiPath();
+
         loginPath.ifPresent(path -> router.route(HttpMethod.POST, path)
                 .handler(this::sendCookieResponse));
 
@@ -81,8 +64,10 @@ public class FirebaseSessionCookieManager {
      * @param rc The routingContext.
      */
     public void sendCookieResponse(RoutingContext rc) {
+        var sessionCookie = config.auth().sessionCookie();
+
         // Set session expiration to 5 days.
-        long expiresIn = Duration.parse(expirationDuration).toMillis();
+        long expiresIn = sessionCookie.expirationDuration().toMillis();
         SessionCookieOptions options = SessionCookieOptions.builder()
                 .setExpiresIn(expiresIn)
                 .build();
@@ -92,7 +77,7 @@ public class FirebaseSessionCookieManager {
         if (tokenCredential != null && "Firebase".equals(tokenCredential.getType())) {
             String idToken = tokenCredential.getToken();
 
-            if (validateToken) {
+            if (sessionCookie.validateToken()) {
                 if (!validateTokenValidity(rc, idToken)) {
                     rc.response().setStatusCode(401);
                     rc.end();
@@ -103,10 +88,10 @@ public class FirebaseSessionCookieManager {
             try {
                 // Create the session cookie. This will also verify the ID token in the process.
                 // The session cookie will have the same claims as the ID token.
-                String sessionCookie = firebaseAuth.createSessionCookie(idToken, options);
+                String cookie = firebaseAuth.createSessionCookie(idToken, options);
 
                 rc.response().addCookie(Cookie
-                        .cookie(sessionCookieName, sessionCookie)
+                        .cookie(sessionCookie.name(), cookie)
                         .setHttpOnly(true)
                         .setMaxAge(expiresIn)
                         .setSameSite(CookieSameSite.STRICT)
@@ -128,8 +113,10 @@ public class FirebaseSessionCookieManager {
      * @param rc The routing context
      */
     public void clearCookieResponse(RoutingContext rc) {
+        var sessionCookie = config.auth().sessionCookie();
+
         rc.response().addCookie(Cookie
-                .cookie(sessionCookieName, "")
+                .cookie(sessionCookie.name(), "")
                 .setHttpOnly(true)
                 .setMaxAge(0)
                 .setSameSite(CookieSameSite.STRICT)
@@ -139,7 +126,9 @@ public class FirebaseSessionCookieManager {
     }
 
     private boolean validateTokenValidity(RoutingContext rc, String idToken) {
-        if (minimumTokenValidity.isEmpty()) {
+        var sessionCookie = config.auth().sessionCookie();
+
+        if (sessionCookie.minimumTokenValidity().isEmpty()) {
             LOG.error("Minimum token validity needs to be set in case token validation is enabled");
             rc.response().setStatusCode(500);
             return false;
@@ -147,7 +136,7 @@ public class FirebaseSessionCookieManager {
 
         try {
             FirebaseToken decodedToken = firebaseAuth.verifyIdToken(idToken);
-            long minimumDuration = Duration.parse(minimumTokenValidity.get()).toMillis();
+            long minimumDuration = sessionCookie.minimumTokenValidity().get().toMillis();
             long authTimeMillis = TimeUnit.SECONDS.toMillis(
                     (long) decodedToken.getClaims().get("auth_time"));
 
@@ -170,10 +159,12 @@ public class FirebaseSessionCookieManager {
      * @return The optional cookie
      */
     public Optional<String> getSessionCookie(RoutingContext rc) {
+        var sessionCookie = config.auth().sessionCookie();
+
         return rc.request()
                 .cookies()
                 .stream()
-                .filter(cookie -> cookie.getName().equals(sessionCookieName))
+                .filter(cookie -> cookie.getName().equals(sessionCookie.name()))
                 .findFirst()
                 .map(Cookie::getValue);
     }
@@ -181,12 +172,14 @@ public class FirebaseSessionCookieManager {
     /**
      * Verify the session cookie and return a FirebaseToken based on the cookie or null
      *
-     * @param sessionCookie THe session cookie
+     * @param cookie THe session cookie
      * @return The firebase token or null
      */
-    public Future<FirebaseToken> verifySessionToken(String sessionCookie) {
+    public Future<FirebaseToken> verifySessionToken(String cookie) {
+        var sessionCookie = config.auth().sessionCookie();
+
         // Verify the session cookie. In this case an additional check is added to detect
         // if the user's Firebase session was revoked, user deleted/disabled, etc.
-        return firebaseAuth.verifySessionCookieAsync(sessionCookie, checkRevoked);
+        return firebaseAuth.verifySessionCookieAsync(cookie, sessionCookie.checkRevoked());
     }
 }
