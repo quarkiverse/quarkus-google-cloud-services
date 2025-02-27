@@ -68,7 +68,7 @@ public interface FirebaseAuthConfig {
              * <p>
              * Defaults to 5 days.
              */
-            @WithDefault("P5")
+            @WithDefault("P5D")
             Duration expirationDuration();
 
             /**
