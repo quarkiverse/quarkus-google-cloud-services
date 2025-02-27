@@ -1,5 +1,6 @@
 package io.quarkiverse.googlecloudservices.firebase.admin.runtime;
 
+import java.time.Duration;
 import java.util.Optional;
 
 import io.quarkus.runtime.annotations.ConfigPhase;
@@ -58,7 +59,8 @@ public interface FirebaseAuthConfig {
              * Name to use for session cookies (see <a href="https://firebase.google.com/docs/auth/admin/manage-cookies#java_2">
              * Manage session cookies</a>)
              */
-            Optional<String> name();
+            @WithDefault("session")
+            String name();
 
             /**
              * The expiration duration of the session cookie. Uses {@link java.time.Duration#parse(CharSequence)} to
@@ -67,7 +69,7 @@ public interface FirebaseAuthConfig {
              * Defaults to 5 days.
              */
             @WithDefault("P5")
-            Optional<String> expirationDuration();
+            Duration expirationDuration();
 
             /**
              * Perform an additional check to see if the session was revoked
@@ -79,14 +81,14 @@ public interface FirebaseAuthConfig {
              * Validate the expiration date of the token.
              */
             @WithDefault("false")
-            Optional<Boolean> validateToken();
+            Boolean validateToken();
 
             /**
              * Minimum token validity in case {@link #validateToken()} is set to true. Uses
              * {@link java.time.Duration#parse(CharSequence)} to get a duration for the expiration. See the JavaDoc of
              * this method for the format of this value.
              */
-            Optional<String> minimumTokenValidity();
+            Optional<Duration> minimumTokenValidity();
 
             /**
              * Path of an HTTP endpoint which can be used to perform the session login. If set, a reactive route will
