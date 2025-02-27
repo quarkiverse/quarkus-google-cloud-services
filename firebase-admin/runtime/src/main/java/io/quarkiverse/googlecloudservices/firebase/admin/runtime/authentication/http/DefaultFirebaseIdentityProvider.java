@@ -27,6 +27,8 @@ import io.smallrye.mutiny.Uni;
 @ApplicationScoped
 public class DefaultFirebaseIdentityProvider implements IdentityProvider<FirebaseAuthenticationRequest> {
 
+    public static final String FIREBASE_TOKEN_TYPE = "Firebase";
+
     @Inject
     FirebaseAuth auth;
 
@@ -86,7 +88,7 @@ public class DefaultFirebaseIdentityProvider implements IdentityProvider<Firebas
     public SecurityIdentity authenticate(FirebaseToken token, String rawToken) {
         var builder = QuarkusSecurityIdentity.builder()
                 .setPrincipal(getPrincipal(token, rawToken))
-                .addCredential(new TokenCredential(rawToken, "Firebase"));
+                .addCredential(new TokenCredential(rawToken, FIREBASE_TOKEN_TYPE));
 
         config.auth().rolesClaim().ifPresent(claim -> {
             var claims = token.getClaims();

@@ -4,6 +4,7 @@ import java.util.Optional;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
+import io.quarkiverse.googlecloudservices.firebase.admin.runtime.authentication.http.DefaultFirebaseIdentityProvider;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.event.Observes;
 import jakarta.inject.Inject;
@@ -74,7 +75,8 @@ public class FirebaseSessionCookieManager {
 
         var securityIdentity = QuarkusHttpUser.getSecurityIdentityBlocking(rc, identityProviderManager);
         var tokenCredential = securityIdentity.getCredential(TokenCredential.class);
-        if (tokenCredential != null && "Firebase".equals(tokenCredential.getType())) {
+        if (tokenCredential != null &&
+                DefaultFirebaseIdentityProvider.FIREBASE_TOKEN_TYPE.equals(tokenCredential.getType())) {
             String idToken = tokenCredential.getToken();
 
             if (sessionCookie.validateToken()) {
