@@ -8,6 +8,10 @@ h|Type
 h|Default
 
 a|icon:lock[title=Fixed at build time] [[quarkus-google-cloud-pubsub_quarkus-google-cloud-pubsub-devservice-enabled]] [.property-path]##link:#quarkus-google-cloud-pubsub_quarkus-google-cloud-pubsub-devservice-enabled[`quarkus.google.cloud.pubsub.devservice.enabled`]##
+ifdef::add-copy-button-to-config-props[]
+config_property_copy_button:+++quarkus.google.cloud.pubsub.devservice.enabled+++[]
+endif::add-copy-button-to-config-props[]
+
 
 [.description]
 --
@@ -25,6 +29,10 @@ endif::add-copy-button-to-env-var[]
 |`false`
 
 a|icon:lock[title=Fixed at build time] [[quarkus-google-cloud-pubsub_quarkus-google-cloud-pubsub-devservice-image-name]] [.property-path]##link:#quarkus-google-cloud-pubsub_quarkus-google-cloud-pubsub-devservice-image-name[`quarkus.google.cloud.pubsub.devservice.image-name`]##
+ifdef::add-copy-button-to-config-props[]
+config_property_copy_button:+++quarkus.google.cloud.pubsub.devservice.image-name+++[]
+endif::add-copy-button-to-config-props[]
+
 
 [.description]
 --
@@ -42,6 +50,10 @@ endif::add-copy-button-to-env-var[]
 |`gcr.io/google.com/cloudsdktool/google-cloud-cli`
 
 a|icon:lock[title=Fixed at build time] [[quarkus-google-cloud-pubsub_quarkus-google-cloud-pubsub-devservice-emulator-port]] [.property-path]##link:#quarkus-google-cloud-pubsub_quarkus-google-cloud-pubsub-devservice-emulator-port[`quarkus.google.cloud.pubsub.devservice.emulator-port`]##
+ifdef::add-copy-button-to-config-props[]
+config_property_copy_button:+++quarkus.google.cloud.pubsub.devservice.emulator-port+++[]
+endif::add-copy-button-to-config-props[]
+
 
 [.description]
 --
@@ -59,6 +71,10 @@ endif::add-copy-button-to-env-var[]
 |
 
 a|icon:lock[title=Fixed at build time] [[quarkus-google-cloud-pubsub_quarkus-google-cloud-firebase-devservice-prefer-firebase-dev-services]] [.property-path]##link:#quarkus-google-cloud-pubsub_quarkus-google-cloud-firebase-devservice-prefer-firebase-dev-services[`quarkus.google.cloud.firebase.devservice.prefer-firebase-dev-services`]##
+ifdef::add-copy-button-to-config-props[]
+config_property_copy_button:+++quarkus.google.cloud.firebase.devservice.prefer-firebase-dev-services+++[]
+endif::add-copy-button-to-config-props[]
+
 
 [.description]
 --
@@ -76,6 +92,10 @@ endif::add-copy-button-to-env-var[]
 |
 
 a| [[quarkus-google-cloud-pubsub_quarkus-google-cloud-pubsub-emulator-host]] [.property-path]##link:#quarkus-google-cloud-pubsub_quarkus-google-cloud-pubsub-emulator-host[`quarkus.google.cloud.pubsub.emulator-host`]##
+ifdef::add-copy-button-to-config-props[]
+config_property_copy_button:+++quarkus.google.cloud.pubsub.emulator-host+++[]
+endif::add-copy-button-to-config-props[]
+
 
 [.description]
 --
@@ -93,6 +113,10 @@ endif::add-copy-button-to-env-var[]
 |
 
 a| [[quarkus-google-cloud-pubsub_quarkus-google-cloud-pubsub-use-emulator-credentials]] [.property-path]##link:#quarkus-google-cloud-pubsub_quarkus-google-cloud-pubsub-use-emulator-credentials[`quarkus.google.cloud.pubsub.use-emulator-credentials`]##
+ifdef::add-copy-button-to-config-props[]
+config_property_copy_button:+++quarkus.google.cloud.pubsub.use-emulator-credentials+++[]
+endif::add-copy-button-to-config-props[]
+
 
 [.description]
 --

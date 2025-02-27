@@ -8,6 +8,10 @@ h|Type
 h|Default
 
 a| [[quarkus-google-cloud-storage_quarkus-google-cloud-storage-host-override]] [.property-path]##link:#quarkus-google-cloud-storage_quarkus-google-cloud-storage-host-override[`quarkus.google.cloud.storage.host-override`]##
+ifdef::add-copy-button-to-config-props[]
+config_property_copy_button:+++quarkus.google.cloud.storage.host-override+++[]
+endif::add-copy-button-to-config-props[]
+
 
 [.description]
 --
