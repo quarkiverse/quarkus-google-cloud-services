@@ -15,7 +15,7 @@ import io.smallrye.config.WithDefault;
  *
  * <pre>
  * quarkus.google.cloud.spanner.devservice.enabled = true
- * quarkus.google.cloud.spanner.devservice.image-name = gcr.io/cloud-spanner-emulator/emulator:1.4.0 # optional
+ * quarkus.google.cloud.spanner.devservice.image-name = gcr.io/cloud-spanner-emulator/emulator:1.5.9 # optional
  * quarkus.google.cloud.spanner.devservice.emulatorPort = 8085 # optional
  * </pre>
  */
@@ -33,9 +33,9 @@ public interface SpannerDevServiceConfig {
     /**
      * Sets the Docker image name for the Google Cloud SDK.
      * This image is used to emulate the Spanner service in the development environment.
-     * The default value is 'gcr.io/cloud-spanner-emulator/emulator:1.5.29'.
+     * The default value is 'gcr.io/cloud-spanner-emulator/emulator'.
      */
-    @WithDefault("gcr.io/cloud-spanner-emulator/emulator:1.5.29")
+    @WithDefault("gcr.io/cloud-spanner-emulator/emulator")
     String imageName();
 
     /**
