@@ -2,11 +2,12 @@ package io.quarkiverse.googlecloudservices.storage.runtime;
 
 import java.util.Optional;
 
+import org.threeten.bp.Duration;
+
 import io.quarkus.runtime.annotations.ConfigPhase;
 import io.quarkus.runtime.annotations.ConfigRoot;
 import io.smallrye.config.ConfigMapping;
 import io.smallrye.config.WithDefault;
-import org.threeten.bp.Duration;
 
 @ConfigMapping(prefix = "quarkus.google.cloud.storage")
 @ConfigRoot(phase = ConfigPhase.RUN_TIME)
