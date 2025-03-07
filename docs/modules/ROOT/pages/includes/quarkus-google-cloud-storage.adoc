@@ -28,5 +28,215 @@ endif::add-copy-button-to-env-var[]
 |string
 |
 
+a| [[quarkus-google-cloud-storage_quarkus-google-cloud-storage-transport-use-grpc]] [.property-path]##link:#quarkus-google-cloud-storage_quarkus-google-cloud-storage-transport-use-grpc[`quarkus.google.cloud.storage.transport.use-grpc`]##
+ifdef::add-copy-button-to-config-props[]
+config_property_copy_button:+++quarkus.google.cloud.storage.transport.use-grpc+++[]
+endif::add-copy-button-to-config-props[]
+
+
+[.description]
+--
+Use the GRPC transport instead of the default HTTP transport.
+
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_GOOGLE_CLOUD_STORAGE_TRANSPORT_USE_GRPC+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_GOOGLE_CLOUD_STORAGE_TRANSPORT_USE_GRPC+++`
+endif::add-copy-button-to-env-var[]
+--
+|boolean
+|`false`
+
+a| [[quarkus-google-cloud-storage_quarkus-google-cloud-storage-transport-http-connect-timeout]] [.property-path]##link:#quarkus-google-cloud-storage_quarkus-google-cloud-storage-transport-http-connect-timeout[`quarkus.google.cloud.storage.transport.http-connect-timeout`]##
+ifdef::add-copy-button-to-config-props[]
+config_property_copy_button:+++quarkus.google.cloud.storage.transport.http-connect-timeout+++[]
+endif::add-copy-button-to-config-props[]
+
+
+[.description]
+--
+Storage HTTP transport connect timeout
+
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_GOOGLE_CLOUD_STORAGE_TRANSPORT_HTTP_CONNECT_TIMEOUT+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_GOOGLE_CLOUD_STORAGE_TRANSPORT_HTTP_CONNECT_TIMEOUT+++`
+endif::add-copy-button-to-env-var[]
+--
+|int
+|
+
+a| [[quarkus-google-cloud-storage_quarkus-google-cloud-storage-transport-http-read-timeout]] [.property-path]##link:#quarkus-google-cloud-storage_quarkus-google-cloud-storage-transport-http-read-timeout[`quarkus.google.cloud.storage.transport.http-read-timeout`]##
+ifdef::add-copy-button-to-config-props[]
+config_property_copy_button:+++quarkus.google.cloud.storage.transport.http-read-timeout+++[]
+endif::add-copy-button-to-config-props[]
+
+
+[.description]
+--
+Storage transport read timeout
+
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_GOOGLE_CLOUD_STORAGE_TRANSPORT_HTTP_READ_TIMEOUT+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_GOOGLE_CLOUD_STORAGE_TRANSPORT_HTTP_READ_TIMEOUT+++`
+endif::add-copy-button-to-env-var[]
+--
+|int
+|
+
+a| [[quarkus-google-cloud-storage_quarkus-google-cloud-storage-retry-initial-retry-delay-millis]] [.property-path]##link:#quarkus-google-cloud-storage_quarkus-google-cloud-storage-retry-initial-retry-delay-millis[`quarkus.google.cloud.storage.retry.initial-retry-delay-millis`]##
+ifdef::add-copy-button-to-config-props[]
+config_property_copy_button:+++quarkus.google.cloud.storage.retry.initial-retry-delay-millis+++[]
+endif::add-copy-button-to-config-props[]
+
+
+[.description]
+--
+Initial retry delay. See `com.google.api.gax.retrying.RetrySettings.Builder++#++setInitialRetryDelay(Duration)`
+
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_GOOGLE_CLOUD_STORAGE_RETRY_INITIAL_RETRY_DELAY_MILLIS+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_GOOGLE_CLOUD_STORAGE_RETRY_INITIAL_RETRY_DELAY_MILLIS+++`
+endif::add-copy-button-to-env-var[]
+--
+|int
+|
+
+a| [[quarkus-google-cloud-storage_quarkus-google-cloud-storage-retry-max-retry-delay-millis]] [.property-path]##link:#quarkus-google-cloud-storage_quarkus-google-cloud-storage-retry-max-retry-delay-millis[`quarkus.google.cloud.storage.retry.max-retry-delay-millis`]##
+ifdef::add-copy-button-to-config-props[]
+config_property_copy_button:+++quarkus.google.cloud.storage.retry.max-retry-delay-millis+++[]
+endif::add-copy-button-to-config-props[]
+
+
+[.description]
+--
+Max retry delay. See `com.google.api.gax.retrying.RetrySettings.Builder++#++setMaxRetryDelay(Duration)`
+
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_GOOGLE_CLOUD_STORAGE_RETRY_MAX_RETRY_DELAY_MILLIS+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_GOOGLE_CLOUD_STORAGE_RETRY_MAX_RETRY_DELAY_MILLIS+++`
+endif::add-copy-button-to-env-var[]
+--
+|int
+|
+
+a| [[quarkus-google-cloud-storage_quarkus-google-cloud-storage-retry-initial-rpc-timeout-millis]] [.property-path]##link:#quarkus-google-cloud-storage_quarkus-google-cloud-storage-retry-initial-rpc-timeout-millis[`quarkus.google.cloud.storage.retry.initial-rpc-timeout-millis`]##
+ifdef::add-copy-button-to-config-props[]
+config_property_copy_button:+++quarkus.google.cloud.storage.retry.initial-rpc-timeout-millis+++[]
+endif::add-copy-button-to-config-props[]
+
+
+[.description]
+--
+Initial RPC timeout. See `com.google.api.gax.retrying.RetrySettings.Builder++#++setInitialRpcTimeout(Duration)`
+
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_GOOGLE_CLOUD_STORAGE_RETRY_INITIAL_RPC_TIMEOUT_MILLIS+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_GOOGLE_CLOUD_STORAGE_RETRY_INITIAL_RPC_TIMEOUT_MILLIS+++`
+endif::add-copy-button-to-env-var[]
+--
+|int
+|
+
+a| [[quarkus-google-cloud-storage_quarkus-google-cloud-storage-retry-max-rpc-timeout-millis]] [.property-path]##link:#quarkus-google-cloud-storage_quarkus-google-cloud-storage-retry-max-rpc-timeout-millis[`quarkus.google.cloud.storage.retry.max-rpc-timeout-millis`]##
+ifdef::add-copy-button-to-config-props[]
+config_property_copy_button:+++quarkus.google.cloud.storage.retry.max-rpc-timeout-millis+++[]
+endif::add-copy-button-to-config-props[]
+
+
+[.description]
+--
+Max RPC timeout. See `com.google.api.gax.retrying.RetrySettings.Builder++#++setMaxRpcTimeout(Duration)`
+
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_GOOGLE_CLOUD_STORAGE_RETRY_MAX_RPC_TIMEOUT_MILLIS+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_GOOGLE_CLOUD_STORAGE_RETRY_MAX_RPC_TIMEOUT_MILLIS+++`
+endif::add-copy-button-to-env-var[]
+--
+|int
+|
+
+a| [[quarkus-google-cloud-storage_quarkus-google-cloud-storage-retry-logical-timeout-millis]] [.property-path]##link:#quarkus-google-cloud-storage_quarkus-google-cloud-storage-retry-logical-timeout-millis[`quarkus.google.cloud.storage.retry.logical-timeout-millis`]##
+ifdef::add-copy-button-to-config-props[]
+config_property_copy_button:+++quarkus.google.cloud.storage.retry.logical-timeout-millis+++[]
+endif::add-copy-button-to-config-props[]
+
+
+[.description]
+--
+Logical timeout. See `com.google.api.gax.retrying.RetrySettings.Builder++#++setLogicalTimeout(Duration)`
+
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_GOOGLE_CLOUD_STORAGE_RETRY_LOGICAL_TIMEOUT_MILLIS+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_GOOGLE_CLOUD_STORAGE_RETRY_LOGICAL_TIMEOUT_MILLIS+++`
+endif::add-copy-button-to-env-var[]
+--
+|int
+|
+
+a| [[quarkus-google-cloud-storage_quarkus-google-cloud-storage-retry-total-timeout-millis]] [.property-path]##link:#quarkus-google-cloud-storage_quarkus-google-cloud-storage-retry-total-timeout-millis[`quarkus.google.cloud.storage.retry.total-timeout-millis`]##
+ifdef::add-copy-button-to-config-props[]
+config_property_copy_button:+++quarkus.google.cloud.storage.retry.total-timeout-millis+++[]
+endif::add-copy-button-to-config-props[]
+
+
+[.description]
+--
+Total timeout. See `com.google.api.gax.retrying.RetrySettings.Builder++#++setTotalTimeout(Duration)`
+
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_GOOGLE_CLOUD_STORAGE_RETRY_TOTAL_TIMEOUT_MILLIS+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_GOOGLE_CLOUD_STORAGE_RETRY_TOTAL_TIMEOUT_MILLIS+++`
+endif::add-copy-button-to-env-var[]
+--
+|int
+|
+
+a| [[quarkus-google-cloud-storage_quarkus-google-cloud-storage-retry-max-attempts]] [.property-path]##link:#quarkus-google-cloud-storage_quarkus-google-cloud-storage-retry-max-attempts[`quarkus.google.cloud.storage.retry.max-attempts`]##
+ifdef::add-copy-button-to-config-props[]
+config_property_copy_button:+++quarkus.google.cloud.storage.retry.max-attempts+++[]
+endif::add-copy-button-to-config-props[]
+
+
+[.description]
+--
+Maximum attempts. See `com.google.api.gax.retrying.RetrySettings.Builder++#++setMaxAttempts(int)`
+
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_GOOGLE_CLOUD_STORAGE_RETRY_MAX_ATTEMPTS+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_GOOGLE_CLOUD_STORAGE_RETRY_MAX_ATTEMPTS+++`
+endif::add-copy-button-to-env-var[]
+--
+|int
+|
+
 |===
 
