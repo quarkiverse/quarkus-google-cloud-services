@@ -1,13 +1,13 @@
 package io.quarkiverse.googlecloudservices.firebase.deployment.testcontainers;
 
-import com.google.api.client.json.gson.GsonFactory;
-import org.apache.commons.io.IOUtils;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.HttpClientBuilder;
-
 import java.io.IOException;
 import java.util.Map;
 import java.util.Objects;
+
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.HttpClientBuilder;
+
+import com.google.api.client.json.gson.GsonFactory;
 
 /**
  * Resolves the version of the firebase tools based on the NPM registry in case version
