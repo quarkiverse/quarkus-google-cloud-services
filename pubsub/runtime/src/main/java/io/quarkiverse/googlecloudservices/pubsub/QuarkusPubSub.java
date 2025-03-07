@@ -9,6 +9,8 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.Instance;
 import jakarta.inject.Inject;
 
+import org.eclipse.microprofile.config.inject.ConfigProperty;
+
 import com.google.api.gax.core.CredentialsProvider;
 import com.google.api.gax.core.NoCredentialsProvider;
 import com.google.api.gax.grpc.GrpcTransportChannel;
@@ -32,6 +34,12 @@ public class QuarkusPubSub {
     @Inject
     PubSubConfiguration pubSubConfiguration;
 
+    @Inject
+    Instance<PubSubPushManager> pushManager;
+
+    @ConfigProperty(name = "quarkus.google.cloud.pubsub.push.enabled")
+    Optional<Boolean> usePush;
+
     private Optional<TransportChannelProvider> channelProvider;
 
     @PostConstruct
@@ -48,20 +56,31 @@ public class QuarkusPubSub {
     /**
      * Creates a PubSub Subscriber using the configured project ID.
      */
-    public Subscriber subscriber(String subscription, MessageReceiver receiver) {
+    public SubscriberInterface subscriber(String subscription, MessageReceiver receiver) {
         return subscriber(subscription, gcpConfigHolder.getBootstrapConfig().projectId().orElseThrow(), receiver);
     }
 
     /**
      * Creates a PubSub Subscriber using the specified project ID.
      */
-    public Subscriber subscriber(String subscription, String projectId, MessageReceiver receiver) {
+    public SubscriberInterface subscriber(String subscription, String projectId, MessageReceiver receiver) {
         ProjectSubscriptionName subscriptionName = ProjectSubscriptionName.of(projectId, subscription);
+        if (usePush.orElse(false)) {
+            return pushSubscriber(subscriptionName, receiver);
+        } else {
+            return pullSubscriber(subscriptionName, receiver);
+        }
+    }
+
+    private Subscriber pullSubscriber(ProjectSubscriptionName subscriptionName, MessageReceiver receiver) {
         var builder = Subscriber.newBuilder(subscriptionName, receiver)
                 .setCredentialsProvider(credentialsProvider());
         channelProvider.ifPresent(builder::setChannelProvider);
         return builder.build();
+    }
 
+    private SubscriberInterface pushSubscriber(ProjectSubscriptionName subscriptionName, MessageReceiver receiver) {
+        return pushManager.get().registerListener(subscriptionName, receiver);
     }
 
     /**
