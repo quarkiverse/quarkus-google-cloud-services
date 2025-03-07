@@ -550,7 +550,7 @@ public class FirebaseEmulatorContainer extends GenericContainer<FirebaseEmulator
                     var uid = (int) unix.getUid();
                     var gid = (int) unix.getGid();
 
-                    LOGGER.info("Auto-ddetected docker uid: {} and gid: {}", uid, gid);
+                    LOGGER.info("Auto-detected docker uid: {} and gid: {}", uid, gid);
 
                     withUserId(uid);
                     withGroupId(gid);
@@ -1523,7 +1523,7 @@ public class FirebaseEmulatorContainer extends GenericContainer<FirebaseEmulator
                     }
                 });
 
-        waitingFor(Wait.forLogMessage(".*Emulator Hub running at.*", 1));
+        waitingFor(Wait.forLogMessage(".*✔  All emulators ready! It is now safe to connect your app.*", 1));
     }
 
     /**
