@@ -25,8 +25,20 @@
             <groupId>com.google.firebase</groupId>
             <artifactId>firebase-admin</artifactId>
             <exclusions>
+                <exclusion>
+                    <groupId>commons-logging</groupId>
+                    <artifactId>commons-logging</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>javax.annotation</groupId>
+                    <artifactId>javax.annotation-api</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.checkerframework</groupId>
+                    <artifactId>checker-qual</artifactId>
+                </exclusion>
                 <!-- We exclude the grpc-netty-shaded library as grpc-netty is included via
-quarkus-google-cloud-common-grpc and Quarkus includes the netty library -->
+quarkus-google-cloud-common-grpc and Quarkus include the netty library -->
                 <exclusion>
                     <groupId>io.grpc</groupId>
                     <artifactId>grpc-netty-shaded</artifactId>

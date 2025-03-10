@@ -4,10 +4,6 @@ import java.io.IOException;
 import java.time.Duration;
 import java.util.Optional;
 
-import com.google.api.gax.retrying.RetrySettings;
-import com.google.cloud.TransportOptions;
-import com.google.cloud.grpc.GrpcTransportOptions;
-import com.google.cloud.http.HttpTransportOptions;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.Default;
 import jakarta.enterprise.inject.Disposes;
@@ -15,7 +11,11 @@ import jakarta.enterprise.inject.Produces;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 
+import com.google.api.gax.retrying.RetrySettings;
 import com.google.auth.Credentials;
+import com.google.cloud.TransportOptions;
+import com.google.cloud.grpc.GrpcTransportOptions;
+import com.google.cloud.http.HttpTransportOptions;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.StorageOptions;
 

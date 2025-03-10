@@ -8,6 +8,10 @@ h|Type
 h|Default
 
 a|icon:lock[title=Fixed at build time] [[quarkus-google-cloud-firebase-devservices_quarkus-google-cloud-devservices-project-id]] [.property-path]##link:#quarkus-google-cloud-firebase-devservices_quarkus-google-cloud-devservices-project-id[`quarkus.google.cloud.devservices.project-id`]##
+ifdef::add-copy-button-to-config-props[]
+config_property_copy_button:+++quarkus.google.cloud.devservices.project-id+++[]
+endif::add-copy-button-to-config-props[]
+
 
 [.description]
 --
@@ -25,6 +29,10 @@ endif::add-copy-button-to-env-var[]
 |
 
 a|icon:lock[title=Fixed at build time] [[quarkus-google-cloud-firebase-devservices_quarkus-google-cloud-devservices-firebase-prefer-firebase-dev-services]] [.property-path]##link:#quarkus-google-cloud-firebase-devservices_quarkus-google-cloud-devservices-firebase-prefer-firebase-dev-services[`quarkus.google.cloud.devservices.firebase.prefer-firebase-dev-services`]##
+ifdef::add-copy-button-to-config-props[]
+config_property_copy_button:+++quarkus.google.cloud.devservices.firebase.prefer-firebase-dev-services+++[]
+endif::add-copy-button-to-config-props[]
+
 
 [.description]
 --
@@ -42,6 +50,10 @@ endif::add-copy-button-to-env-var[]
 |`true`
 
 a|icon:lock[title=Fixed at build time] [[quarkus-google-cloud-firebase-devservices_quarkus-google-cloud-devservices-firebase-emulator-firebase-version]] [.property-path]##link:#quarkus-google-cloud-firebase-devservices_quarkus-google-cloud-devservices-firebase-emulator-firebase-version[`quarkus.google.cloud.devservices.firebase.emulator.firebase-version`]##
+ifdef::add-copy-button-to-config-props[]
+config_property_copy_button:+++quarkus.google.cloud.devservices.firebase.emulator.firebase-version+++[]
+endif::add-copy-button-to-config-props[]
+
 
 [.description]
 --
@@ -59,6 +71,10 @@ endif::add-copy-button-to-env-var[]
 |`latest`
 
 a|icon:lock[title=Fixed at build time] [[quarkus-google-cloud-firebase-devservices_quarkus-google-cloud-devservices-firebase-emulator-docker-image-name]] [.property-path]##link:#quarkus-google-cloud-firebase-devservices_quarkus-google-cloud-devservices-firebase-emulator-docker-image-name[`quarkus.google.cloud.devservices.firebase.emulator.docker.image-name`]##
+ifdef::add-copy-button-to-config-props[]
+config_property_copy_button:+++quarkus.google.cloud.devservices.firebase.emulator.docker.image-name+++[]
+endif::add-copy-button-to-config-props[]
+
 
 [.description]
 --
@@ -78,6 +94,10 @@ endif::add-copy-button-to-env-var[]
 |`node:20-alpine`
 
 a|icon:lock[title=Fixed at build time] [[quarkus-google-cloud-firebase-devservices_quarkus-google-cloud-devservices-firebase-emulator-docker-docker-user]] [.property-path]##link:#quarkus-google-cloud-firebase-devservices_quarkus-google-cloud-devservices-firebase-emulator-docker-docker-user[`quarkus.google.cloud.devservices.firebase.emulator.docker.docker-user`]##
+ifdef::add-copy-button-to-config-props[]
+config_property_copy_button:+++quarkus.google.cloud.devservices.firebase.emulator.docker.docker-user+++[]
+endif::add-copy-button-to-config-props[]
+
 
 [.description]
 --
@@ -95,6 +115,10 @@ endif::add-copy-button-to-env-var[]
 |
 
 a|icon:lock[title=Fixed at build time] [[quarkus-google-cloud-firebase-devservices_quarkus-google-cloud-devservices-firebase-emulator-docker-docker-group]] [.property-path]##link:#quarkus-google-cloud-firebase-devservices_quarkus-google-cloud-devservices-firebase-emulator-docker-docker-group[`quarkus.google.cloud.devservices.firebase.emulator.docker.docker-group`]##
+ifdef::add-copy-button-to-config-props[]
+config_property_copy_button:+++quarkus.google.cloud.devservices.firebase.emulator.docker.docker-group+++[]
+endif::add-copy-button-to-config-props[]
+
 
 [.description]
 --
@@ -112,6 +136,10 @@ endif::add-copy-button-to-env-var[]
 |
 
 a|icon:lock[title=Fixed at build time] [[quarkus-google-cloud-firebase-devservices_quarkus-google-cloud-devservices-firebase-emulator-docker-docker-user-env]] [.property-path]##link:#quarkus-google-cloud-firebase-devservices_quarkus-google-cloud-devservices-firebase-emulator-docker-docker-user-env[`quarkus.google.cloud.devservices.firebase.emulator.docker.docker-user-env`]##
+ifdef::add-copy-button-to-config-props[]
+config_property_copy_button:+++quarkus.google.cloud.devservices.firebase.emulator.docker.docker-user-env+++[]
+endif::add-copy-button-to-config-props[]
+
 
 [.description]
 --
@@ -129,6 +157,10 @@ endif::add-copy-button-to-env-var[]
 |
 
 a|icon:lock[title=Fixed at build time] [[quarkus-google-cloud-firebase-devservices_quarkus-google-cloud-devservices-firebase-emulator-docker-docker-group-env]] [.property-path]##link:#quarkus-google-cloud-firebase-devservices_quarkus-google-cloud-devservices-firebase-emulator-docker-docker-group-env[`quarkus.google.cloud.devservices.firebase.emulator.docker.docker-group-env`]##
+ifdef::add-copy-button-to-config-props[]
+config_property_copy_button:+++quarkus.google.cloud.devservices.firebase.emulator.docker.docker-group-env+++[]
+endif::add-copy-button-to-config-props[]
+
 
 [.description]
 --
@@ -145,7 +177,32 @@ endif::add-copy-button-to-env-var[]
 |string
 |
 
+a|icon:lock[title=Fixed at build time] [[quarkus-google-cloud-firebase-devservices_quarkus-google-cloud-devservices-firebase-emulator-docker-auto-detect-user-and-group]] [.property-path]##link:#quarkus-google-cloud-firebase-devservices_quarkus-google-cloud-devservices-firebase-emulator-docker-auto-detect-user-and-group[`quarkus.google.cloud.devservices.firebase.emulator.docker.auto-detect-user-and-group`]##
+ifdef::add-copy-button-to-config-props[]
+config_property_copy_button:+++quarkus.google.cloud.devservices.firebase.emulator.docker.auto-detect-user-and-group+++[]
+endif::add-copy-button-to-config-props[]
+
+
+[.description]
+--
+Automatically try to detect the `docker-user()` and `docker-group()` based on the current user. This is the default. Note that this setting is overridden by any of the previous ways to set the uid/gid.
+
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_GOOGLE_CLOUD_DEVSERVICES_FIREBASE_EMULATOR_DOCKER_AUTO_DETECT_USER_AND_GROUP+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_GOOGLE_CLOUD_DEVSERVICES_FIREBASE_EMULATOR_DOCKER_AUTO_DETECT_USER_AND_GROUP+++`
+endif::add-copy-button-to-env-var[]
+--
+|boolean
+|`true`
+
 a|icon:lock[title=Fixed at build time] [[quarkus-google-cloud-firebase-devservices_quarkus-google-cloud-devservices-firebase-emulator-docker-follow-std-out]] [.property-path]##link:#quarkus-google-cloud-firebase-devservices_quarkus-google-cloud-devservices-firebase-emulator-docker-follow-std-out[`quarkus.google.cloud.devservices.firebase.emulator.docker.follow-std-out`]##
+ifdef::add-copy-button-to-config-props[]
+config_property_copy_button:+++quarkus.google.cloud.devservices.firebase.emulator.docker.follow-std-out+++[]
+endif::add-copy-button-to-config-props[]
+
 
 [.description]
 --
@@ -163,6 +220,10 @@ endif::add-copy-button-to-env-var[]
 |
 
 a|icon:lock[title=Fixed at build time] [[quarkus-google-cloud-firebase-devservices_quarkus-google-cloud-devservices-firebase-emulator-docker-follow-std-err]] [.property-path]##link:#quarkus-google-cloud-firebase-devservices_quarkus-google-cloud-devservices-firebase-emulator-docker-follow-std-err[`quarkus.google.cloud.devservices.firebase.emulator.docker.follow-std-err`]##
+ifdef::add-copy-button-to-config-props[]
+config_property_copy_button:+++quarkus.google.cloud.devservices.firebase.emulator.docker.follow-std-err+++[]
+endif::add-copy-button-to-config-props[]
+
 
 [.description]
 --
@@ -180,6 +241,10 @@ endif::add-copy-button-to-env-var[]
 |
 
 a|icon:lock[title=Fixed at build time] [[quarkus-google-cloud-firebase-devservices_quarkus-google-cloud-devservices-firebase-emulator-cli-token]] [.property-path]##link:#quarkus-google-cloud-firebase-devservices_quarkus-google-cloud-devservices-firebase-emulator-cli-token[`quarkus.google.cloud.devservices.firebase.emulator.cli.token`]##
+ifdef::add-copy-button-to-config-props[]
+config_property_copy_button:+++quarkus.google.cloud.devservices.firebase.emulator.cli.token+++[]
+endif::add-copy-button-to-config-props[]
+
 
 [.description]
 --
@@ -197,6 +262,10 @@ endif::add-copy-button-to-env-var[]
 |
 
 a|icon:lock[title=Fixed at build time] [[quarkus-google-cloud-firebase-devservices_quarkus-google-cloud-devservices-firebase-emulator-cli-java-tool-options]] [.property-path]##link:#quarkus-google-cloud-firebase-devservices_quarkus-google-cloud-devservices-firebase-emulator-cli-java-tool-options[`quarkus.google.cloud.devservices.firebase.emulator.cli.java-tool-options`]##
+ifdef::add-copy-button-to-config-props[]
+config_property_copy_button:+++quarkus.google.cloud.devservices.firebase.emulator.cli.java-tool-options+++[]
+endif::add-copy-button-to-config-props[]
+
 
 [.description]
 --
@@ -214,6 +283,10 @@ endif::add-copy-button-to-env-var[]
 |
 
 a|icon:lock[title=Fixed at build time] [[quarkus-google-cloud-firebase-devservices_quarkus-google-cloud-devservices-firebase-emulator-cli-emulator-data]] [.property-path]##link:#quarkus-google-cloud-firebase-devservices_quarkus-google-cloud-devservices-firebase-emulator-cli-emulator-data[`quarkus.google.cloud.devservices.firebase.emulator.cli.emulator-data`]##
+ifdef::add-copy-button-to-config-props[]
+config_property_copy_button:+++quarkus.google.cloud.devservices.firebase.emulator.cli.emulator-data+++[]
+endif::add-copy-button-to-config-props[]
+
 
 [.description]
 --
@@ -231,6 +304,10 @@ endif::add-copy-button-to-env-var[]
 |
 
 a|icon:lock[title=Fixed at build time] [[quarkus-google-cloud-firebase-devservices_quarkus-google-cloud-devservices-firebase-emulator-cli-import-export]] [.property-path]##link:#quarkus-google-cloud-firebase-devservices_quarkus-google-cloud-devservices-firebase-emulator-cli-import-export[`quarkus.google.cloud.devservices.firebase.emulator.cli.import-export`]##
+ifdef::add-copy-button-to-config-props[]
+config_property_copy_button:+++quarkus.google.cloud.devservices.firebase.emulator.cli.import-export+++[]
+endif::add-copy-button-to-config-props[]
+
 
 [.description]
 --
@@ -248,6 +325,10 @@ a|`import-only`, `export-only`, `import-export`
 |
 
 a|icon:lock[title=Fixed at build time] [[quarkus-google-cloud-firebase-devservices_quarkus-google-cloud-devservices-firebase-emulator-cli-experiments]] [.property-path]##link:#quarkus-google-cloud-firebase-devservices_quarkus-google-cloud-devservices-firebase-emulator-cli-experiments[`quarkus.google.cloud.devservices.firebase.emulator.cli.experiments`]##
+ifdef::add-copy-button-to-config-props[]
+config_property_copy_button:+++quarkus.google.cloud.devservices.firebase.emulator.cli.experiments+++[]
+endif::add-copy-button-to-config-props[]
+
 
 [.description]
 --
@@ -265,6 +346,10 @@ endif::add-copy-button-to-env-var[]
 |
 
 a|icon:lock[title=Fixed at build time] [[quarkus-google-cloud-firebase-devservices_quarkus-google-cloud-devservices-firebase-emulator-cli-debug]] [.property-path]##link:#quarkus-google-cloud-firebase-devservices_quarkus-google-cloud-devservices-firebase-emulator-cli-debug[`quarkus.google.cloud.devservices.firebase.emulator.cli.debug`]##
+ifdef::add-copy-button-to-config-props[]
+config_property_copy_button:+++quarkus.google.cloud.devservices.firebase.emulator.cli.debug+++[]
+endif::add-copy-button-to-config-props[]
+
 
 [.description]
 --
@@ -282,6 +367,10 @@ endif::add-copy-button-to-env-var[]
 |
 
 a|icon:lock[title=Fixed at build time] [[quarkus-google-cloud-firebase-devservices_quarkus-google-cloud-devservices-firebase-emulator-custom-firebase-json]] [.property-path]##link:#quarkus-google-cloud-firebase-devservices_quarkus-google-cloud-devservices-firebase-emulator-custom-firebase-json[`quarkus.google.cloud.devservices.firebase.emulator.custom-firebase-json`]##
+ifdef::add-copy-button-to-config-props[]
+config_property_copy_button:+++quarkus.google.cloud.devservices.firebase.emulator.custom-firebase-json+++[]
+endif::add-copy-button-to-config-props[]
+
 
 [.description]
 --
@@ -307,6 +396,10 @@ endif::add-copy-button-to-env-var[]
 |
 
 a|icon:lock[title=Fixed at build time] [[quarkus-google-cloud-firebase-devservices_quarkus-google-cloud-devservices-firebase-emulator-ui-enabled]] [.property-path]##link:#quarkus-google-cloud-firebase-devservices_quarkus-google-cloud-devservices-firebase-emulator-ui-enabled[`quarkus.google.cloud.devservices.firebase.emulator.ui.enabled`]##
+ifdef::add-copy-button-to-config-props[]
+config_property_copy_button:+++quarkus.google.cloud.devservices.firebase.emulator.ui.enabled+++[]
+endif::add-copy-button-to-config-props[]
+
 
 [.description]
 --
@@ -324,6 +417,10 @@ endif::add-copy-button-to-env-var[]
 |`true`
 
 a|icon:lock[title=Fixed at build time] [[quarkus-google-cloud-firebase-devservices_quarkus-google-cloud-devservices-firebase-emulator-ui-emulator-port]] [.property-path]##link:#quarkus-google-cloud-firebase-devservices_quarkus-google-cloud-devservices-firebase-emulator-ui-emulator-port[`quarkus.google.cloud.devservices.firebase.emulator.ui.emulator-port`]##
+ifdef::add-copy-button-to-config-props[]
+config_property_copy_button:+++quarkus.google.cloud.devservices.firebase.emulator.ui.emulator-port+++[]
+endif::add-copy-button-to-config-props[]
+
 
 [.description]
 --
@@ -341,6 +438,10 @@ endif::add-copy-button-to-env-var[]
 |
 
 a|icon:lock[title=Fixed at build time] [[quarkus-google-cloud-firebase-devservices_quarkus-google-cloud-devservices-firebase-emulator-ui-logging-port]] [.property-path]##link:#quarkus-google-cloud-firebase-devservices_quarkus-google-cloud-devservices-firebase-emulator-ui-logging-port[`quarkus.google.cloud.devservices.firebase.emulator.ui.logging-port`]##
+ifdef::add-copy-button-to-config-props[]
+config_property_copy_button:+++quarkus.google.cloud.devservices.firebase.emulator.ui.logging-port+++[]
+endif::add-copy-button-to-config-props[]
+
 
 [.description]
 --
@@ -358,6 +459,10 @@ endif::add-copy-button-to-env-var[]
 |
 
 a|icon:lock[title=Fixed at build time] [[quarkus-google-cloud-firebase-devservices_quarkus-google-cloud-devservices-firebase-emulator-ui-hub-port]] [.property-path]##link:#quarkus-google-cloud-firebase-devservices_quarkus-google-cloud-devservices-firebase-emulator-ui-hub-port[`quarkus.google.cloud.devservices.firebase.emulator.ui.hub-port`]##
+ifdef::add-copy-button-to-config-props[]
+config_property_copy_button:+++quarkus.google.cloud.devservices.firebase.emulator.ui.hub-port+++[]
+endif::add-copy-button-to-config-props[]
+
 
 [.description]
 --
@@ -375,6 +480,10 @@ endif::add-copy-button-to-env-var[]
 |
 
 a|icon:lock[title=Fixed at build time] [[quarkus-google-cloud-firebase-devservices_quarkus-google-cloud-devservices-firebase-auth-enabled]] [.property-path]##link:#quarkus-google-cloud-firebase-devservices_quarkus-google-cloud-devservices-firebase-auth-enabled[`quarkus.google.cloud.devservices.firebase.auth.enabled`]##
+ifdef::add-copy-button-to-config-props[]
+config_property_copy_button:+++quarkus.google.cloud.devservices.firebase.auth.enabled+++[]
+endif::add-copy-button-to-config-props[]
+
 
 [.description]
 --
@@ -392,6 +501,10 @@ endif::add-copy-button-to-env-var[]
 |`false`
 
 a|icon:lock[title=Fixed at build time] [[quarkus-google-cloud-firebase-devservices_quarkus-google-cloud-devservices-firebase-auth-emulator-port]] [.property-path]##link:#quarkus-google-cloud-firebase-devservices_quarkus-google-cloud-devservices-firebase-auth-emulator-port[`quarkus.google.cloud.devservices.firebase.auth.emulator-port`]##
+ifdef::add-copy-button-to-config-props[]
+config_property_copy_button:+++quarkus.google.cloud.devservices.firebase.auth.emulator-port+++[]
+endif::add-copy-button-to-config-props[]
+
 
 [.description]
 --
@@ -409,6 +522,10 @@ endif::add-copy-button-to-env-var[]
 |
 
 a|icon:lock[title=Fixed at build time] [[quarkus-google-cloud-firebase-devservices_quarkus-google-cloud-devservices-firebase-hosting-enabled]] [.property-path]##link:#quarkus-google-cloud-firebase-devservices_quarkus-google-cloud-devservices-firebase-hosting-enabled[`quarkus.google.cloud.devservices.firebase.hosting.enabled`]##
+ifdef::add-copy-button-to-config-props[]
+config_property_copy_button:+++quarkus.google.cloud.devservices.firebase.hosting.enabled+++[]
+endif::add-copy-button-to-config-props[]
+
 
 [.description]
 --
@@ -426,6 +543,10 @@ endif::add-copy-button-to-env-var[]
 |`false`
 
 a|icon:lock[title=Fixed at build time] [[quarkus-google-cloud-firebase-devservices_quarkus-google-cloud-devservices-firebase-hosting-emulator-port]] [.property-path]##link:#quarkus-google-cloud-firebase-devservices_quarkus-google-cloud-devservices-firebase-hosting-emulator-port[`quarkus.google.cloud.devservices.firebase.hosting.emulator-port`]##
+ifdef::add-copy-button-to-config-props[]
+config_property_copy_button:+++quarkus.google.cloud.devservices.firebase.hosting.emulator-port+++[]
+endif::add-copy-button-to-config-props[]
+
 
 [.description]
 --
@@ -443,6 +564,10 @@ endif::add-copy-button-to-env-var[]
 |
 
 a|icon:lock[title=Fixed at build time] [[quarkus-google-cloud-firebase-devservices_quarkus-google-cloud-devservices-firebase-hosting-hosting-path]] [.property-path]##link:#quarkus-google-cloud-firebase-devservices_quarkus-google-cloud-devservices-firebase-hosting-hosting-path[`quarkus.google.cloud.devservices.firebase.hosting.hosting-path`]##
+ifdef::add-copy-button-to-config-props[]
+config_property_copy_button:+++quarkus.google.cloud.devservices.firebase.hosting.hosting-path+++[]
+endif::add-copy-button-to-config-props[]
+
 
 [.description]
 --
@@ -460,6 +585,10 @@ endif::add-copy-button-to-env-var[]
 |
 
 a|icon:lock[title=Fixed at build time] [[quarkus-google-cloud-firebase-devservices_quarkus-google-cloud-devservices-firebase-database-enabled]] [.property-path]##link:#quarkus-google-cloud-firebase-devservices_quarkus-google-cloud-devservices-firebase-database-enabled[`quarkus.google.cloud.devservices.firebase.database.enabled`]##
+ifdef::add-copy-button-to-config-props[]
+config_property_copy_button:+++quarkus.google.cloud.devservices.firebase.database.enabled+++[]
+endif::add-copy-button-to-config-props[]
+
 
 [.description]
 --
@@ -477,6 +606,10 @@ endif::add-copy-button-to-env-var[]
 |`false`
 
 a|icon:lock[title=Fixed at build time] [[quarkus-google-cloud-firebase-devservices_quarkus-google-cloud-devservices-firebase-database-emulator-port]] [.property-path]##link:#quarkus-google-cloud-firebase-devservices_quarkus-google-cloud-devservices-firebase-database-emulator-port[`quarkus.google.cloud.devservices.firebase.database.emulator-port`]##
+ifdef::add-copy-button-to-config-props[]
+config_property_copy_button:+++quarkus.google.cloud.devservices.firebase.database.emulator-port+++[]
+endif::add-copy-button-to-config-props[]
+
 
 [.description]
 --
@@ -494,6 +627,10 @@ endif::add-copy-button-to-env-var[]
 |
 
 a|icon:lock[title=Fixed at build time] [[quarkus-google-cloud-firebase-devservices_quarkus-google-cloud-devservices-firebase-firestore-enabled]] [.property-path]##link:#quarkus-google-cloud-firebase-devservices_quarkus-google-cloud-devservices-firebase-firestore-enabled[`quarkus.google.cloud.devservices.firebase.firestore.enabled`]##
+ifdef::add-copy-button-to-config-props[]
+config_property_copy_button:+++quarkus.google.cloud.devservices.firebase.firestore.enabled+++[]
+endif::add-copy-button-to-config-props[]
+
 
 [.description]
 --
@@ -511,6 +648,10 @@ endif::add-copy-button-to-env-var[]
 |`false`
 
 a|icon:lock[title=Fixed at build time] [[quarkus-google-cloud-firebase-devservices_quarkus-google-cloud-devservices-firebase-firestore-emulator-port]] [.property-path]##link:#quarkus-google-cloud-firebase-devservices_quarkus-google-cloud-devservices-firebase-firestore-emulator-port[`quarkus.google.cloud.devservices.firebase.firestore.emulator-port`]##
+ifdef::add-copy-button-to-config-props[]
+config_property_copy_button:+++quarkus.google.cloud.devservices.firebase.firestore.emulator-port+++[]
+endif::add-copy-button-to-config-props[]
+
 
 [.description]
 --
@@ -528,6 +669,10 @@ endif::add-copy-button-to-env-var[]
 |
 
 a|icon:lock[title=Fixed at build time] [[quarkus-google-cloud-firebase-devservices_quarkus-google-cloud-devservices-firebase-firestore-websocket-port]] [.property-path]##link:#quarkus-google-cloud-firebase-devservices_quarkus-google-cloud-devservices-firebase-firestore-websocket-port[`quarkus.google.cloud.devservices.firebase.firestore.websocket-port`]##
+ifdef::add-copy-button-to-config-props[]
+config_property_copy_button:+++quarkus.google.cloud.devservices.firebase.firestore.websocket-port+++[]
+endif::add-copy-button-to-config-props[]
+
 
 [.description]
 --
@@ -545,6 +690,10 @@ endif::add-copy-button-to-env-var[]
 |
 
 a|icon:lock[title=Fixed at build time] [[quarkus-google-cloud-firebase-devservices_quarkus-google-cloud-devservices-firebase-firestore-rules-file]] [.property-path]##link:#quarkus-google-cloud-firebase-devservices_quarkus-google-cloud-devservices-firebase-firestore-rules-file[`quarkus.google.cloud.devservices.firebase.firestore.rules-file`]##
+ifdef::add-copy-button-to-config-props[]
+config_property_copy_button:+++quarkus.google.cloud.devservices.firebase.firestore.rules-file+++[]
+endif::add-copy-button-to-config-props[]
+
 
 [.description]
 --
@@ -562,6 +711,10 @@ endif::add-copy-button-to-env-var[]
 |
 
 a|icon:lock[title=Fixed at build time] [[quarkus-google-cloud-firebase-devservices_quarkus-google-cloud-devservices-firebase-firestore-indexes-file]] [.property-path]##link:#quarkus-google-cloud-firebase-devservices_quarkus-google-cloud-devservices-firebase-firestore-indexes-file[`quarkus.google.cloud.devservices.firebase.firestore.indexes-file`]##
+ifdef::add-copy-button-to-config-props[]
+config_property_copy_button:+++quarkus.google.cloud.devservices.firebase.firestore.indexes-file+++[]
+endif::add-copy-button-to-config-props[]
+
 
 [.description]
 --
@@ -579,6 +732,10 @@ endif::add-copy-button-to-env-var[]
 |
 
 a|icon:lock[title=Fixed at build time] [[quarkus-google-cloud-firebase-devservices_quarkus-google-cloud-devservices-functions-enabled]] [.property-path]##link:#quarkus-google-cloud-firebase-devservices_quarkus-google-cloud-devservices-functions-enabled[`quarkus.google.cloud.devservices.functions.enabled`]##
+ifdef::add-copy-button-to-config-props[]
+config_property_copy_button:+++quarkus.google.cloud.devservices.functions.enabled+++[]
+endif::add-copy-button-to-config-props[]
+
 
 [.description]
 --
@@ -596,6 +753,10 @@ endif::add-copy-button-to-env-var[]
 |`false`
 
 a|icon:lock[title=Fixed at build time] [[quarkus-google-cloud-firebase-devservices_quarkus-google-cloud-devservices-functions-emulator-port]] [.property-path]##link:#quarkus-google-cloud-firebase-devservices_quarkus-google-cloud-devservices-functions-emulator-port[`quarkus.google.cloud.devservices.functions.emulator-port`]##
+ifdef::add-copy-button-to-config-props[]
+config_property_copy_button:+++quarkus.google.cloud.devservices.functions.emulator-port+++[]
+endif::add-copy-button-to-config-props[]
+
 
 [.description]
 --
@@ -613,6 +774,10 @@ endif::add-copy-button-to-env-var[]
 |
 
 a|icon:lock[title=Fixed at build time] [[quarkus-google-cloud-firebase-devservices_quarkus-google-cloud-devservices-pubsub-enabled]] [.property-path]##link:#quarkus-google-cloud-firebase-devservices_quarkus-google-cloud-devservices-pubsub-enabled[`quarkus.google.cloud.devservices.pubsub.enabled`]##
+ifdef::add-copy-button-to-config-props[]
+config_property_copy_button:+++quarkus.google.cloud.devservices.pubsub.enabled+++[]
+endif::add-copy-button-to-config-props[]
+
 
 [.description]
 --
@@ -630,6 +795,10 @@ endif::add-copy-button-to-env-var[]
 |`false`
 
 a|icon:lock[title=Fixed at build time] [[quarkus-google-cloud-firebase-devservices_quarkus-google-cloud-devservices-pubsub-emulator-port]] [.property-path]##link:#quarkus-google-cloud-firebase-devservices_quarkus-google-cloud-devservices-pubsub-emulator-port[`quarkus.google.cloud.devservices.pubsub.emulator-port`]##
+ifdef::add-copy-button-to-config-props[]
+config_property_copy_button:+++quarkus.google.cloud.devservices.pubsub.emulator-port+++[]
+endif::add-copy-button-to-config-props[]
+
 
 [.description]
 --
@@ -647,6 +816,10 @@ endif::add-copy-button-to-env-var[]
 |
 
 a|icon:lock[title=Fixed at build time] [[quarkus-google-cloud-firebase-devservices_quarkus-google-cloud-devservices-storage-enabled]] [.property-path]##link:#quarkus-google-cloud-firebase-devservices_quarkus-google-cloud-devservices-storage-enabled[`quarkus.google.cloud.devservices.storage.enabled`]##
+ifdef::add-copy-button-to-config-props[]
+config_property_copy_button:+++quarkus.google.cloud.devservices.storage.enabled+++[]
+endif::add-copy-button-to-config-props[]
+
 
 [.description]
 --
@@ -664,6 +837,10 @@ endif::add-copy-button-to-env-var[]
 |`false`
 
 a|icon:lock[title=Fixed at build time] [[quarkus-google-cloud-firebase-devservices_quarkus-google-cloud-devservices-storage-emulator-port]] [.property-path]##link:#quarkus-google-cloud-firebase-devservices_quarkus-google-cloud-devservices-storage-emulator-port[`quarkus.google.cloud.devservices.storage.emulator-port`]##
+ifdef::add-copy-button-to-config-props[]
+config_property_copy_button:+++quarkus.google.cloud.devservices.storage.emulator-port+++[]
+endif::add-copy-button-to-config-props[]
+
 
 [.description]
 --
@@ -681,6 +858,10 @@ endif::add-copy-button-to-env-var[]
 |
 
 a|icon:lock[title=Fixed at build time] [[quarkus-google-cloud-firebase-devservices_quarkus-google-cloud-devservices-storage-rules-file]] [.property-path]##link:#quarkus-google-cloud-firebase-devservices_quarkus-google-cloud-devservices-storage-rules-file[`quarkus.google.cloud.devservices.storage.rules-file`]##
+ifdef::add-copy-button-to-config-props[]
+config_property_copy_button:+++quarkus.google.cloud.devservices.storage.rules-file+++[]
+endif::add-copy-button-to-config-props[]
+
 
 [.description]
 --
