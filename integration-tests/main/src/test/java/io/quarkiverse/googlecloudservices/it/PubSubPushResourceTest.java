@@ -1,26 +1,30 @@
 package io.quarkiverse.googlecloudservices.it;
 
-import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
-import com.google.api.client.json.webtoken.JsonWebSignature;
-import com.google.protobuf.Timestamp;
-import io.quarkiverse.googlecloudservices.pubsub.TokenVerifier;
-import io.quarkus.test.junit.QuarkusTest;
-import io.quarkus.test.junit.QuarkusTestProfile;
-import io.quarkus.test.junit.TestProfile;
-import io.restassured.http.ContentType;
-import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.enterprise.inject.Alternative;
-import org.junit.jupiter.api.Test;
+import static io.restassured.RestAssured.given;
+import static org.awaitility.Awaitility.await;
+import static org.hamcrest.core.IsEqual.equalTo;
 
-import javax.annotation.Priority;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
-import static io.restassured.RestAssured.given;
-import static org.awaitility.Awaitility.await;
-import static org.hamcrest.core.IsEqual.equalTo;
+import javax.annotation.Priority;
+
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.inject.Alternative;
+
+import org.junit.jupiter.api.Test;
+
+import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
+import com.google.api.client.json.webtoken.JsonWebSignature;
+import com.google.protobuf.Timestamp;
+
+import io.quarkiverse.googlecloudservices.pubsub.TokenVerifier;
+import io.quarkus.test.junit.QuarkusTest;
+import io.quarkus.test.junit.QuarkusTestProfile;
+import io.quarkus.test.junit.TestProfile;
+import io.restassured.http.ContentType;
 
 @QuarkusTest()
 @TestProfile(PubSubPushResourceTest.Profile.class)

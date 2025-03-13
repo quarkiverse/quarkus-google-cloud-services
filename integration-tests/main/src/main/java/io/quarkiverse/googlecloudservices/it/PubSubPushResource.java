@@ -2,8 +2,6 @@ package io.quarkiverse.googlecloudservices.it;
 
 import java.io.IOException;
 
-import com.google.api.core.ApiService;
-import io.quarkus.runtime.Startup;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
 import jakarta.inject.Inject;
@@ -12,9 +10,11 @@ import jakarta.ws.rs.core.MediaType;
 
 import org.jboss.logging.Logger;
 
+import com.google.api.core.ApiService;
 import com.google.cloud.pubsub.v1.MessageReceiver;
 
 import io.quarkiverse.googlecloudservices.pubsub.QuarkusPubSub;
+import io.quarkus.runtime.Startup;
 
 @Path("/pubsub-push")
 @Startup

@@ -1,4 +1,4 @@
-package io.quarkiverse.googlecloudservices.pubsub;
+package io.quarkiverse.googlecloudservices.pubsub.push;
 
 import java.util.Optional;
 
@@ -10,11 +10,12 @@ import org.jboss.logging.Logger;
 
 import com.google.common.base.Strings;
 
-import io.quarkus.vertx.web.RouteFilter;
+import io.quarkiverse.googlecloudservices.pubsub.TokenVerifier;
+import io.vertx.core.Handler;
 import io.vertx.ext.web.RoutingContext;
 
 /**
- * The filter perform authentication checks on Google PubSub push messages. For these messages, HTTP POST calls
+ * This filter perform authentication checks on Google PubSub push messages. For these messages, HTTP POST calls
  * are made on a specific endpoint using Google-Specific JWTs. This filter performs the checks as documented
  * <a href="https://cloud.google.com/pubsub/docs/authenticate-push-subscriptions">here</a> to validate the
  * calls originate from a PubSub subscription.
@@ -22,9 +23,9 @@ import io.vertx.ext.web.RoutingContext;
  * No checks are performed for any other requests or in case the PubSub endpoint is not active.
  */
 @ApplicationScoped
-public class GooglePubSubAuthenticationFilter {
+public class GooglePubSubAuthenticationHandler implements Handler<RoutingContext> {
 
-    private static final Logger LOGGER = Logger.getLogger(GooglePubSubAuthenticationFilter.class);
+    private static final Logger LOGGER = Logger.getLogger(GooglePubSubAuthenticationHandler.class);
 
     @ConfigProperty(name = "quarkus.google.cloud.pubsub.push.endpoint-path")
     Optional<String> pubSubEndpoint;
@@ -38,8 +39,7 @@ public class GooglePubSubAuthenticationFilter {
     @Inject
     TokenVerifier verifier;
 
-    @RouteFilter(1000)
-    public void filter(RoutingContext rc) {
+    public void handle(RoutingContext rc) {
         // Endpoint not configured, just move on
         if (pubSubEndpoint.isEmpty()) {
             LOGGER.trace("PubSub endpoint is empty, not checking authentication");

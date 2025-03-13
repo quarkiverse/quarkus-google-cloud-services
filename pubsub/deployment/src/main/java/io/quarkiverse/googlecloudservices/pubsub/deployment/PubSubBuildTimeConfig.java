@@ -1,5 +1,7 @@
 package io.quarkiverse.googlecloudservices.pubsub.deployment;
 
+import java.util.Optional;
+
 import io.quarkus.runtime.annotations.ConfigRoot;
 import io.smallrye.config.ConfigMapping;
 import io.smallrye.config.WithDefault;
@@ -32,5 +34,11 @@ public interface PubSubBuildTimeConfig {
          */
         @WithDefault("false")
         boolean enabled();
+
+        /**
+         * The endpoint path for the pubsub push calls.
+         */
+        Optional<String> endpointPath();
+
     }
 }

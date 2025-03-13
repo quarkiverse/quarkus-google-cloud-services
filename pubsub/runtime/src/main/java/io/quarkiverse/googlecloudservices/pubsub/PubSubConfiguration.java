@@ -34,11 +34,6 @@ public interface PubSubConfiguration {
     interface Push {
 
         /**
-         * The endpoint path for the pubsub push calls.
-         */
-        Optional<String> endpointPath();
-
-        /**
          * Audiences to accept for pubsub push messages. This can be set as a comma-separated list for multiple
          * audiences. If the audience is not configured, the <code>aud</code> claim in the Pub sub JWT will be ignored
          */

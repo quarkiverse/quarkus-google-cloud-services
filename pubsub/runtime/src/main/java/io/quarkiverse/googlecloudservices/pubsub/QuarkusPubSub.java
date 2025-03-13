@@ -22,6 +22,7 @@ import com.google.pubsub.v1.*;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 import io.quarkiverse.googlecloudservices.common.GcpConfigHolder;
+import io.quarkiverse.googlecloudservices.pubsub.push.PubSubPushManager;
 
 @ApplicationScoped
 public class QuarkusPubSub {
