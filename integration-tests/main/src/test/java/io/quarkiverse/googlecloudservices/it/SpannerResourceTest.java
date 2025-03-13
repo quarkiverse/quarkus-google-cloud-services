@@ -2,7 +2,6 @@ package io.quarkiverse.googlecloudservices.it;
 
 import static io.restassured.RestAssured.given;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -10,11 +9,7 @@ import java.util.concurrent.TimeoutException;
 
 import jakarta.inject.Inject;
 
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.testcontainers.containers.SpannerEmulatorContainer;
-import org.testcontainers.utility.DockerImageName;
 
 import com.google.cloud.spanner.InstanceConfigId;
 import com.google.cloud.spanner.InstanceId;
@@ -25,25 +20,9 @@ import io.quarkus.test.junit.QuarkusTest;
 
 @QuarkusTest
 public class SpannerResourceTest {
-    private static final SpannerEmulatorContainer EMULATOR = new SpannerEmulatorContainer(
-            DockerImageName.parse("gcr.io/cloud-spanner-emulator/emulator"));
 
     @Inject
     Spanner spanner;
-
-    @BeforeAll
-    public static void startGcloudContainer() {
-        List<String> portBindings = new ArrayList<>();
-        portBindings.add("9010:9010");
-        portBindings.add("9020:9020");
-        EMULATOR.setPortBindings(portBindings);
-        EMULATOR.start();
-    }
-
-    @AfterAll
-    public static void stopGcloudContainer() {
-        EMULATOR.stop();
-    }
 
     @Test
     public void testSpanner() throws ExecutionException, InterruptedException, TimeoutException {

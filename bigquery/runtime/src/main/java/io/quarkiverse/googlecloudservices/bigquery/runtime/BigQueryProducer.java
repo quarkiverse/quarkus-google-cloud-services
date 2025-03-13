@@ -30,15 +30,19 @@ public class BigQueryProducer {
     @Inject
     GcpConfigHolder gcpConfigHolder;
 
+    @Inject
+    BigQueryConfiguration bigQueryConfiguration;
+
     @Produces
     @Singleton
     @Default
     public BigQuery bigQuery() {
         GcpBootstrapConfiguration gcpConfiguration = gcpConfigHolder.getBootstrapConfig();
-        return BigQueryOptions.newBuilder().setCredentials(googleCredentials)
-                .setProjectId(gcpConfiguration.projectId().orElse(null))
-                .build()
-                .getService();
+        var builder = BigQueryOptions.newBuilder()
+                .setCredentials(googleCredentials)
+                .setProjectId(gcpConfiguration.projectId().orElse(null));
+        bigQueryConfiguration.hostOverride().ifPresent(builder::setHost);
+        return builder.build().getService();
     }
 
     @Produces
@@ -46,10 +50,10 @@ public class BigQueryProducer {
     @Default
     public BigQueryWriteClient bigQueryWriteClient() throws IOException {
         GcpBootstrapConfiguration gcpConfiguration = gcpConfigHolder.getBootstrapConfig();
-        BigQueryWriteSettings bigQueryWriteSettings = BigQueryWriteSettings.newBuilder()
+        var builder = BigQueryWriteSettings.newBuilder()
                 .setCredentialsProvider(credentialsProvider)
-                .setQuotaProjectId(gcpConfiguration.projectId().orElse(null))
-                .build();
-        return BigQueryWriteClient.create(bigQueryWriteSettings);
+                .setQuotaProjectId(gcpConfiguration.projectId().orElse(null));
+        bigQueryConfiguration.hostOverride().ifPresent(builder::setEndpoint);
+        return BigQueryWriteClient.create(builder.build());
     }
 }

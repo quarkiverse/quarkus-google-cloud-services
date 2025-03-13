@@ -8,6 +8,10 @@ h|Type
 h|Default
 
 a| [[quarkus-google-cloud-spanner_quarkus-google-cloud-spanner-emulator-host]] [.property-path]##link:#quarkus-google-cloud-spanner_quarkus-google-cloud-spanner-emulator-host[`quarkus.google.cloud.spanner.emulator-host`]##
+ifdef::add-copy-button-to-config-props[]
+config_property_copy_button:+++quarkus.google.cloud.spanner.emulator-host+++[]
+endif::add-copy-button-to-config-props[]
+
 
 [.description]
 --
