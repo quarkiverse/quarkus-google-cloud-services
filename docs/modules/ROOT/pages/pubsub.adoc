@@ -193,7 +193,7 @@ This extension can be configured to use the push model. In this setup:
 ** If you want to set up your own handling, there is a convenience method available to call for the internal handling
 * Incoming requests will be verified and checked for the right authentication credentials, and denied if this fails
 * Using `QuarkusPubSub` subscribers can be registered to handle incoming messages. The subscriber methods automatically
-  use the pull of push versions dependening on the `...push.enabled` flag.
+  use the pull of push versions dependening on the `quarkus.google.cloud.pubsub.push.enabled` flag.
 
 Note that any message which cannot be successfully delivered to the application and processed will be marked for
 redelivery. This includes errors or simply failing to `ack()` the message using the `AckReplyConsumer` provided
@@ -201,7 +201,7 @@ in the `MessageReceiver` interface.
 
 When running quarkus-tests, messages will also be authenticated, which will fail as you cannot provide a valid JWT
 signed with the Google private keys. To resolve this issue, there are two options:
-* Using pull-subscriptions for testing purposes. For the `%test` profile, set the `...push.enabed` flag to false. This
+* Using pull-subscriptions for testing purposes. For the `%test` profile, set the `quarkus.google.cloud.pubsub.push.enabed` flag to false. This
   will result in the code using pull messages instead of push messages without any underlying code changes
 * Use a mock implementation of the `TokenVerifier` class as can be seen in the `PubSubPushResourceTest` in the
   integration tests of this extension.

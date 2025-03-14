@@ -9,8 +9,6 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.Instance;
 import jakarta.inject.Inject;
 
-import org.eclipse.microprofile.config.inject.ConfigProperty;
-
 import com.google.api.gax.core.CredentialsProvider;
 import com.google.api.gax.core.NoCredentialsProvider;
 import com.google.api.gax.grpc.GrpcTransportChannel;
@@ -22,6 +20,7 @@ import com.google.pubsub.v1.*;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 import io.quarkiverse.googlecloudservices.common.GcpConfigHolder;
+import io.quarkiverse.googlecloudservices.pubsub.push.PubSubPushBuildTimeConfig;
 import io.quarkiverse.googlecloudservices.pubsub.push.PubSubPushManager;
 
 @ApplicationScoped
@@ -38,8 +37,8 @@ public class QuarkusPubSub {
     @Inject
     Instance<PubSubPushManager> pushManager;
 
-    @ConfigProperty(name = "quarkus.google.cloud.pubsub.push.enabled")
-    Optional<Boolean> usePush;
+    @Inject
+    PubSubPushBuildTimeConfig pushConfig;
 
     private Optional<TransportChannelProvider> channelProvider;
 
@@ -66,7 +65,7 @@ public class QuarkusPubSub {
      */
     public SubscriberInterface subscriber(String subscription, String projectId, MessageReceiver receiver) {
         ProjectSubscriptionName subscriptionName = ProjectSubscriptionName.of(projectId, subscription);
-        if (usePush.orElse(false)) {
+        if (pushConfig.enabled()) {
             return pushSubscriber(subscriptionName, receiver);
         } else {
             return pullSubscriber(subscriptionName, receiver);

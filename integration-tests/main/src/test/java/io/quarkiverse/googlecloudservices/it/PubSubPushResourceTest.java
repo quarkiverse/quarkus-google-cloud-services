@@ -20,7 +20,7 @@ import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
 import com.google.api.client.json.webtoken.JsonWebSignature;
 import com.google.protobuf.Timestamp;
 
-import io.quarkiverse.googlecloudservices.pubsub.TokenVerifier;
+import io.quarkiverse.googlecloudservices.pubsub.push.TokenVerifier;
 import io.quarkus.test.junit.QuarkusTest;
 import io.quarkus.test.junit.QuarkusTestProfile;
 import io.quarkus.test.junit.TestProfile;

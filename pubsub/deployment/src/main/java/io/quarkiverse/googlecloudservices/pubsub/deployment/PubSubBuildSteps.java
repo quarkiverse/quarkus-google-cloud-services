@@ -30,8 +30,8 @@ public class PubSubBuildSteps {
             BuildProducer<RouteBuildItem> additionalRoutes,
             NonApplicationRootPathBuildItem nonApplicationRootPathBuildItem,
             PubSubPushRecorder recorder,
-            PubSubBuildTimeConfig config) {
-        if (!config.push().enabled()) {
+            PubSubPushBuildTimeConfig config) {
+        if (!config.enabled()) {
             return;
         }
 
@@ -45,7 +45,7 @@ public class PubSubBuildSteps {
                         PubSubPushEndpointHandler.class)
                 .build());
 
-        config.push().endpointPath().ifPresent(endpoint -> additionalRoutes.produce(nonApplicationRootPathBuildItem
+        config.endpointPath().ifPresent(endpoint -> additionalRoutes.produce(nonApplicationRootPathBuildItem
                 .routeBuilder()
                 .routeFunction(endpoint, recorder.routeFunction())
                 .build()));

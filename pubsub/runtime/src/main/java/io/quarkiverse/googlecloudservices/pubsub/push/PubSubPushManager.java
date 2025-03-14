@@ -1,6 +1,7 @@
 package io.quarkiverse.googlecloudservices.pubsub.push;
 
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import jakarta.enterprise.context.ApplicationScoped;
 
@@ -14,13 +15,11 @@ import com.google.cloud.pubsub.v1.SubscriberInterface;
 import com.google.pubsub.v1.ProjectSubscriptionName;
 import com.google.pubsub.v1.PubsubMessage;
 
-import io.quarkiverse.googlecloudservices.pubsub.QuarkusPubSub;
-
 /**
  * This class manages pub-sub push subscriptions (see <a href="https://cloud.google.com/pubsub/docs/push">here</a>).
  * <p>
- * It provides a way to subscribe to messages (via {@link QuarkusPubSub} comparable to regular pull subscriptions. Also
- * handlers are implemented to handle the incoming HTTP connections.
+ * It provides a way to subscribe to messages (via {@link io.quarkiverse.googlecloudservices.pubsub.QuarkusPubSub}
+ * comparable to regular pull subscriptions. Also handlers are implemented to handle the incoming HTTP connections.
  * <p>
  * Users can opt to use the default routes, or provide their own logic using the provided utility methods to handle these
  * requests.
@@ -69,29 +68,29 @@ public class PubSubPushManager {
 
     private static class PushSubscriber extends AbstractApiService implements MessageReceiver, SubscriberInterface {
         private final MessageReceiver receiver;
-        private boolean started;
+        private final AtomicBoolean started;
 
         private PushSubscriber(MessageReceiver receiver) {
             this.receiver = receiver;
-            this.started = true;
+            this.started = new AtomicBoolean(true);
         }
 
         @Override
         protected void doStart() {
-            this.started = true;
+            this.started.set(true);
             this.notifyStarted();
         }
 
         @Override
         protected void doStop() {
-            this.started = false;
+            this.started.set(false);
             this.notifyStopped();
         }
 
         @Override
         public void receiveMessage(PubsubMessage pubsubMessage, AckReplyConsumer ackReplyConsumer) {
             LOGGER.debug("Received a push message " + pubsubMessage.getMessageId());
-            if (started) {
+            if (started.get()) {
                 receiver.receiveMessage(pubsubMessage, ackReplyConsumer);
             } else {
                 LOGGER.debug(
