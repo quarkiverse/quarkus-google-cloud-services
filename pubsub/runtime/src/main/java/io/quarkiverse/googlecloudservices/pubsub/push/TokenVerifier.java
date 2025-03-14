@@ -1,4 +1,4 @@
-package io.quarkiverse.googlecloudservices.pubsub;
+package io.quarkiverse.googlecloudservices.pubsub.push;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;

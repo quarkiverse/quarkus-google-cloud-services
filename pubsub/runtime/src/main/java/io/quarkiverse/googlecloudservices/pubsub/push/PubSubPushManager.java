@@ -14,13 +14,11 @@ import com.google.cloud.pubsub.v1.SubscriberInterface;
 import com.google.pubsub.v1.ProjectSubscriptionName;
 import com.google.pubsub.v1.PubsubMessage;
 
-import io.quarkiverse.googlecloudservices.pubsub.QuarkusPubSub;
-
 /**
  * This class manages pub-sub push subscriptions (see <a href="https://cloud.google.com/pubsub/docs/push">here</a>).
  * <p>
- * It provides a way to subscribe to messages (via {@link QuarkusPubSub} comparable to regular pull subscriptions. Also
- * handlers are implemented to handle the incoming HTTP connections.
+ * It provides a way to subscribe to messages (via {@link io.quarkiverse.googlecloudservices.pubsub.QuarkusPubSub}
+ * comparable to regular pull subscriptions. Also handlers are implemented to handle the incoming HTTP connections.
  * <p>
  * Users can opt to use the default routes, or provide their own logic using the provided utility methods to handle these
  * requests.

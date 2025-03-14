@@ -10,7 +10,6 @@ import org.jboss.logging.Logger;
 
 import com.google.common.base.Strings;
 
-import io.quarkiverse.googlecloudservices.pubsub.TokenVerifier;
 import io.vertx.core.Handler;
 import io.vertx.ext.web.RoutingContext;
 
