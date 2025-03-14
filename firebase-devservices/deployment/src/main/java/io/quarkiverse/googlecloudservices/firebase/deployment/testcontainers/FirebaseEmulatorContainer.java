@@ -2,6 +2,7 @@ package io.quarkiverse.googlecloudservices.firebase.deployment.testcontainers;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.nio.file.Path;
 import java.util.*;
 import java.util.function.Consumer;
@@ -1051,20 +1052,13 @@ public class FirebaseEmulatorContainer extends GenericContainer<FirebaseEmulator
 
     private static class FirebaseDockerBuilder {
 
-        private static final Map<Emulator, String> DOWNLOADABLE_EMULATORS = Map.of(
-                Emulator.REALTIME_DATABASE, "database",
-                Emulator.CLOUD_FIRESTORE, "firestore",
-                Emulator.PUB_SUB, "pubsub",
-                Emulator.CLOUD_STORAGE, "storage",
-                Emulator.EMULATOR_SUITE_UI, "ui");
-
         private final ImageFromDockerfile result;
 
         private final EmulatorConfig emulatorConfig;
         private final Map<Emulator, ExposedPort> devServices;
 
         private DockerfileBuilder dockerBuilder;
-        private String firebaseVersion;
+        private final String firebaseVersion;
 
         public FirebaseDockerBuilder(EmulatorConfig emulatorConfig) {
             this.devServices = emulatorConfig.firebaseConfig().services;
@@ -1106,21 +1100,33 @@ public class FirebaseEmulatorContainer extends GenericContainer<FirebaseEmulator
 
         private void buildBaseImageIfNeeded() {
             if (!baseImageExists()) {
+                var baseDockerFile = buildResource("Dockerfile.base");
+
                 var baseImage = new ImageFromDockerfile(baseImageName(), false)
-                        .withDockerfileFromBuilder(builder -> {
-                            this.dockerBuilder = builder;
-                        });
-
-                this.configureBaseBaseImage();
-                this.initialSetup();
-                this.createUserIfNeeded();
-                this.fixOwnership();
-
-                this.switchToUser();
-                this.downloadEmulators();
+                        .withDockerfile(baseDockerFile)
+                        .withFileFromPath("user-add.sh", buildResource("user-add.sh"))
+                        .withBuildArg("BASE_IMAGE", emulatorConfig.dockerConfig().imageName())
+                        .withBuildArg("USER_ID", "" + dockerUser())
+                        .withBuildArg("GROUP_ID", "" + dockerGroup())
+                        .withBuildArg("FIREBASE_VERSION", firebaseVersion);
 
                 baseImage.get();
                 this.dockerBuilder = null;
+            }
+        }
+
+        private Path buildResource(String path) {
+            var cl = Thread.currentThread().getContextClassLoader();
+            var resourcePath = cl.getResource(getClass().getPackageName().replace('.', '/') + "/" + path);
+
+            if (resourcePath == null) {
+                throw new IllegalStateException("Resource not found: " + path);
+            }
+
+            try {
+                return Path.of(resourcePath.toURI());
+            } catch (URISyntaxException e) {
+                throw new IllegalStateException("Resource not found: " + path, e);
             }
         }
 
@@ -1212,64 +1218,8 @@ public class FirebaseEmulatorContainer extends GenericContainer<FirebaseEmulator
             // TODO: Validate if a custom firebase.json is defined, that the hosts are defined as 0.0.0.0
         }
 
-        private void configureBaseBaseImage() {
-            dockerBuilder.from(emulatorConfig.dockerConfig().imageName());
-        }
-
         private void configureBaseImage() {
             dockerBuilder.from(baseImageName());
-        }
-
-        private void initialSetup() {
-            dockerBuilder
-                    .run("apk --no-cache add openjdk17-jre bash curl openssl gettext nano nginx sudo && " +
-                            "npm cache clean --force && " +
-                            "npm i -g firebase-tools@" + firebaseVersion + " && " +
-                            "deluser nginx && delgroup abuild && delgroup ping && " +
-                            "mkdir -p " + FIREBASE_ROOT + " && " +
-
-                            "mkdir -p " + EMULATOR_DATA_PATH + " && " +
-                            "mkdir -p " + EMULATOR_EXPORT_PATH + " && " +
-                            "chmod 777 -R /srv/*");
-        }
-
-        private void createUserIfNeeded() {
-            var commands = new ArrayList<String>();
-
-            emulatorConfig.dockerConfig.groupId().ifPresent(group -> commands.add("addgroup -g " + group + " runner"));
-
-            emulatorConfig.dockerConfig.userId().ifPresent(user -> {
-                var groupName = emulatorConfig.dockerConfig().groupId().map(i -> "runner").orElse("node");
-                commands.add("adduser -u " + user + " -G " + groupName + " -D -h /srv/firebase runner");
-            });
-
-            LOGGER.info("Running docker container as user/group: {}", dockerUserAndGroup());
-
-            if (!commands.isEmpty()) {
-                var runCmd = String.join(" && ", commands);
-                dockerBuilder.run(runCmd);
-            }
-        }
-
-        private void downloadEmulators() {
-            DOWNLOADABLE_EMULATORS
-                    .entrySet()
-                    .stream()
-                    .map(e -> downloadEmulatorCommand(e.getKey(), e.getValue()))
-                    .forEach(dockerBuilder::run);
-        }
-
-        private String downloadEmulatorCommand(Emulator emulator, String downloadId) {
-            return "firebase setup:emulators:" + downloadId;
-        }
-
-        private void switchToUser() {
-            dockerBuilder.user(dockerUserAndGroup());
-        }
-
-        private void fixOwnership() {
-            dockerBuilder
-                    .run("chown " + dockerUserAndGroup() + " -R /srv/*");
         }
 
         private void authenticateToFirebase() {
@@ -1441,12 +1391,6 @@ public class FirebaseEmulatorContainer extends GenericContainer<FirebaseEmulator
 
         private boolean isEmulatorEnabled(Emulator emulator) {
             return this.devServices.containsKey(emulator);
-        }
-
-        private String dockerUserAndGroup() {
-            var group = dockerGroup();
-            var user = dockerUser();
-            return user + ":" + group;
         }
 
         private int dockerUser() {
