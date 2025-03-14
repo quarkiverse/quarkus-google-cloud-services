@@ -1,5 +1,6 @@
 package io.quarkiverse.googlecloudservices.firebase.admin.runtime;
 
+import java.time.Duration;
 import java.util.Optional;
 
 import io.quarkus.runtime.annotations.ConfigPhase;
@@ -46,6 +47,62 @@ public interface FirebaseAuthConfig {
          * (i.e. an array in the JWT) or a single value.
          */
         Optional<String> rolesClaim();
+
+        /**
+         * Returns the session cookie configuration
+         */
+        SessionCookie sessionCookie();
+
+        public interface SessionCookie {
+
+            /**
+             * Name to use for session cookies (see <a href="https://firebase.google.com/docs/auth/admin/manage-cookies#java_2">
+             * Manage session cookies</a>)
+             */
+            @WithDefault("session")
+            String name();
+
+            /**
+             * The expiration duration of the session cookie. Uses {@link java.time.Duration#parse(CharSequence)} to
+             * get a duration for the expiration. See the JavaDoc of this method for the format of this value.
+             * <p>
+             * Defaults to 5 days.
+             */
+            @WithDefault("P5D")
+            Duration expirationDuration();
+
+            /**
+             * Perform an additional check to see if the session was revoked
+             */
+            @WithDefault("true")
+            Boolean checkRevoked();
+
+            /**
+             * Validate the expiration date of the token.
+             */
+            @WithDefault("false")
+            Boolean validateToken();
+
+            /**
+             * Minimum token validity in case {@link #validateToken()} is set to true. Uses
+             * {@link java.time.Duration#parse(CharSequence)} to get a duration for the expiration. See the JavaDoc of
+             * this method for the format of this value.
+             */
+            Optional<Duration> minimumTokenValidity();
+
+            /**
+             * Path of an HTTP endpoint which can be used to perform the session login. If set, a reactive route will
+             * be registered to handle setting the cookie based on an authenticated request.
+             */
+            Optional<String> loginApiPath();
+
+            /**
+             * Path of an HTTP endpoint which can be used to perform the session logout. If set, a reactive route will
+             * be registered to handle clearing the session cookie.
+             */
+            Optional<String> logoutApiPath();
+
+        }
 
     }
 

@@ -14,16 +14,24 @@ import com.google.firebase.auth.FirebaseToken;
 public class FirebasePrincipal implements JsonWebToken {
 
     private final FirebaseToken token;
+    private final String idToken;
     private final Map<String, Object> claims;
 
     /**
      * Creates a new FirebasePrincipal object with the given FirebaseToken.
      *
      * @param token The FirebaseToken to be wrapped by this principal.
+     * @param idToken The original JWT token
      */
-    public FirebasePrincipal(FirebaseToken token) {
+    public FirebasePrincipal(FirebaseToken token, String idToken) {
         this.token = token;
+        this.idToken = idToken;
         this.claims = token.getClaims();
+    }
+
+    @Override
+    public String getRawToken() {
+        return idToken;
     }
 
     /**
