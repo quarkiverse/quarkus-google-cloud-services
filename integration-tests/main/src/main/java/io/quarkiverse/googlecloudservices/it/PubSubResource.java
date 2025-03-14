@@ -16,7 +16,7 @@ import com.google.api.core.ApiFutureCallback;
 import com.google.api.core.ApiFutures;
 import com.google.cloud.pubsub.v1.MessageReceiver;
 import com.google.cloud.pubsub.v1.Publisher;
-import com.google.cloud.pubsub.v1.Subscriber;
+import com.google.cloud.pubsub.v1.SubscriberInterface;
 import com.google.common.util.concurrent.MoreExecutors;
 import com.google.protobuf.ByteString;
 import com.google.pubsub.v1.PubsubMessage;
@@ -30,7 +30,7 @@ public class PubSubResource {
     @Inject
     QuarkusPubSub pubSub;
 
-    private Subscriber subscriber;
+    private SubscriberInterface subscriber;
     private String lastMessage;
 
     @PostConstruct
