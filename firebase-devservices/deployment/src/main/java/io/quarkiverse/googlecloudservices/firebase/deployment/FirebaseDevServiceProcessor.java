@@ -13,7 +13,7 @@ import io.quarkus.deployment.annotations.BuildSteps;
 import io.quarkus.deployment.builditem.*;
 import io.quarkus.deployment.console.ConsoleInstalledBuildItem;
 import io.quarkus.deployment.console.StartupLogCompressor;
-import io.quarkus.deployment.dev.devservices.GlobalDevServicesConfig;
+import io.quarkus.deployment.dev.devservices.DevServicesConfig;
 import io.quarkus.deployment.logging.LoggingSetupBuildItem;
 
 /**
@@ -21,7 +21,7 @@ import io.quarkus.deployment.logging.LoggingSetupBuildItem;
  * <p>
  * The processor starts the Firebase service in case it's not running.
  */
-@BuildSteps(onlyIfNot = IsNormal.class, onlyIf = GlobalDevServicesConfig.Enabled.class)
+@BuildSteps(onlyIfNot = IsNormal.class, onlyIf = DevServicesConfig.Enabled.class)
 public class FirebaseDevServiceProcessor {
 
     private static final Logger LOGGER = Logger.getLogger(FirebaseDevServiceProcessor.class.getName());
@@ -51,7 +51,7 @@ public class FirebaseDevServiceProcessor {
             CuratedApplicationShutdownBuildItem closeBuildItem,
             LaunchModeBuildItem launchMode,
             LoggingSetupBuildItem loggingSetupBuildItem,
-            GlobalDevServicesConfig globalDevServicesConfig) {
+            DevServicesConfig globalDevServicesConfig) {
         // If dev service is running and config has changed, stop the service
         if (devService != null && !firebaseBuildTimeConfig.equals(config)) {
             stopContainer();
@@ -72,7 +72,7 @@ public class FirebaseDevServiceProcessor {
                     closeBuildItem,
                     projectConfig,
                     firebaseBuildTimeConfig,
-                    globalDevServicesConfig.timeout);
+                    globalDevServicesConfig.timeout());
         } catch (Throwable t) {
             LOGGER.warn("Unable to start Firebase dev service", t);
             // Dump captured logs in case of an error
