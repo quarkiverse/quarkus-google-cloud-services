@@ -8,6 +8,7 @@ import org.jboss.logging.Logger;
 
 import io.quarkiverse.googlecloudservices.firebase.deployment.testcontainers.FirebaseEmulatorContainer;
 import io.quarkus.deployment.IsNormal;
+import io.quarkus.deployment.annotations.BuildProducer;
 import io.quarkus.deployment.annotations.BuildStep;
 import io.quarkus.deployment.annotations.BuildSteps;
 import io.quarkus.deployment.builditem.*;
@@ -15,6 +16,9 @@ import io.quarkus.deployment.console.ConsoleInstalledBuildItem;
 import io.quarkus.deployment.console.StartupLogCompressor;
 import io.quarkus.deployment.dev.devservices.DevServicesConfig;
 import io.quarkus.deployment.logging.LoggingSetupBuildItem;
+import io.quarkus.devui.spi.page.CardPageBuildItem;
+import io.quarkus.devui.spi.page.ExternalPageBuilder;
+import io.quarkus.devui.spi.page.Page;
 
 /**
  * Processor responsible for managing Firebase Dev Services.
@@ -51,11 +55,13 @@ public class FirebaseDevServiceProcessor {
             CuratedApplicationShutdownBuildItem closeBuildItem,
             LaunchModeBuildItem launchMode,
             LoggingSetupBuildItem loggingSetupBuildItem,
+            BuildProducer<CardPageBuildItem> cardProducer,
             DevServicesConfig globalDevServicesConfig) {
         // If dev service is running and config has changed, stop the service
         if (devService != null && !firebaseBuildTimeConfig.equals(config)) {
             stopContainer();
         } else if (devService != null) {
+            createDevServiceCard(devService, firebaseBuildTimeConfig, launchMode, cardProducer);
             return devService.toBuildItem();
         }
 
@@ -82,7 +88,78 @@ public class FirebaseDevServiceProcessor {
             compressor.close();
         }
 
+        createDevServiceCard(devService, firebaseBuildTimeConfig, launchMode, cardProducer);
         return devService == null ? null : devService.toBuildItem();
+    }
+
+    private void createDevServiceCard(DevServicesResultBuildItem.RunningDevService devService,
+            FirebaseDevServiceConfig firebaseBuildTimeConfig,
+            LaunchModeBuildItem launchMode,
+            BuildProducer<CardPageBuildItem> cardProducer) {
+        if (launchMode.isNotLocalDevModeType()) {
+            return;
+        }
+
+        var config = devService.getConfig();
+
+        var cardBuildItem = new CardPageBuildItem();
+        cardBuildItem.addBuildTimeData("emulators", config
+                .entrySet()
+                .stream()
+                .map(entry -> {
+                    var emulator = CONFIG_PROPERTIES.entrySet()
+                            .stream()
+                            .filter(e -> e.getValue().equals(entry.getKey()))
+                            .findFirst()
+                            .map(Map.Entry::getKey)
+                            .orElse(null);
+
+                    return new EmulatorRow(emulator, entry.getKey(), entry.getValue());
+                })
+                .toList());
+
+        cardBuildItem.addPage(Page.tableDataPageBuilder("Running emulators")
+                .showColumn("name")
+                .showColumn("configProperty")
+                .showColumn("host")
+                .icon("font-awesome-solid:plug")
+                .staticLabel("" + config.size())
+                .buildTimeDataKey("emulators"));
+
+        var uiHost = config.get(CONFIG_PROPERTIES.get(FirebaseEmulatorContainer.Emulator.EMULATOR_SUITE_UI));
+        if (uiHost != null) {
+            cardBuildItem.addPage(Page.externalPageBuilder("Firebase UI")
+                    .url(uiHost, uiHost)
+                    .icon("font-awesome-solid:gauge-high")
+                    .staticLabel(firebaseBuildTimeConfig.firebase().emulator().firebaseVersion())
+                    .mimeType(ExternalPageBuilder.MIME_TYPE_HTML));
+        }
+
+        cardProducer.produce(cardBuildItem);
+    }
+
+    public static class EmulatorRow {
+        private final FirebaseEmulatorContainer.Emulator name;
+        private final String configProperty;
+        private final String host;
+
+        public EmulatorRow(FirebaseEmulatorContainer.Emulator name, String configProperty, String host) {
+            this.name = name;
+            this.configProperty = configProperty;
+            this.host = host;
+        }
+
+        public FirebaseEmulatorContainer.Emulator getName() {
+            return name;
+        }
+
+        public String getConfigProperty() {
+            return configProperty;
+        }
+
+        public String getHost() {
+            return host;
+        }
     }
 
     /**
@@ -91,7 +168,7 @@ public class FirebaseDevServiceProcessor {
      * @param dockerStatusBuildItem, Docker status
      * @param config, Configuration for the Firebase service
      * @param timeout, Optional timeout for starting the service
-     * @param closeBuildItem
+     * @param closeBuildItem The close build item
      * @return Running service item, or null if the service couldn't be started
      */
     private DevServicesResultBuildItem.RunningDevService startContainerIfAvailable(DockerStatusBuildItem dockerStatusBuildItem,

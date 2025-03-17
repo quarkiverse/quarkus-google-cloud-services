@@ -1524,7 +1524,9 @@ public class FirebaseEmulatorContainer extends GenericContainer<FirebaseEmulator
 
     private String getEmulatorEndpoint(Emulator emulator) {
         var endpoint = this.getHost() + ":" + emulatorPort(emulator);
-        if (emulator.equals(Emulator.REALTIME_DATABASE) || emulator.equals(Emulator.CLOUD_STORAGE)) {
+        if (emulator.equals(Emulator.REALTIME_DATABASE)
+                || emulator.equals(Emulator.CLOUD_STORAGE)
+                || emulator.equals(Emulator.EMULATOR_SUITE_UI)) {
             endpoint = "http://" + endpoint;
         }
         return endpoint;
