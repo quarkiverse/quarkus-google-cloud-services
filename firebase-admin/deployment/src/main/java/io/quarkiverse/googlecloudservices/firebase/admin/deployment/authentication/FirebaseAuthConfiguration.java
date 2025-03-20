@@ -14,17 +14,4 @@ public interface FirebaseAuthConfiguration {
     @WithDefault("false")
     boolean enabled();
 
-    /**
-     * Returns the session cookie configuration
-     */
-    SessionCookie sessionCookie();
-
-    public interface SessionCookie {
-        /**
-         * Enable session cookie support
-         */
-        @WithDefault("false")
-        boolean enabled();
-
-    }
 }

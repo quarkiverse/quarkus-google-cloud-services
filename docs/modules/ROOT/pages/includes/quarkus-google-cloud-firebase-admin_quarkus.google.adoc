@@ -134,7 +134,7 @@ Environment variable: `+++QUARKUS_GOOGLE_CLOUD_FIREBASE_AUTH_SESSION_COOKIE_NAME
 endif::add-copy-button-to-env-var[]
 --
 |string
-|
+|`session`
 
 a| [[quarkus-google-cloud-firebase-admin_quarkus-google-cloud-firebase-auth-session-cookie-expiration-duration]] [.property-path]##link:#quarkus-google-cloud-firebase-admin_quarkus-google-cloud-firebase-auth-session-cookie-expiration-duration[`quarkus.google.cloud.firebase.auth.session-cookie.expiration-duration`]##
 ifdef::add-copy-button-to-config-props[]
@@ -156,8 +156,8 @@ ifndef::add-copy-button-to-env-var[]
 Environment variable: `+++QUARKUS_GOOGLE_CLOUD_FIREBASE_AUTH_SESSION_COOKIE_EXPIRATION_DURATION+++`
 endif::add-copy-button-to-env-var[]
 --
-|string
-|`P5`
+|link:https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/time/Duration.html[Duration] link:#duration-note-anchor-quarkus-google-cloud-firebase-admin_quarkus-google[icon:question-circle[title=More information about the Duration format]]
+|`P5D`
 
 a| [[quarkus-google-cloud-firebase-admin_quarkus-google-cloud-firebase-auth-session-cookie-check-revoked]] [.property-path]##link:#quarkus-google-cloud-firebase-admin_quarkus-google-cloud-firebase-auth-session-cookie-check-revoked[`quarkus.google.cloud.firebase.auth.session-cookie.check-revoked`]##
 ifdef::add-copy-button-to-config-props[]
@@ -219,7 +219,7 @@ ifndef::add-copy-button-to-env-var[]
 Environment variable: `+++QUARKUS_GOOGLE_CLOUD_FIREBASE_AUTH_SESSION_COOKIE_MINIMUM_TOKEN_VALIDITY+++`
 endif::add-copy-button-to-env-var[]
 --
-|string
+|link:https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/time/Duration.html[Duration] link:#duration-note-anchor-quarkus-google-cloud-firebase-admin_quarkus-google[icon:question-circle[title=More information about the Duration format]]
 |
 
 a| [[quarkus-google-cloud-firebase-admin_quarkus-google-cloud-firebase-auth-session-cookie-login-api-path]] [.property-path]##link:#quarkus-google-cloud-firebase-admin_quarkus-google-cloud-firebase-auth-session-cookie-login-api-path[`quarkus.google.cloud.firebase.auth.session-cookie.login-api-path`]##
@@ -266,3 +266,22 @@ endif::add-copy-button-to-env-var[]
 
 |===
 
+ifndef::no-duration-note[]
+[NOTE]
+[id=duration-note-anchor-quarkus-google-cloud-firebase-admin_quarkus-google]
+.About the Duration format
+====
+To write duration values, use the standard `java.time.Duration` format.
+See the link:https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/time/Duration.html#parse(java.lang.CharSequence)[Duration#parse() Java API documentation] for more information.
+
+You can also use a simplified format, starting with a number:
+
+* If the value is only a number, it represents time in seconds.
+* If the value is a number followed by `ms`, it represents time in milliseconds.
+
+In other cases, the simplified format is translated to the `java.time.Duration` format for parsing:
+
+* If the value is a number followed by `h`, `m`, or `s`, it is prefixed with `PT`.
+* If the value is a number followed by `d`, it is prefixed with `P`.
+====
+endif::no-duration-note[]
