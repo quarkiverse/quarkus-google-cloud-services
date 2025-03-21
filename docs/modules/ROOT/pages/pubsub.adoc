@@ -87,7 +87,7 @@ import com.google.api.core.ApiFutureCallback;
 import com.google.api.core.ApiFutures;
 import com.google.cloud.pubsub.v1.MessageReceiver;
 import com.google.cloud.pubsub.v1.Publisher;
-import com.google.cloud.pubsub.v1.Subscriber;
+import com.google.cloud.pubsub.v1.SubscriberInterface;
 import com.google.common.util.concurrent.MoreExecutors;
 import com.google.protobuf.ByteString;
 import com.google.pubsub.v1.PubsubMessage;
@@ -103,7 +103,7 @@ public class PubSubResource {
     @Inject
     QuarkusPubSub pubSub;
 
-    private Subscriber subscriber;
+    private SubscriberInterface subscriber;
 
     @PostConstruct
     void init() throws IOException {
@@ -177,6 +177,38 @@ facilities offered by `io.quarkiverse.googlecloudservices.pubsub.QuarkusPubSub` 
     }
 ----
 
+== Pull vs Push messages
+
+PubSub offers two modes of operation; pull and push. The pull model is the regular model where the application
+regularly checks if there are messages available and pulls them from the broker, afther which they are dispatched
+internally in the application. This approach works fine for applications that run constantly, but fails when using e.g.
+Cloud Run, i.e. applications that are started on request. For these situations, a push model can also be used.
+
+In the push model, the application exposes a specific HTTP/REST endpoint which the Google PubSub infrastructure can
+call to deliver the messages. On Cloud Run, this would imply the service would be started (if needed) to handle these messages.
+
+This extension can be configured to use the push model. In this setup:
+
+* The application can expose (if configured) an endpoint to respond to the HTTP request from the PubSub infrastructure
+** If you want to set up your own handling, there is a convenience method available to call for the internal handling
+* Incoming requests will be verified and checked for the right authentication credentials, and denied if this fails
+* Using `QuarkusPubSub` subscribers can be registered to handle incoming messages. The subscriber methods automatically
+  use the pull of push versions dependening on the `quarkus.google.cloud.pubsub.push.enabled` flag.
+
+Note that any message which cannot be successfully delivered to the application and processed will be marked for
+redelivery. This includes errors or simply failing to `ack()` the message using the `AckReplyConsumer` provided
+in the `MessageReceiver` interface.
+
+When running quarkus-tests, messages will also be authenticated, which will fail as you cannot provide a valid JWT
+signed with the Google private keys. To resolve this issue, there are two options:
+* Using pull-subscriptions for testing purposes. For the `%test` profile, set the `quarkus.google.cloud.pubsub.push.enabed` flag to false. This
+  will result in the code using pull messages instead of push messages without any underlying code changes
+* Use a mock implementation of the `TokenVerifier` class as can be seen in the `PubSubPushResourceTest` in the
+  integration tests of this extension.
+
+Consult the https://cloud.google.com/pubsub/docs/push[Google Cloud PubSub push] documentation for more information on
+the push model, configuring the topics and subscriptions and configuring authentication.
+
 == Dev Service
 
 === Configuring the Dev Service
@@ -190,6 +222,8 @@ You can also set the
 * `quarkus.google.cloud.pubsub.devservice.emulator-port` property to change the port on which the emulator will be started (by default there is no port set, so the emulator will use a random port)
 
 === Using the Dev Service
+
+_Note: the setup below is handled automatically in case you use `QuarkusPubSub` to create publishers and subscribers._
 
 If we want to connect to the Dev Service, we need to specify `TransportChannelProvider` when creating subscriptions and publishers.
 

@@ -14,7 +14,7 @@ import io.quarkus.deployment.annotations.BuildSteps;
 import io.quarkus.deployment.builditem.*;
 import io.quarkus.deployment.console.ConsoleInstalledBuildItem;
 import io.quarkus.deployment.console.StartupLogCompressor;
-import io.quarkus.deployment.dev.devservices.GlobalDevServicesConfig;
+import io.quarkus.deployment.dev.devservices.DevServicesConfig;
 import io.quarkus.deployment.logging.LoggingSetupBuildItem;
 
 /**
@@ -22,7 +22,7 @@ import io.quarkus.deployment.logging.LoggingSetupBuildItem;
  * <p>
  * The processor starts the Pub/Sub service in case it's not running.
  */
-@BuildSteps(onlyIfNot = IsNormal.class, onlyIf = GlobalDevServicesConfig.Enabled.class)
+@BuildSteps(onlyIfNot = IsNormal.class, onlyIf = DevServicesConfig.Enabled.class)
 public class PubSubDevServiceProcessor {
 
     private static final Logger LOGGER = Logger.getLogger(PubSubDevServiceProcessor.class.getName());
@@ -34,16 +34,16 @@ public class PubSubDevServiceProcessor {
 
     @BuildStep
     public DevServicesResultBuildItem start(DockerStatusBuildItem dockerStatusBuildItem,
-            PubSubBuildTimeConfig pubSubBuildTimeConfig,
+            PubSubDevServiceConfig devServiceConfig,
             FirebaseDevServiceConfig firebaseConfig,
             List<DevServicesSharedNetworkBuildItem> devServicesSharedNetworkBuildItem,
             Optional<ConsoleInstalledBuildItem> consoleInstalledBuildItem,
             CuratedApplicationShutdownBuildItem closeBuildItem,
             LaunchModeBuildItem launchMode,
             LoggingSetupBuildItem loggingSetupBuildItem,
-            GlobalDevServicesConfig globalDevServicesConfig) {
+            DevServicesConfig globalDevServicesConfig) {
         // If dev service is running and config has changed, stop the service
-        if (devService != null && !pubSubBuildTimeConfig.devservice().equals(config)) {
+        if (devService != null && !devServiceConfig.equals(config)) {
             stopContainer();
         } else if (devService != null) {
             return devService.toBuildItem();
@@ -57,8 +57,8 @@ public class PubSubDevServiceProcessor {
 
         // Try starting the container if conditions are met
         try {
-            devService = startContainerIfAvailable(dockerStatusBuildItem, pubSubBuildTimeConfig.devservice(),
-                    firebaseConfig, globalDevServicesConfig.timeout);
+            devService = startContainerIfAvailable(dockerStatusBuildItem, devServiceConfig,
+                    firebaseConfig, globalDevServicesConfig.timeout());
         } catch (Throwable t) {
             LOGGER.warn("Unable to start PubSub dev service", t);
             // Dump captured logs in case of an error
