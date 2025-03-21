@@ -3,6 +3,9 @@ package io.quarkiverse.googlecloudservices.firebase.deployment.testcontainers;
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.nio.file.FileSystem;
+import java.nio.file.FileSystemNotFoundException;
+import java.nio.file.FileSystems;
 import java.nio.file.Path;
 import java.util.*;
 import java.util.function.Consumer;
@@ -1124,7 +1127,21 @@ public class FirebaseEmulatorContainer extends GenericContainer<FirebaseEmulator
             }
 
             try {
-                return Path.of(resourcePath.toURI());
+                var uri = resourcePath.toURI();
+
+                try {
+                    if (uri.getScheme().equals("jar")) {
+                        try (FileSystem zipfs = FileSystems.newFileSystem(uri, new HashMap<>())) {
+                            return Path.of(resourcePath.toURI());
+                        }
+                    } else {
+                        return Path.of(resourcePath.toURI());
+                    }
+                } catch (FileSystemNotFoundException e) {
+                    throw new IllegalStateException("Cannot read from filesystem for uri " + uri, e);
+                } catch (IOException e) {
+                    throw new IllegalStateException("Cannot read build resource: " + uri, e);
+                }
             } catch (URISyntaxException e) {
                 throw new IllegalStateException("Resource not found: " + path, e);
             }
