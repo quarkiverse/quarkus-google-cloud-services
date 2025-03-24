@@ -53,6 +53,14 @@
             <groupId>io.quarkus</groupId>
             <artifactId>quarkus-grpc-common</artifactId>
         </dependency>
+        <dependency>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-vertx-http</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.google.api-client</groupId>
+            <artifactId>google-api-client</artifactId>
+        </dependency>
     </dependencies>
 
     <build>
