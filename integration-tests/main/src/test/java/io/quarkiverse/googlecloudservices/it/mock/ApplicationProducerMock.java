@@ -3,6 +3,8 @@ package io.quarkiverse.googlecloudservices.it.mock;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
+import com.google.auth.Credentials;
+import com.google.cloud.NoCredentials;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.Default;
 import jakarta.enterprise.inject.Produces;
@@ -10,10 +12,6 @@ import jakarta.inject.Singleton;
 
 import org.mockito.Mockito;
 
-import com.google.api.gax.core.CredentialsProvider;
-import com.google.api.gax.core.NoCredentialsProvider;
-import com.google.auth.Credentials;
-import com.google.cloud.NoCredentials;
 import com.google.cloud.secretmanager.v1.AccessSecretVersionResponse;
 import com.google.cloud.secretmanager.v1.SecretManagerServiceClient;
 import com.google.cloud.secretmanager.v1.SecretPayload;
@@ -31,13 +29,6 @@ public class ApplicationProducerMock {
     @Default
     public Credentials googleCredential() {
         return NoCredentials.getInstance();
-    }
-
-    @Produces
-    @Singleton
-    @Default
-    public CredentialsProvider credentialsProvider() {
-        return NoCredentialsProvider.create();
     }
 
     @Produces

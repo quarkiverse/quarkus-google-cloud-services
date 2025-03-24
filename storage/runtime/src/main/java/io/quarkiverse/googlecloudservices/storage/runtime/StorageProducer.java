@@ -7,12 +7,14 @@ import java.util.Optional;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.Default;
 import jakarta.enterprise.inject.Disposes;
+import jakarta.enterprise.inject.Instance;
 import jakarta.enterprise.inject.Produces;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 
 import com.google.api.gax.retrying.RetrySettings;
 import com.google.auth.Credentials;
+import com.google.cloud.NoCredentials;
 import com.google.cloud.TransportOptions;
 import com.google.cloud.grpc.GrpcTransportOptions;
 import com.google.cloud.http.HttpTransportOptions;
@@ -26,7 +28,7 @@ import io.quarkiverse.googlecloudservices.common.GcpConfigHolder;
 public class StorageProducer {
 
     @Inject
-    Credentials googleCredentials;
+    Instance<Credentials> googleCredentials;
 
     @Inject
     GcpConfigHolder gcpConfigHolder;
@@ -39,8 +41,12 @@ public class StorageProducer {
     @Default
     public Storage storage() throws IOException {
         GcpBootstrapConfiguration gcpConfiguration = gcpConfigHolder.getBootstrapConfig();
+        var credentials = storageConfiguration.hostOverride().isPresent()
+                ? NoCredentials.getInstance()
+                : googleCredentials.get();
+
         StorageOptions.Builder builder = StorageOptions.newBuilder()
-                .setCredentials(googleCredentials);
+                .setCredentials(credentials);
 
         gcpConfiguration.projectId().ifPresent(builder::setProjectId);
         storageConfiguration.hostOverride().ifPresent(builder::setHost);
