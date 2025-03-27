@@ -214,6 +214,15 @@
       "contributions": [
         "doc"
       ]
+    },
+    {
+      "login": "SimonScholz",
+      "name": "Simon Scholz",
+      "avatar_url": "https://avatars.githubusercontent.com/u/7559962?v=4",
+      "profile": "https://simonscholz.dev",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,
