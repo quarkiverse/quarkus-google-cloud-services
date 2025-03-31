@@ -3,7 +3,6 @@ package io.quarkiverse.googlecloudservices.firebase.deployment.testcontainers;
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.nio.file.FileSystem;
 import java.nio.file.FileSystemNotFoundException;
 import java.nio.file.FileSystems;
 import java.nio.file.Path;
@@ -1130,10 +1129,17 @@ public class FirebaseEmulatorContainer extends GenericContainer<FirebaseEmulator
                 var uri = resourcePath.toURI();
 
                 try {
+                    /*
+                     * If the resource is read form a JAR (the normal extension situation), we need to
+                     * create a Filesystem which can handle that. This is not needed for a local build.
+                     */
                     if (uri.getScheme().equals("jar")) {
-                        try (FileSystem zipfs = FileSystems.newFileSystem(uri, new HashMap<>())) {
-                            return Path.of(resourcePath.toURI());
-                        }
+                        /*
+                         * The FS is not closed as this will later result in an error when the
+                         * file is actually loaded from the JAR by the Docker client code.
+                         */
+                        FileSystems.newFileSystem(uri, new HashMap<>());
+                        return Path.of(resourcePath.toURI());
                     } else {
                         return Path.of(resourcePath.toURI());
                     }
