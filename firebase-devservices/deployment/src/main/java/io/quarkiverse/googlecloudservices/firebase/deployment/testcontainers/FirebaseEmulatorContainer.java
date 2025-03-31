@@ -2,10 +2,7 @@ package io.quarkiverse.googlecloudservices.firebase.deployment.testcontainers;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URISyntaxException;
-import java.nio.file.FileSystemNotFoundException;
-import java.nio.file.FileSystems;
-import java.nio.file.Path;
+import java.nio.file.*;
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
@@ -1060,11 +1057,14 @@ public class FirebaseEmulatorContainer extends GenericContainer<FirebaseEmulator
         private final Map<Emulator, ExposedPort> devServices;
 
         private DockerfileBuilder dockerBuilder;
+        private Path tempBuildResourceDir;
         private final String firebaseVersion;
 
         public FirebaseDockerBuilder(EmulatorConfig emulatorConfig) {
             this.devServices = emulatorConfig.firebaseConfig().services;
             this.emulatorConfig = emulatorConfig;
+
+            LOGGER.debug("Loaded emulator config {}", this.emulatorConfig);
 
             try {
                 var resolver = new FirebaseVersionResolver();
@@ -1101,56 +1101,66 @@ public class FirebaseEmulatorContainer extends GenericContainer<FirebaseEmulator
         }
 
         private void buildBaseImageIfNeeded() {
+            LOGGER.debug("Checking if we need to build a new base image for the Firebase dev service image");
             if (!baseImageExists()) {
+                LOGGER.debug("No base image found to use for Firebase DevService. Building new image");
+
                 var baseDockerFile = buildResource("Dockerfile.base");
+
+                var baseImageName = emulatorConfig.dockerConfig().imageName();
+                var user = dockerUser();
+                var group = dockerGroup();
+
+                LOGGER.debug("Using base image {}", baseImageName);
+                LOGGER.debug("Running as {} : {}", user, group);
+                LOGGER.debug("Installing firebase version: {}", firebaseVersion);
 
                 var baseImage = new ImageFromDockerfile(baseImageName(), false)
                         .withDockerfile(baseDockerFile)
                         .withFileFromPath("user-add.sh", buildResource("user-add.sh"))
-                        .withBuildArg("BASE_IMAGE", emulatorConfig.dockerConfig().imageName())
-                        .withBuildArg("USER_ID", "" + dockerUser())
-                        .withBuildArg("GROUP_ID", "" + dockerGroup())
+                        .withBuildArg("BASE_IMAGE", baseImageName)
+                        .withBuildArg("USER_ID", "" + user)
+                        .withBuildArg("GROUP_ID", "" + group)
                         .withBuildArg("FIREBASE_VERSION", firebaseVersion);
 
                 baseImage.get();
                 this.dockerBuilder = null;
+            } else {
+                LOGGER.debug("Base image already exists. Using the cached version");
             }
         }
 
-        private Path buildResource(String path) {
+        private Path buildResource(String filePath) {
             var cl = Thread.currentThread().getContextClassLoader();
-            var resourcePath = cl.getResource(getClass().getPackageName().replace('.', '/') + "/" + path);
+            var resourcePath = getClass().getPackageName().replace('.', '/') + "/" + filePath;
+            LOGGER.debug("Including resource from resource {}", resourcePath);
 
-            if (resourcePath == null) {
-                throw new IllegalStateException("Resource not found: " + path);
-            }
+            Path path = Path.of(filePath);
 
-            try {
-                var uri = resourcePath.toURI();
-
-                try {
-                    /*
-                     * If the resource is read form a JAR (the normal extension situation), we need to
-                     * create a Filesystem which can handle that. This is not needed for a local build.
-                     */
-                    if (uri.getScheme().equals("jar")) {
-                        /*
-                         * The FS is not closed as this will later result in an error when the
-                         * file is actually loaded from the JAR by the Docker client code.
-                         */
-                        FileSystems.newFileSystem(uri, new HashMap<>());
-                        return Path.of(resourcePath.toURI());
-                    } else {
-                        return Path.of(resourcePath.toURI());
-                    }
-                } catch (FileSystemNotFoundException e) {
-                    throw new IllegalStateException("Cannot read from filesystem for uri " + uri, e);
-                } catch (IOException e) {
-                    throw new IllegalStateException("Cannot read build resource: " + uri, e);
+            try (var resource = cl.getResourceAsStream(resourcePath)) {
+                if (resource == null) {
+                    throw new IllegalStateException("Resource not found: " + filePath);
                 }
-            } catch (URISyntaxException e) {
+
+                File tempFile = new File(temporaryBuildResourceDir().toFile(), path.getFileName().toString());
+                tempFile.deleteOnExit();
+
+                Files.copy(resource, tempFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+
+                LOGGER.debug("Including {} from temporary directory {}", filePath, tempFile.toPath());
+
+                return tempFile.toPath();
+            } catch (IOException e) {
                 throw new IllegalStateException("Resource not found: " + path, e);
             }
+        }
+
+        private Path temporaryBuildResourceDir() throws IOException {
+            if (tempBuildResourceDir == null) {
+                tempBuildResourceDir = Files.createTempDirectory("firebase");
+                tempBuildResourceDir.toFile().deleteOnExit();
+            }
+            return tempBuildResourceDir;
         }
 
         private static final String BASE_IMAGE_NAME = "localhost/testcontainers/firebase-base";
