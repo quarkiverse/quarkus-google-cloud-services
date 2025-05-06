@@ -2,6 +2,7 @@ package io.quarkiverse.googlecloudservices.pubsub;
 
 import java.io.IOException;
 import java.util.Optional;
+import java.util.function.Consumer;
 import java.util.stream.StreamSupport;
 
 import jakarta.annotation.PostConstruct;
@@ -87,17 +88,38 @@ public class QuarkusPubSub {
      * Creates a PubSub Publisher using the configured project ID.
      */
     public Publisher publisher(String topic) throws IOException {
-        return publisher(topic, gcpConfigHolder.getBootstrapConfig().projectId().orElseThrow());
+        return publisher(topic, (Consumer<Publisher.Builder>) null);
+    }
+
+    /**
+     * Creates a PubSub Publisher using the configured project ID. The customizer can be used to change additional
+     * settings on the builder
+     */
+    public Publisher publisher(String topic, Consumer<Publisher.Builder> customizer) throws IOException {
+        return publisher(topic, gcpConfigHolder.getBootstrapConfig().projectId().orElseThrow(), customizer);
     }
 
     /**
      * Creates a PubSub Publisher using the specified project ID.
      */
     public Publisher publisher(String topic, String projectId) throws IOException {
+        return publisher(topic, projectId, null);
+    }
+
+    /**
+     * Creates a PubSub Publisher using the specified project ID.The customizer can be used to change additional
+     * settings on the builder
+     */
+    public Publisher publisher(String topic, String projectId, Consumer<Publisher.Builder> customizer) throws IOException {
         TopicName topicName = TopicName.of(projectId, topic);
         var builder = Publisher.newBuilder(topicName)
                 .setCredentialsProvider(credentialsProvider());
         channelProvider.ifPresent(builder::setChannelProvider);
+
+        if (customizer != null) {
+            customizer.accept(builder);
+        }
+
         return builder.build();
     }
 
