@@ -1,0 +1,72 @@
+= Google Cloud Services - Vertex AI
+
+This extension allows to inject a `com.google.cloud.vertexai.VertexAI` object inside your Quarkus application.
+
+Be sure to have read the https://quarkiverse.github.io/quarkiverse-docs/quarkus-google-cloud-services/main/index.html[Google Cloud Services extension pack global documentation] before this one, it contains general configuration and information.
+
+== Bootstrapping the project
+
+First, we need a new project.Create a new project with the following command (replace the version placeholder with the correct one):
+
+[source,shell script]
+----
+mvn io.quarkus:quarkus-maven-plugin:<quarkusVersion>:create \
+    -DprojectGroupId=org.acme \
+    -DprojectArtifactId=spanner-quickstart \
+    -Dextensions="resteasy-reactive-jackson,quarkus-google-cloud-vertex-ai"
+cd spanner-quickstart
+----
+
+This command generates a Maven project, importing the Google Cloud Spanner extension.
+
+If you already have your Quarkus project configured, you can add the `quarkus-google-cloud-vertex-ai` extension to your project by running the following command in your project base directory:
+
+[source,shell script]
+----
+./mvnw quarkus:add-extension -Dextensions="quarkus-google-cloud-vertex-ai"
+----
+
+This will add the following to your pom.xml:
+
+[source,xml]
+----
+<dependency>
+    <groupId>io.quarkiverse.googlecloudservices</groupId>
+    <artifactId>quarkus-google-cloud-vertex-ai</artifactId>
+</dependency>
+----
+
+== Some example
+
+This is an example usage of the extension: we create a REST resource with a single endpoint that takes a prompt as query parameter a do a prediction using a Generative Model configured with Gemini Flash.
+
+[source,java]
+----
+import java.io.IOException;
+
+import jakarta.inject.Inject;
+import jakarta.ws.rs.GET;
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.QueryParam;
+
+import com.google.cloud.vertexai.VertexAI;
+import com.google.cloud.vertexai.generativeai.GenerativeModel;
+
+@Path("/vertexai")
+public class VertexAIResource {
+    @Inject
+    VertexAI vertexAI;
+
+    @GET
+    public String predict(@QueryParam("prompt") String prompt) throws IOException {
+        var model = new GenerativeModel("gemini-2.0-flash-001", vertexAI);
+        var response = model.generateContent(prompt);
+
+        return response.toString();
+    }
+}
+----
+
+== Configuration Reference
+
+include::./includes/quarkus-google-cloud-vertex-ai.adoc[]

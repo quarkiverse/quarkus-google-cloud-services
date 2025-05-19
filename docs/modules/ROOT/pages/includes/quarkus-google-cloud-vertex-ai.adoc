@@ -1,0 +1,53 @@
+[.configuration-legend]
+icon:lock[title=Fixed at build time] Configuration property fixed at build time - All other configuration properties are overridable at runtime
+[.configuration-reference.searchable, cols="80,.^10,.^10"]
+|===
+
+h|[.header-title]##Configuration property##
+h|Type
+h|Default
+
+a| [[quarkus-google-cloud-vertex-ai_quarkus-google-cloud-vertexai-location]] [.property-path]##link:#quarkus-google-cloud-vertex-ai_quarkus-google-cloud-vertexai-location[`quarkus.google.cloud.vertexai.location`]##
+ifdef::add-copy-button-to-config-props[]
+config_property_copy_button:+++quarkus.google.cloud.vertexai.location+++[]
+endif::add-copy-button-to-config-props[]
+
+
+[.description]
+--
+Google Cloud region.
+
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_GOOGLE_CLOUD_VERTEXAI_LOCATION+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_GOOGLE_CLOUD_VERTEXAI_LOCATION+++`
+endif::add-copy-button-to-env-var[]
+--
+|string
+|
+
+a| [[quarkus-google-cloud-vertex-ai_quarkus-google-cloud-vertexai-api-endpoint]] [.property-path]##link:#quarkus-google-cloud-vertex-ai_quarkus-google-cloud-vertexai-api-endpoint[`quarkus.google.cloud.vertexai.api-endpoint`]##
+ifdef::add-copy-button-to-config-props[]
+config_property_copy_button:+++quarkus.google.cloud.vertexai.api-endpoint+++[]
+endif::add-copy-button-to-config-props[]
+
+
+[.description]
+--
+Vertex AI API endpoint.
+
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_GOOGLE_CLOUD_VERTEXAI_API_ENDPOINT+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_GOOGLE_CLOUD_VERTEXAI_API_ENDPOINT+++`
+endif::add-copy-button-to-env-var[]
+--
+|string
+|
+
+|===
+
