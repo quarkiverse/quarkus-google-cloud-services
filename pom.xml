@@ -26,6 +26,7 @@
   <modules>
     <module>bom</module>
     <module>common</module>
+
     <module>bigquery</module>
     <module>pubsub</module>
     <module>spanner</module>
@@ -37,6 +38,8 @@
     <module>bigtable</module>
     <module>secret-manager</module>
     <module>logging</module>
+    <module>vertx-ai</module>
+    
     <module>integration-tests</module>
   </modules>
   <dependencyManagement>
