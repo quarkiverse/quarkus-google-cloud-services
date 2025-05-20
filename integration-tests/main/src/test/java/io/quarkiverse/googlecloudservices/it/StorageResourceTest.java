@@ -1,6 +1,7 @@
 package io.quarkiverse.googlecloudservices.it;
 
 import static io.restassured.RestAssured.given;
+import static org.hamcrest.Matchers.containsString;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
@@ -57,11 +58,11 @@ public class StorageResourceTest {
         }
         bucket.create("hello.txt", "{\"success\": true}".getBytes(StandardCharsets.UTF_8));
 
-        RestAssured.registerParser("text/plain", Parser.JSON);
+        RestAssured.registerParser("text/plain", Parser.TEXT);
         given()
                 .when().get("/storage")
                 .then()
                 .statusCode(200)
-                .body("success", Matchers.equalTo(true));
+                .body(containsString("{\"success\": true}"));
     }
 }
