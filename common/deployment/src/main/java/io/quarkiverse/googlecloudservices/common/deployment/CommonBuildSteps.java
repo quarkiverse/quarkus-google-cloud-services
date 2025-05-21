@@ -42,7 +42,8 @@ public class CommonBuildSteps {
                 // Required due to sun.misc.Unsafe usage in static initializers
                 .addRuntimeReinitializedClass("com.google.common.cache.Striped64")
                 // Required due to initializing a java.util.Random
-                .addRuntimeReinitializedClass("io.opentelemetry.sdk.internal.AndroidFriendlyRandomHolder");
+                .addRuntimeReinitializedClass("io.opentelemetry.sdk.internal.AndroidFriendlyRandomHolder")
+                .addRuntimeInitializedClass("io.grpc.netty.shaded.io.netty.util.internal.logging.Log4JLoggerFactory");
         return builder.build();
     }
 }
