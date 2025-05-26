@@ -20,6 +20,7 @@ The following services are implemented:
 - [Spanner](spanner)
 - [Storage](storage)
 - [Logging](logging)
+- [Vertex AI](vertx-ai)
     
 ## Example applications
 
