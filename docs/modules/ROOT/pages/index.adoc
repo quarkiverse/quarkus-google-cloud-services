@@ -7,12 +7,15 @@ The Google Cloud Services extension pack provides Quarkus extensions for the fol
 * xref:bigquery.adoc[BigQuery]
 * xref:bigtable.adoc[BigTable]
 * xref:firebase-admin.adoc[Firebase Admin]
+* xref:firebase-devservices.adoc[Firebase Dev services]
+* xref:firebase-realtime-database.adoc[Firebase Realtime Database]
 * xref:firestore.adoc[Firestore]
 * xref:logging.adoc[Logging]
 * xref:pubsub.adoc[PubSub]
 * xref:secretmanager.adoc[SecretManager]
 * xref:spanner.adoc[Spanner]
 * xref:storage.adoc[Storage]
+* xref:vertexai.adoc[Vertex AI]
 
 They all share an optional common configuration property to set the project ID:
 [source, properties]
