@@ -38,10 +38,6 @@
                     <artifactId>checker-qual</artifactId>
                 </exclusion>
                 <exclusion>
-                    <groupId>io.grpc</groupId>
-                    <artifactId>grpc-netty-shaded</artifactId>
-                </exclusion>
-                <exclusion>
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>animal-sniffer-annotations</artifactId>
                 </exclusion>
