@@ -70,3 +70,7 @@ public class VertexAIResource {
 == Configuration Reference
 
 include::./includes/quarkus-google-cloud-vertex-ai.adoc[]
+
+== Resources
+
+- https://www.loicmathieu.fr/wordpress/en/informatique/creer-un-chatbot-avec-google-gemini-vertex-ai-et-quarkus/[Creating a chatbot with Google Gemini Vertex AI and Quarkus]
