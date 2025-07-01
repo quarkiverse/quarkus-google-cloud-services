@@ -1,6 +1,6 @@
 #!/bin/sh
 
-user_exists(){ id "$1" &>/dev/null; }
+user_exists(){ getent passwd "$1" &>/dev/null; }
 group_exists(){ getent group "$1" &>/dev/null; }
 group_name(){ getent group "$1" | cut -d ':' -f 1; }
 
