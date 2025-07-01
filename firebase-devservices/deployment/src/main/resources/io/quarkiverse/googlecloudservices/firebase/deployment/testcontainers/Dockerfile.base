@@ -23,6 +23,7 @@ RUN /srv/user-add.sh ${USER_ID} ${GROUP_ID}
 RUN chown ${USER_ID}:${GROUP_ID} -R /srv/*
 USER "${USER_ID}:${GROUP_ID}"
 
+WORKDIR /srv/firebase
 RUN firebase setup:emulators:database
 RUN firebase setup:emulators:firestore
 RUN firebase setup:emulators:pubsub
