@@ -9,7 +9,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>quarkus-google-cloud-firebase-devservices-parent</artifactId>
-    <name>Quarkus - Google Cloud Services - Firebas Dev Services</name>
+    <name>Quarkus - Google Cloud Services - Firebase Dev Services</name>
     <packaging>pom</packaging>
 
     <modules>

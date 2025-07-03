@@ -41,7 +41,7 @@ public class PubSubDevServiceProcessor {
             CuratedApplicationShutdownBuildItem closeBuildItem,
             LaunchModeBuildItem launchMode,
             LoggingSetupBuildItem loggingSetupBuildItem,
-            DevServicesConfig globalDevServicesConfig) {
+            DevServicesConfig devServicesConfig) {
         // If dev service is running and config has changed, stop the service
         if (devService != null && !devServiceConfig.equals(config)) {
             stopContainer();
@@ -58,7 +58,7 @@ public class PubSubDevServiceProcessor {
         // Try starting the container if conditions are met
         try {
             devService = startContainerIfAvailable(dockerStatusBuildItem, devServiceConfig,
-                    firebaseConfig, globalDevServicesConfig.timeout());
+                    firebaseConfig, devServicesConfig.timeout());
         } catch (Throwable t) {
             LOGGER.warn("Unable to start PubSub dev service", t);
             // Dump captured logs in case of an error
