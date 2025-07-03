@@ -18,7 +18,7 @@ import io.quarkus.deployment.builditem.DockerStatusBuildItem;
 import io.quarkus.deployment.builditem.LaunchModeBuildItem;
 import io.quarkus.deployment.console.ConsoleInstalledBuildItem;
 import io.quarkus.deployment.console.StartupLogCompressor;
-import io.quarkus.deployment.dev.devservices.GlobalDevServicesConfig;
+import io.quarkus.deployment.dev.devservices.DevServicesConfig;
 import io.quarkus.deployment.logging.LoggingSetupBuildItem;
 
 /**
@@ -26,7 +26,7 @@ import io.quarkus.deployment.logging.LoggingSetupBuildItem;
  * <p>
  * The processor starts the Bigtable service in case it's not running.
  */
-@BuildSteps(onlyIfNot = IsNormal.class, onlyIf = GlobalDevServicesConfig.Enabled.class)
+@BuildSteps(onlyIfNot = IsNormal.class, onlyIf = DevServicesConfig.Enabled.class)
 public class BigtableDevServiceProcessor {
 
     private static final Logger LOGGER = Logger.getLogger(BigtableDevServiceProcessor.class.getName());
@@ -44,7 +44,7 @@ public class BigtableDevServiceProcessor {
             CuratedApplicationShutdownBuildItem closeBuildItem,
             LaunchModeBuildItem launchMode,
             LoggingSetupBuildItem loggingSetupBuildItem,
-            GlobalDevServicesConfig globalDevServicesConfig) {
+            DevServicesConfig devServicesConfig) {
         // If dev service is running and config has changed, stop the service
         if (devService != null && !buildTimeConfig.devservice().equals(config)) {
             stopContainer();
@@ -61,7 +61,7 @@ public class BigtableDevServiceProcessor {
         // Try starting the container if conditions are met
         try {
             devService = startContainerIfAvailable(dockerStatusBuildItem, buildTimeConfig.devservice(),
-                    globalDevServicesConfig.timeout);
+                    devServicesConfig.timeout());
         } catch (Throwable t) {
             LOGGER.warn("Unable to start Bigtable dev service", t);
             // Dump captured logs in case of an error

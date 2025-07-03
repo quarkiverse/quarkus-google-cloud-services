@@ -14,7 +14,7 @@ import io.quarkus.deployment.annotations.BuildSteps;
 import io.quarkus.deployment.builditem.*;
 import io.quarkus.deployment.console.ConsoleInstalledBuildItem;
 import io.quarkus.deployment.console.StartupLogCompressor;
-import io.quarkus.deployment.dev.devservices.GlobalDevServicesConfig;
+import io.quarkus.deployment.dev.devservices.DevServicesConfig;
 import io.quarkus.deployment.logging.LoggingSetupBuildItem;
 
 /**
@@ -22,7 +22,7 @@ import io.quarkus.deployment.logging.LoggingSetupBuildItem;
  * <p>
  * The processor starts the Spanner service in case it's not running.
  */
-@BuildSteps(onlyIfNot = IsNormal.class, onlyIf = GlobalDevServicesConfig.Enabled.class)
+@BuildSteps(onlyIfNot = IsNormal.class, onlyIf = DevServicesConfig.Enabled.class)
 public class SpannerDevServiceProcessor {
 
     private static final Logger LOGGER = Logger.getLogger(SpannerDevServiceProcessor.class.getName());
@@ -40,7 +40,7 @@ public class SpannerDevServiceProcessor {
             CuratedApplicationShutdownBuildItem closeBuildItem,
             LaunchModeBuildItem launchMode,
             LoggingSetupBuildItem loggingSetupBuildItem,
-            GlobalDevServicesConfig globalDevServicesConfig) {
+            DevServicesConfig devServicesConfig) {
         // If dev service is running and config has changed, stop the service
         if (devService != null && !spannerBuildTimeConfig.devservice().equals(config)) {
             stopContainer();
@@ -57,7 +57,7 @@ public class SpannerDevServiceProcessor {
         // Try starting the container if conditions are met
         try {
             devService = startContainerIfAvailable(dockerStatusBuildItem, spannerBuildTimeConfig.devservice(),
-                    globalDevServicesConfig.timeout);
+                    devServicesConfig.timeout());
         } catch (Throwable t) {
             LOGGER.warn("Unable to start Spanner dev service", t);
             // Dump captured logs in case of an error

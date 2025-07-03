@@ -56,7 +56,7 @@ public class FirebaseDevServiceProcessor {
             LaunchModeBuildItem launchMode,
             LoggingSetupBuildItem loggingSetupBuildItem,
             BuildProducer<CardPageBuildItem> cardProducer,
-            DevServicesConfig globalDevServicesConfig) {
+            DevServicesConfig devServicesConfig) {
         // If dev service is running and config has changed, stop the service
         if (devService != null && !firebaseBuildTimeConfig.equals(config)) {
             stopContainer();
@@ -78,7 +78,7 @@ public class FirebaseDevServiceProcessor {
                     closeBuildItem,
                     projectConfig,
                     firebaseBuildTimeConfig,
-                    globalDevServicesConfig.timeout());
+                    devServicesConfig.timeout());
         } catch (Throwable t) {
             LOGGER.warn("Unable to start Firebase dev service", t);
             // Dump captured logs in case of an error
