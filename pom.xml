@@ -15,7 +15,7 @@
     <quarkus.version>3.24.1</quarkus.version>
     <enforcer-plugin.version>3.5.0</enforcer-plugin.version>
     <assertj.version>3.27.3</assertj.version>
-    <opentelemetry-alpha.version>1.51.0-alpha</opentelemetry-alpha.version>
+    <opentelemetry-alpha.version>1.52.0-alpha</opentelemetry-alpha.version>
   </properties>
   <scm>
     <connection>scm:git:git@github.com:quarkiverse/quarkus-google-cloud-services.git</connection>
