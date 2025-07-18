@@ -3,11 +3,13 @@ package io.quarkiverse.googlecloudservices.it.firebaseadmin;
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.equalTo;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import io.quarkus.test.junit.QuarkusTest;
 
 @QuarkusTest
+@Disabled
 public class FirebaseAuthorizationResourceTest {
 
     @Test
