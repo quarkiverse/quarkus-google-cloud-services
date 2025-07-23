@@ -45,7 +45,9 @@ public class FirebaseEmulatorConfigBuilder {
     private FirebaseEmulatorContainer.Builder configureBuilder() {
         var builder = FirebaseEmulatorContainer.builder();
 
-        builder.withFirebaseVersion(config.firebase().emulator().firebaseVersion());
+        config.firebase().emulator().firebaseVersion().ifPresentOrElse(
+                builder::withFirebaseVersion,
+                builder::autoDetectFirebaseToolsVersion);
 
         handleDockerConfig(config.firebase().emulator().docker(), builder);
         handleCliConfig(config.firebase().emulator().cli(), builder);

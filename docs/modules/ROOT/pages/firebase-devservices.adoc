@@ -107,6 +107,14 @@ quarkusDev {
 }
 ----
 
+== Firebase tools version
+
+You can specify the firebase (tools) version to use, which determines the version of the emulators which are run
+in the configuration. However, if a `package.json` file is present which defines this version (eiter in
+`dependencies` or `devDependencies`) this version will automatically be picked up in no specific version is
+configured. If neither a version is configured, nor a `package.json` file can be found, the `latest` version of
+`firebase-tools` is used.
+
 == Base image caching
 
 This extension builds a custom Docker image to execute the firebase emulators. To reduce startup times, an aggressive
@@ -132,7 +140,7 @@ You can configure a custom image if needed as base image to run the Firebase Emu
 
 * The image must support NodeJS in a version compatible with the required Firebase Tools
 * The image must be `alpine` based (or at least able to install the following packages using `apk`: )
-** openjdk17-jre
+** openjdk21-jre
 ** bash
 ** curl
 ** openssl
