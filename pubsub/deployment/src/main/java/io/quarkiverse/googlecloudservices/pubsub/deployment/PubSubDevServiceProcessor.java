@@ -116,7 +116,8 @@ public class PubSubDevServiceProcessor {
             Optional<Duration> timeout) {
         // Create and configure Pub/Sub emulator container
         PubSubEmulatorContainer emulatorContainer = new QuarkusPubSubContainer(
-                DockerImageName.parse(config.imageName()).asCompatibleSubstituteFor("gcr.io/google.com/cloudsdktool/cloud-sdk"),
+                DockerImageName.parse(config.imageName())
+                        .asCompatibleSubstituteFor("gcr.io/google.com/cloudsdktool/cloud-sdk:emulators"),
                 config.emulatorPort().orElse(null));
 
         // Set container startup timeout if provided

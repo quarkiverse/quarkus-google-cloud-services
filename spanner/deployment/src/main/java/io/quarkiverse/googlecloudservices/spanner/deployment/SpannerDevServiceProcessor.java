@@ -108,7 +108,8 @@ public class SpannerDevServiceProcessor {
             Optional<Duration> timeout) {
         // Create and configure Pub/Sub emulator container
         QuarkusSpannerContainer emulatorContainer = new QuarkusSpannerContainer(
-                DockerImageName.parse(config.imageName()).asCompatibleSubstituteFor("gcr.io/google.com/cloudsdktool/cloud-sdk"),
+                DockerImageName.parse(config.imageName())
+                        .asCompatibleSubstituteFor("gcr.io/google.com/cloudsdktool/cloud-sdk:emulators:emulators"),
                 config.httpPort().orElse(null),
                 config.grpcPort().orElse(null));
 
