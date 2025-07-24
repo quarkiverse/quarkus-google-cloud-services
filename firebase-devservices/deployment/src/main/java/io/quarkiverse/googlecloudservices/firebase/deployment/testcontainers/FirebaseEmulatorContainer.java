@@ -405,6 +405,16 @@ public class FirebaseEmulatorContainer extends GenericContainer<FirebaseEmulator
         }
 
         /**
+         * Try to auto detect the firebase tools version to use based on the package.json configuration.
+         *
+         * @return The builder.
+         */
+        public Builder autoDetectFirebaseToolsVersion() {
+            this.firebaseVersion = FirebaseToolsVersionReader.getFirebaseVersion();
+            return this;
+        }
+
+        /**
          * Configure the firebase emulators
          *
          * @return The firebase config builder

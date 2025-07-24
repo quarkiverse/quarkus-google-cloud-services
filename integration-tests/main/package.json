@@ -1,0 +1,9 @@
+{
+  "name": "dummy",
+  "private": true,
+  "version": "0.0.0",
+  "description": "This file is used to fixate the version of firebase-tools used, so we can use dependabot to detect when we need to upgrade",
+  "dependencies": {
+    "firebase-tools": "^14.11.1"
+  }
+}

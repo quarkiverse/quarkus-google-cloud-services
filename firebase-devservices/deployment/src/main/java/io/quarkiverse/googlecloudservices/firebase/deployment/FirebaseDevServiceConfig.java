@@ -85,10 +85,10 @@ public interface FirebaseDevServiceConfig {
         interface Emulator {
 
             /**
-             * The version of the firebase tools to use. Default is to use the latest available version.
+             * The version of the firebase tools to use. Default is to auto-detect it from a package.json file
+             * or else use the latest available version.
              */
-            @WithDefault(FirebaseEmulatorContainer.DEFAULT_FIREBASE_VERSION)
-            String firebaseVersion();
+            Optional<String> firebaseVersion();
 
             /**
              * Docker specific settings

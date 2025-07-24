@@ -131,7 +131,7 @@ public class FirebaseDevServiceProcessor {
             cardBuildItem.addPage(Page.externalPageBuilder("Firebase UI")
                     .url(uiHost, uiHost)
                     .icon("font-awesome-solid:gauge-high")
-                    .staticLabel(firebaseBuildTimeConfig.firebase().emulator().firebaseVersion())
+                    .staticLabel(firebaseBuildTimeConfig.firebase().emulator().firebaseVersion().orElse("auto-detected"))
                     .mimeType(ExternalPageBuilder.MIME_TYPE_HTML));
         }
 
