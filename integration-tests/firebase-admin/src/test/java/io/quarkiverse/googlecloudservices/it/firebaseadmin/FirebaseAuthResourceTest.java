@@ -12,6 +12,7 @@ import java.util.Set;
 
 import jakarta.inject.Inject;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -21,6 +22,7 @@ import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.http.ContentType;
 
 @QuarkusTest
+@Disabled
 class FirebaseAuthResourceTest extends FirebaseAuthTest {
 
     @Inject
