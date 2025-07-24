@@ -57,7 +57,7 @@ endif::add-copy-button-to-config-props[]
 
 [.description]
 --
-The version of the firebase tools to use. Default is to use the latest available version.
+The version of the firebase tools to use. Default is to auto-detect it from a package.json file or else use the latest available version.
 
 
 ifdef::add-copy-button-to-env-var[]
@@ -68,7 +68,7 @@ Environment variable: `+++QUARKUS_GOOGLE_CLOUD_DEVSERVICES_FIREBASE_EMULATOR_FIR
 endif::add-copy-button-to-env-var[]
 --
 |string
-|`latest`
+|
 
 a|icon:lock[title=Fixed at build time] [[quarkus-google-cloud-firebase-devservices_quarkus-google-cloud-devservices-firebase-emulator-docker-image-name]] [.property-path]##link:#quarkus-google-cloud-firebase-devservices_quarkus-google-cloud-devservices-firebase-emulator-docker-image-name[`quarkus.google.cloud.devservices.firebase.emulator.docker.image-name`]##
 ifdef::add-copy-button-to-config-props[]

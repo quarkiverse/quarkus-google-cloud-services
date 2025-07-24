@@ -15,7 +15,7 @@ import io.smallrye.config.WithDefault;
  *
  * <pre>
  * quarkus.google.cloud.firestore.devservice.enabled = true
- * quarkus.google.cloud.firestore.devservice.image-name = gcr.io/google.com/cloudsdktool/google-cloud-cli # optional
+ * quarkus.google.cloud.firestore.devservice.image-name = gcr.io/google.com/cloudsdktool/google-cloud-cli:emulators # optional
  * quarkus.google.cloud.firestore.devservice.emulatorPort = 8080 # optional
  * </pre>
  */
@@ -33,9 +33,9 @@ public interface FirestoreDevServiceConfig {
     /**
      * Sets the Docker image name for the Google Cloud SDK.
      * This image is used to emulate the Firestore service in the development environment.
-     * The default value is 'gcr.io/google.com/cloudsdktool/google-cloud-cli'.
+     * The default value is 'gcr.io/google.com/cloudsdktool/google-cloud-cli:emulators:emulators'.
      */
-    @WithDefault("gcr.io/google.com/cloudsdktool/google-cloud-cli")
+    @WithDefault("gcr.io/google.com/cloudsdktool/google-cloud-cli:emulators:emulators")
     String imageName();
 
     /**

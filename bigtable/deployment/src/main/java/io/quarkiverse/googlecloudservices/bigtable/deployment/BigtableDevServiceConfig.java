@@ -15,7 +15,7 @@ import io.smallrye.config.WithDefault;
  *
  * <pre>
  * quarkus.google.cloud.bigtable.devservice.enabled = true
- * quarkus.google.cloud.bigtable.devservice.image-name = gcr.io/google.com/cloudsdktool/google-cloud-cli # optional
+ * quarkus.google.cloud.bigtable.devservice.image-name = gcr.io/google.com/cloudsdktool/google-cloud-cli:emulators # optional
  * quarkus.google.cloud.bigtable.devservice.emulatorPort = 9000 # optional
  * </pre>
  */
@@ -35,7 +35,7 @@ public interface BigtableDevServiceConfig {
      * This image is used to emulate the Bigtable service in the development environment.
      * The default value is 'gcr.io/google.com/cloudsdktool/google-cloud-cli'.
      */
-    @WithDefault("gcr.io/google.com/cloudsdktool/google-cloud-cli")
+    @WithDefault("gcr.io/google.com/cloudsdktool/google-cloud-cli:emulators")
     String imageName();
 
     /**

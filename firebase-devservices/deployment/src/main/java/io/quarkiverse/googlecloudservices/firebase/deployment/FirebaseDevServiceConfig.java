@@ -18,7 +18,7 @@ import io.smallrye.config.WithDefault;
  *
  * <pre>
  * quarkus.google.cloud.firebase.devservice.enabled = true
- * quarkus.google.cloud.pubsub.devservice.image-name = gcr.io/google.com/cloudsdktool/google-cloud-cli # optional
+ * quarkus.google.cloud.pubsub.devservice.image-name = gcr.io/google.com/cloudsdktool/google-cloud-cli:emulators # optional
  * quarkus.google.cloud.pubsub.devservice.emulatorPort = 8085 # optional
  * </pre>
  */

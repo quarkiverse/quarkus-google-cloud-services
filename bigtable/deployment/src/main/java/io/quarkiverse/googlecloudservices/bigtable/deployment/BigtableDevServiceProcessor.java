@@ -112,7 +112,8 @@ public class BigtableDevServiceProcessor {
             Optional<Duration> timeout) {
         // Create and configure Bigtable emulator container
         BigtableEmulatorContainer emulatorContainer = new QuarkusBigtableContainer(
-                DockerImageName.parse(config.imageName()).asCompatibleSubstituteFor("gcr.io/google.com/cloudsdktool/cloud-sdk"),
+                DockerImageName.parse(config.imageName())
+                        .asCompatibleSubstituteFor("gcr.io/google.com/cloudsdktool/cloud-sdk:emulators"),
                 config.emulatorPort().orElse(null));
 
         // Set container startup timeout if provided
