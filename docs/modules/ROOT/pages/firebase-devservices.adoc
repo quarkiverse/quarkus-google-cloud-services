@@ -18,6 +18,7 @@ The following emulators have been verified to work:
 * Functions
 
 The following emulators are currently not supported:
+
 * EventArc
 
 Currently you can specify a custom `firebase.json` file but suport for this is limited. A
@@ -187,6 +188,26 @@ The following extensions support  Dev Services which conflicts with the  Dev Ser
 * PubSub
 
 When including this module, these  Dev Services will automatically be disabled, as the Firebase emulator should feature wise be on-par or more extensive than the individual emulators.
+
+== Specific environments
+
+For some environments, there are additional steps to take to run this extension:
+
+[.configuration-reference.searchable, cols="20,.^80"]
+|===
+
+h|[.header-title]##Environment##
+h|Type
+
+a|Bitbucket
+
+|Include an environment variable to disable docker buildkit
+
+`export DOCKER_BUILDKIT=0`
+
+See https://support.atlassian.com/bitbucket-cloud/docs/run-docker-commands-in-bitbucket-pipelines/#Docker-BuildKit
+
+|===
 
 == Configuration Reference
 
