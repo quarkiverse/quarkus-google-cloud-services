@@ -44,7 +44,7 @@ public class TestableFirebaseEmulatorContainer {
                 .detectUidGid()
                 .afterStart(this::afterStart)
                 .done()
-                .withFirebaseVersion("latest")
+                .autoDetectFirebaseToolsVersion()
                 .withCliArguments()
                 .withProjectId("demo-test-project")
                 .done();
