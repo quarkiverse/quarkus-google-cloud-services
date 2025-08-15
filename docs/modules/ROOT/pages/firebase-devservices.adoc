@@ -201,11 +201,17 @@ h|Type
 
 a|Bitbucket
 
-|Include an environment variable to disable docker buildkit
+a|Use cloud runtime v3 to make sure the Firebase Emulator can mount volumes (needed for e.g Hosting)
 
-`export DOCKER_BUILDKIT=0`
+[source]
+----
+options:
+    runtime:
+        cloud:
+            version: 3
+----
 
-See https://support.atlassian.com/bitbucket-cloud/docs/run-docker-commands-in-bitbucket-pipelines/#Docker-BuildKit
+See https://support.atlassian.com/bitbucket-cloud/docs/enable-and-use-runtime-v3/
 
 |===
 
