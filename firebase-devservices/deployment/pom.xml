@@ -17,6 +17,10 @@
             <artifactId>quarkus-core-deployment</artifactId>
         </dependency>
         <dependency>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-jackson-deployment</artifactId>
+        </dependency>
+        <dependency>
             <groupId>io.quarkiverse.googlecloudservices</groupId>
             <artifactId>quarkus-google-cloud-common-deployment</artifactId>
         </dependency>

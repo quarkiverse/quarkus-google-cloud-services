@@ -7,7 +7,7 @@ ARG USER_ID
 ARG GROUP_ID
 ARG FIREBASE_VERSION
 
-RUN apk --no-cache add openjdk17-jre bash curl openssl gettext nano nginx sudo && \
+RUN apk --no-cache add openjdk21-jre bash curl openssl gettext nano nginx sudo && \
     npm cache clean --force && \
     npm i -g firebase-tools@${FIREBASE_VERSION} && \
     deluser nginx && delgroup abuild && delgroup ping && \

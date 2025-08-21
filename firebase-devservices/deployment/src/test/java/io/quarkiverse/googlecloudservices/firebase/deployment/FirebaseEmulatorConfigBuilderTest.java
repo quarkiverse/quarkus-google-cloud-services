@@ -24,7 +24,7 @@ class FirebaseEmulatorConfigBuilderTest {
                 new TestFirebase(
                         true,
                         new TestFirebaseEmulator(
-                                "11.0.0",
+                                Optional.of("11.0.0"),
                                 new TestDocker(
                                         "node:21-alpine",
                                         Optional.of(1001),
@@ -156,7 +156,7 @@ class FirebaseEmulatorConfigBuilderTest {
     }
 
     record TestFirebaseEmulator(
-            String firebaseVersion,
+            Optional<String> firebaseVersion,
             FirebaseDevServiceConfig.Firebase.Emulator.Docker docker,
             FirebaseDevServiceConfig.Firebase.Emulator.Cli cli,
             Optional<String> customFirebaseJson,
