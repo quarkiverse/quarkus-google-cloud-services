@@ -15,8 +15,21 @@ import com.google.api.gax.core.NoCredentialsProvider;
 import com.google.api.gax.grpc.GrpcTransportChannel;
 import com.google.api.gax.rpc.FixedTransportChannelProvider;
 import com.google.api.gax.rpc.TransportChannelProvider;
-import com.google.cloud.pubsub.v1.*;
-import com.google.pubsub.v1.*;
+import com.google.cloud.pubsub.v1.MessageReceiver;
+import com.google.cloud.pubsub.v1.Publisher;
+import com.google.cloud.pubsub.v1.Subscriber;
+import com.google.cloud.pubsub.v1.SubscriberInterface;
+import com.google.cloud.pubsub.v1.SubscriptionAdminClient;
+import com.google.cloud.pubsub.v1.SubscriptionAdminSettings;
+import com.google.cloud.pubsub.v1.TopicAdminClient;
+import com.google.cloud.pubsub.v1.TopicAdminSettings;
+import com.google.pubsub.v1.ProjectName;
+import com.google.pubsub.v1.ProjectSubscriptionName;
+import com.google.pubsub.v1.PushConfig;
+import com.google.pubsub.v1.Subscription;
+import com.google.pubsub.v1.SubscriptionName;
+import com.google.pubsub.v1.Topic;
+import com.google.pubsub.v1.TopicName;
 
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
@@ -185,8 +198,16 @@ public class QuarkusPubSub {
     private CredentialsProvider credentialsProvider() {
         if (pubSubConfiguration.emulatorHost().isPresent() && pubSubConfiguration.useEmulatorCredentials()) {
             return new NoCredentialsProvider();
-        } else {
+        } else if (!credentialsProvider.isAmbiguous()) {
             return credentialsProvider.get();
+        } else {
+            /*
+             * Ref: https://quarkus.io/guides/cdi-reference#sorting-beans-obtained-with-programmatic-lookup
+             *
+             * The stream is already sorted by priority. The result is not predictable
+             * if no priority is specified since they all have implicit priority 0.
+             */
+            return credentialsProvider.stream().findFirst().get();
         }
     }
 }

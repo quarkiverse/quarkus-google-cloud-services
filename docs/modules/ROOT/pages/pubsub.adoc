@@ -55,8 +55,26 @@ This extension provides a `QuarkusPubSub` CDI bean that can help to interact wit
 If you don't want to use `QuarkusPubSub`, be sure to configure the authentication.
 By default, PubSub mandates the usage of the `GOOGLE_APPLICATION_CREDENTIALS` environment variable to define its credentials, so
 you need to set it instead of relying on the `quarkus.google.cloud.service-account-location` property.
-Another solution, is to inject a `CredentialsProvider` provided by the extension, and to use it inside the various PubSub
-builders and settings objects when, instantiating PubSub components.
+Another solution, is to produce a `CredentialsProvider` with a priority > 0 - the highest priority
+will be used and the default provider has priority 0.
+
+For example, this uses the `quarkus.google.cloud.service-account-encoded-key` property to authenticate
+using a Base64 encoded Google Cloud service account key.
+
+[source,java]
+----
+@ConfigProperty(name = "quarkus.google.cloud.service-account-encoded-key")
+String base64Key;
+
+@Produces
+@Singleton
+@Priority(Integer.MAX_VALUE)
+public CredentialsProvider credentialsProvider() throws IOException {
+    final InputStream keyStream = new ByteArrayInputStream(Base64.getDecoder().decode(base64Key));
+    final GoogleCredentials credentials = GoogleCredentials.fromStream(keyStream);
+    return () -> credentials;
+}
+----
 
 In case you are connecting to the emulator (and thus `quarkus.google.cloud.pubsub.emulator-host` is set), the
 extension will automatically use the `NoCredentialsProvider` for authentication. This behaviour can be disabled
