@@ -47,7 +47,7 @@ Environment variable: `+++QUARKUS_GOOGLE_CLOUD_LOGGING_ENABLED+++`
 endif::add-copy-button-to-env-var[]
 --
 |boolean
-|`+++true+++`
+|`true`
 
 a| [[quarkus-google-cloud-logging_quarkus-google-cloud-logging-format]] [.property-path]##link:#quarkus-google-cloud-logging_quarkus-google-cloud-logging-format[`quarkus.google.cloud.logging.format`]##
 ifdef::add-copy-button-to-config-props[]
@@ -68,7 +68,7 @@ Environment variable: `+++QUARKUS_GOOGLE_CLOUD_LOGGING_FORMAT+++`
 endif::add-copy-button-to-env-var[]
 --
 a|`text`, `json`
-|`+++text+++`
+|`text`
 
 a| [[quarkus-google-cloud-logging_quarkus-google-cloud-logging-synchronicity]] [.property-path]##link:#quarkus-google-cloud-logging_quarkus-google-cloud-logging-synchronicity[`quarkus.google.cloud.logging.synchronicity`]##
 ifdef::add-copy-button-to-config-props[]
@@ -152,7 +152,7 @@ Environment variable: `+++QUARKUS_GOOGLE_CLOUD_LOGGING_RESOURCE_TYPE+++`
 endif::add-copy-button-to-env-var[]
 --
 |string
-|`+++global+++`
+|`global`
 
 a| [[quarkus-google-cloud-logging_quarkus-google-cloud-logging-resource-label-label]] [.property-path]##link:#quarkus-google-cloud-logging_quarkus-google-cloud-logging-resource-label-label[`quarkus.google.cloud.logging.resource.label."label"`]##
 ifdef::add-copy-button-to-config-props[]
@@ -194,7 +194,7 @@ Environment variable: `+++QUARKUS_GOOGLE_CLOUD_LOGGING_GCP_TRACING_ENABLED+++`
 endif::add-copy-button-to-env-var[]
 --
 |boolean
-|`+++true+++`
+|`true`
 
 a| [[quarkus-google-cloud-logging_quarkus-google-cloud-logging-gcp-tracing-project-id]] [.property-path]##link:#quarkus-google-cloud-logging_quarkus-google-cloud-logging-gcp-tracing-project-id[`quarkus.google.cloud.logging.gcp-tracing.project-id`]##
 ifdef::add-copy-button-to-config-props[]
@@ -236,7 +236,7 @@ Environment variable: `+++QUARKUS_GOOGLE_CLOUD_LOGGING_STRUCTURED_STACK_TRACE_IN
 endif::add-copy-button-to-env-var[]
 --
 |boolean
-|`+++true+++`
+|`true`
 
 a| [[quarkus-google-cloud-logging_quarkus-google-cloud-logging-structured-mdc-included]] [.property-path]##link:#quarkus-google-cloud-logging_quarkus-google-cloud-logging-structured-mdc-included[`quarkus.google.cloud.logging.structured.mdc.included`]##
 ifdef::add-copy-button-to-config-props[]
@@ -257,7 +257,7 @@ Environment variable: `+++QUARKUS_GOOGLE_CLOUD_LOGGING_STRUCTURED_MDC_INCLUDED++
 endif::add-copy-button-to-env-var[]
 --
 |boolean
-|`+++true+++`
+|`true`
 
 a| [[quarkus-google-cloud-logging_quarkus-google-cloud-logging-structured-mdc-field-name]] [.property-path]##link:#quarkus-google-cloud-logging_quarkus-google-cloud-logging-structured-mdc-field-name[`quarkus.google.cloud.logging.structured.mdc.field-name`]##
 ifdef::add-copy-button-to-config-props[]
@@ -278,7 +278,7 @@ Environment variable: `+++QUARKUS_GOOGLE_CLOUD_LOGGING_STRUCTURED_MDC_FIELD_NAME
 endif::add-copy-button-to-env-var[]
 --
 |string
-|`+++mdc+++`
+|`mdc`
 
 a| [[quarkus-google-cloud-logging_quarkus-google-cloud-logging-structured-parameters-included]] [.property-path]##link:#quarkus-google-cloud-logging_quarkus-google-cloud-logging-structured-parameters-included[`quarkus.google.cloud.logging.structured.parameters.included`]##
 ifdef::add-copy-button-to-config-props[]
@@ -299,7 +299,7 @@ Environment variable: `+++QUARKUS_GOOGLE_CLOUD_LOGGING_STRUCTURED_PARAMETERS_INC
 endif::add-copy-button-to-env-var[]
 --
 |boolean
-|`+++true+++`
+|`true`
 
 a| [[quarkus-google-cloud-logging_quarkus-google-cloud-logging-structured-parameters-field-name]] [.property-path]##link:#quarkus-google-cloud-logging_quarkus-google-cloud-logging-structured-parameters-field-name[`quarkus.google.cloud.logging.structured.parameters.field-name`]##
 ifdef::add-copy-button-to-config-props[]
@@ -320,7 +320,7 @@ Environment variable: `+++QUARKUS_GOOGLE_CLOUD_LOGGING_STRUCTURED_PARAMETERS_FIE
 endif::add-copy-button-to-env-var[]
 --
 |string
-|`+++parameters+++`
+|`parameters`
 
 a| [[quarkus-google-cloud-logging_quarkus-google-cloud-logging-log-target]] [.property-path]##link:#quarkus-google-cloud-logging_quarkus-google-cloud-logging-log-target[`quarkus.google.cloud.logging.log-target`]##
 ifdef::add-copy-button-to-config-props[]
@@ -341,7 +341,7 @@ Environment variable: `+++QUARKUS_GOOGLE_CLOUD_LOGGING_LOG_TARGET+++`
 endif::add-copy-button-to-env-var[]
 --
 a|`cloud-logging`, `stdout`, `stderr`
-|`+++cloud-logging+++`
+|`cloud-logging`
 
 |===
 

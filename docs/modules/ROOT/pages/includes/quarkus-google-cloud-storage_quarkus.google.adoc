@@ -47,7 +47,7 @@ Environment variable: `+++QUARKUS_GOOGLE_CLOUD_STORAGE_TRANSPORT_USE_GRPC+++`
 endif::add-copy-button-to-env-var[]
 --
 |boolean
-|`+++false+++`
+|`false`
 
 a| [[quarkus-google-cloud-storage_quarkus-google-cloud-storage-transport-http-connect-timeout]] [.property-path]##link:#quarkus-google-cloud-storage_quarkus-google-cloud-storage-transport-http-connect-timeout[`quarkus.google.cloud.storage.transport.http-connect-timeout`]##
 ifdef::add-copy-button-to-config-props[]
