@@ -71,7 +71,11 @@ String base64Key;
 @Priority(Integer.MAX_VALUE)
 public CredentialsProvider credentialsProvider() throws IOException {
     final InputStream keyStream = new ByteArrayInputStream(Base64.getDecoder().decode(base64Key));
-    final GoogleCredentials credentials = GoogleCredentials.fromStream(keyStream);
+        final GoogleCredentials credentials = GoogleCredentials.fromStream(keyStream).createScoped(
+            Arrays.asList(new String[] {
+                "https://www.googleapis.com/auth/pubsub",
+                "https://www.googleapis.com/auth/cloud-platform"
+            }));
     return () -> credentials;
 }
 ----
