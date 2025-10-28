@@ -5,9 +5,12 @@ import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.stream.StreamSupport;
 
+import jakarta.annotation.PostConstruct;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.inject.Instance;
+import jakarta.inject.Inject;
+
 import com.google.api.gax.core.CredentialsProvider;
-import com.google.api.gax.core.ExecutorProvider;
-import com.google.api.gax.core.InstantiatingExecutorProvider;
 import com.google.api.gax.core.NoCredentialsProvider;
 import com.google.api.gax.grpc.GrpcTransportChannel;
 import com.google.api.gax.rpc.FixedTransportChannelProvider;
@@ -33,10 +36,6 @@ import io.grpc.ManagedChannelBuilder;
 import io.quarkiverse.googlecloudservices.common.GcpConfigHolder;
 import io.quarkiverse.googlecloudservices.pubsub.push.PubSubPushBuildTimeConfig;
 import io.quarkiverse.googlecloudservices.pubsub.push.PubSubPushManager;
-import jakarta.annotation.PostConstruct;
-import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.enterprise.inject.Instance;
-import jakarta.inject.Inject;
 
 @ApplicationScoped
 public class QuarkusPubSub {
@@ -54,9 +53,6 @@ public class QuarkusPubSub {
 
     @Inject
     PubSubPushBuildTimeConfig pushConfig;
-
-    @Inject
-    PubSubPullConfiguration pullConfig;
 
     private Optional<TransportChannelProvider> channelProvider;
 
@@ -91,10 +87,7 @@ public class QuarkusPubSub {
     }
 
     private Subscriber pullSubscriber(ProjectSubscriptionName subscriptionName, MessageReceiver receiver) {
-        ExecutorProvider executorProvider = InstantiatingExecutorProvider.newBuilder().setExecutorThreadCount(pullConfig.streamConcurrency().get()).build();
         var builder = Subscriber.newBuilder(subscriptionName, receiver)
-                .setParallelPullCount(pullConfig.parallelStreamCount().get())
-                .setExecutorProvider(executorProvider)
                 .setCredentialsProvider(credentialsProvider());
         channelProvider.ifPresent(builder::setChannelProvider);
         return builder.build();
