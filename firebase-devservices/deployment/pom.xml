@@ -49,14 +49,6 @@
             <groupId>com.google.firebase</groupId>
             <artifactId>firebase-admin</artifactId>
             <scope>test</scope>
-            <exclusions>
-                <!-- We exclude the grpc-netty-shaded library as grpc-netty is included via
-quarkus-google-cloud-common-grpc and Quarkus includes the netty library -->
-                <exclusion>
-                    <groupId>io.grpc</groupId>
-                    <artifactId>grpc-netty-shaded</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <dependency>
             <groupId>io.quarkus</groupId>
@@ -85,12 +77,6 @@ quarkus-google-cloud-common-grpc and Quarkus includes the netty library -->
                     <groupId>org.checkerframework</groupId>
                     <artifactId>checker-qual</artifactId>
                 </exclusion>
-                <!-- We exclude the grpc-netty-shaded library and include only the grpc-netty
-                one (coming from quarkus-google-cloud-common-grpc) as netty is already included with Quarkus -->
-                <exclusion>
-                    <groupId>io.grpc</groupId>
-                    <artifactId>grpc-netty-shaded</artifactId>
-                </exclusion>
                 <exclusion>
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>animal-sniffer-annotations</artifactId>
@@ -113,12 +99,6 @@ quarkus-google-cloud-common-grpc and Quarkus includes the netty library -->
                 <exclusion>
                     <groupId>org.checkerframework</groupId>
                     <artifactId>checker-qual</artifactId>
-                </exclusion>
-                <!-- We exclude the grpc-netty-shaded library as grpc-netty is included via
-                quarkus-google-cloud-common-grpc and Quarkus includes the netty library -->
-                <exclusion>
-                    <groupId>io.grpc</groupId>
-                    <artifactId>grpc-netty-shaded</artifactId>
                 </exclusion>
                 <exclusion>
                     <groupId>org.codehaus.mojo</groupId>
