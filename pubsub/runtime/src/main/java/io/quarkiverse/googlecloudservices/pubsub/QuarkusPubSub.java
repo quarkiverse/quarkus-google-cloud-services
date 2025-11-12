@@ -11,16 +11,32 @@ import jakarta.enterprise.inject.Instance;
 import jakarta.inject.Inject;
 
 import com.google.api.gax.core.CredentialsProvider;
+import com.google.api.gax.core.ExecutorProvider;
+import com.google.api.gax.core.InstantiatingExecutorProvider;
 import com.google.api.gax.core.NoCredentialsProvider;
 import com.google.api.gax.grpc.GrpcTransportChannel;
 import com.google.api.gax.rpc.FixedTransportChannelProvider;
 import com.google.api.gax.rpc.TransportChannelProvider;
-import com.google.cloud.pubsub.v1.*;
-import com.google.pubsub.v1.*;
+import com.google.cloud.pubsub.v1.MessageReceiver;
+import com.google.cloud.pubsub.v1.Publisher;
+import com.google.cloud.pubsub.v1.Subscriber;
+import com.google.cloud.pubsub.v1.SubscriberInterface;
+import com.google.cloud.pubsub.v1.SubscriptionAdminClient;
+import com.google.cloud.pubsub.v1.SubscriptionAdminSettings;
+import com.google.cloud.pubsub.v1.TopicAdminClient;
+import com.google.cloud.pubsub.v1.TopicAdminSettings;
+import com.google.pubsub.v1.ProjectName;
+import com.google.pubsub.v1.ProjectSubscriptionName;
+import com.google.pubsub.v1.PushConfig;
+import com.google.pubsub.v1.Subscription;
+import com.google.pubsub.v1.SubscriptionName;
+import com.google.pubsub.v1.Topic;
+import com.google.pubsub.v1.TopicName;
 
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 import io.quarkiverse.googlecloudservices.common.GcpConfigHolder;
+import io.quarkiverse.googlecloudservices.pubsub.PubSubPullConfiguration.PullConfiguration;
 import io.quarkiverse.googlecloudservices.pubsub.push.PubSubPushBuildTimeConfig;
 import io.quarkiverse.googlecloudservices.pubsub.push.PubSubPushManager;
 
@@ -40,6 +56,9 @@ public class QuarkusPubSub {
 
     @Inject
     PubSubPushBuildTimeConfig pushConfig;
+
+    @Inject
+    PubSubPullConfiguration pullConfig;
 
     private Optional<TransportChannelProvider> channelProvider;
 
@@ -69,12 +88,27 @@ public class QuarkusPubSub {
         if (pushConfig.enabled()) {
             return pushSubscriber(subscriptionName, receiver);
         } else {
-            return pullSubscriber(subscriptionName, receiver);
+            return pullSubscriber(subscriptionName, receiver, pullConfig.toPullConfiguration());
         }
     }
 
-    private Subscriber pullSubscriber(ProjectSubscriptionName subscriptionName, MessageReceiver receiver) {
+    /**
+     * Creates a PubSub pull Subscriber using the specified project ID and pull configuration
+     */
+    public SubscriberInterface pullSubscriber(String subscription, String projectId, MessageReceiver receiver,
+            PullConfiguration pullConfiguration) {
+        ProjectSubscriptionName subscriptionName = ProjectSubscriptionName.of(projectId, subscription);
+        return pullSubscriber(subscriptionName, receiver,
+                pullConfiguration == null ? pullConfig.toPullConfiguration() : pullConfiguration);
+    }
+
+    private Subscriber pullSubscriber(ProjectSubscriptionName subscriptionName, MessageReceiver receiver,
+            PullConfiguration pullConfiguration) {
+        ExecutorProvider executorProvider = InstantiatingExecutorProvider.newBuilder()
+                .setExecutorThreadCount(pullConfiguration.streamConcurrency()).build();
         var builder = Subscriber.newBuilder(subscriptionName, receiver)
+                .setParallelPullCount(pullConfiguration.parallelStreamCount())
+                .setExecutorProvider(executorProvider)
                 .setCredentialsProvider(credentialsProvider());
         channelProvider.ifPresent(builder::setChannelProvider);
         return builder.build();
