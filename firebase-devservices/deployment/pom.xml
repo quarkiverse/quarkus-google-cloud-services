@@ -164,7 +164,7 @@ quarkus-google-cloud-common-grpc and Quarkus includes the netty library -->
             <plugin>
                 <groupId>io.fabric8</groupId>
                 <artifactId>docker-maven-plugin</artifactId>
-                <version>0.47.0</version>
+                <version>0.48.0</version>
                 <executions>
                     <execution>
                         <id>npm-install-before-testing</id>
