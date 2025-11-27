@@ -36,7 +36,6 @@ import com.google.pubsub.v1.TopicName;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 import io.quarkiverse.googlecloudservices.common.GcpConfigHolder;
-import io.quarkiverse.googlecloudservices.pubsub.PubSubPullConfiguration.PullConfiguration;
 import io.quarkiverse.googlecloudservices.pubsub.push.PubSubPushBuildTimeConfig;
 import io.quarkiverse.googlecloudservices.pubsub.push.PubSubPushManager;
 
@@ -65,7 +64,8 @@ public class QuarkusPubSub {
     @PostConstruct
     void init() {
         if (pubSubConfiguration.emulatorHost().isPresent()) {
-            ManagedChannel channel = ManagedChannelBuilder.forTarget(pubSubConfiguration.emulatorHost().get()).usePlaintext()
+            ManagedChannel channel = ManagedChannelBuilder.forTarget(pubSubConfiguration.emulatorHost().get())
+                    .usePlaintext()
                     .build();
             channelProvider = Optional.of(FixedTransportChannelProvider.create(GrpcTransportChannel.create(channel)));
         } else {
@@ -88,7 +88,7 @@ public class QuarkusPubSub {
         if (pushConfig.enabled()) {
             return pushSubscriber(subscriptionName, receiver);
         } else {
-            return pullSubscriber(subscriptionName, receiver, pullConfig.toPullConfiguration());
+            return pullSubscriber(subscriptionName, receiver, pullConfig.toStreamConfig());
         }
     }
 
@@ -96,14 +96,14 @@ public class QuarkusPubSub {
      * Creates a PubSub pull Subscriber using the specified project ID and pull configuration
      */
     public SubscriberInterface pullSubscriber(String subscription, String projectId, MessageReceiver receiver,
-            PullConfiguration pullConfiguration) {
+            StreamConfig pullConfiguration) {
         ProjectSubscriptionName subscriptionName = ProjectSubscriptionName.of(projectId, subscription);
         return pullSubscriber(subscriptionName, receiver,
-                pullConfiguration == null ? pullConfig.toPullConfiguration() : pullConfiguration);
+                pullConfiguration == null ? pullConfig.toStreamConfig() : pullConfiguration);
     }
 
     private Subscriber pullSubscriber(ProjectSubscriptionName subscriptionName, MessageReceiver receiver,
-            PullConfiguration pullConfiguration) {
+            StreamConfig pullConfiguration) {
         ExecutorProvider executorProvider = InstantiatingExecutorProvider.newBuilder()
                 .setExecutorThreadCount(pullConfiguration.streamConcurrency()).build();
         var builder = Subscriber.newBuilder(subscriptionName, receiver)
@@ -144,7 +144,8 @@ public class QuarkusPubSub {
      * Creates a PubSub Publisher using the specified project ID.The customizer can be used to change additional
      * settings on the builder
      */
-    public Publisher publisher(String topic, String projectId, Consumer<Publisher.Builder> customizer) throws IOException {
+    public Publisher publisher(String topic, String projectId, Consumer<Publisher.Builder> customizer)
+            throws IOException {
         TopicName topicName = TopicName.of(projectId, topic);
         var builder = Publisher.newBuilder(topicName)
                 .setCredentialsProvider(credentialsProvider());
@@ -199,12 +200,14 @@ public class QuarkusPubSub {
      * Creates a PubSub Subscription if not already exist, using the configured project ID.
      */
     public Subscription createSubscription(String topic, String subscription) throws IOException {
-        SubscriptionName subscriptionName = SubscriptionName.of(gcpConfigHolder.getBootstrapConfig().projectId().orElseThrow(),
+        SubscriptionName subscriptionName = SubscriptionName.of(
+                gcpConfigHolder.getBootstrapConfig().projectId().orElseThrow(),
                 subscription);
         TopicName topicName = TopicName.of(gcpConfigHolder.getBootstrapConfig().projectId().orElseThrow(), topic);
         SubscriptionAdminSettings subscriptionAdminSettings = subscriptionAdminSettings();
 
-        try (SubscriptionAdminClient subscriptionAdminClient = SubscriptionAdminClient.create(subscriptionAdminSettings)) {
+        try (SubscriptionAdminClient subscriptionAdminClient = SubscriptionAdminClient
+                .create(subscriptionAdminSettings)) {
             Iterable<Subscription> subscriptions = subscriptionAdminClient
                     .listSubscriptions(ProjectName.of(gcpConfigHolder.getBootstrapConfig().projectId().orElseThrow()))
                     .iterateAll();

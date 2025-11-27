@@ -11,9 +11,6 @@ import io.smallrye.config.WithDefault;
 @ConfigRoot(phase = ConfigPhase.RUN_TIME)
 public interface PubSubPullConfiguration {
 
-    public static record PullConfiguration(int parallelStreamCount, int streamConcurrency) {
-    }
-
     /**
      * Number of concurrent streams to use for pull subscriptions. Defaults
      * to 1 which is the same as the base PubSub library.
@@ -28,7 +25,7 @@ public interface PubSubPullConfiguration {
     @WithDefault("5")
     Optional<Integer> streamConcurrency();
 
-    default PullConfiguration toPullConfiguration() {
-        return new PullConfiguration(parallelStreamCount().orElse(1), streamConcurrency().orElse(5));
+    default StreamConfig toStreamConfig() {
+        return new StreamConfig(parallelStreamCount().orElse(1), streamConcurrency().orElse(5));
     }
 }
