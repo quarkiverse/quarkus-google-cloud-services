@@ -11,12 +11,27 @@ import jakarta.enterprise.inject.Instance;
 import jakarta.inject.Inject;
 
 import com.google.api.gax.core.CredentialsProvider;
+import com.google.api.gax.core.ExecutorProvider;
+import com.google.api.gax.core.InstantiatingExecutorProvider;
 import com.google.api.gax.core.NoCredentialsProvider;
 import com.google.api.gax.grpc.GrpcTransportChannel;
 import com.google.api.gax.rpc.FixedTransportChannelProvider;
 import com.google.api.gax.rpc.TransportChannelProvider;
-import com.google.cloud.pubsub.v1.*;
-import com.google.pubsub.v1.*;
+import com.google.cloud.pubsub.v1.MessageReceiver;
+import com.google.cloud.pubsub.v1.Publisher;
+import com.google.cloud.pubsub.v1.Subscriber;
+import com.google.cloud.pubsub.v1.SubscriberInterface;
+import com.google.cloud.pubsub.v1.SubscriptionAdminClient;
+import com.google.cloud.pubsub.v1.SubscriptionAdminSettings;
+import com.google.cloud.pubsub.v1.TopicAdminClient;
+import com.google.cloud.pubsub.v1.TopicAdminSettings;
+import com.google.pubsub.v1.ProjectName;
+import com.google.pubsub.v1.ProjectSubscriptionName;
+import com.google.pubsub.v1.PushConfig;
+import com.google.pubsub.v1.Subscription;
+import com.google.pubsub.v1.SubscriptionName;
+import com.google.pubsub.v1.Topic;
+import com.google.pubsub.v1.TopicName;
 
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
@@ -41,12 +56,16 @@ public class QuarkusPubSub {
     @Inject
     PubSubPushBuildTimeConfig pushConfig;
 
+    @Inject
+    PubSubPullConfiguration pullConfig;
+
     private Optional<TransportChannelProvider> channelProvider;
 
     @PostConstruct
     void init() {
         if (pubSubConfiguration.emulatorHost().isPresent()) {
-            ManagedChannel channel = ManagedChannelBuilder.forTarget(pubSubConfiguration.emulatorHost().get()).usePlaintext()
+            ManagedChannel channel = ManagedChannelBuilder.forTarget(pubSubConfiguration.emulatorHost().get())
+                    .usePlaintext()
                     .build();
             channelProvider = Optional.of(FixedTransportChannelProvider.create(GrpcTransportChannel.create(channel)));
         } else {
@@ -69,12 +88,27 @@ public class QuarkusPubSub {
         if (pushConfig.enabled()) {
             return pushSubscriber(subscriptionName, receiver);
         } else {
-            return pullSubscriber(subscriptionName, receiver);
+            return pullSubscriber(subscriptionName, receiver, pullConfig.toStreamConfig());
         }
     }
 
-    private Subscriber pullSubscriber(ProjectSubscriptionName subscriptionName, MessageReceiver receiver) {
+    /**
+     * Creates a PubSub pull Subscriber using the specified project ID and pull configuration
+     */
+    public SubscriberInterface pullSubscriber(String subscription, String projectId, MessageReceiver receiver,
+            StreamConfig pullConfiguration) {
+        ProjectSubscriptionName subscriptionName = ProjectSubscriptionName.of(projectId, subscription);
+        return pullSubscriber(subscriptionName, receiver,
+                pullConfiguration == null ? pullConfig.toStreamConfig() : pullConfiguration);
+    }
+
+    private Subscriber pullSubscriber(ProjectSubscriptionName subscriptionName, MessageReceiver receiver,
+            StreamConfig pullConfiguration) {
+        ExecutorProvider executorProvider = InstantiatingExecutorProvider.newBuilder()
+                .setExecutorThreadCount(pullConfiguration.streamConcurrency()).build();
         var builder = Subscriber.newBuilder(subscriptionName, receiver)
+                .setParallelPullCount(pullConfiguration.parallelStreamCount())
+                .setExecutorProvider(executorProvider)
                 .setCredentialsProvider(credentialsProvider());
         channelProvider.ifPresent(builder::setChannelProvider);
         return builder.build();
@@ -110,7 +144,8 @@ public class QuarkusPubSub {
      * Creates a PubSub Publisher using the specified project ID.The customizer can be used to change additional
      * settings on the builder
      */
-    public Publisher publisher(String topic, String projectId, Consumer<Publisher.Builder> customizer) throws IOException {
+    public Publisher publisher(String topic, String projectId, Consumer<Publisher.Builder> customizer)
+            throws IOException {
         TopicName topicName = TopicName.of(projectId, topic);
         var builder = Publisher.newBuilder(topicName)
                 .setCredentialsProvider(credentialsProvider());
@@ -165,12 +200,14 @@ public class QuarkusPubSub {
      * Creates a PubSub Subscription if not already exist, using the configured project ID.
      */
     public Subscription createSubscription(String topic, String subscription) throws IOException {
-        SubscriptionName subscriptionName = SubscriptionName.of(gcpConfigHolder.getBootstrapConfig().projectId().orElseThrow(),
+        SubscriptionName subscriptionName = SubscriptionName.of(
+                gcpConfigHolder.getBootstrapConfig().projectId().orElseThrow(),
                 subscription);
         TopicName topicName = TopicName.of(gcpConfigHolder.getBootstrapConfig().projectId().orElseThrow(), topic);
         SubscriptionAdminSettings subscriptionAdminSettings = subscriptionAdminSettings();
 
-        try (SubscriptionAdminClient subscriptionAdminClient = SubscriptionAdminClient.create(subscriptionAdminSettings)) {
+        try (SubscriptionAdminClient subscriptionAdminClient = SubscriptionAdminClient
+                .create(subscriptionAdminSettings)) {
             Iterable<Subscription> subscriptions = subscriptionAdminClient
                     .listSubscriptions(ProjectName.of(gcpConfigHolder.getBootstrapConfig().projectId().orElseThrow()))
                     .iterateAll();
