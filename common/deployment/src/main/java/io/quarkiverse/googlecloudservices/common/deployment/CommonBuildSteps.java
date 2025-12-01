@@ -38,11 +38,15 @@ public class CommonBuildSteps {
     @BuildStep
     public NativeImageConfigBuildItem nativeImageConfiguration() {
         NativeImageConfigBuildItem.Builder builder = NativeImageConfigBuildItem.builder()
-                .addRuntimeReinitializedClass("com.sun.management.internal.PlatformMBeanProviderImpl")
+                .addRuntimeInitializedClass("com.sun.management.internal.PlatformMBeanProviderImpl")
                 // Required due to sun.misc.Unsafe usage in static initializers
-                .addRuntimeReinitializedClass("com.google.common.cache.Striped64")
+                .addRuntimeInitializedClass("com.google.common.cache.Striped64")
                 // Required due to initializing a java.util.Random
-                .addRuntimeReinitializedClass("io.opentelemetry.sdk.internal.AndroidFriendlyRandomHolder");
+                .addRuntimeInitializedClass("io.opentelemetry.sdk.internal.AndroidFriendlyRandomHolder")
+                // Required for Netty HTTP
+                .addRuntimeInitializedClass("io.netty.handler.codec.compression.ZstdConstants")
+                .addRuntimeInitializedClass("io.netty.handler.codec.compression.BrotliOptions")
+                .addRuntimeInitializedClass("io.vertx.core.buffer.impl.VertxByteBufAllocator");
         return builder.build();
     }
 }

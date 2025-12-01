@@ -26,7 +26,7 @@ Environment variable: `+++QUARKUS_GOOGLE_CLOUD_BIGTABLE_DEVSERVICE_ENABLED+++`
 endif::add-copy-button-to-env-var[]
 --
 |boolean
-|`false`
+|`+++false+++`
 
 a|icon:lock[title=Fixed at build time] [[quarkus-google-cloud-bigtable_quarkus-google-cloud-bigtable-devservice-image-name]] [.property-path]##link:#quarkus-google-cloud-bigtable_quarkus-google-cloud-bigtable-devservice-image-name[`quarkus.google.cloud.bigtable.devservice.image-name`]##
 ifdef::add-copy-button-to-config-props[]
@@ -47,7 +47,7 @@ Environment variable: `+++QUARKUS_GOOGLE_CLOUD_BIGTABLE_DEVSERVICE_IMAGE_NAME+++
 endif::add-copy-button-to-env-var[]
 --
 |string
-|`gcr.io/google.com/cloudsdktool/google-cloud-cli`
+|`+++gcr.io/google.com/cloudsdktool/google-cloud-cli:emulators+++`
 
 a|icon:lock[title=Fixed at build time] [[quarkus-google-cloud-bigtable_quarkus-google-cloud-bigtable-devservice-emulator-port]] [.property-path]##link:#quarkus-google-cloud-bigtable_quarkus-google-cloud-bigtable-devservice-emulator-port[`quarkus.google.cloud.bigtable.devservice.emulator-port`]##
 ifdef::add-copy-button-to-config-props[]
