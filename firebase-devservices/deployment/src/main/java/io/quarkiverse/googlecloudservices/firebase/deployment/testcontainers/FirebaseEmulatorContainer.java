@@ -168,6 +168,7 @@ public class FirebaseEmulatorContainer extends GenericContainer<FirebaseEmulator
             Optional<Integer> groupId,
             boolean followStdOut,
             boolean followStdErr,
+            Map<String, String> envVars,
             Consumer<FirebaseEmulatorContainer> afterStart) {
 
         /**
@@ -179,6 +180,7 @@ public class FirebaseEmulatorContainer extends GenericContainer<FirebaseEmulator
                 Optional.empty(),
                 true,
                 true,
+                new HashMap<>(),
                 null);
     }
 
@@ -481,6 +483,7 @@ public class FirebaseEmulatorContainer extends GenericContainer<FirebaseEmulator
                         Builder.this.dockerConfig.groupId(),
                         Builder.this.dockerConfig.followStdOut(),
                         Builder.this.dockerConfig.followStdErr(),
+                        Builder.this.dockerConfig.envVars(),
                         Builder.this.dockerConfig.afterStart());
                 return this;
             }
@@ -512,6 +515,7 @@ public class FirebaseEmulatorContainer extends GenericContainer<FirebaseEmulator
                         Builder.this.dockerConfig.groupId(),
                         Builder.this.dockerConfig.followStdOut(),
                         Builder.this.dockerConfig.followStdErr(),
+                        Builder.this.dockerConfig.envVars(),
                         Builder.this.dockerConfig.afterStart());
                 return this;
             }
@@ -543,6 +547,7 @@ public class FirebaseEmulatorContainer extends GenericContainer<FirebaseEmulator
                         groupId,
                         Builder.this.dockerConfig.followStdOut(),
                         Builder.this.dockerConfig.followStdErr(),
+                        Builder.this.dockerConfig.envVars(),
                         Builder.this.dockerConfig.afterStart());
                 return this;
             }
@@ -583,6 +588,7 @@ public class FirebaseEmulatorContainer extends GenericContainer<FirebaseEmulator
                         Builder.this.dockerConfig.groupId(),
                         followStdOut,
                         Builder.this.dockerConfig.followStdErr(),
+                        Builder.this.dockerConfig.envVars(),
                         Builder.this.dockerConfig.afterStart());
                 return this;
             }
@@ -600,6 +606,26 @@ public class FirebaseEmulatorContainer extends GenericContainer<FirebaseEmulator
                         Builder.this.dockerConfig.groupId(),
                         Builder.this.dockerConfig.followStdOut(),
                         followStdErr,
+                        Builder.this.dockerConfig.envVars(),
+                        Builder.this.dockerConfig.afterStart());
+                return this;
+            }
+
+            /**
+             * Add additional environment variables to the docker image. These can be picked up by
+             * some webframeworks to pass in configuration.
+             *
+             * @param envVars The environment variables
+             * @return THe builder
+             */
+            public DockerConfigBuilder withEnvVars(Map<String, String> envVars) {
+                Builder.this.dockerConfig = new DockerConfig(
+                        Builder.this.dockerConfig.imageName(),
+                        Builder.this.dockerConfig.userId(),
+                        Builder.this.dockerConfig.groupId(),
+                        Builder.this.dockerConfig.followStdOut(),
+                        Builder.this.dockerConfig.followStdErr(),
+                        new HashMap<>(envVars),
                         Builder.this.dockerConfig.afterStart());
                 return this;
             }
@@ -617,6 +643,7 @@ public class FirebaseEmulatorContainer extends GenericContainer<FirebaseEmulator
                         Builder.this.dockerConfig.groupId(),
                         Builder.this.dockerConfig.followStdOut(),
                         Builder.this.dockerConfig.followStdErr(),
+                        Builder.this.dockerConfig.envVars(),
                         afterStart);
                 return this;
             }
@@ -1105,6 +1132,7 @@ public class FirebaseEmulatorContainer extends GenericContainer<FirebaseEmulator
             this.addFirebaseJson();
             this.includeFirestoreFiles();
             this.includeStorageFiles();
+            this.includeAdditionalEnvironmentVariables();
             this.runExecutable();
 
             return result;
@@ -1368,6 +1396,15 @@ public class FirebaseEmulatorContainer extends GenericContainer<FirebaseEmulator
                 this.dockerBuilder.run("mkdir -p " + containerFunctionsPath(emulatorConfig));
                 this.dockerBuilder.volume(containerFunctionsPath(emulatorConfig));
             }
+        }
+
+        private void includeAdditionalEnvironmentVariables() {
+            LOGGER.debug("Adding additional environment variables in firebase-tools image");
+
+            emulatorConfig.dockerConfig().envVars().forEach((key, value) -> {
+                LOGGER.debug("Adding environment variable {} = {}", key, value);
+                dockerBuilder.env(key, value);
+            });
         }
 
         private void runExecutable() {
