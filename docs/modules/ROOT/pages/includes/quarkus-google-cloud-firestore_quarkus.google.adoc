@@ -47,7 +47,7 @@ Environment variable: `+++QUARKUS_GOOGLE_CLOUD_FIRESTORE_DEVSERVICE_ENABLED+++`
 endif::add-copy-button-to-env-var[]
 --
 |boolean
-|`false`
+|`+++false+++`
 
 a|icon:lock[title=Fixed at build time] [[quarkus-google-cloud-firestore_quarkus-google-cloud-firestore-devservice-image-name]] [.property-path]##link:#quarkus-google-cloud-firestore_quarkus-google-cloud-firestore-devservice-image-name[`quarkus.google.cloud.firestore.devservice.image-name`]##
 ifdef::add-copy-button-to-config-props[]
@@ -57,7 +57,7 @@ endif::add-copy-button-to-config-props[]
 
 [.description]
 --
-Sets the Docker image name for the Google Cloud SDK. This image is used to emulate the Firestore service in the development environment. The default value is 'gcr.io/google.com/cloudsdktool/google-cloud-cli'.
+Sets the Docker image name for the Google Cloud SDK. This image is used to emulate the Firestore service in the development environment. The default value is 'gcr.io/google.com/cloudsdktool/google-cloud-cli:emulators:emulators'.
 
 
 ifdef::add-copy-button-to-env-var[]
@@ -68,7 +68,7 @@ Environment variable: `+++QUARKUS_GOOGLE_CLOUD_FIRESTORE_DEVSERVICE_IMAGE_NAME++
 endif::add-copy-button-to-env-var[]
 --
 |string
-|`gcr.io/google.com/cloudsdktool/google-cloud-cli`
+|`+++gcr.io/google.com/cloudsdktool/google-cloud-cli:emulators:emulators+++`
 
 a|icon:lock[title=Fixed at build time] [[quarkus-google-cloud-firestore_quarkus-google-cloud-firestore-devservice-emulator-port]] [.property-path]##link:#quarkus-google-cloud-firestore_quarkus-google-cloud-firestore-devservice-emulator-port[`quarkus.google.cloud.firestore.devservice.emulator-port`]##
 ifdef::add-copy-button-to-config-props[]
