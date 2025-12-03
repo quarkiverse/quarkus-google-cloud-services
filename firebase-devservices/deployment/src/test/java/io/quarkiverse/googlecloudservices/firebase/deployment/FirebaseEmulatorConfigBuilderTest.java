@@ -71,7 +71,7 @@ class FirebaseEmulatorConfigBuilderTest {
                         true,
                         Optional.empty(),
                         Optional.of("storage.rules")));
-        configBuilder = new FirebaseEmulatorConfigBuilder(projectConfig, config);
+        configBuilder = new FirebaseEmulatorConfigBuilder(projectConfig, config, true);
     }
 
     @Test
@@ -85,6 +85,7 @@ class FirebaseEmulatorConfigBuilderTest {
         assertEquals(1002, emulatorConfig.dockerConfig().groupId().orElse(null));
         assertFalse(emulatorConfig.dockerConfig().followStdOut());
         assertTrue(emulatorConfig.dockerConfig().followStdErr());
+        assertTrue(emulatorConfig.dockerConfig().useSharedNetwork());
 
         assertEquals("11.0.0", emulatorConfig.firebaseVersion());
 
