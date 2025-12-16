@@ -16,12 +16,6 @@
             <groupId>com.google.api</groupId>
             <artifactId>gax-grpc</artifactId>
             <exclusions>
-                <!-- We exclude the grpc-netty-shaded library as grpc-netty is included directly
-                 and Quarkus includes the netty library -->
-                <exclusion>
-                    <groupId>io.grpc</groupId>
-                    <artifactId>grpc-netty-shaded</artifactId>
-                </exclusion>
                 <exclusion>
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>animal-sniffer-annotations</artifactId>
@@ -37,16 +31,6 @@
                 <exclusion>
                     <groupId>javax.annotation</groupId>
                     <artifactId>javax.annotation-api</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>io.grpc</groupId>
-            <artifactId>grpc-netty</artifactId>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.codehaus.mojo</groupId>
-                    <artifactId>animal-sniffer-annotations</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
