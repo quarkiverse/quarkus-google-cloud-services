@@ -46,7 +46,8 @@ public class CommonBuildSteps {
                 // Required for Netty HTTP
                 .addRuntimeInitializedClass("io.netty.handler.codec.compression.ZstdConstants")
                 .addRuntimeInitializedClass("io.netty.handler.codec.compression.BrotliOptions")
-                .addRuntimeInitializedClass("io.vertx.core.buffer.impl.VertxByteBufAllocator");
+                .addRuntimeInitializedClass("io.vertx.core.buffer.impl.VertxByteBufAllocator")
+                .addRuntimeInitializedClass("io.netty.buffer.PooledByteBufAllocator");
         return builder.build();
     }
 }
