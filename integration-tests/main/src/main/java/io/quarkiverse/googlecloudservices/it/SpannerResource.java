@@ -31,8 +31,8 @@ public class SpannerResource {
     public void createDatabase() throws ExecutionException, InterruptedException, TimeoutException {
         // create the instance
         spanner.getInstanceAdminClient().createInstance(
-                InstanceInfo.newBuilder(InstanceId.of("test-project", "test-instance"))
-                        .setInstanceConfigId(InstanceConfigId.of("test-project", "test-config")).build())
+                InstanceInfo.newBuilder(InstanceId.of(projectId, "test-instance"))
+                        .setInstanceConfigId(InstanceConfigId.of(projectId, "test-config")).build())
                 .get(1, TimeUnit.SECONDS);
 
         // create the database and the table
