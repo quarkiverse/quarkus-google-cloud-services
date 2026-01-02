@@ -25,7 +25,7 @@ public class MessageDispatcher {
     /**
      * Adapter interface to translate the message handling action to the underlying transport mechanism
      */
-    public interface Response extends AckReplyConsumer{
+    public interface Response extends AckReplyConsumer {
 
         void ioError();
 
@@ -35,6 +35,7 @@ public class MessageDispatcher {
 
     /**
      * Handle the message and dispatch it to the registered listeners.
+     *
      * @param message The message to dispatch
      * @param response The response adapter interface to translate to the underlying transport.
      */
