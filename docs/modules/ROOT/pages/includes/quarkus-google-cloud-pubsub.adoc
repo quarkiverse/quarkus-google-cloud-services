@@ -241,5 +241,47 @@ endif::add-copy-button-to-env-var[]
 |boolean
 |`+++true+++`
 
+a| [[quarkus-google-cloud-pubsub_quarkus-google-cloud-pubsub-pull-parallel-stream-count]] [.property-path]##link:#quarkus-google-cloud-pubsub_quarkus-google-cloud-pubsub-pull-parallel-stream-count[`quarkus.google.cloud.pubsub.pull.parallel-stream-count`]##
+ifdef::add-copy-button-to-config-props[]
+config_property_copy_button:+++quarkus.google.cloud.pubsub.pull.parallel-stream-count+++[]
+endif::add-copy-button-to-config-props[]
+
+
+[.description]
+--
+Number of concurrent streams to use for pull subscriptions. Defaults to 1 which is the same as the base PubSub library.
+
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_GOOGLE_CLOUD_PUBSUB_PULL_PARALLEL_STREAM_COUNT+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_GOOGLE_CLOUD_PUBSUB_PULL_PARALLEL_STREAM_COUNT+++`
+endif::add-copy-button-to-env-var[]
+--
+|int
+|`+++1+++`
+
+a| [[quarkus-google-cloud-pubsub_quarkus-google-cloud-pubsub-pull-stream-concurrency]] [.property-path]##link:#quarkus-google-cloud-pubsub_quarkus-google-cloud-pubsub-pull-stream-concurrency[`quarkus.google.cloud.pubsub.pull.stream-concurrency`]##
+ifdef::add-copy-button-to-config-props[]
+config_property_copy_button:+++quarkus.google.cloud.pubsub.pull.stream-concurrency+++[]
+endif::add-copy-button-to-config-props[]
+
+
+[.description]
+--
+Number of concurrent messages to process per stream. Defaults to 5 which is the same as the base PubSub library.
+
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_GOOGLE_CLOUD_PUBSUB_PULL_STREAM_CONCURRENCY+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_GOOGLE_CLOUD_PUBSUB_PULL_STREAM_CONCURRENCY+++`
+endif::add-copy-button-to-env-var[]
+--
+|int
+|`+++5+++`
+
 |===
 
