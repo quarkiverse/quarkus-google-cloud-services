@@ -33,7 +33,8 @@ class FirebaseEmulatorConfigBuilderTest {
                                         Optional.empty(),
                                         false,
                                         Optional.of(false),
-                                        Optional.of(true)),
+                                        Optional.of(true),
+                                        Map.of("TEST", "TestMe")),
                                 new TestCli(
                                         Optional.of("MY_TOKEN"),
                                         Optional.of("-Xmx"),
@@ -85,6 +86,7 @@ class FirebaseEmulatorConfigBuilderTest {
         assertEquals(1002, emulatorConfig.dockerConfig().groupId().orElse(null));
         assertFalse(emulatorConfig.dockerConfig().followStdOut());
         assertTrue(emulatorConfig.dockerConfig().followStdErr());
+        assertEquals("TestMe", emulatorConfig.dockerConfig().envVars().get("TEST"));
 
         assertEquals("11.0.0", emulatorConfig.firebaseVersion());
 
@@ -171,7 +173,8 @@ class FirebaseEmulatorConfigBuilderTest {
             Optional<String> dockerGroupEnv,
             boolean autoDetectUserAndGroup,
             Optional<Boolean> followStdOut,
-            Optional<Boolean> followStdErr) implements FirebaseDevServiceConfig.Firebase.Emulator.Docker {
+            Optional<Boolean> followStdErr,
+            Map<String, String> envVars) implements FirebaseDevServiceConfig.Firebase.Emulator.Docker {
     }
 
     record TestCli(

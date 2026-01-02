@@ -70,6 +70,7 @@ public class FirebaseEmulatorConfigBuilder {
         docker.dockerGroupEnv().ifPresent(dockerConfig::withGroupIdFromEnv);
         docker.followStdOut().ifPresent(dockerConfig::followStdOut);
         docker.followStdErr().ifPresent(dockerConfig::followStdErr);
+        dockerConfig.withEnvVars(docker.envVars());
 
         dockerConfig.done();
     }
