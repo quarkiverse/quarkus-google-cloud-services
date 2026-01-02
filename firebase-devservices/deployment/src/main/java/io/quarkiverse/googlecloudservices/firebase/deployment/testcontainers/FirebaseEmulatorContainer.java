@@ -977,7 +977,7 @@ public class FirebaseEmulatorContainer extends GenericContainer<FirebaseEmulator
     private final boolean followStdErr;
     private final Consumer<FirebaseEmulatorContainer> afterStart;
     private final boolean useSharedNetwork;
-    private String hostName;
+    private String hostName = "localhost";
 
     /**
      * Create the builder for the emulator container
@@ -1564,28 +1564,42 @@ public class FirebaseEmulatorContainer extends GenericContainer<FirebaseEmulator
      * Return the TCP port an emulator is listening on.
      *
      * @param emulator The emulator
-     * @return The TC Port
+     * @return The TCP Port
      */
     public Integer emulatorPort(Emulator emulator) {
         var exposedPort = services.get(emulator);
-        if (useSharedNetwork || exposedPort.isFixed()) {
+        if (exposedPort.isFixed()) {
             return exposedPort.fixedPort();
         } else {
-            return getMappedPort(emulator.internalPort);
+            if (useSharedNetwork) {
+                return emulator.internalPort;
+            } else {
+                return getMappedPort(emulator.internalPort);
+            }
         }
     }
 
     /**
-     * Get the ports on which the emulators are running.
+     * Return the url an emulator is listening on
      *
-     * @return A map {@link Emulator} -> {@link Integer} indicating the TCP port the emulator is running on.
+     * @param emulator The emulator
+     * @return The url
      */
-    public Map<Emulator, Integer> emulatorPorts() {
+    public String emulatorUrl(Emulator emulator) {
+        return this.hostName + ":" + emulatorPort(emulator);
+    }
+
+    /**
+     * Get the urls on which the emulators are running.
+     *
+     * @return A map {@link Emulator} -> {@link String} indicating the host and TCP port the emulator is running on.
+     */
+    public Map<Emulator, String> emulatorUrls() {
         return services.keySet()
                 .stream()
                 .collect(Collectors.toMap(
                         e -> e,
-                        this::emulatorPort));
+                        this::emulatorUrl));
     }
 
     private void writeToStdOut(OutputFrame frame) {

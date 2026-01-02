@@ -250,11 +250,11 @@ public class FirebaseDevServiceProcessor {
         // Set the config for the started container
         FirebaseDevServiceProcessor.config = config;
 
-        var emulatorContainerConfig = emulatorContainerConfig(emulatorContainer);
+        var emulatorContainerConfig = emulatorContainerConfig(emulatorContainer, useSharedNetwork);
 
         if (LOGGER.isInfoEnabled()) {
-            var runningPorts = emulatorContainer.emulatorPorts();
-            runningPorts.forEach((e, p) -> LOGGER.info("Google Cloud Emulator " + e + " reachable on port " + p));
+            var runningPorts = emulatorContainer.emulatorUrls();
+            runningPorts.forEach((e, p) -> LOGGER.info("Google Cloud Emulator " + e + " reachable on " + p));
 
             emulatorContainerConfig
                     .forEach((e, h) -> LOGGER.info("Google Cloud emulator config property " + e + " set to " + h));
@@ -269,15 +269,30 @@ public class FirebaseDevServiceProcessor {
                 emulatorContainerConfig);
     }
 
-    private Map<String, String> emulatorContainerConfig(FirebaseEmulatorContainer emulatorContainer) {
-        return emulatorContainer.emulatorEndpoints()
+    private Map<String, String> emulatorContainerConfig(FirebaseEmulatorContainer emulatorContainer, boolean useSharedNetwork) {
+        var emulatorProperties = new HashMap<>(emulatorContainer.emulatorEndpoints()
                 .entrySet()
                 .stream()
                 .filter(e -> CONFIG_PROPERTIES.containsKey(e.getKey()))
                 .collect(
                         Collectors.toMap(
                                 e -> configPropertyForEmulator(e.getKey()),
-                                Map.Entry::getValue));
+                                Map.Entry::getValue)));
+
+        // In case either the pubsub or cloud firestore is running and we use shared network mode, we force the usage
+        // of emulator credentials, as the default automatic detection won't work (because the hostname is set to the
+        // shared network host instead of localhost).
+        if (useSharedNetwork) {
+            if (emulatorProperties.containsKey(CONFIG_PROPERTIES.get(FirebaseEmulatorContainer.Emulator.PUB_SUB))) {
+                emulatorProperties.put("quarkus.google.cloud.pubsub.use-emulator-credentials", "true");
+            }
+
+            if (emulatorProperties.containsKey(CONFIG_PROPERTIES.get(FirebaseEmulatorContainer.Emulator.CLOUD_FIRESTORE))) {
+                emulatorProperties.put("quarkus.google.cloud.firestore.use-emulator-credentials", "true");
+            }
+        }
+
+        return emulatorProperties;
     }
 
     private String configPropertyForEmulator(FirebaseEmulatorContainer.Emulator emulator) {
