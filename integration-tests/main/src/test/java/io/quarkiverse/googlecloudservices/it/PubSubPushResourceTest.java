@@ -14,6 +14,7 @@ import javax.annotation.Priority;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.Alternative;
 
+import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.junit.jupiter.api.Test;
 
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
@@ -28,6 +29,9 @@ import io.restassured.http.ContentType;
 @QuarkusTest()
 @TestProfile(PubSubPushResourceTest.Profile.class)
 public class PubSubPushResourceTest {
+
+    @ConfigProperty(name = "quarkus.google.cloud.project-id")
+    String projectId;
 
     public static final class Profile implements QuarkusTestProfile {
 
@@ -166,7 +170,7 @@ public class PubSubPushResourceTest {
         var data = Base64.getEncoder().encodeToString(message.getBytes(StandardCharsets.UTF_8));
 
         return "{\n" +
-                "\"subscription\": \"projects/test-project/subscriptions/" + subscriptionId + "\",\n" +
+                "\"subscription\": \"projects/" + projectId + "/subscriptions/" + subscriptionId + "\",\n" +
                 "\"publishTime\" : \"" + publishTime + "\",\n" +
                 "\"message\": {\n" +
                 "\"data\": \"" + data + "\",\n" +
