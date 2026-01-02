@@ -32,7 +32,8 @@ public class PubSubBuildSteps {
                 .setUnremovable()
                 .addBeanClasses(
                         PubSubPushManager.class,
-                        GoogleTokenVerifier.class)
+                        GoogleTokenVerifier.class,
+                        MessageDispatcher.class)
                 .build());
 
     }

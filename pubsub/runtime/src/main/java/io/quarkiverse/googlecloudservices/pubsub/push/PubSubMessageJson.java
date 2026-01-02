@@ -15,7 +15,7 @@ import com.google.pubsub.v1.PubsubMessage;
  * @param message The message
  * @param subscription The subscription
  */
-record PubSubMessageJson(
+public record PubSubMessageJson(
         MessageJson message,
         String subscription) {
 
