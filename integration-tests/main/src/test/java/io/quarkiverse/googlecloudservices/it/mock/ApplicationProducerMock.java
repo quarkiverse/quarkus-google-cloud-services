@@ -10,8 +10,6 @@ import jakarta.inject.Singleton;
 
 import org.mockito.Mockito;
 
-import com.google.auth.Credentials;
-import com.google.cloud.NoCredentials;
 import com.google.cloud.secretmanager.v1.AccessSecretVersionResponse;
 import com.google.cloud.secretmanager.v1.SecretManagerServiceClient;
 import com.google.cloud.secretmanager.v1.SecretPayload;
@@ -23,13 +21,6 @@ import io.quarkus.test.Mock;
 @Mock
 @ApplicationScoped
 public class ApplicationProducerMock {
-
-    @Produces
-    @Singleton
-    @Default
-    public Credentials googleCredential() {
-        return NoCredentials.getInstance();
-    }
 
     @Produces
     @Singleton
