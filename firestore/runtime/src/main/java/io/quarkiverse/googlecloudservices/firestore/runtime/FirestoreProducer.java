@@ -43,6 +43,7 @@ public class FirestoreProducer {
         GcpBootstrapConfiguration gcpConfiguration = gcpConfigHolder.getBootstrapConfig();
         FirestoreOptions.Builder builder = FirestoreOptions.newBuilder()
                 .setProjectId(gcpConfiguration.projectId().orElse(null));
+        firestoreConfiguration.databaseId().ifPresent(builder::setDatabaseId);
         if (useEmulatorCredentials()) {
             builder.setCredentials(new FirestoreOptions.EmulatorCredentials());
             firestoreConfiguration.hostOverride().ifPresent(builder::setEmulatorHost);
@@ -50,7 +51,6 @@ public class FirestoreProducer {
             builder.setCredentials(googleCredentials.get());
             firestoreConfiguration.hostOverride().ifPresent(builder::setHost);
             firestoreConfiguration.retry().map(this::buildRetrySettings).ifPresent(builder::setRetrySettings);
-            firestoreConfiguration.databaseId().ifPresent(builder::setDatabaseId);
         }
         return builder.build().getService();
     }
