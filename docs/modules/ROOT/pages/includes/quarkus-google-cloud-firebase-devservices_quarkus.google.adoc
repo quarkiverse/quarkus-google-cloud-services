@@ -219,6 +219,27 @@ endif::add-copy-button-to-env-var[]
 |boolean
 |
 
+a|icon:lock[title=Fixed at build time] [[quarkus-google-cloud-firebase-devservices_quarkus-google-cloud-devservices-firebase-emulator-docker-env-vars-env-vars]] [.property-path]##link:#quarkus-google-cloud-firebase-devservices_quarkus-google-cloud-devservices-firebase-emulator-docker-env-vars-env-vars[`quarkus.google.cloud.devservices.firebase.emulator.docker.env-vars."env-vars"`]##
+ifdef::add-copy-button-to-config-props[]
+config_property_copy_button:+++quarkus.google.cloud.devservices.firebase.emulator.docker.env-vars."env-vars"+++[]
+endif::add-copy-button-to-config-props[]
+
+
+[.description]
+--
+List of additional environment variables and values which can be passed into the docker image. These variables can be picked up by some webframeworks or functions (see the firebase documentation). This feature can e.g. be used to pass in for example the port the Quarkus application is exposing.
+
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_GOOGLE_CLOUD_DEVSERVICES_FIREBASE_EMULATOR_DOCKER_ENV_VARS__ENV_VARS_+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_GOOGLE_CLOUD_DEVSERVICES_FIREBASE_EMULATOR_DOCKER_ENV_VARS__ENV_VARS_+++`
+endif::add-copy-button-to-env-var[]
+--
+|Map<String,String>
+|
+
 a|icon:lock[title=Fixed at build time] [[quarkus-google-cloud-firebase-devservices_quarkus-google-cloud-devservices-firebase-emulator-cli-token]] [.property-path]##link:#quarkus-google-cloud-firebase-devservices_quarkus-google-cloud-devservices-firebase-emulator-cli-token[`quarkus.google.cloud.devservices.firebase.emulator.cli.token`]##
 ifdef::add-copy-button-to-config-props[]
 config_property_copy_button:+++quarkus.google.cloud.devservices.firebase.emulator.cli.token+++[]
