@@ -1,5 +1,6 @@
 package io.quarkiverse.googlecloudservices.firebase.deployment;
 
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
@@ -173,6 +174,13 @@ public interface FirebaseDevServiceConfig {
                  * Pipe Stedd of the container to the Quarkus logging
                  */
                 Optional<Boolean> followStdErr();
+
+                /**
+                 * List of additional environment variables and values which can be passed into the docker image. These
+                 * variables can be picked up by some webframeworks or functions (see the firebase documentation).
+                 * This feature can e.g. be used to pass in for example the port the Quarkus application is exposing.
+                 */
+                Map<String, String> envVars();
 
             }
 
