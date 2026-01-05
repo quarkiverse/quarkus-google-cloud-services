@@ -39,8 +39,6 @@ public class CommonBuildSteps {
     public NativeImageConfigBuildItem nativeImageConfiguration() {
         NativeImageConfigBuildItem.Builder builder = NativeImageConfigBuildItem.builder()
                 .addRuntimeInitializedClass("com.sun.management.internal.PlatformMBeanProviderImpl")
-                // Required due to sun.misc.Unsafe usage in static initializers
-                .addRuntimeInitializedClass("com.google.common.cache.Striped64")
                 // Required due to initializing a java.util.Random
                 .addRuntimeInitializedClass("io.opentelemetry.sdk.internal.AndroidFriendlyRandomHolder")
                 // Required for Netty HTTP
