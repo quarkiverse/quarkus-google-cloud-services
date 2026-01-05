@@ -76,6 +76,7 @@ public class FirebaseEmulatorConfigBuilder {
         docker.followStdOut().ifPresent(dockerConfig::followStdOut);
         docker.followStdErr().ifPresent(dockerConfig::followStdErr);
         dockerConfig.useSharedNetwork(this.useSharedNetwork);
+        dockerConfig.withEnvVars(docker.envVars());
 
         dockerConfig.done();
     }
