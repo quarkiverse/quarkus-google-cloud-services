@@ -16,6 +16,7 @@ import io.quarkus.deployment.console.ConsoleInstalledBuildItem;
 import io.quarkus.deployment.console.StartupLogCompressor;
 import io.quarkus.deployment.dev.devservices.DevServicesConfig;
 import io.quarkus.deployment.logging.LoggingSetupBuildItem;
+import io.quarkus.devservices.common.ConfigureUtil;
 
 /**
  * Processor responsible for managing Pub/Sub Dev Services.
@@ -33,9 +34,11 @@ public class PubSubDevServiceProcessor {
     private static volatile PubSubDevServiceConfig config;
 
     @BuildStep
-    public DevServicesResultBuildItem start(DockerStatusBuildItem dockerStatusBuildItem,
+    public DevServicesResultBuildItem start(
+            DockerStatusBuildItem dockerStatusBuildItem,
             PubSubDevServiceConfig devServiceConfig,
             FirebaseDevServiceConfig firebaseConfig,
+            DevServicesComposeProjectBuildItem composeProjectBuildItem,
             List<DevServicesSharedNetworkBuildItem> devServicesSharedNetworkBuildItem,
             Optional<ConsoleInstalledBuildItem> consoleInstalledBuildItem,
             CuratedApplicationShutdownBuildItem closeBuildItem,
@@ -57,8 +60,10 @@ public class PubSubDevServiceProcessor {
 
         // Try starting the container if conditions are met
         try {
+            boolean useSharedNetwork = DevServicesSharedNetworkBuildItem.isSharedNetworkRequired(devServicesConfig,
+                    devServicesSharedNetworkBuildItem);
             devService = startContainerIfAvailable(dockerStatusBuildItem, devServiceConfig,
-                    firebaseConfig, devServicesConfig.timeout());
+                    firebaseConfig, devServicesConfig.timeout(), composeProjectBuildItem, useSharedNetwork);
         } catch (Throwable t) {
             LOGGER.warn("Unable to start PubSub dev service", t);
             // Dump captured logs in case of an error
@@ -77,12 +82,17 @@ public class PubSubDevServiceProcessor {
      * @param dockerStatusBuildItem, Docker status
      * @param config, Configuration for the Pub/Sub service
      * @param timeout, Optional timeout for starting the service
+     * @param composeProjectBuildItem The compose build item
+     * @param useSharedNetwork Start the service on a shared docker network
      * @return Running service item, or null if the service couldn't be started
      */
-    private DevServicesResultBuildItem.RunningDevService startContainerIfAvailable(DockerStatusBuildItem dockerStatusBuildItem,
+    private DevServicesResultBuildItem.RunningDevService startContainerIfAvailable(
+            DockerStatusBuildItem dockerStatusBuildItem,
             PubSubDevServiceConfig config,
             FirebaseDevServiceConfig firebaseConfig,
-            Optional<Duration> timeout) {
+            Optional<Duration> timeout,
+            DevServicesComposeProjectBuildItem composeProjectBuildItem,
+            boolean useSharedNetwork) {
         if (!config.enabled()) {
             // PubSub service explicitly disabled
             LOGGER.debug("Not starting Dev Services for PubSub as it has been disabled in the config");
@@ -100,7 +110,7 @@ public class PubSubDevServiceProcessor {
             return null;
         }
 
-        return startContainer(dockerStatusBuildItem, config, timeout);
+        return startContainer(dockerStatusBuildItem, config, timeout, composeProjectBuildItem, useSharedNetwork);
     }
 
     /**
@@ -109,16 +119,23 @@ public class PubSubDevServiceProcessor {
      * @param dockerStatusBuildItem, Docker status
      * @param config, Configuration for the PubSub service
      * @param timeout, Optional timeout for starting the service
+     * @param composeProjectBuildItem The compose build item
+     * @param useSharedNetwork Start the service on a shared docker network
      * @return Running service item, or null if the service couldn't be started
      */
-    private DevServicesResultBuildItem.RunningDevService startContainer(DockerStatusBuildItem dockerStatusBuildItem,
+    private DevServicesResultBuildItem.RunningDevService startContainer(
+            DockerStatusBuildItem dockerStatusBuildItem,
             PubSubDevServiceConfig config,
-            Optional<Duration> timeout) {
+            Optional<Duration> timeout,
+            DevServicesComposeProjectBuildItem composeProjectBuildItem,
+            boolean useSharedNetwork) {
         // Create and configure Pub/Sub emulator container
         PubSubEmulatorContainer emulatorContainer = new QuarkusPubSubContainer(
                 DockerImageName.parse(config.imageName())
                         .asCompatibleSubstituteFor("gcr.io/google.com/cloudsdktool/cloud-sdk:emulators"),
-                config.emulatorPort().orElse(null));
+                config.emulatorPort().orElse(null),
+                composeProjectBuildItem.getDefaultNetworkId(),
+                useSharedNetwork);
 
         // Set container startup timeout if provided
         timeout.ifPresent(emulatorContainer::withStartupTimeout);
@@ -156,11 +173,16 @@ public class PubSubDevServiceProcessor {
     private static class QuarkusPubSubContainer extends PubSubEmulatorContainer {
 
         private final Integer fixedExposedPort;
+        private final boolean useSharedNetwork;
+        private final String hostName;
         private static final int INTERNAL_PORT = 8085;
 
-        private QuarkusPubSubContainer(DockerImageName dockerImageName, Integer fixedExposedPort) {
+        private QuarkusPubSubContainer(DockerImageName dockerImageName, Integer fixedExposedPort,
+                String defaultNetworkId, boolean useSharedNetwork) {
             super(dockerImageName);
             this.fixedExposedPort = fixedExposedPort;
+            this.useSharedNetwork = useSharedNetwork;
+            this.hostName = ConfigureUtil.configureNetwork(this, defaultNetworkId, useSharedNetwork, "pubsub");
         }
 
         /**
@@ -169,12 +191,24 @@ public class PubSubDevServiceProcessor {
         @Override
         public void configure() {
             super.configure();
+            if (useSharedNetwork) {
+                return;
+            }
 
             // Expose Pub/Sub emulatorPort
             if (fixedExposedPort != null) {
                 addFixedExposedPort(fixedExposedPort, INTERNAL_PORT);
             } else {
                 addExposedPort(INTERNAL_PORT);
+            }
+        }
+
+        @Override
+        public String getEmulatorEndpoint() {
+            if (useSharedNetwork) {
+                return hostName + ":" + INTERNAL_PORT;
+            } else {
+                return super.getEmulatorEndpoint();
             }
         }
     }

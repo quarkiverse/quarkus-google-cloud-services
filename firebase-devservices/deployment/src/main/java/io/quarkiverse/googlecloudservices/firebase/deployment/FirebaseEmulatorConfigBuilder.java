@@ -15,6 +15,7 @@ public class FirebaseEmulatorConfigBuilder {
 
     private final FirebaseDevServiceProjectConfig projectConfig;
     private final FirebaseDevServiceConfig config;
+    private final boolean useSharedNetwork;
 
     public static Map<FirebaseEmulatorContainer.Emulator, FirebaseDevServiceConfig.GenericDevService> devServices(
             FirebaseDevServiceConfig config) {
@@ -29,9 +30,13 @@ public class FirebaseEmulatorConfigBuilder {
                 FirebaseEmulatorContainer.Emulator.PUB_SUB, config.pubsub());
     }
 
-    public FirebaseEmulatorConfigBuilder(FirebaseDevServiceProjectConfig projectConfig, FirebaseDevServiceConfig config) {
+    public FirebaseEmulatorConfigBuilder(
+            FirebaseDevServiceProjectConfig projectConfig,
+            FirebaseDevServiceConfig config,
+            boolean useSharedNetwork) {
         this.projectConfig = projectConfig;
         this.config = config;
+        this.useSharedNetwork = useSharedNetwork;
     }
 
     public FirebaseEmulatorContainer build() {
@@ -70,6 +75,7 @@ public class FirebaseEmulatorConfigBuilder {
         docker.dockerGroupEnv().ifPresent(dockerConfig::withGroupIdFromEnv);
         docker.followStdOut().ifPresent(dockerConfig::followStdOut);
         docker.followStdErr().ifPresent(dockerConfig::followStdErr);
+        dockerConfig.useSharedNetwork(this.useSharedNetwork);
 
         dockerConfig.done();
     }

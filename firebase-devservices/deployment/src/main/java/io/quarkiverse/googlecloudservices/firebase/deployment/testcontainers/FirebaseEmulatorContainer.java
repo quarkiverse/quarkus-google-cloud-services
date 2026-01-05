@@ -168,6 +168,7 @@ public class FirebaseEmulatorContainer extends GenericContainer<FirebaseEmulator
             Optional<Integer> groupId,
             boolean followStdOut,
             boolean followStdErr,
+            boolean useSharedNetwork,
             Consumer<FirebaseEmulatorContainer> afterStart) {
 
         /**
@@ -179,6 +180,7 @@ public class FirebaseEmulatorContainer extends GenericContainer<FirebaseEmulator
                 Optional.empty(),
                 true,
                 true,
+                false,
                 null);
     }
 
@@ -481,6 +483,7 @@ public class FirebaseEmulatorContainer extends GenericContainer<FirebaseEmulator
                         Builder.this.dockerConfig.groupId(),
                         Builder.this.dockerConfig.followStdOut(),
                         Builder.this.dockerConfig.followStdErr(),
+                        Builder.this.dockerConfig.useSharedNetwork(),
                         Builder.this.dockerConfig.afterStart());
                 return this;
             }
@@ -512,6 +515,7 @@ public class FirebaseEmulatorContainer extends GenericContainer<FirebaseEmulator
                         Builder.this.dockerConfig.groupId(),
                         Builder.this.dockerConfig.followStdOut(),
                         Builder.this.dockerConfig.followStdErr(),
+                        Builder.this.dockerConfig.useSharedNetwork(),
                         Builder.this.dockerConfig.afterStart());
                 return this;
             }
@@ -543,6 +547,7 @@ public class FirebaseEmulatorContainer extends GenericContainer<FirebaseEmulator
                         groupId,
                         Builder.this.dockerConfig.followStdOut(),
                         Builder.this.dockerConfig.followStdErr(),
+                        Builder.this.dockerConfig.useSharedNetwork(),
                         Builder.this.dockerConfig.afterStart());
                 return this;
             }
@@ -583,6 +588,7 @@ public class FirebaseEmulatorContainer extends GenericContainer<FirebaseEmulator
                         Builder.this.dockerConfig.groupId(),
                         followStdOut,
                         Builder.this.dockerConfig.followStdErr(),
+                        Builder.this.dockerConfig.useSharedNetwork(),
                         Builder.this.dockerConfig.afterStart());
                 return this;
             }
@@ -600,6 +606,25 @@ public class FirebaseEmulatorContainer extends GenericContainer<FirebaseEmulator
                         Builder.this.dockerConfig.groupId(),
                         Builder.this.dockerConfig.followStdOut(),
                         followStdErr,
+                        Builder.this.dockerConfig.useSharedNetwork(),
+                        Builder.this.dockerConfig.afterStart());
+                return this;
+            }
+
+            /**
+             * Configure the container to use a shared docker network.
+             *
+             * @param useSharedNetwork Whether to use a shared network
+             * @return The builder
+             */
+            public DockerConfigBuilder useSharedNetwork(boolean useSharedNetwork) {
+                Builder.this.dockerConfig = new DockerConfig(
+                        Builder.this.dockerConfig.imageName(),
+                        Builder.this.dockerConfig.userId(),
+                        Builder.this.dockerConfig.groupId(),
+                        Builder.this.dockerConfig.followStdOut(),
+                        Builder.this.dockerConfig.followStdErr(),
+                        useSharedNetwork,
                         Builder.this.dockerConfig.afterStart());
                 return this;
             }
@@ -617,6 +642,7 @@ public class FirebaseEmulatorContainer extends GenericContainer<FirebaseEmulator
                         Builder.this.dockerConfig.groupId(),
                         Builder.this.dockerConfig.followStdOut(),
                         Builder.this.dockerConfig.followStdErr(),
+                        Builder.this.dockerConfig.useSharedNetwork(),
                         afterStart);
                 return this;
             }
@@ -950,6 +976,8 @@ public class FirebaseEmulatorContainer extends GenericContainer<FirebaseEmulator
     private final boolean followStdOut;
     private final boolean followStdErr;
     private final Consumer<FirebaseEmulatorContainer> afterStart;
+    private final boolean useSharedNetwork;
+    private String hostName = "localhost";
 
     /**
      * Create the builder for the emulator container
@@ -972,6 +1000,7 @@ public class FirebaseEmulatorContainer extends GenericContainer<FirebaseEmulator
         this.followStdOut = emulatorConfig.dockerConfig().followStdOut();
         this.followStdErr = emulatorConfig.dockerConfig().followStdErr();
         this.afterStart = emulatorConfig.dockerConfig().afterStart();
+        this.useSharedNetwork = emulatorConfig.dockerConfig().useSharedNetwork();
 
         emulatorConfig.cliArguments().emulatorData().ifPresent(path -> {
             // https://firebase.google.com/docs/emulator-suite/install_and_configure#export_and_import_emulator_data
@@ -1498,18 +1527,24 @@ public class FirebaseEmulatorContainer extends GenericContainer<FirebaseEmulator
     public void configure() {
         super.configure();
 
-        services.keySet()
-                .forEach(emulator -> {
-                    var exposedPort = services.get(emulator);
-                    // Expose emulatorPort
-                    if (exposedPort.isFixed()) {
-                        addFixedExposedPort(exposedPort.fixedPort(), exposedPort.fixedPort());
-                    } else {
-                        addExposedPort(emulator.internalPort);
-                    }
-                });
+        if (!useSharedNetwork) {
+            services.keySet()
+                    .forEach(emulator -> {
+                        var exposedPort = services.get(emulator);
+                        // Expose emulatorPort
+                        if (exposedPort.isFixed()) {
+                            addFixedExposedPort(exposedPort.fixedPort(), exposedPort.fixedPort());
+                        } else {
+                            addExposedPort(emulator.internalPort);
+                        }
+                    });
+        }
 
         waitingFor(Wait.forLogMessage(".*✔  All emulators ready! It is now safe to connect your app.*", 1));
+    }
+
+    public void setupSharedNetworkHost(String hostName) {
+        this.hostName = hostName;
     }
 
     /**
@@ -1529,28 +1564,42 @@ public class FirebaseEmulatorContainer extends GenericContainer<FirebaseEmulator
      * Return the TCP port an emulator is listening on.
      *
      * @param emulator The emulator
-     * @return The TC Port
+     * @return The TCP Port
      */
     public Integer emulatorPort(Emulator emulator) {
         var exposedPort = services.get(emulator);
         if (exposedPort.isFixed()) {
             return exposedPort.fixedPort();
         } else {
-            return getMappedPort(emulator.internalPort);
+            if (useSharedNetwork) {
+                return emulator.internalPort;
+            } else {
+                return getMappedPort(emulator.internalPort);
+            }
         }
     }
 
     /**
-     * Get the ports on which the emulators are running.
+     * Return the url an emulator is listening on
      *
-     * @return A map {@link Emulator} -> {@link Integer} indicating the TCP port the emulator is running on.
+     * @param emulator The emulator
+     * @return The url
      */
-    public Map<Emulator, Integer> emulatorPorts() {
+    public String emulatorUrl(Emulator emulator) {
+        return this.hostName + ":" + emulatorPort(emulator);
+    }
+
+    /**
+     * Get the urls on which the emulators are running.
+     *
+     * @return A map {@link Emulator} -> {@link String} indicating the host and TCP port the emulator is running on.
+     */
+    public Map<Emulator, String> emulatorUrls() {
         return services.keySet()
                 .stream()
                 .collect(Collectors.toMap(
                         e -> e,
-                        this::emulatorPort));
+                        this::emulatorUrl));
     }
 
     private void writeToStdOut(OutputFrame frame) {
@@ -1566,7 +1615,8 @@ public class FirebaseEmulatorContainer extends GenericContainer<FirebaseEmulator
     }
 
     private String getEmulatorEndpoint(Emulator emulator) {
-        var endpoint = this.getHost() + ":" + emulatorPort(emulator);
+        var endpoint = (useSharedNetwork ? this.hostName : this.getHost()) +
+                ":" + emulatorPort(emulator);
         if (emulator.equals(Emulator.REALTIME_DATABASE)
                 || emulator.equals(Emulator.CLOUD_STORAGE)
                 || emulator.equals(Emulator.EMULATOR_SUITE_UI)) {
