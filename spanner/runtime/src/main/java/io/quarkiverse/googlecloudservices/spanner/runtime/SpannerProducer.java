@@ -40,6 +40,7 @@ public class SpannerProducer {
         }
 
         spannerConfiguration.emulatorHost().ifPresent(builder::setEmulatorHost);
+        spannerConfiguration.databaseRole().ifPresent(builder::setDatabaseRole);
         return builder.build().getService();
     }
 
