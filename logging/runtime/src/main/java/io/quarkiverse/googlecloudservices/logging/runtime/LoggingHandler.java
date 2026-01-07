@@ -4,6 +4,8 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.logging.ErrorManager;
 
+import io.quarkiverse.googlecloudservices.common.GcpConfigHolder;
+import jakarta.inject.Inject;
 import org.jboss.logmanager.ExtHandler;
 import org.jboss.logmanager.ExtLogRecord;
 
@@ -35,6 +37,7 @@ public class LoggingHandler extends ExtHandler {
     private InternalHandler internalHandler;
     private TraceInfoExtractor traceExtractor;
     private LogRecordLabelExtractor logRecordLabelExtractor;
+    private GcpConfigHolder gcpConfigHolder;
 
     public LoggingHandler(LoggingConfiguration config) {
         this.config = config;
@@ -106,7 +109,13 @@ public class LoggingHandler extends ExtHandler {
     }
 
     private String composeTraceString(String traceId) {
-        return String.format("projects/%s/traces/%s", this.config.gcpTracing().projectId().orElse(null), traceId);
+        var project = this.config
+                .gcpTracing()
+                .projectId()
+                .or(() -> gcpConfigHolder.getBootstrapConfig().projectId())
+                .orElse(null);
+
+        return String.format("projects/%s/traces/%s", project, traceId);
     }
 
     @Override
@@ -132,6 +141,8 @@ public class LoggingHandler extends ExtHandler {
             initTraceExtractor();
             // init log record label extractor
             initLogRecordLabelExtractor();
+            // init gcp config holder for project id
+            initGcpConfigHolder();
         }
         return log;
     }
@@ -160,6 +171,10 @@ public class LoggingHandler extends ExtHandler {
         } else {
             this.traceExtractor = (r) -> null;
         }
+    }
+
+    private void initGcpConfigHolder() {
+        this.gcpConfigHolder = Arc.container().instance(GcpConfigHolder.class).get();
     }
 
     private void initDefaultWriteOptions() {
