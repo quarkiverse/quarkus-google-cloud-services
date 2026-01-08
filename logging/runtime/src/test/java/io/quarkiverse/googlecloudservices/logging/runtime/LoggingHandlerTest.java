@@ -13,6 +13,8 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.logging.Level;
 
+import io.quarkiverse.googlecloudservices.common.GcpBootstrapConfiguration;
+import io.quarkiverse.googlecloudservices.common.GcpConfigHolder;
 import org.jboss.logmanager.ExtLogRecord;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -122,6 +124,15 @@ class LoggingHandlerTest {
         Logging logging = Mockito.mock(Logging.class);
         when(loggingInstanceHandler.get()).thenReturn(logging);
         when(container.instance(Logging.class)).thenReturn(loggingInstanceHandler);
+
+        InstanceHandle<GcpConfigHolder> gcpConfigHolderInstanceHandle = Mockito.mock(InstanceHandle.class);
+        GcpConfigHolder gcpConfigHolder = Mockito.mock(GcpConfigHolder.class);
+        GcpBootstrapConfiguration gcpBootstrapConfiguration = Mockito.mock(GcpBootstrapConfiguration.class);
+        when(gcpBootstrapConfiguration.projectId()).thenReturn(Optional.ofNullable(null));
+        when(gcpConfigHolder.getBootstrapConfig()).thenReturn(gcpBootstrapConfiguration);
+        when(gcpConfigHolderInstanceHandle.get()).thenReturn(gcpConfigHolder);
+        when(container.instance(GcpConfigHolder.class)).thenReturn(gcpConfigHolderInstanceHandle);
+
         return container;
     }
 
