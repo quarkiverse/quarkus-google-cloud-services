@@ -73,8 +73,11 @@ public class LoggingResource {
 === Basic
 Currently, the logging system uses a single Google Cloud Operations log and this is a mandatory configuration parameter.
 
-* `quarkus.google.cloud.logging.default-log`
-* `quarkus.google.cloud.project-id`
+* `quarkus.google.cloud.logging.default-log` - This is the name of the resource to which the log belongs. See
+  https://docs.cloud.google.com/logging/docs/reference/v2/rest/v2/LogEntry[the google docs] for more info. Note that
+  currently only a single log id is supported. The logName will always be a project logName and this property does not
+  accept forward-slashes.
+* `quarkus.google.cloud.project-id` (see xref:index.adoc[the main documentation] about this property)
 
 If you want to disable the logging to Google Cloud you can do so:
 
