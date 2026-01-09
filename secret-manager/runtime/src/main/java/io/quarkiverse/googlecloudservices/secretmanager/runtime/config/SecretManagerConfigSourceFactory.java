@@ -24,12 +24,19 @@ public class SecretManagerConfigSourceFactory implements ConfigSourceFactory {
 
         GcpBootstrapConfiguration gcpConfig = config.getConfigMapping(GcpBootstrapConfiguration.class);
 
-        if (gcpConfig.enableMetadataServer()) {
-            String projectId = gcpConfig.projectId().orElse(ServiceOptions.getDefaultProjectId());
-            if (projectId != null) {
-                return singletonList(new SecretManagerConfigSource(gcpConfig, projectId));
-            }
+        String projectId = getProjectId(gcpConfig);
+        if (projectId != null) {
+            return singletonList(new SecretManagerConfigSource(gcpConfig, projectId));
+        } else {
+            return emptyList();
         }
-        return emptyList();
+    }
+
+    private String getProjectId(GcpBootstrapConfiguration gcpConfig) {
+        if (gcpConfig.enableMetadataServer()) {
+            return gcpConfig.projectId().orElse(ServiceOptions.getDefaultProjectId());
+        } else {
+            return gcpConfig.projectId().orElse(null);
+        }
     }
 }
