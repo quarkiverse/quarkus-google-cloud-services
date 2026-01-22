@@ -16,7 +16,14 @@ public class LoggingHandlerFactory {
 
     private static final Logger LOG = LoggerFactory.getLogger(LoggingHandlerFactory.class);
 
-    public RuntimeValue<Optional<Handler>> create(LoggingConfiguration config) {
+    private final RuntimeValue<LoggingConfiguration> rConfig;
+
+    public LoggingHandlerFactory(RuntimeValue<LoggingConfiguration> rConfig) {
+        this.rConfig = rConfig;
+    }
+
+    public RuntimeValue<Optional<Handler>> create() {
+        LoggingConfiguration config = rConfig.getValue();
         if (!config.enabled()) {
             LOG.info("GCP logging is disabled");
             return new RuntimeValue<>(Optional.empty());

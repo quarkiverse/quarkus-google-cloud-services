@@ -25,6 +25,7 @@
         <opencensus.version>0.31.1</opencensus.version><!-- mess in google-pubsub and grpc deps; should be rather stable as OpenCensus has been sunsetted already - see https://github.com/GoogleCloudPlatform/cloud-opensource-java/issues/862 -->
         <threeten.version>1.7.2</threeten.version><!-- mess in google-cloud-core transitive deps -->
         <conscrypt.version>2.5.2</conscrypt.version><!-- mess in google-cloud-bigquery and the other google cloud lib-->
+        <animal-sniffer.version>1.21</animal-sniffer.version> <!-- mess in google-cloud-storage -->
     </properties>
 
     <dependencyManagement>
@@ -85,6 +86,11 @@
                 <groupId>org.conscrypt</groupId>
                 <artifactId>conscrypt-openjdk-uber</artifactId>
                 <version>${conscrypt.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>animal-sniffer-annotations</artifactId>
+                <version>${animal-sniffer.version}</version>
             </dependency>
 
             <!-- Google Cloud Services Extensions -->
