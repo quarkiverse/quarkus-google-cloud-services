@@ -13,8 +13,6 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.logging.Level;
 
-import io.quarkiverse.googlecloudservices.common.GcpBootstrapConfiguration;
-import io.quarkiverse.googlecloudservices.common.GcpConfigHolder;
 import org.jboss.logmanager.ExtLogRecord;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -26,6 +24,8 @@ import com.google.cloud.logging.Logging;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
+import io.quarkiverse.googlecloudservices.common.GcpBootstrapConfiguration;
+import io.quarkiverse.googlecloudservices.common.GcpConfigHolder;
 import io.quarkus.arc.Arc;
 import io.quarkus.arc.ArcContainer;
 import io.quarkus.arc.InstanceHandle;

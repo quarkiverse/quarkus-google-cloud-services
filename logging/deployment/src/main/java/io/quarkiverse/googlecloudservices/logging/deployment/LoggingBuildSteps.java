@@ -41,8 +41,8 @@ public class LoggingBuildSteps {
 
     @BuildStep
     @Record(ExecutionTime.RUNTIME_INIT)
-    public LogHandlerBuildItem handler(LoggingConfiguration config, LoggingHandlerFactory factory) {
-        return new LogHandlerBuildItem(factory.create(config));
+    public LogHandlerBuildItem handler(LoggingHandlerFactory factory) {
+        return new LogHandlerBuildItem(factory.create());
     }
 
     @BuildStep

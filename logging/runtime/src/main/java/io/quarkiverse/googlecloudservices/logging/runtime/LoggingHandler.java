@@ -4,8 +4,6 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.logging.ErrorManager;
 
-import io.quarkiverse.googlecloudservices.common.GcpConfigHolder;
-import jakarta.inject.Inject;
 import org.jboss.logmanager.ExtHandler;
 import org.jboss.logmanager.ExtLogRecord;
 
@@ -17,6 +15,7 @@ import com.google.cloud.logging.Payload;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
 
+import io.quarkiverse.googlecloudservices.common.GcpConfigHolder;
 import io.quarkiverse.googlecloudservices.logging.runtime.LoggingConfiguration.LogFormat;
 import io.quarkiverse.googlecloudservices.logging.runtime.format.InternalHandler;
 import io.quarkiverse.googlecloudservices.logging.runtime.format.JsonHandler;
