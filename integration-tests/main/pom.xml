@@ -27,7 +27,7 @@
     </dependency>
     <dependency>
       <groupId>io.quarkiverse.googlecloudservices</groupId>
-      <artifactId>quarkus-google-cloud-pubsub</artifactId>
+      <artifactId>quarkus-google-cloud-pubsub-push-vertx-http</artifactId>
     </dependency>
     <dependency>
       <groupId>io.quarkiverse.googlecloudservices</groupId>

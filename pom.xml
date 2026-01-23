@@ -29,6 +29,7 @@
 
     <module>bigquery</module>
     <module>pubsub</module>
+    <module>pubsub-push-vertx-http</module>
     <module>spanner</module>
     <module>storage</module>
     <module>firebase-devservices</module>
