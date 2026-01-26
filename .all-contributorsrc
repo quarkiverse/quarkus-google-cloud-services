@@ -232,6 +232,15 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "micheljung",
+      "name": "Michel Jung",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1864183?v=4",
+      "profile": "http://www.micheljung.ch",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,
