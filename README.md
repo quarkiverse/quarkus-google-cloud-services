@@ -1,6 +1,6 @@
 # Quarkiverse - Quarkus Google Cloud Services
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-25-orange.svg?style=flat-square)](#contributors-)
+[![All Contributors](https://img.shields.io/badge/all_contributors-26-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 [![version](https://img.shields.io/maven-central/v/io.quarkiverse.googlecloudservices/quarkus-google-cloud-services-bom)](https://repo1.maven.org/maven2/io/quarkiverse/googlecloudservices/)
 [![Build](https://github.com/quarkiverse/quarkus-google-cloud-services/workflows/Build/badge.svg)](https://github.com/quarkiverse/quarkus-google-cloud-services/actions?query=workflow%3ABuild)
@@ -75,6 +75,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/xperjon"><img src="https://avatars.githubusercontent.com/u/965777?v=4?s=100" width="100px;" alt="Jon-Erik Liw"/><br /><sub><b>Jon-Erik Liw</b></sub></a><br /><a href="https://github.com/quarkiverse/quarkus-google-cloud-services/commits?author=xperjon" title="Documentation">📖</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://simonscholz.dev"><img src="https://avatars.githubusercontent.com/u/7559962?v=4?s=100" width="100px;" alt="Simon Scholz"/><br /><sub><b>Simon Scholz</b></sub></a><br /><a href="https://github.com/quarkiverse/quarkus-google-cloud-services/commits?author=SimonScholz" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/jfbenckhuijsen"><img src="https://avatars.githubusercontent.com/u/6218066?v=4?s=100" width="100px;" alt="Jeroen Benckhuijsen"/><br /><sub><b>Jeroen Benckhuijsen</b></sub></a><br /><a href="https://github.com/quarkiverse/quarkus-google-cloud-services/commits?author=jfbenckhuijsen" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="http://www.micheljung.ch"><img src="https://avatars.githubusercontent.com/u/1864183?v=4?s=100" width="100px;" alt="Michel Jung"/><br /><sub><b>Michel Jung</b></sub></a><br /><a href="https://github.com/quarkiverse/quarkus-google-cloud-services/commits?author=micheljung" title="Code">💻</a></td>
     </tr>
   </tbody>
 </table>
