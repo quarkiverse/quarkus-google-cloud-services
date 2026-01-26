@@ -10,6 +10,7 @@ import io.quarkus.arc.deployment.AdditionalBeanBuildItem;
 import io.quarkus.deployment.annotations.BuildProducer;
 import io.quarkus.deployment.annotations.BuildStep;
 import io.quarkus.deployment.builditem.FeatureBuildItem;
+import io.quarkus.deployment.builditem.nativeimage.NativeImageConfigBuildItem;
 
 public class FirebaseAdminBuildSteps {
 
@@ -42,5 +43,16 @@ public class FirebaseAdminBuildSteps {
         }
 
         additionalBeans.produce(builder.build());
+    }
+
+    /**
+     * Fix for <a href="https://github.com/quarkiverse/quarkus-google-cloud-services/issues/963">#963</a>.
+     */
+    @BuildStep
+    public NativeImageConfigBuildItem nativeImageConfiguration() {
+        return NativeImageConfigBuildItem.builder()
+                .addRuntimeInitializedClass("com.google.firebase.internal.ApiClientUtils")
+                .addRuntimeInitializedClass("com.google.firebase.internal.ApiClientUtils$TransportInstanceHolder")
+                .build();
     }
 }
