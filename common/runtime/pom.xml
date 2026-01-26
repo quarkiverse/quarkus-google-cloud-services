@@ -46,6 +46,11 @@
                 </exclusion>
             </exclusions>
         </dependency>
+        <!-- Needed for native image build -->
+        <dependency>
+            <groupId>com.github.luben</groupId>
+            <artifactId>zstd-jni</artifactId>
+        </dependency>
         <dependency>
             <groupId>com.google.cloud</groupId>
             <artifactId>google-cloud-core</artifactId>

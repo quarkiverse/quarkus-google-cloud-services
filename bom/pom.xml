@@ -18,8 +18,9 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
-        <google-cloud-sdk.version>26.50.0</google-cloud-sdk.version>
+        <google-cloud-sdk.version>26.71.0</google-cloud-sdk.version>
         <firebase-admin-sdk.version>9.7.0</firebase-admin-sdk.version>
+        <sztd-jni.version>1.5.7-6</sztd-jni.version>
 
         <!-- Dependency convergence issues -->
         <opencensus.version>0.31.1</opencensus.version><!-- mess in google-pubsub and grpc deps; should be rather stable as OpenCensus has been sunsetted already - see https://github.com/GoogleCloudPlatform/cloud-opensource-java/issues/862 -->
@@ -42,6 +43,12 @@
                 <groupId>com.google.firebase</groupId>
                 <artifactId>firebase-admin</artifactId>
                 <version>${firebase-admin-sdk.version}</version>
+            </dependency>
+            <!-- Needed for native image build -->
+            <dependency>
+                <groupId>com.github.luben</groupId>
+                <artifactId>zstd-jni</artifactId>
+                <version>${sztd-jni.version}</version>
             </dependency>
 
             <!-- Google Cloud Services common libs-->
@@ -91,6 +98,11 @@
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>animal-sniffer-annotations</artifactId>
                 <version>${animal-sniffer.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.google.re2j</groupId>
+                <artifactId>re2j</artifactId>
+                <version>1.8</version>
             </dependency>
 
             <!-- Google Cloud Services Extensions -->
