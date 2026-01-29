@@ -27,7 +27,7 @@
         <threeten.version>1.7.2</threeten.version><!-- mess in google-cloud-core transitive deps -->
         <conscrypt.version>2.5.2</conscrypt.version><!-- mess in google-cloud-bigquery and the other google cloud lib-->
         <animal-sniffer.version>1.27</animal-sniffer.version> <!-- mess in google-cloud-storage -->
-        <protobuf-version>4.33.2</protobuf-version> <!-- mess in Firebase -->
+        <protobuf-version>4.33.4</protobuf-version> <!-- mess in Firebase -->
         <re2j-version>1.8</re2j-version>
     </properties>
 
