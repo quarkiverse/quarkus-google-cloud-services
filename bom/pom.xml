@@ -19,7 +19,7 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
         <google-cloud-sdk.version>26.74.0</google-cloud-sdk.version>
-        <firebase-admin-sdk.version>9.7.0</firebase-admin-sdk.version>
+        <firebase-admin-sdk.version>9.7.1</firebase-admin-sdk.version>
         <sztd-jni.version>1.5.7-6</sztd-jni.version>
 
         <!-- Dependency convergence issues -->
