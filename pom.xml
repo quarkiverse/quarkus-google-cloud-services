@@ -12,7 +12,7 @@
   <version>2.21.0-SNAPSHOT</version>
   <packaging>pom</packaging>
   <properties>
-    <quarkus.version>3.31.0</quarkus.version>
+    <quarkus.version>3.31.3</quarkus.version>
     <enforcer-plugin.version>3.6.2</enforcer-plugin.version>
     <assertj.version>3.27.7</assertj.version>
     <opentelemetry-alpha.version>1.59.0-alpha</opentelemetry-alpha.version>
