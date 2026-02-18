@@ -30,10 +30,6 @@
                     <artifactId>commons-logging</artifactId>
                 </exclusion>
                 <exclusion>
-                    <groupId>log4j</groupId>
-                    <artifactId>log4j</artifactId>
-                </exclusion>
-                <exclusion>
                     <groupId>org.apache.logging.log4j</groupId>
                     <artifactId>log4j</artifactId>
                 </exclusion>
@@ -50,10 +46,6 @@
                     <artifactId>animal-sniffer-annotations</artifactId>
                 </exclusion>
             </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>org.jboss.logmanager</groupId>
-            <artifactId>log4j-jboss-logmanager</artifactId>
         </dependency>
         <dependency>
             <groupId>org.jboss.logmanager</groupId>

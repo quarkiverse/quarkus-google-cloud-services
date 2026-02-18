@@ -41,6 +41,8 @@ public class CommonBuildSteps {
                 .addRuntimeInitializedClass("com.sun.management.internal.PlatformMBeanProviderImpl")
                 // Required due to initializing a java.util.Random
                 .addRuntimeInitializedClass("io.opentelemetry.sdk.internal.AndroidFriendlyRandomHolder")
+                // Required for Netty gRPC
+                .addRuntimeInitializedClass("io.grpc.netty.shaded.io.netty.util.ThreadDeathWatcher")
                 // Required for Netty HTTP
                 .addRuntimeInitializedClass("io.netty.handler.codec.compression.ZstdConstants")
                 .addRuntimeInitializedClass("io.netty.handler.codec.compression.BrotliOptions")
