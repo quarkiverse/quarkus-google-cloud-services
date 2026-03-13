@@ -199,6 +199,17 @@ Note that any message which cannot be successfully delivered to the application 
 redelivery. This includes errors or simply failing to `ack()` the message using the `AckReplyConsumer` provided
 in the `MessageReceiver` interface.
 
+*!!Important!!*
+
+You need to use the module `quarkus-pubsub-push-vertx-http` as a dependency in your own code to use this functionality. Previously the push logic was automatically packaged as a dependency, however this was found to conflict with the usage of Pubsub from Google Cloud Functions. Include the following in your project pom.xml (or an equivalent for Gradle or other build tools):
+
+```xml
+        <dependency>
+            <groupId>io.quarkiverse.googlecloudservices</groupId>
+            <artifactId>quarkus-google-cloud-pubsub-push-vertx-http</artifactId>
+        </dependency>
+```
+
 When running quarkus-tests, messages will also be authenticated, which will fail as you cannot provide a valid JWT
 signed with the Google private keys. To resolve this issue, there are two options:
 * Using pull-subscriptions for testing purposes. For the `%test` profile, set the `quarkus.google.cloud.pubsub.push.enabed` flag to false. This
