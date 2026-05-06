@@ -7,7 +7,7 @@ h|[.header-title]##Configuration property##
 h|Type
 h|Default
 
-a|icon:lock[title=Fixed at build time] [[quarkus-google-cloud-spanner_quarkus-google-cloud-spanner-devservice-enabled]] [.property-path]##link:#quarkus-google-cloud-spanner_quarkus-google-cloud-spanner-devservice-enabled[`quarkus.google.cloud.spanner.devservice.enabled`]##
+a|icon:lock[title=Fixed at build time] [[quarkus-google-cloud-spanner_quarkus-google-cloud-spanner-devservice-enabled]] [.property-path]##link:#quarkus-google-cloud-spanner_quarkus-google-cloud-spanner-devservice-enabled[`+++quarkus.google.cloud.spanner.devservice.enabled+++`]##
 ifdef::add-copy-button-to-config-props[]
 config_property_copy_button:+++quarkus.google.cloud.spanner.devservice.enabled+++[]
 endif::add-copy-button-to-config-props[]
@@ -28,7 +28,7 @@ endif::add-copy-button-to-env-var[]
 |boolean
 |`+++false+++`
 
-a|icon:lock[title=Fixed at build time] [[quarkus-google-cloud-spanner_quarkus-google-cloud-spanner-devservice-image-name]] [.property-path]##link:#quarkus-google-cloud-spanner_quarkus-google-cloud-spanner-devservice-image-name[`quarkus.google.cloud.spanner.devservice.image-name`]##
+a|icon:lock[title=Fixed at build time] [[quarkus-google-cloud-spanner_quarkus-google-cloud-spanner-devservice-image-name]] [.property-path]##link:#quarkus-google-cloud-spanner_quarkus-google-cloud-spanner-devservice-image-name[`+++quarkus.google.cloud.spanner.devservice.image-name+++`]##
 ifdef::add-copy-button-to-config-props[]
 config_property_copy_button:+++quarkus.google.cloud.spanner.devservice.image-name+++[]
 endif::add-copy-button-to-config-props[]
@@ -49,7 +49,7 @@ endif::add-copy-button-to-env-var[]
 |string
 |`+++gcr.io/cloud-spanner-emulator/emulator+++`
 
-a|icon:lock[title=Fixed at build time] [[quarkus-google-cloud-spanner_quarkus-google-cloud-spanner-devservice-http-port]] [.property-path]##link:#quarkus-google-cloud-spanner_quarkus-google-cloud-spanner-devservice-http-port[`quarkus.google.cloud.spanner.devservice.http-port`]##
+a|icon:lock[title=Fixed at build time] [[quarkus-google-cloud-spanner_quarkus-google-cloud-spanner-devservice-http-port]] [.property-path]##link:#quarkus-google-cloud-spanner_quarkus-google-cloud-spanner-devservice-http-port[`+++quarkus.google.cloud.spanner.devservice.http-port+++`]##
 ifdef::add-copy-button-to-config-props[]
 config_property_copy_button:+++quarkus.google.cloud.spanner.devservice.http-port+++[]
 endif::add-copy-button-to-config-props[]
@@ -70,7 +70,7 @@ endif::add-copy-button-to-env-var[]
 |int
 |
 
-a|icon:lock[title=Fixed at build time] [[quarkus-google-cloud-spanner_quarkus-google-cloud-spanner-devservice-grpc-port]] [.property-path]##link:#quarkus-google-cloud-spanner_quarkus-google-cloud-spanner-devservice-grpc-port[`quarkus.google.cloud.spanner.devservice.grpc-port`]##
+a|icon:lock[title=Fixed at build time] [[quarkus-google-cloud-spanner_quarkus-google-cloud-spanner-devservice-grpc-port]] [.property-path]##link:#quarkus-google-cloud-spanner_quarkus-google-cloud-spanner-devservice-grpc-port[`+++quarkus.google.cloud.spanner.devservice.grpc-port+++`]##
 ifdef::add-copy-button-to-config-props[]
 config_property_copy_button:+++quarkus.google.cloud.spanner.devservice.grpc-port+++[]
 endif::add-copy-button-to-config-props[]
@@ -91,7 +91,7 @@ endif::add-copy-button-to-env-var[]
 |int
 |
 
-a| [[quarkus-google-cloud-spanner_quarkus-google-cloud-spanner-emulator-host]] [.property-path]##link:#quarkus-google-cloud-spanner_quarkus-google-cloud-spanner-emulator-host[`quarkus.google.cloud.spanner.emulator-host`]##
+a| [[quarkus-google-cloud-spanner_quarkus-google-cloud-spanner-emulator-host]] [.property-path]##link:#quarkus-google-cloud-spanner_quarkus-google-cloud-spanner-emulator-host[`+++quarkus.google.cloud.spanner.emulator-host+++`]##
 ifdef::add-copy-button-to-config-props[]
 config_property_copy_button:+++quarkus.google.cloud.spanner.emulator-host+++[]
 endif::add-copy-button-to-config-props[]
@@ -112,7 +112,7 @@ endif::add-copy-button-to-env-var[]
 |string
 |
 
-a| [[quarkus-google-cloud-spanner_quarkus-google-cloud-spanner-database-role]] [.property-path]##link:#quarkus-google-cloud-spanner_quarkus-google-cloud-spanner-database-role[`quarkus.google.cloud.spanner.database-role`]##
+a| [[quarkus-google-cloud-spanner_quarkus-google-cloud-spanner-database-role]] [.property-path]##link:#quarkus-google-cloud-spanner_quarkus-google-cloud-spanner-database-role[`+++quarkus.google.cloud.spanner.database-role+++`]##
 ifdef::add-copy-button-to-config-props[]
 config_property_copy_button:+++quarkus.google.cloud.spanner.database-role+++[]
 endif::add-copy-button-to-config-props[]
