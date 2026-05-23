@@ -120,7 +120,7 @@ configured. If neither a version is configured, nor a `package.json` file can be
 
 This extension builds a custom Docker image to execute the firebase emulators. To reduce startup times, an aggressive
 caching strategy is used. The extension will build an internal base image (called
-`localhost/testcontainers/firebase-base:{firebase-version}`) and will only rebuild this image if it cannot be found.
+`localhost/testcontainers/firebase-base:\{firebase-version\}`) and will only rebuild this image if it cannot be found.
 If you need the image to be regenerated, you manually need to remove the docker image.
 
 Currently the base image builder uses the following steps:
