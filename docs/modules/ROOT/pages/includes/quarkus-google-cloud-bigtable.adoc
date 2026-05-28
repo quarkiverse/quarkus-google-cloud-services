@@ -7,7 +7,7 @@ h|[.header-title]##Configuration property##
 h|Type
 h|Default
 
-a|icon:lock[title=Fixed at build time] [[quarkus-google-cloud-bigtable_quarkus-google-cloud-bigtable-devservice-enabled]] [.property-path]##link:#quarkus-google-cloud-bigtable_quarkus-google-cloud-bigtable-devservice-enabled[`quarkus.google.cloud.bigtable.devservice.enabled`]##
+a|icon:lock[title=Fixed at build time] [[quarkus-google-cloud-bigtable_quarkus-google-cloud-bigtable-devservice-enabled]] [.property-path]##link:#quarkus-google-cloud-bigtable_quarkus-google-cloud-bigtable-devservice-enabled[`+++quarkus.google.cloud.bigtable.devservice.enabled+++`]##
 ifdef::add-copy-button-to-config-props[]
 config_property_copy_button:+++quarkus.google.cloud.bigtable.devservice.enabled+++[]
 endif::add-copy-button-to-config-props[]
@@ -28,7 +28,7 @@ endif::add-copy-button-to-env-var[]
 |boolean
 |`+++false+++`
 
-a|icon:lock[title=Fixed at build time] [[quarkus-google-cloud-bigtable_quarkus-google-cloud-bigtable-devservice-image-name]] [.property-path]##link:#quarkus-google-cloud-bigtable_quarkus-google-cloud-bigtable-devservice-image-name[`quarkus.google.cloud.bigtable.devservice.image-name`]##
+a|icon:lock[title=Fixed at build time] [[quarkus-google-cloud-bigtable_quarkus-google-cloud-bigtable-devservice-image-name]] [.property-path]##link:#quarkus-google-cloud-bigtable_quarkus-google-cloud-bigtable-devservice-image-name[`+++quarkus.google.cloud.bigtable.devservice.image-name+++`]##
 ifdef::add-copy-button-to-config-props[]
 config_property_copy_button:+++quarkus.google.cloud.bigtable.devservice.image-name+++[]
 endif::add-copy-button-to-config-props[]
@@ -49,7 +49,7 @@ endif::add-copy-button-to-env-var[]
 |string
 |`+++gcr.io/google.com/cloudsdktool/google-cloud-cli:emulators+++`
 
-a|icon:lock[title=Fixed at build time] [[quarkus-google-cloud-bigtable_quarkus-google-cloud-bigtable-devservice-emulator-port]] [.property-path]##link:#quarkus-google-cloud-bigtable_quarkus-google-cloud-bigtable-devservice-emulator-port[`quarkus.google.cloud.bigtable.devservice.emulator-port`]##
+a|icon:lock[title=Fixed at build time] [[quarkus-google-cloud-bigtable_quarkus-google-cloud-bigtable-devservice-emulator-port]] [.property-path]##link:#quarkus-google-cloud-bigtable_quarkus-google-cloud-bigtable-devservice-emulator-port[`+++quarkus.google.cloud.bigtable.devservice.emulator-port+++`]##
 ifdef::add-copy-button-to-config-props[]
 config_property_copy_button:+++quarkus.google.cloud.bigtable.devservice.emulator-port+++[]
 endif::add-copy-button-to-config-props[]
