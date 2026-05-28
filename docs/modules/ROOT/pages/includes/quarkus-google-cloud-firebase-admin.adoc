@@ -7,7 +7,7 @@ h|[.header-title]##Configuration property##
 h|Type
 h|Default
 
-a|icon:lock[title=Fixed at build time] [[quarkus-google-cloud-firebase-admin_quarkus-google-cloud-firebase-auth-enabled]] [.property-path]##link:#quarkus-google-cloud-firebase-admin_quarkus-google-cloud-firebase-auth-enabled[`quarkus.google.cloud.firebase.auth.enabled`]##
+a|icon:lock[title=Fixed at build time] [[quarkus-google-cloud-firebase-admin_quarkus-google-cloud-firebase-auth-enabled]] [.property-path]##link:#quarkus-google-cloud-firebase-admin_quarkus-google-cloud-firebase-auth-enabled[`+++quarkus.google.cloud.firebase.auth.enabled+++`]##
 ifdef::add-copy-button-to-config-props[]
 config_property_copy_button:+++quarkus.google.cloud.firebase.auth.enabled+++[]
 endif::add-copy-button-to-config-props[]
@@ -28,7 +28,7 @@ endif::add-copy-button-to-env-var[]
 |boolean
 |`+++false+++`
 
-a|icon:lock[title=Fixed at build time] [[quarkus-google-cloud-firebase-admin_quarkus-google-cloud-firebase-auth-session-cookie-enabled]] [.property-path]##link:#quarkus-google-cloud-firebase-admin_quarkus-google-cloud-firebase-auth-session-cookie-enabled[`quarkus.google.cloud.firebase.auth.session-cookie.enabled`]##
+a|icon:lock[title=Fixed at build time] [[quarkus-google-cloud-firebase-admin_quarkus-google-cloud-firebase-auth-session-cookie-enabled]] [.property-path]##link:#quarkus-google-cloud-firebase-admin_quarkus-google-cloud-firebase-auth-session-cookie-enabled[`+++quarkus.google.cloud.firebase.auth.session-cookie.enabled+++`]##
 ifdef::add-copy-button-to-config-props[]
 config_property_copy_button:+++quarkus.google.cloud.firebase.auth.session-cookie.enabled+++[]
 endif::add-copy-button-to-config-props[]
@@ -49,7 +49,7 @@ endif::add-copy-button-to-env-var[]
 |boolean
 |`+++false+++`
 
-a| [[quarkus-google-cloud-firebase-admin_quarkus-google-cloud-firebase-auth-emulator-host]] [.property-path]##link:#quarkus-google-cloud-firebase-admin_quarkus-google-cloud-firebase-auth-emulator-host[`quarkus.google.cloud.firebase.auth.emulator-host`]##
+a| [[quarkus-google-cloud-firebase-admin_quarkus-google-cloud-firebase-auth-emulator-host]] [.property-path]##link:#quarkus-google-cloud-firebase-admin_quarkus-google-cloud-firebase-auth-emulator-host[`+++quarkus.google.cloud.firebase.auth.emulator-host+++`]##
 ifdef::add-copy-button-to-config-props[]
 config_property_copy_button:+++quarkus.google.cloud.firebase.auth.emulator-host+++[]
 endif::add-copy-button-to-config-props[]
@@ -70,7 +70,7 @@ endif::add-copy-button-to-env-var[]
 |string
 |
 
-a| [[quarkus-google-cloud-firebase-admin_quarkus-google-cloud-firebase-auth-use-emulator-credentials]] [.property-path]##link:#quarkus-google-cloud-firebase-admin_quarkus-google-cloud-firebase-auth-use-emulator-credentials[`quarkus.google.cloud.firebase.auth.use-emulator-credentials`]##
+a| [[quarkus-google-cloud-firebase-admin_quarkus-google-cloud-firebase-auth-use-emulator-credentials]] [.property-path]##link:#quarkus-google-cloud-firebase-admin_quarkus-google-cloud-firebase-auth-use-emulator-credentials[`+++quarkus.google.cloud.firebase.auth.use-emulator-credentials+++`]##
 ifdef::add-copy-button-to-config-props[]
 config_property_copy_button:+++quarkus.google.cloud.firebase.auth.use-emulator-credentials+++[]
 endif::add-copy-button-to-config-props[]
@@ -94,7 +94,7 @@ endif::add-copy-button-to-env-var[]
 |boolean
 |`+++true+++`
 
-a| [[quarkus-google-cloud-firebase-admin_quarkus-google-cloud-firebase-auth-roles-claim]] [.property-path]##link:#quarkus-google-cloud-firebase-admin_quarkus-google-cloud-firebase-auth-roles-claim[`quarkus.google.cloud.firebase.auth.roles-claim`]##
+a| [[quarkus-google-cloud-firebase-admin_quarkus-google-cloud-firebase-auth-roles-claim]] [.property-path]##link:#quarkus-google-cloud-firebase-admin_quarkus-google-cloud-firebase-auth-roles-claim[`+++quarkus.google.cloud.firebase.auth.roles-claim+++`]##
 ifdef::add-copy-button-to-config-props[]
 config_property_copy_button:+++quarkus.google.cloud.firebase.auth.roles-claim+++[]
 endif::add-copy-button-to-config-props[]
@@ -115,7 +115,7 @@ endif::add-copy-button-to-env-var[]
 |string
 |
 
-a| [[quarkus-google-cloud-firebase-admin_quarkus-google-cloud-firebase-auth-session-cookie-name]] [.property-path]##link:#quarkus-google-cloud-firebase-admin_quarkus-google-cloud-firebase-auth-session-cookie-name[`quarkus.google.cloud.firebase.auth.session-cookie.name`]##
+a| [[quarkus-google-cloud-firebase-admin_quarkus-google-cloud-firebase-auth-session-cookie-name]] [.property-path]##link:#quarkus-google-cloud-firebase-admin_quarkus-google-cloud-firebase-auth-session-cookie-name[`+++quarkus.google.cloud.firebase.auth.session-cookie.name+++`]##
 ifdef::add-copy-button-to-config-props[]
 config_property_copy_button:+++quarkus.google.cloud.firebase.auth.session-cookie.name+++[]
 endif::add-copy-button-to-config-props[]
@@ -136,7 +136,7 @@ endif::add-copy-button-to-env-var[]
 |string
 |`+++session+++`
 
-a| [[quarkus-google-cloud-firebase-admin_quarkus-google-cloud-firebase-auth-session-cookie-expiration-duration]] [.property-path]##link:#quarkus-google-cloud-firebase-admin_quarkus-google-cloud-firebase-auth-session-cookie-expiration-duration[`quarkus.google.cloud.firebase.auth.session-cookie.expiration-duration`]##
+a| [[quarkus-google-cloud-firebase-admin_quarkus-google-cloud-firebase-auth-session-cookie-expiration-duration]] [.property-path]##link:#quarkus-google-cloud-firebase-admin_quarkus-google-cloud-firebase-auth-session-cookie-expiration-duration[`+++quarkus.google.cloud.firebase.auth.session-cookie.expiration-duration+++`]##
 ifdef::add-copy-button-to-config-props[]
 config_property_copy_button:+++quarkus.google.cloud.firebase.auth.session-cookie.expiration-duration+++[]
 endif::add-copy-button-to-config-props[]
@@ -159,7 +159,7 @@ endif::add-copy-button-to-env-var[]
 |link:https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/time/Duration.html[Duration] link:#duration-note-anchor-quarkus-google-cloud-firebase-admin_quarkus-google[icon:question-circle[title=More information about the Duration format]]
 |`+++P5D+++`
 
-a| [[quarkus-google-cloud-firebase-admin_quarkus-google-cloud-firebase-auth-session-cookie-check-revoked]] [.property-path]##link:#quarkus-google-cloud-firebase-admin_quarkus-google-cloud-firebase-auth-session-cookie-check-revoked[`quarkus.google.cloud.firebase.auth.session-cookie.check-revoked`]##
+a| [[quarkus-google-cloud-firebase-admin_quarkus-google-cloud-firebase-auth-session-cookie-check-revoked]] [.property-path]##link:#quarkus-google-cloud-firebase-admin_quarkus-google-cloud-firebase-auth-session-cookie-check-revoked[`+++quarkus.google.cloud.firebase.auth.session-cookie.check-revoked+++`]##
 ifdef::add-copy-button-to-config-props[]
 config_property_copy_button:+++quarkus.google.cloud.firebase.auth.session-cookie.check-revoked+++[]
 endif::add-copy-button-to-config-props[]
@@ -180,7 +180,7 @@ endif::add-copy-button-to-env-var[]
 |boolean
 |`+++true+++`
 
-a| [[quarkus-google-cloud-firebase-admin_quarkus-google-cloud-firebase-auth-session-cookie-validate-token]] [.property-path]##link:#quarkus-google-cloud-firebase-admin_quarkus-google-cloud-firebase-auth-session-cookie-validate-token[`quarkus.google.cloud.firebase.auth.session-cookie.validate-token`]##
+a| [[quarkus-google-cloud-firebase-admin_quarkus-google-cloud-firebase-auth-session-cookie-validate-token]] [.property-path]##link:#quarkus-google-cloud-firebase-admin_quarkus-google-cloud-firebase-auth-session-cookie-validate-token[`+++quarkus.google.cloud.firebase.auth.session-cookie.validate-token+++`]##
 ifdef::add-copy-button-to-config-props[]
 config_property_copy_button:+++quarkus.google.cloud.firebase.auth.session-cookie.validate-token+++[]
 endif::add-copy-button-to-config-props[]
@@ -201,7 +201,7 @@ endif::add-copy-button-to-env-var[]
 |boolean
 |`+++false+++`
 
-a| [[quarkus-google-cloud-firebase-admin_quarkus-google-cloud-firebase-auth-session-cookie-minimum-token-validity]] [.property-path]##link:#quarkus-google-cloud-firebase-admin_quarkus-google-cloud-firebase-auth-session-cookie-minimum-token-validity[`quarkus.google.cloud.firebase.auth.session-cookie.minimum-token-validity`]##
+a| [[quarkus-google-cloud-firebase-admin_quarkus-google-cloud-firebase-auth-session-cookie-minimum-token-validity]] [.property-path]##link:#quarkus-google-cloud-firebase-admin_quarkus-google-cloud-firebase-auth-session-cookie-minimum-token-validity[`+++quarkus.google.cloud.firebase.auth.session-cookie.minimum-token-validity+++`]##
 ifdef::add-copy-button-to-config-props[]
 config_property_copy_button:+++quarkus.google.cloud.firebase.auth.session-cookie.minimum-token-validity+++[]
 endif::add-copy-button-to-config-props[]
@@ -222,7 +222,7 @@ endif::add-copy-button-to-env-var[]
 |link:https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/time/Duration.html[Duration] link:#duration-note-anchor-quarkus-google-cloud-firebase-admin_quarkus-google[icon:question-circle[title=More information about the Duration format]]
 |
 
-a| [[quarkus-google-cloud-firebase-admin_quarkus-google-cloud-firebase-auth-session-cookie-login-api-path]] [.property-path]##link:#quarkus-google-cloud-firebase-admin_quarkus-google-cloud-firebase-auth-session-cookie-login-api-path[`quarkus.google.cloud.firebase.auth.session-cookie.login-api-path`]##
+a| [[quarkus-google-cloud-firebase-admin_quarkus-google-cloud-firebase-auth-session-cookie-login-api-path]] [.property-path]##link:#quarkus-google-cloud-firebase-admin_quarkus-google-cloud-firebase-auth-session-cookie-login-api-path[`+++quarkus.google.cloud.firebase.auth.session-cookie.login-api-path+++`]##
 ifdef::add-copy-button-to-config-props[]
 config_property_copy_button:+++quarkus.google.cloud.firebase.auth.session-cookie.login-api-path+++[]
 endif::add-copy-button-to-config-props[]
@@ -243,7 +243,7 @@ endif::add-copy-button-to-env-var[]
 |string
 |
 
-a| [[quarkus-google-cloud-firebase-admin_quarkus-google-cloud-firebase-auth-session-cookie-logout-api-path]] [.property-path]##link:#quarkus-google-cloud-firebase-admin_quarkus-google-cloud-firebase-auth-session-cookie-logout-api-path[`quarkus.google.cloud.firebase.auth.session-cookie.logout-api-path`]##
+a| [[quarkus-google-cloud-firebase-admin_quarkus-google-cloud-firebase-auth-session-cookie-logout-api-path]] [.property-path]##link:#quarkus-google-cloud-firebase-admin_quarkus-google-cloud-firebase-auth-session-cookie-logout-api-path[`+++quarkus.google.cloud.firebase.auth.session-cookie.logout-api-path+++`]##
 ifdef::add-copy-button-to-config-props[]
 config_property_copy_button:+++quarkus.google.cloud.firebase.auth.session-cookie.logout-api-path+++[]
 endif::add-copy-button-to-config-props[]
