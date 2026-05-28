@@ -7,7 +7,7 @@ h|[.header-title]##Configuration property##
 h|Type
 h|Default
 
-a| [[quarkus-google-cloud_quarkus-google-cloud-enable-metadata-server]] [.property-path]##link:#quarkus-google-cloud_quarkus-google-cloud-enable-metadata-server[`quarkus.google.cloud.enable-metadata-server`]##
+a| [[quarkus-google-cloud_quarkus-google-cloud-enable-metadata-server]] [.property-path]##link:#quarkus-google-cloud_quarkus-google-cloud-enable-metadata-server[`+++quarkus.google.cloud.enable-metadata-server+++`]##
 ifdef::add-copy-button-to-config-props[]
 config_property_copy_button:+++quarkus.google.cloud.enable-metadata-server+++[]
 endif::add-copy-button-to-config-props[]
@@ -28,7 +28,7 @@ endif::add-copy-button-to-env-var[]
 |boolean
 |`+++true+++`
 
-a| [[quarkus-google-cloud_quarkus-google-cloud-project-id]] [.property-path]##link:#quarkus-google-cloud_quarkus-google-cloud-project-id[`quarkus.google.cloud.project-id`]##
+a| [[quarkus-google-cloud_quarkus-google-cloud-project-id]] [.property-path]##link:#quarkus-google-cloud_quarkus-google-cloud-project-id[`+++quarkus.google.cloud.project-id+++`]##
 ifdef::add-copy-button-to-config-props[]
 config_property_copy_button:+++quarkus.google.cloud.project-id+++[]
 endif::add-copy-button-to-config-props[]
@@ -49,7 +49,7 @@ endif::add-copy-button-to-env-var[]
 |string
 |
 
-a| [[quarkus-google-cloud_quarkus-google-cloud-service-account-location]] [.property-path]##link:#quarkus-google-cloud_quarkus-google-cloud-service-account-location[`quarkus.google.cloud.service-account-location`]##
+a| [[quarkus-google-cloud_quarkus-google-cloud-service-account-location]] [.property-path]##link:#quarkus-google-cloud_quarkus-google-cloud-service-account-location[`+++quarkus.google.cloud.service-account-location+++`]##
 ifdef::add-copy-button-to-config-props[]
 config_property_copy_button:+++quarkus.google.cloud.service-account-location+++[]
 endif::add-copy-button-to-config-props[]
@@ -70,7 +70,7 @@ endif::add-copy-button-to-env-var[]
 |string
 |
 
-a| [[quarkus-google-cloud_quarkus-google-cloud-service-account-encoded-key]] [.property-path]##link:#quarkus-google-cloud_quarkus-google-cloud-service-account-encoded-key[`quarkus.google.cloud.service-account-encoded-key`]##
+a| [[quarkus-google-cloud_quarkus-google-cloud-service-account-encoded-key]] [.property-path]##link:#quarkus-google-cloud_quarkus-google-cloud-service-account-encoded-key[`+++quarkus.google.cloud.service-account-encoded-key+++`]##
 ifdef::add-copy-button-to-config-props[]
 config_property_copy_button:+++quarkus.google.cloud.service-account-encoded-key+++[]
 endif::add-copy-button-to-config-props[]
@@ -91,7 +91,7 @@ endif::add-copy-button-to-env-var[]
 |string
 |
 
-a| [[quarkus-google-cloud_quarkus-google-cloud-access-token-enabled]] [.property-path]##link:#quarkus-google-cloud_quarkus-google-cloud-access-token-enabled[`quarkus.google.cloud.access-token-enabled`]##
+a| [[quarkus-google-cloud_quarkus-google-cloud-access-token-enabled]] [.property-path]##link:#quarkus-google-cloud_quarkus-google-cloud-access-token-enabled[`+++quarkus.google.cloud.access-token-enabled+++`]##
 ifdef::add-copy-button-to-config-props[]
 config_property_copy_button:+++quarkus.google.cloud.access-token-enabled+++[]
 endif::add-copy-button-to-config-props[]
@@ -112,7 +112,7 @@ endif::add-copy-button-to-env-var[]
 |boolean
 |`+++true+++`
 
-a| [[quarkus-google-cloud_quarkus-google-cloud-secret-manager-enabled]] [.property-path]##link:#quarkus-google-cloud_quarkus-google-cloud-secret-manager-enabled[`quarkus.google.cloud.secret-manager-enabled`]##
+a| [[quarkus-google-cloud_quarkus-google-cloud-secret-manager-enabled]] [.property-path]##link:#quarkus-google-cloud_quarkus-google-cloud-secret-manager-enabled[`+++quarkus.google.cloud.secret-manager-enabled+++`]##
 ifdef::add-copy-button-to-config-props[]
 config_property_copy_button:+++quarkus.google.cloud.secret-manager-enabled+++[]
 endif::add-copy-button-to-config-props[]
