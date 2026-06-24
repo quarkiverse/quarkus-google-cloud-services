@@ -41,7 +41,8 @@
     <module>vertx-ai</module>
     
     <module>integration-tests</module>
-  </modules>
+      <module>docs-rag</module>
+    </modules>
   <dependencyManagement>
     <dependencies>
       <dependency>
