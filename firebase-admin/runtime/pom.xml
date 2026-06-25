@@ -13,7 +13,7 @@
     <description>Use Google Cloud Firebase Admin to perform privileged actions</description>
 
     <properties>
-        <microprofile-jwt-auth-api.version>2.1</microprofile-jwt-auth-api.version>
+        <microprofile-jwt-auth-api.version>2.2</microprofile-jwt-auth-api.version>
     </properties>
 
     <dependencies>
