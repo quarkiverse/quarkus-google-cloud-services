@@ -1566,18 +1566,19 @@ public class FirebaseEmulatorContainer extends GenericContainer<FirebaseEmulator
     public void configure() {
         super.configure();
 
-        if (!useSharedNetwork) {
-            services.keySet()
-                    .forEach(emulator -> {
-                        var exposedPort = services.get(emulator);
-                        // Expose emulatorPort
-                        if (exposedPort.isFixed()) {
-                            addFixedExposedPort(exposedPort.fixedPort(), exposedPort.fixedPort());
-                        } else {
-                            addExposedPort(emulator.internalPort);
-                        }
-                    });
-        }
+        // Always expose/bind ports to the host, even when running on a shared network. This allows the JVM
+        // (which is not part of the Docker network) to keep reaching the emulators via localhost, while
+        // containers on the shared network can additionally reach them via the network alias (see hostName).
+        services.keySet()
+                .forEach(emulator -> {
+                    var exposedPort = services.get(emulator);
+                    // Expose emulatorPort
+                    if (exposedPort.isFixed()) {
+                        addFixedExposedPort(exposedPort.fixedPort(), exposedPort.fixedPort());
+                    } else {
+                        addExposedPort(emulator.internalPort);
+                    }
+                });
 
         waitingFor(Wait.forLogMessage(".*✔  All emulators ready! It is now safe to connect your app.*", 1));
     }
@@ -1587,16 +1588,14 @@ public class FirebaseEmulatorContainer extends GenericContainer<FirebaseEmulator
     }
 
     /**
-     * Get the various endpoints for the emulators. The map values are in the form of a string "host:port".
+     * Get the various endpoints for the emulators, as reachable from the JVM running the Quarkus application
+     * (i.e. {@code localhost:<mappedPort>}, even when the container is also attached to a shared network).
+     * The map values are in the form of a string "host:port".
      *
      * @return The emulator endpoints
      */
     public Map<Emulator, String> emulatorEndpoints() {
-        return services.keySet()
-                .stream()
-                .collect(Collectors.toMap(
-                        e -> e,
-                        this::getEmulatorEndpoint));
+        return hostEmulatorUrls();
     }
 
     /**
@@ -1606,26 +1605,77 @@ public class FirebaseEmulatorContainer extends GenericContainer<FirebaseEmulator
      * @return The TCP Port
      */
     public Integer emulatorPort(Emulator emulator) {
-        var exposedPort = services.get(emulator);
-        if (exposedPort.isFixed()) {
-            return exposedPort.fixedPort();
-        } else {
-            if (useSharedNetwork) {
-                return emulator.internalPort;
-            } else {
-                return getMappedPort(emulator.internalPort);
-            }
+        if (useSharedNetwork && !services.get(emulator).isFixed()) {
+            return emulator.internalPort;
         }
+        return hostMappedPort(emulator);
     }
 
     /**
-     * Return the url an emulator is listening on
+     * Return the host-mapped TCP port an emulator is reachable on from the Docker host, regardless of whether
+     * the container is also running on a shared network. Since ports are always exposed to the host (see
+     * {@link #configure()}), this is always backed by a real port mapping.
+     *
+     * @param emulator The emulator
+     * @return The host-mapped TCP port
+     */
+    public Integer hostMappedPort(Emulator emulator) {
+        var exposedPort = services.get(emulator);
+        return exposedPort.isFixed() ? exposedPort.fixedPort() : getMappedPort(emulator.internalPort);
+    }
+
+    /**
+     * Return the url an emulator is listening on, addressed by its shared-network alias. Only resolvable by
+     * other containers attached to the same shared network (see {@link #setupSharedNetworkHost(String)}).
      *
      * @param emulator The emulator
      * @return The url
      */
     public String emulatorUrl(Emulator emulator) {
         return this.hostName + ":" + emulatorPort(emulator);
+    }
+
+    /**
+     * Return the url an emulator is reachable on from the Docker host (i.e. {@code localhost:<mappedPort>}),
+     * usable by the JVM running the Quarkus application even when the container is also attached to a shared
+     * network.
+     *
+     * @param emulator The emulator
+     * @return The host url
+     */
+    public String hostEmulatorUrl(Emulator emulator) {
+        return withHttpPrefixIfNeeded(emulator, this.getHost() + ":" + hostMappedPort(emulator));
+    }
+
+    /**
+     * Some emulators (Realtime Database, Cloud Storage, the Emulator Suite UI) are only usable as an HTTP
+     * endpoint; the others are plain {@code host:port} pairs consumed by gRPC/REST clients. Both
+     * {@link #hostEmulatorUrl(Emulator)} and callers building an equivalent URL for a different host (e.g. the
+     * {@code host.testcontainers.internal} ambassador) should go through this helper to stay consistent.
+     *
+     * @param emulator The emulator the endpoint is for
+     * @param hostPort The {@code host:port} pair to prefix
+     * @return {@code hostPort}, prefixed with {@code http://} if the emulator needs it
+     */
+    public static String withHttpPrefixIfNeeded(Emulator emulator, String hostPort) {
+        if (emulator == Emulator.REALTIME_DATABASE || emulator == Emulator.CLOUD_STORAGE
+                || emulator == Emulator.EMULATOR_SUITE_UI) {
+            return "http://" + hostPort;
+        }
+        return hostPort;
+    }
+
+    /**
+     * Get the host-mapped urls (see {@link #hostEmulatorUrl(Emulator)}) for all configured emulators.
+     *
+     * @return A map {@link Emulator} -> {@link String} of host-reachable emulator endpoints.
+     */
+    public Map<Emulator, String> hostEmulatorUrls() {
+        return services.keySet()
+                .stream()
+                .collect(Collectors.toMap(
+                        e -> e,
+                        this::hostEmulatorUrl));
     }
 
     /**
@@ -1653,14 +1703,4 @@ public class FirebaseEmulatorContainer extends GenericContainer<FirebaseEmulator
         LOGGER.atLevel(level).log(frame.getUtf8StringWithoutLineEnding());
     }
 
-    private String getEmulatorEndpoint(Emulator emulator) {
-        var endpoint = (useSharedNetwork ? this.hostName : this.getHost()) +
-                ":" + emulatorPort(emulator);
-        if (emulator.equals(Emulator.REALTIME_DATABASE)
-                || emulator.equals(Emulator.CLOUD_STORAGE)
-                || emulator.equals(Emulator.EMULATOR_SUITE_UI)) {
-            endpoint = "http://" + endpoint;
-        }
-        return endpoint;
-    }
 }

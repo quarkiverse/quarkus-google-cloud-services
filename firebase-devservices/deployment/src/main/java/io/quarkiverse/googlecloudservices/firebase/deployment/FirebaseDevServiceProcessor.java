@@ -5,6 +5,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import org.jboss.logging.Logger;
+import org.testcontainers.Testcontainers;
 
 import io.quarkiverse.googlecloudservices.firebase.deployment.testcontainers.FirebaseEmulatorContainer;
 import io.quarkus.deployment.IsNormal;
@@ -46,6 +47,26 @@ public class FirebaseDevServiceProcessor {
             FirebaseEmulatorContainer.Emulator.CLOUD_FIRESTORE, "quarkus.google.cloud.firestore.host-override",
             FirebaseEmulatorContainer.Emulator.CLOUD_STORAGE, "quarkus.google.cloud.storage.host-override",
             FirebaseEmulatorContainer.Emulator.PUB_SUB, "quarkus.google.cloud.pubsub.emulator-host");
+
+    // Additional config properties exposing the emulator endpoints as reachable from any other container
+    // started by Testcontainers in this JVM (e.g. the Playwright browser container, or a containerized
+    // app-under-test), via Testcontainers.exposeHostPorts() + the "host.testcontainers.internal" ambassador
+    // hostname. A container started outside Testcontainers (e.g. via docker-compose) won't have that ambassador
+    // wired up and must instead use the shared-network alias (see FirebaseEmulatorContainer#emulatorUrl).
+    private static final Map<FirebaseEmulatorContainer.Emulator, String> CONTAINER_CONFIG_PROPERTIES = Map.of(
+            FirebaseEmulatorContainer.Emulator.AUTHENTICATION, "quarkus.google.cloud.firebase.auth.container-emulator-host",
+            FirebaseEmulatorContainer.Emulator.EMULATOR_SUITE_UI, "quarkus.google.cloud.firebase.container-emulator-host",
+            FirebaseEmulatorContainer.Emulator.FIREBASE_HOSTING,
+            "quarkus.google.cloud.firebase.hosting.container-emulator-host",
+            FirebaseEmulatorContainer.Emulator.CLOUD_FUNCTIONS, "quarkus.google.cloud.functions.container-emulator-host",
+            FirebaseEmulatorContainer.Emulator.EVENT_ARC, "quarkus.google.cloud.eventarc.container-emulator-host",
+            FirebaseEmulatorContainer.Emulator.REALTIME_DATABASE,
+            "quarkus.google.cloud.firebase.database.container-host-override",
+            FirebaseEmulatorContainer.Emulator.CLOUD_FIRESTORE, "quarkus.google.cloud.firestore.container-host-override",
+            FirebaseEmulatorContainer.Emulator.CLOUD_STORAGE, "quarkus.google.cloud.storage.container-host-override",
+            FirebaseEmulatorContainer.Emulator.PUB_SUB, "quarkus.google.cloud.pubsub.container-emulator-host");
+
+    private static final String HOST_TESTCONTAINERS_INTERNAL = "host.testcontainers.internal";
 
     @BuildStep
     public DevServicesResultBuildItem start(
@@ -290,6 +311,19 @@ public class FirebaseDevServiceProcessor {
             if (emulatorProperties.containsKey(CONFIG_PROPERTIES.get(FirebaseEmulatorContainer.Emulator.CLOUD_FIRESTORE))) {
                 emulatorProperties.put("quarkus.google.cloud.firestore.use-emulator-credentials", "true");
             }
+
+            // Expose the emulator's host-mapped ports to any container started by Testcontainers in this JVM
+            // (e.g. the Playwright browser container), reachable via the "host.testcontainers.internal" ambassador.
+            var configuredEmulators = emulatorContainer.hostEmulatorUrls().keySet();
+            configuredEmulators
+                    .forEach(emulator -> Testcontainers.exposeHostPorts(emulatorContainer.hostMappedPort(emulator)));
+
+            emulatorProperties.putAll(configuredEmulators
+                    .stream()
+                    .filter(CONTAINER_CONFIG_PROPERTIES::containsKey)
+                    .collect(Collectors.toMap(
+                            CONTAINER_CONFIG_PROPERTIES::get,
+                            emulator -> containerEmulatorUrl(emulatorContainer, emulator))));
         }
 
         return emulatorProperties;
@@ -297,6 +331,16 @@ public class FirebaseDevServiceProcessor {
 
     private String configPropertyForEmulator(FirebaseEmulatorContainer.Emulator emulator) {
         return CONFIG_PROPERTIES.get(emulator);
+    }
+
+    /**
+     * Build the URL on which an emulator is reachable from another Testcontainers-managed container, via the
+     * {@code host.testcontainers.internal} ambassador (see {@link Testcontainers#exposeHostPorts(int...)}).
+     */
+    private String containerEmulatorUrl(FirebaseEmulatorContainer emulatorContainer,
+            FirebaseEmulatorContainer.Emulator emulator) {
+        return FirebaseEmulatorContainer.withHttpPrefixIfNeeded(emulator,
+                HOST_TESTCONTAINERS_INTERNAL + ":" + emulatorContainer.hostMappedPort(emulator));
     }
 
     /**
