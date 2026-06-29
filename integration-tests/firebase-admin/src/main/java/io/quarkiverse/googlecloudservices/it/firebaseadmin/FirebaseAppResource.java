@@ -21,24 +21,31 @@ public class FirebaseAppResource {
     @GET
     @Path("/options")
     @Produces(MediaType.APPLICATION_JSON)
-    public FirebaseOptions getOptions() {
-        return firebaseApp.getOptions();
+    public FirebaseOptionsDto getOptions() {
+        return toDto(firebaseApp.getOptions());
     }
 
     @GET
     @Authenticated
     @Path("/secret-options")
     @Produces(MediaType.APPLICATION_JSON)
-    public FirebaseOptions getSecretOptions() {
-        return firebaseApp.getOptions();
+    public FirebaseOptionsDto getSecretOptions() {
+        return toDto(firebaseApp.getOptions());
     }
 
     @GET
     @RolesAllowed({ "admin" })
     @Path("/admin-options")
     @Produces(MediaType.APPLICATION_JSON)
-    public FirebaseOptions getAdminOptions() {
-        return firebaseApp.getOptions();
+    public FirebaseOptionsDto getAdminOptions() {
+        return toDto(firebaseApp.getOptions());
+    }
+
+    private static FirebaseOptionsDto toDto(FirebaseOptions options) {
+        return new FirebaseOptionsDto(options.getProjectId());
+    }
+
+    public record FirebaseOptionsDto(String projectId) {
     }
 
 }
