@@ -5,10 +5,10 @@ import java.util.List;
 import java.util.Optional;
 
 import org.jboss.logging.Logger;
-import org.testcontainers.containers.PubSubEmulatorContainer;
+import org.testcontainers.gcloud.PubSubEmulatorContainer;
 import org.testcontainers.utility.DockerImageName;
 
-import io.quarkus.deployment.IsNormal;
+import io.quarkus.deployment.IsProduction;
 import io.quarkus.deployment.annotations.BuildStep;
 import io.quarkus.deployment.annotations.BuildSteps;
 import io.quarkus.deployment.builditem.*;
@@ -23,7 +23,7 @@ import io.quarkus.devservices.common.ConfigureUtil;
  * <p>
  * The processor starts the Pub/Sub service in case it's not running.
  */
-@BuildSteps(onlyIfNot = IsNormal.class, onlyIf = DevServicesConfig.Enabled.class)
+@BuildSteps(onlyIfNot = IsProduction.class, onlyIf = DevServicesConfig.Enabled.class)
 public class PubSubDevServiceProcessor {
 
     private static final Logger LOGGER = Logger.getLogger(PubSubDevServiceProcessor.class.getName());

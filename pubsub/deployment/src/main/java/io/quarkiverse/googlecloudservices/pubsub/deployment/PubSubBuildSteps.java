@@ -53,7 +53,7 @@ public class PubSubBuildSteps {
                     .build());
 
             additionalFilters.produce(new FilterBuildItem(
-                    recorder.authHandlerInstance(recorder.authenticationHandler(endpoint, config)),
+                    recorder.authHandlerInstance(recorder.authenticationHandler(endpoint)),
                     999));
         });
 
