@@ -80,8 +80,8 @@ endif::add-copy-button-to-config-props[]
 --
 Forces the usage of emulator credentials. The logic automatically uses emulator credentials in case the emulatorHost is set.
 
- - If true: force usage of emulator credentials
- - If false: force not using emulator credentials
+ * If true: force usage of emulator credentials
+ * If false: force not using emulator credentials
 
 
 ifdef::add-copy-button-to-env-var[]

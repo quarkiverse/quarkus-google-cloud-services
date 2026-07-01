@@ -122,8 +122,8 @@ endif::add-copy-button-to-config-props[]
 --
 Forces the usage of emulator credentials. The logic automatically uses emulator credentials in case the host running the library uses "localhost". This behaviour can be overridden by specifying this configuration property:
 
- - If true: force usage of emulator credentials
- - If false: force not using emulator credentials _If not present: keep the automatic behaviour_
+ * If true: force usage of emulator credentials
+ * If false: force not using emulator credentials _If not present: keep the automatic behaviour_
 
 
 ifdef::add-copy-button-to-env-var[]
