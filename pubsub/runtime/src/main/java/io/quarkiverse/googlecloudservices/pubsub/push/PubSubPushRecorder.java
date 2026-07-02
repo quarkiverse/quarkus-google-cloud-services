@@ -5,6 +5,7 @@ import java.util.function.Consumer;
 import jakarta.enterprise.inject.spi.CDI;
 
 import io.quarkus.runtime.RuntimeValue;
+import io.quarkus.runtime.annotations.RecordableConstructor;
 import io.quarkus.runtime.annotations.Recorder;
 import io.vertx.core.Handler;
 import io.vertx.core.http.HttpMethod;
@@ -19,6 +20,13 @@ import io.vertx.ext.web.handler.BodyHandler;
 @Recorder
 public class PubSubPushRecorder {
 
+    private RuntimeValue<PubSubPushRuntimeConfig> config;
+
+    @RecordableConstructor
+    public PubSubPushRecorder(RuntimeValue<PubSubPushRuntimeConfig> config) {
+        this.config = config;
+    }
+
     public Consumer<Route> routeFunction() {
         var endpointHandler = CDI.current().select(PubSubPushEndpointHandler.class).get();
 
@@ -28,14 +36,13 @@ public class PubSubPushRecorder {
                 .handler(endpointHandler);
     }
 
-    public RuntimeValue<GooglePubSubAuthenticationHandler> authenticationHandler(String endpoint,
-            PubSubPushBuildTimeConfig config) {
+    public RuntimeValue<GooglePubSubAuthenticationHandler> authenticationHandler(String endpoint) {
         var tokenVerifier = CDI.current().select(TokenVerifier.class).get();
 
         return new RuntimeValue<>(new GooglePubSubAuthenticationHandler(
                 endpoint,
-                config.verificationToken(),
-                config.serviceAccountEmail().orElseThrow(),
+                config.getValue().verificationToken(),
+                config.getValue().serviceAccountEmail().orElseThrow(),
                 tokenVerifier));
     }
 
