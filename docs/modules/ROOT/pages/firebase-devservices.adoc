@@ -176,6 +176,54 @@ A simple setup would be
 
 Note that a redirect from the hosting emulator to the Quarkus instance is currently not supported by the emulator.
 
+=== Web framework dev servers
+
+When the Hosting emulator is enabled, the DevService inspects the configured hosting directory to detect whether it
+contains a supported frontend framework project, using the same detection signals `firebase-tools` itself uses. If a
+supported framework is detected, the generated Docker image is adjusted so the framework's own dev server (including
+its hot-reload/HMR client) can be used from inside the container. What exactly is adjusted, and what you may need to
+configure in your own project, is detailed per framework below.
+
+Currently supported frameworks:
+
+* Vite
+
+==== Vite
+
+`firebase-tools` spawns the project's own `vite` binary directly, without any CLI flags, and serves pages through
+the Hosting emulator using a plain HTTP request/response proxy that does not forward WebSocket upgrades. To make
+hot-reload work from inside this DevService, the following adjustments are applied to the Docker image:
+
+* File-change events on the bind-mounted host directory are not reliably delivered as `inotify` events into the
+  container, so `CHOKIDAR_USEPOLLING` is enabled to fall back to filesystem polling, which `chokidar` (Vite's file
+  watcher) honors.
+* Vite's dev server port (`5173`) is published on the Docker host under the same port number, since Vite's HMR
+  client reconnects directly to that port rather than through the Hosting emulator's own proxy.
+
+On top of that, two things need to be configured explicitly in your own `vite.config.js`/`vite.config.ts` for
+hot-reload to actually work:
+
+[source,js]
+----
+export default defineConfig({
+  server: {
+    // Vite defaults to binding only the loopback interface, which is unreachable from the Docker
+    // host even though the dev server port is published.
+    host: true,
+    hmr: {
+      // Must match Vite's default dev server port (5173). Without this, the HMR client falls back
+      // to the page's own port (the Hosting emulator's port), which cannot proxy WebSocket
+      // connections and will never connect.
+      clientPort: 5173,
+    },
+  },
+})
+----
+
+Without these settings, the page loads and the browser console shows the dev server connecting (e.g. "[vite]
+connecting..."), but file changes never trigger a reload, since the HMR WebSocket never actually reaches the Vite
+dev server.
+
 === Auth emulator
 
 You can use the features provided by Mircoprofile JWT (e.g. injecting a `@Claim` value) by including the smallrye-jwt

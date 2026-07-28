@@ -1001,7 +1001,40 @@ public class FirebaseEmulatorContainer extends GenericContainer<FirebaseEmulator
         }
     }
 
+    /**
+     * Interface to implement support for specific Web frameworks, to match the support Firebase has for these.
+     */
+    interface WebFramework {
+
+        /**
+         * Name of the framework.
+         */
+        String name();
+
+        /**
+         * Returns true if the usage of the framework was detected.
+         */
+        boolean detected();
+
+        /**
+         * Apply the needed changes to the docker file
+         *
+         * @param builder The docker file builder
+         */
+        void apply(DockerfileBuilder builder);
+
+        /**
+         * Container-internal ports that need to be published to the Docker host directly, in addition to the
+         * configured emulators. Frameworks whose dev server is reached directly by the browser (e.g. for
+         * hot-reload websocket connections that bypass the Hosting emulator's proxy) should override this.
+         */
+        default Set<Integer> additionalExposedPorts() {
+            return Set.of();
+        }
+    }
+
     private final Map<Emulator, ExposedPort> services;
+    private final Set<Integer> additionalExposedPorts;
     private final boolean followStdOut;
     private final boolean followStdErr;
     private final Consumer<FirebaseEmulatorContainer> afterStart;
@@ -1023,9 +1056,14 @@ public class FirebaseEmulatorContainer extends GenericContainer<FirebaseEmulator
      * @param emulatorConfig The generic configuration of the firebase emulators
      */
     public FirebaseEmulatorContainer(EmulatorConfig emulatorConfig) {
-        super(new FirebaseDockerBuilder(emulatorConfig).build());
+        this(new FirebaseDockerBuilder(emulatorConfig), emulatorConfig);
+    }
+
+    private FirebaseEmulatorContainer(FirebaseDockerBuilder dockerBuilder, EmulatorConfig emulatorConfig) {
+        super(dockerBuilder.build());
 
         this.services = emulatorConfig.firebaseConfig().services;
+        this.additionalExposedPorts = dockerBuilder.additionalExposedPorts();
         this.followStdOut = emulatorConfig.dockerConfig().followStdOut();
         this.followStdErr = emulatorConfig.dockerConfig().followStdErr();
         this.afterStart = emulatorConfig.dockerConfig().afterStart();
@@ -1038,17 +1076,12 @@ public class FirebaseEmulatorContainer extends GenericContainer<FirebaseEmulator
         });
 
         if (this.services.containsKey(Emulator.FIREBASE_HOSTING)) {
-            var hostingPath = emulatorConfig
-                    .firebaseConfig()
-                    .hostingConfig()
-                    .hostingContentDir()
-                    .map(Path::toString)
-                    .orElse(new File(FirebaseJsonBuilder.FIREBASE_HOSTING_SUBPATH).getAbsolutePath());
+            var hostingPath = hostHostingPath(emulatorConfig);
 
             LOGGER.debug("Mounting {} to the container hosting path", hostingPath);
 
             // Mount volume for static hosting content
-            this.withFileSystemBind(hostingPath, containerHostingPath(emulatorConfig), BindMode.READ_WRITE);
+            this.withFileSystemBind(hostingPath.toString(), containerHostingPath(emulatorConfig), BindMode.READ_WRITE);
         }
 
         if (this.services.containsKey(Emulator.CLOUD_FUNCTIONS)) {
@@ -1064,6 +1097,20 @@ public class FirebaseEmulatorContainer extends GenericContainer<FirebaseEmulator
             // Mount volume for functions
             this.withFileSystemBind(functionsPath, containerFunctionsPath(emulatorConfig), BindMode.READ_WRITE);
         }
+    }
+
+    /**
+     * The local (host machine) directory holding the hosting content, which gets bind-mounted into the
+     * container. This is where {@link WebFramework} detection looks for framework-specific files, since the
+     * container's own filesystem doesn't have the hosting content available until the volume is mounted at
+     * container startup.
+     */
+    private static Path hostHostingPath(EmulatorConfig emulatorConfig) {
+        return emulatorConfig
+                .firebaseConfig()
+                .hostingConfig()
+                .hostingContentDir()
+                .orElseGet(() -> new File(FirebaseJsonBuilder.FIREBASE_HOSTING_SUBPATH).getAbsoluteFile().toPath());
     }
 
     static String containerHostingPath(EmulatorConfig emulatorConfig) {
@@ -1119,6 +1166,9 @@ public class FirebaseEmulatorContainer extends GenericContainer<FirebaseEmulator
 
     private static class FirebaseDockerBuilder {
 
+        private final WebFramework[] webFrameworks;
+        private final Set<Integer> additionalExposedPorts = new LinkedHashSet<>();
+
         private final ImageFromDockerfile result;
 
         private final EmulatorConfig emulatorConfig;
@@ -1131,6 +1181,9 @@ public class FirebaseEmulatorContainer extends GenericContainer<FirebaseEmulator
         public FirebaseDockerBuilder(EmulatorConfig emulatorConfig) {
             this.devServices = emulatorConfig.firebaseConfig().services;
             this.emulatorConfig = emulatorConfig;
+            this.webFrameworks = isEmulatorEnabled(Emulator.FIREBASE_HOSTING)
+                    ? new WebFramework[] { new ViteWebFramework(hostHostingPath(emulatorConfig)) }
+                    : new WebFramework[0];
 
             LOGGER.debug("Loaded emulator config {}", this.emulatorConfig);
 
@@ -1164,6 +1217,7 @@ public class FirebaseEmulatorContainer extends GenericContainer<FirebaseEmulator
             this.includeFirestoreFiles();
             this.includeStorageFiles();
             this.includeAdditionalEnvironmentVariables();
+            this.checkForSupportedWebFrameworks();
             this.runExecutable();
 
             return result;
@@ -1438,6 +1492,21 @@ public class FirebaseEmulatorContainer extends GenericContainer<FirebaseEmulator
             });
         }
 
+        private void checkForSupportedWebFrameworks() {
+            LOGGER.info("Checking for additional web frameworks which may be enabled");
+            Arrays.stream(webFrameworks).forEach(framework -> {
+                if (framework.detected()) {
+                    LOGGER.info("Detected web framework {}. Applying configuration", framework.name());
+                    framework.apply(dockerBuilder);
+                    additionalExposedPorts.addAll(framework.additionalExposedPorts());
+                }
+            });
+        }
+
+        Set<Integer> additionalExposedPorts() {
+            return additionalExposedPorts;
+        }
+
         private void runExecutable() {
             List<String> arguments = new ArrayList<>();
 
@@ -1579,6 +1648,12 @@ public class FirebaseEmulatorContainer extends GenericContainer<FirebaseEmulator
                         addExposedPort(emulator.internalPort);
                     }
                 });
+
+        // Web framework dev servers (e.g. Vite) are reached directly by the browser for hot-reload websocket
+        // connections, bypassing the Hosting emulator's proxy, so they need a host-reachable port regardless
+        // of shared-network mode. Published on the same port number inside and outside the container, since
+        // that's the port the dev server's client-side code will try to reconnect to.
+        additionalExposedPorts.forEach(port -> addFixedExposedPort(port, port));
 
         waitingFor(Wait.forLogMessage(".*✔  All emulators ready! It is now safe to connect your app.*", 1));
     }
