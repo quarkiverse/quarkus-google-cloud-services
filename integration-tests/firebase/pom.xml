@@ -54,6 +54,13 @@
             <artifactId>rest-assured</artifactId>
             <scope>test</scope>
         </dependency>
+        <!-- Used by CompanionContainerTestResource to start a minimal companion container and verify it can
+             reach the emulator via the host.testcontainers.internal ambassador -->
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>testcontainers</artifactId>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>

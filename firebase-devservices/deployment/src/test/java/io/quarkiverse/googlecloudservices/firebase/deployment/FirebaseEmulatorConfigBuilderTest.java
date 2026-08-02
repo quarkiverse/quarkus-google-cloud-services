@@ -47,12 +47,14 @@ class FirebaseEmulatorConfigBuilderTest {
                                         true,
                                         Optional.of(6000),
                                         Optional.of(6001),
-                                        Optional.of(6002))),
+                                        Optional.of(6002)),
+                                true),
                         new TestGenericDevService(true, Optional.of(6003)),
                         new TestHosting(
                                 true,
                                 Optional.of(6004),
-                                Optional.of("public")),
+                                Optional.of("public"),
+                                new TestVite(Optional.empty())),
                         new TestGenericDevService(
                                 false,
                                 Optional.of(6005)),
@@ -163,7 +165,8 @@ class FirebaseEmulatorConfigBuilderTest {
             FirebaseDevServiceConfig.Firebase.Emulator.Docker docker,
             FirebaseDevServiceConfig.Firebase.Emulator.Cli cli,
             Optional<String> customFirebaseJson,
-            UI ui) implements FirebaseDevServiceConfig.Firebase.Emulator {
+            UI ui,
+            boolean exposeToCompanionContainers) implements FirebaseDevServiceConfig.Firebase.Emulator {
     }
 
     record TestDocker(
@@ -205,7 +208,14 @@ class FirebaseEmulatorConfigBuilderTest {
     record TestHosting(
             boolean enabled,
             Optional<Integer> emulatorPort,
-            Optional<String> hostingPath) implements FirebaseDevServiceConfig.Firebase.HostingDevService {
+            Optional<String> hostingPath,
+            FirebaseDevServiceConfig.Firebase.HostingDevService.Vite vite)
+            implements
+                FirebaseDevServiceConfig.Firebase.HostingDevService {
+    }
+
+    record TestVite(
+            Optional<Integer> hmrPort) implements FirebaseDevServiceConfig.Firebase.HostingDevService.Vite {
     }
 
     record TestStorageDevService(

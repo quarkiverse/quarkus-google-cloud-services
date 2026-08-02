@@ -104,7 +104,7 @@ public class FirebaseEmulatorContainerIntegrationTest {
 
     private static void customizeFirebaseOptions(FirebaseOptions.Builder builder) {
         var emulatorHost = firebaseContainer.getHost();
-        var dbPort = firebaseContainer.emulatorPort(FirebaseEmulatorContainer.Emulator.REALTIME_DATABASE);
+        var dbPort = firebaseContainer.containerEmulatorPort(FirebaseEmulatorContainer.Emulator.REALTIME_DATABASE);
 
         builder.setDatabaseUrl("http://" + emulatorHost + ":" + dbPort + "?ns=demo-test-project");
     }
@@ -163,7 +163,7 @@ public class FirebaseEmulatorContainerIntegrationTest {
     @Test
     public void testFirebaseAuthenticationEmulatorConnection() throws FirebaseAuthException {
         // Retrieve the host and port for the Authentication emulator
-        int authPort = firebaseContainer.emulatorPort(FirebaseEmulatorContainer.Emulator.AUTHENTICATION);
+        int authPort = firebaseContainer.containerEmulatorPort(FirebaseEmulatorContainer.Emulator.AUTHENTICATION);
 
         // Set the environment variable for the Firebase Authentication emulator
         FirebaseProcessEnvironment.setenv("FIREBASE_AUTH_EMULATOR_HOST", firebaseContainer.getHost() + ":" + authPort);
@@ -186,7 +186,7 @@ public class FirebaseEmulatorContainerIntegrationTest {
 
     @Test
     public void testFirestoreEmulatorConnection() throws Exception {
-        int firestorePort = firebaseContainer.emulatorPort(FirebaseEmulatorContainer.Emulator.CLOUD_FIRESTORE);
+        int firestorePort = firebaseContainer.containerEmulatorPort(FirebaseEmulatorContainer.Emulator.CLOUD_FIRESTORE);
 
         FirestoreOptions options = FirestoreOptions.newBuilder()
                 .setProjectId("demo-test-project")
@@ -236,7 +236,7 @@ public class FirebaseEmulatorContainerIntegrationTest {
     @Test
     public void testPubSubEmulatorConnection() throws Exception {
         // Retrieve the host and port for the Pub/Sub emulator
-        int pubSubPort = firebaseContainer.emulatorPort(FirebaseEmulatorContainer.Emulator.PUB_SUB);
+        int pubSubPort = firebaseContainer.containerEmulatorPort(FirebaseEmulatorContainer.Emulator.PUB_SUB);
 
         // Set up a gRPC channel to the Pub/Sub emulator
         ManagedChannel channel = ManagedChannelBuilder.forAddress(firebaseContainer.getHost(), pubSubPort)
@@ -273,7 +273,7 @@ public class FirebaseEmulatorContainerIntegrationTest {
 
     @Test
     public void testStorageEmulatorConnection() throws IOException {
-        int storagePort = firebaseContainer.emulatorPort(FirebaseEmulatorContainer.Emulator.CLOUD_STORAGE);
+        int storagePort = firebaseContainer.containerEmulatorPort(FirebaseEmulatorContainer.Emulator.CLOUD_STORAGE);
 
         Storage storage = StorageOptions.newBuilder()
                 .setHost("http://" + firebaseContainer.getHost() + ":" + storagePort)
@@ -303,7 +303,7 @@ public class FirebaseEmulatorContainerIntegrationTest {
     @Test
     public void testEmulatorUIReachable() throws Exception {
         // Get the host and port for the Emulator UI
-        int uiPort = firebaseContainer.emulatorPort(FirebaseEmulatorContainer.Emulator.EMULATOR_SUITE_UI);
+        int uiPort = firebaseContainer.containerEmulatorPort(FirebaseEmulatorContainer.Emulator.EMULATOR_SUITE_UI);
 
         // Construct the URL for the Emulator UI root (where index.html would be served)
         URL url = new URI("http://" + firebaseContainer.getHost() + ":" + uiPort + "/").toURL();
@@ -323,7 +323,7 @@ public class FirebaseEmulatorContainerIntegrationTest {
     @Test
     public void testEmulatorHub() throws Exception {
         // Get the host and port for the Emulator UI
-        int uiPort = firebaseContainer.emulatorPort(FirebaseEmulatorContainer.Emulator.EMULATOR_HUB);
+        int uiPort = firebaseContainer.containerEmulatorPort(FirebaseEmulatorContainer.Emulator.EMULATOR_HUB);
 
         // Construct the URL for the Emulator UI root (where index.html would be served)
         URL url = new URI("http://" + firebaseContainer.getHost() + ":" + uiPort + "/emulators").toURL();

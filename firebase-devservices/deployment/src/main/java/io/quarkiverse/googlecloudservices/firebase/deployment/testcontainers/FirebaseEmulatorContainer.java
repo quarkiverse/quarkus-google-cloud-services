@@ -255,11 +255,15 @@ public class FirebaseEmulatorContainer extends GenericContainer<FirebaseEmulator
      * Firebase hosting configuration
      *
      * @param hostingContentDir The path to the directory containing the hosting content
+     * @param viteHmrPort The port the project's own vite.config.js configures the Vite dev server (and therefore
+     *        its HMR client) to use, or empty to use Vite's default (see {@link ViteWebFramework#DEFAULT_HMR_PORT})
      */
     public record HostingConfig(
-            Optional<Path> hostingContentDir) {
+            Optional<Path> hostingContentDir,
+            Optional<Integer> viteHmrPort) {
 
         public static final HostingConfig DEFAULT = new HostingConfig(
+                Optional.empty(),
                 Optional.empty());
     }
 
@@ -853,7 +857,23 @@ public class FirebaseEmulatorContainer extends GenericContainer<FirebaseEmulator
              */
             public FirebaseConfigBuilder withHostingPath(Path hostingContentDir) {
                 this.hostingConfig = new HostingConfig(
-                        Optional.of(hostingContentDir));
+                        Optional.of(hostingContentDir),
+                        this.hostingConfig.viteHmrPort());
+                return this;
+            }
+
+            /**
+             * Configure the port the project's own vite.config.js configures the Vite dev server (and therefore
+             * its HMR client) to use. Only relevant if the hosting directory is detected as a Vite project;
+             * defaults to Vite's own default (see {@link ViteWebFramework#DEFAULT_HMR_PORT}) if not set.
+             *
+             * @param viteHmrPort The Vite HMR port
+             * @return The builder
+             */
+            public FirebaseConfigBuilder withViteHmrPort(int viteHmrPort) {
+                this.hostingConfig = new HostingConfig(
+                        this.hostingConfig.hostingContentDir(),
+                        Optional.of(viteHmrPort));
                 return this;
             }
 
@@ -1035,6 +1055,7 @@ public class FirebaseEmulatorContainer extends GenericContainer<FirebaseEmulator
 
     private final Map<Emulator, ExposedPort> services;
     private final Set<Integer> additionalExposedPorts;
+    private final Optional<Integer> viteHmrPort;
     private final boolean followStdOut;
     private final boolean followStdErr;
     private final Consumer<FirebaseEmulatorContainer> afterStart;
@@ -1064,6 +1085,7 @@ public class FirebaseEmulatorContainer extends GenericContainer<FirebaseEmulator
 
         this.services = emulatorConfig.firebaseConfig().services;
         this.additionalExposedPorts = dockerBuilder.additionalExposedPorts();
+        this.viteHmrPort = dockerBuilder.viteHmrPort();
         this.followStdOut = emulatorConfig.dockerConfig().followStdOut();
         this.followStdErr = emulatorConfig.dockerConfig().followStdErr();
         this.afterStart = emulatorConfig.dockerConfig().afterStart();
@@ -1168,6 +1190,7 @@ public class FirebaseEmulatorContainer extends GenericContainer<FirebaseEmulator
 
         private final WebFramework[] webFrameworks;
         private final Set<Integer> additionalExposedPorts = new LinkedHashSet<>();
+        private Integer detectedViteHmrPort;
 
         private final ImageFromDockerfile result;
 
@@ -1182,7 +1205,10 @@ public class FirebaseEmulatorContainer extends GenericContainer<FirebaseEmulator
             this.devServices = emulatorConfig.firebaseConfig().services;
             this.emulatorConfig = emulatorConfig;
             this.webFrameworks = isEmulatorEnabled(Emulator.FIREBASE_HOSTING)
-                    ? new WebFramework[] { new ViteWebFramework(hostHostingPath(emulatorConfig)) }
+                    ? new WebFramework[] { new ViteWebFramework(
+                            hostHostingPath(emulatorConfig),
+                            emulatorConfig.firebaseConfig().hostingConfig().viteHmrPort()
+                                    .orElse(ViteWebFramework.DEFAULT_HMR_PORT)) }
                     : new WebFramework[0];
 
             LOGGER.debug("Loaded emulator config {}", this.emulatorConfig);
@@ -1499,12 +1525,20 @@ public class FirebaseEmulatorContainer extends GenericContainer<FirebaseEmulator
                     LOGGER.info("Detected web framework {}. Applying configuration", framework.name());
                     framework.apply(dockerBuilder);
                     additionalExposedPorts.addAll(framework.additionalExposedPorts());
+
+                    if (framework instanceof ViteWebFramework vite) {
+                        detectedViteHmrPort = vite.hmrPort();
+                    }
                 }
             });
         }
 
         Set<Integer> additionalExposedPorts() {
             return additionalExposedPorts;
+        }
+
+        Optional<Integer> viteHmrPort() {
+            return Optional.ofNullable(detectedViteHmrPort);
         }
 
         private void runExecutable() {
@@ -1663,23 +1697,12 @@ public class FirebaseEmulatorContainer extends GenericContainer<FirebaseEmulator
     }
 
     /**
-     * Get the various endpoints for the emulators, as reachable from the JVM running the Quarkus application
-     * (i.e. {@code localhost:<mappedPort>}, even when the container is also attached to a shared network).
-     * The map values are in the form of a string "host:port".
-     *
-     * @return The emulator endpoints
-     */
-    public Map<Emulator, String> emulatorEndpoints() {
-        return hostEmulatorUrls();
-    }
-
-    /**
      * Return the TCP port an emulator is listening on.
      *
      * @param emulator The emulator
      * @return The TCP Port
      */
-    public Integer emulatorPort(Emulator emulator) {
+    public Integer containerEmulatorPort(Emulator emulator) {
         if (useSharedNetwork && !services.get(emulator).isFixed()) {
             return emulator.internalPort;
         }
@@ -1706,8 +1729,8 @@ public class FirebaseEmulatorContainer extends GenericContainer<FirebaseEmulator
      * @param emulator The emulator
      * @return The url
      */
-    public String emulatorUrl(Emulator emulator) {
-        return this.hostName + ":" + emulatorPort(emulator);
+    public String containerEmulatorUrl(Emulator emulator) {
+        return withHttpPrefixIfNeeded(emulator, this.hostName + ":" + containerEmulatorPort(emulator));
     }
 
     /**
@@ -1729,19 +1752,21 @@ public class FirebaseEmulatorContainer extends GenericContainer<FirebaseEmulator
      * {@code host.testcontainers.internal} ambassador) should go through this helper to stay consistent.
      *
      * @param emulator The emulator the endpoint is for
-     * @param hostPort The {@code host:port} pair to prefix
-     * @return {@code hostPort}, prefixed with {@code http://} if the emulator needs it
+     * @param authority The {@code host:port} pair to prefix
+     * @return {@code authority}, prefixed with {@code http://} if the emulator needs it
      */
-    public static String withHttpPrefixIfNeeded(Emulator emulator, String hostPort) {
+    public static String withHttpPrefixIfNeeded(Emulator emulator, String authority) {
         if (emulator == Emulator.REALTIME_DATABASE || emulator == Emulator.CLOUD_STORAGE
                 || emulator == Emulator.EMULATOR_SUITE_UI) {
-            return "http://" + hostPort;
+            return "http://" + authority;
         }
-        return hostPort;
+        return authority;
     }
 
     /**
-     * Get the host-mapped urls (see {@link #hostEmulatorUrl(Emulator)}) for all configured emulators.
+     * Get the various endpoints for the emulators, as reachable from the JVM running the Quarkus application
+     * (i.e. {@code localhost:<mappedPort>}, even when the container is also attached to a shared network).
+     * The map values are in the form of a string "host:port".
      *
      * @return A map {@link Emulator} -> {@link String} of host-reachable emulator endpoints.
      */
@@ -1758,12 +1783,23 @@ public class FirebaseEmulatorContainer extends GenericContainer<FirebaseEmulator
      *
      * @return A map {@link Emulator} -> {@link String} indicating the host and TCP port the emulator is running on.
      */
-    public Map<Emulator, String> emulatorUrls() {
+    public Map<Emulator, String> containerEmulatorUrls() {
         return services.keySet()
                 .stream()
                 .collect(Collectors.toMap(
                         e -> e,
-                        this::emulatorUrl));
+                        this::containerEmulatorUrl));
+    }
+
+    /**
+     * The port Vite's dev server (and therefore its HMR client) is actually published on, published on the same
+     * port number inside and outside the container (see {@link ViteWebFramework}). Empty unless a Vite-based
+     * hosting project was detected.
+     *
+     * @return The resolved Vite HMR port, or empty if no Vite project was detected
+     */
+    public Optional<Integer> viteHmrPort() {
+        return viteHmrPort;
     }
 
     private void writeToStdOut(OutputFrame frame) {

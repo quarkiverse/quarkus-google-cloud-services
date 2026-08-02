@@ -167,7 +167,8 @@ class CustomFirebaseConfigReader {
             LOGGER.debug("Hosting configured with public directory {}", publicDir);
 
             return new FirebaseEmulatorContainer.HostingConfig(
-                    publicDir);
+                    publicDir,
+                    Optional.empty());
         } else {
             return FirebaseEmulatorContainer.HostingConfig.DEFAULT;
         }
