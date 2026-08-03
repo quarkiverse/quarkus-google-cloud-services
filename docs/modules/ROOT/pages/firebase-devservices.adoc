@@ -157,6 +157,137 @@ If emulators are configured via the configuration options, a `firebase.json` fil
 * Each of the emulators must be exposed on `0.0.0.0` as host as described https://firebase.google.com/docs/emulator-suite/use_hosting#emulators-no-local-host[here]. If this is not done, the Emulators will not be reachable from the Docker host.
 * Emulators need to be configured to use the default ports. Customizing the ports on which they run is currently not supported (this might change in a future version).
 
+== Connectivity
+
+Each emulator's address is exposed to your application through two config properties, because which one is
+actually reachable depends on where your code runs. These properties are consumed by the respective extensions
+themselves (`FirestoreProducer`, `FirebaseAdminProducer`, `StorageProducer`, `FirebaseDatabaseProducer`, ...) - you
+normally never read them directly, but it helps to know which is which when debugging connectivity issues.
+
+[.configuration-reference.searchable, cols="20,27,27,26"]
+|===
+
+h|Emulator
+h|App-facing property
+h|Companion-container property
+h|Default
+
+|Auth
+|`quarkus.google.cloud.firebase.auth.emulator-host`
+|`quarkus.google.cloud.firebase.auth.container-emulator-host`
+|random port
+
+|Emulator Suite UI
+|`quarkus.google.cloud.firebase.emulator-host`
+|`quarkus.google.cloud.firebase.container-emulator-host`
+|random port
+
+|Firebase Hosting
+|`quarkus.google.cloud.firebase.hosting.emulator-host`
+|`quarkus.google.cloud.firebase.hosting.container-emulator-host`
+|random port
+
+|Cloud Functions
+|`quarkus.google.cloud.functions.emulator-host`
+|`quarkus.google.cloud.functions.container-emulator-host`
+|random port
+
+|EventArc
+|`quarkus.google.cloud.eventarc.emulator-host`
+|`quarkus.google.cloud.eventarc.container-emulator-host`
+|random port (only settable via a custom `firebase.json`, see above - not exposed as a devservices config property)
+
+|Realtime Database
+|`quarkus.google.cloud.firebase.database.host-override`
+|`quarkus.google.cloud.firebase.database.container-host-override`
+|random port
+
+|Cloud Firestore
+|`quarkus.google.cloud.firestore.host-override`
+|`quarkus.google.cloud.firestore.container-host-override`
+|random port
+
+|Cloud Storage
+|`quarkus.google.cloud.storage.host-override`
+|`quarkus.google.cloud.storage.container-host-override`
+|random port
+
+|Pub/Sub
+|`quarkus.google.cloud.pubsub.emulator-host`
+|`quarkus.google.cloud.pubsub.container-emulator-host`
+|random port
+
+|===
+
+Every emulator listed above defaults to a randomly Docker-assigned host port; you can pin one to a specific port via
+its own `emulator-port` config property (e.g. `quarkus.google.cloud.devservices.firebase.firestore.emulator-port`).
+The Vite dev server (see below) is the one exception: it is always published on host port `5173`, with no
+configuration option.
+
+NOTE: Throughout this page, *the Docker host* refers to `getHost():getMappedPort()` (Testcontainers) - the address
+your emulator container's published ports are reachable on from outside Docker. This is usually, but not always,
+literally `localhost`: `getHost()` resolves via `DockerClientProviderStrategy.resolveDockerHostIpAddress()`, which
+returns `localhost` for a local Docker Desktop/Engine reached over a unix socket, the daemon's own host for a
+remote/TCP Docker daemon, and the Docker bridge network's gateway IP when the build itself runs inside a container
+(a common "Docker-outside-of-Docker" CI setup) - `TESTCONTAINERS_HOST_OVERRIDE` overrides all of this when set.
+
+The app-facing property (first column) resolves to the Docker host when shared-network mode is inactive, and to the
+shared-network alias whenever it *is* active - mirroring the same blanket `useSharedNetwork` check the sibling
+Google Cloud Dev Services (Firestore, PubSub, ...) already use. In practice, shared-network mode is normally only
+active because Quarkus itself requires it for a containerized `@QuarkusIntegrationTest` run, which it attaches to
+that same network automatically, so the alias resolves correctly.
+
+CAUTION: If you manually force shared-network mode on for an unrelated reason
+(`quarkus.devservices.launch-on-shared-network=true`) while your actual consumer is still a plain host-JVM process
+(`quarkus:dev`, a regular `@QuarkusTest`, a non-containerized `@QuarkusIntegrationTest`), that consumer gets the
+alias here too and won't be able to reach it.
+
+The companion-container property (second column) is populated by default, regardless of network mode. It exists for
+a container *your own test code* starts via Testcontainers in the same JVM (e.g. a Playwright browser container)
+that needs to reach the emulator - reachable via the `host.testcontainers.internal` ambassador hostname that
+`Testcontainers.exposeHostPorts()` sets up. Since this starts one extra ambassador container (shared across the
+whole JVM - harmless if something else already triggered it, but wasted if nothing ever needs it), you can turn it
+off entirely if your tests never start a companion container that needs to reach the emulator:
+
+[source,properties]
+----
+quarkus.google.cloud.devservices.firebase.emulator.expose-to-companion-containers=false
+----
+
+[cols="35,65"]
+|===
+
+h|Situation
+h|Address
+
+|Host-JVM consumer (`quarkus:dev`, `@QuarkusTest`, non-containerized `@QuarkusIntegrationTest`), shared-network inactive
+|The Docker host
+
+|Host-JVM consumer, shared-network manually forced active for an unrelated reason
+|Shared-network alias - unreachable from a host-JVM process, see the caution above
+
+|`@QuarkusIntegrationTest`, containerized (always forces shared-network mode on)
+|`<network alias>:<container port>` - attached to that network automatically by Quarkus
+
+|A companion container your test starts itself, also attached to the shared network
+|`<network alias>:<container port>` or, if `expose-to-companion-containers` is enabled (default),
+`host.testcontainers.internal:<host-mapped port>` - either works
+
+|A companion container your test starts itself, not attached to the shared network
+|`host.testcontainers.internal:<host-mapped port>`, and requires `expose-to-companion-containers` (default: enabled)
+
+|Browser, from the host machine
+|The Docker host
+
+|===
+
+IMPORTANT: The two shared-facing forms use *different* port numbers, and mixing them up will simply fail to
+connect. The network alias always addresses the emulator's *internal* container port; the
+`host.testcontainers.internal` ambassador always forwards to the *host-mapped* port published on the Docker host -
+never the internal one, since the ambassador itself runs outside the container and forwards through the Docker
+host's own published port mapping. This distinction disappears (both numbers are equal) once an emulator is pinned
+to a fixed port, or for the Vite dev server.
+
 == Details on specific Devservices
 
 The following sections provide documentation in interaction with specific emulators.
@@ -199,6 +330,8 @@ hot-reload work from inside this DevService, the following adjustments are appli
   watcher) honors.
 * Vite's dev server port (`5173`) is published on the Docker host under the same port number, since Vite's HMR
   client reconnects directly to that port rather than through the Hosting emulator's own proxy.
+* The resolved port is also set as the `VITE_HMR_PORT` environment variable inside the container, so
+  `vite.config.js`/`vite.config.ts` can read it back instead of hardcoding it.
 
 On top of that, two things need to be configured explicitly in your own `vite.config.js`/`vite.config.ts` for
 hot-reload to actually work:
@@ -211,18 +344,48 @@ export default defineConfig({
     // host even though the dev server port is published.
     host: true,
     hmr: {
-      // Must match Vite's default dev server port (5173). Without this, the HMR client falls back
-      // to the page's own port (the Hosting emulator's port), which cannot proxy WebSocket
-      // connections and will never connect.
-      clientPort: 5173,
+      // Read back the port the DevService actually published (see VITE_HMR_PORT below), falling back
+      // to Vite's own default outside the emulator (e.g. a plain `vite dev` on your machine). Without
+      // this, the HMR client falls back to the page's own port (the Hosting emulator's port), which
+      // cannot proxy WebSocket connections and will never connect.
+      clientPort: Number(process.env.VITE_HMR_PORT) || 5173,
     },
   },
 })
 ----
 
+`process.env` works here regardless of the `VITE_` prefix - that prefix only governs which variables Vite exposes
+to client-side code via `import.meta.env`; `vite.config.js` itself is a plain Node.js script and can read any
+environment variable. Reading it back this way, instead of hardcoding a number, keeps `vite.config.js` and the
+DevService in sync automatically, including if you configure a different port per profile (see below).
+
 Without these settings, the page loads and the browser console shows the dev server connecting (e.g. "[vite]
 connecting..."), but file changes never trigger a reload, since the HMR WebSocket never actually reaches the Vite
 dev server.
+
+Unlike every other emulator managed by this DevService, the Vite HMR port is published on a *fixed* Docker host
+port rather than a randomly assigned one, since the browser's HMR client needs to reach it directly at a
+predictable address. If your own `vite.config.js`/`vite.config.ts` overrides `server.port` to something other than
+Vite's default of `5173`, tell the DevService about it so it publishes the right port:
+
+[source,properties]
+----
+quarkus.google.cloud.devservices.firebase.hosting.vite.hmr-port=5174
+----
+
+It's also recommended to set `server.strictPort: true` in `vite.config`, so Vite fails fast instead of silently
+falling back to a different port if the configured one is unavailable inside the container. The DevService logs a
+best-effort warning at startup if it detects a likely mismatch or a missing `strictPort` setting, but this is a
+plain-text heuristic (not a full JS/TS parser), so it can't reliably catch every case - except when it detects
+`vite.config` reading `server.port` from `process.env.VITE_HMR_PORT`, which it recognizes as a confirmed match
+rather than an unknown case.
+
+Because this port is fixed rather than random, running two instances of the emulator at once (e.g. `quarkus:dev`
+together with continuous testing, or `quarkus:dev` alongside a separately started `mvn test`) can fail with a
+"port is already allocated" error if both try to publish the same Vite HMR port. If you need dev mode and tests to
+run side by side, configure a different `hmr-port` for the `%test` profile. If your `vite.config.js`/`vite.config.ts`
+reads `server.port` from `VITE_HMR_PORT` as shown above, that's all you need to do - the config stays in sync
+automatically. If you hardcode the port instead, you'll also need to mirror that same value there by hand.
 
 === Auth emulator
 

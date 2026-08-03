@@ -144,6 +144,12 @@ public class FirebaseEmulatorConfigBuilder {
                 .ifPresent(firebaseConfigBuilder::withHostingPath);
 
         config.firebase()
+                .hosting()
+                .vite()
+                .hmrPort()
+                .ifPresent(firebaseConfigBuilder::withViteHmrPort);
+
+        config.firebase()
                 .firestore()
                 .indexesFile()
                 .map(FirebaseEmulatorConfigBuilder::asPath)

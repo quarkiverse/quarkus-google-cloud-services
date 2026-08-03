@@ -121,6 +121,16 @@ public interface FirebaseDevServiceConfig {
              */
             UI ui();
 
+            /**
+             * Whether to expose the emulator's ports to companion containers this JVM starts via Testcontainers
+             * (e.g. a Playwright browser container), reachable via the {@code host.testcontainers.internal}
+             * ambassador hostname. Starts one small extra ambassador container (shared across the whole JVM, so
+             * this doesn't add up if other Dev Services already use it). Disable this if your tests never need a
+             * companion container to reach the emulator this way.
+             */
+            @WithDefault("true")
+            boolean exposeToCompanionContainers();
+
             interface Docker {
                 /**
                  * Sets the Docker image name for the Google Cloud SDK.
@@ -260,6 +270,30 @@ public interface FirebaseDevServiceConfig {
              * Path to the hosting files.
              */
             Optional<String> hostingPath();
+
+            /**
+             * Settings specific to a <a href="https://vite.dev">Vite</a>-based hosting project. Nested under its
+             * own group (rather than flat properties on {@link HostingDevService}) so future Vite-specific settings
+             * have a natural place to live.
+             */
+            Vite vite();
+
+            interface Vite {
+                /**
+                 * The port the project's own Vite dev server is configured to listen on (the {@code server.port}
+                 * setting in {@code vite.config.js}/{@code vite.config.ts}), and therefore also the port the
+                 * browser's Vite HMR (hot module reload) client tries to reconnect on. Only relevant when the
+                 * hosting directory is detected as a Vite project. Defaults to Vite's own default of 5173, which is
+                 * what Firebase's emulator uses when it spawns the dev server without any {@code server.port}
+                 * override present.
+                 * <p>
+                 * If your {@code vite.config} customizes {@code server.port}, set this to the same value so the
+                 * emulator publishes the port the HMR client actually needs to reach. It's recommended to also set
+                 * {@code server.strictPort: true} in {@code vite.config}, so Vite fails fast instead of silently
+                 * picking a different port if this one turns out to be unavailable.
+                 */
+                Optional<Integer> hmrPort();
+            }
         }
 
         /**

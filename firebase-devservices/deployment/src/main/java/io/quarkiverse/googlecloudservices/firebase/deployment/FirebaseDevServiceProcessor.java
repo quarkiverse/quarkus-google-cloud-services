@@ -271,10 +271,11 @@ public class FirebaseDevServiceProcessor {
         // Set the config for the started container
         FirebaseDevServiceProcessor.config = config;
 
-        var emulatorContainerConfig = emulatorContainerConfig(emulatorContainer, useSharedNetwork);
+        var emulatorContainerConfig = emulatorContainerConfig(emulatorContainer, useSharedNetwork,
+                config.firebase().emulator().exposeToCompanionContainers());
 
         if (LOGGER.isInfoEnabled()) {
-            var runningPorts = emulatorContainer.emulatorUrls();
+            var runningPorts = emulatorContainer.hostEmulatorUrls();
             runningPorts.forEach((e, p) -> LOGGER.info("Google Cloud Emulator " + e + " reachable on " + p));
 
             emulatorContainerConfig
@@ -290,8 +291,15 @@ public class FirebaseDevServiceProcessor {
                 emulatorContainerConfig);
     }
 
-    private Map<String, String> emulatorContainerConfig(FirebaseEmulatorContainer emulatorContainer, boolean useSharedNetwork) {
-        var emulatorProperties = new HashMap<>(emulatorContainer.emulatorEndpoints()
+    private Map<String, String> emulatorContainerConfig(FirebaseEmulatorContainer emulatorContainer,
+            boolean useSharedNetwork, boolean exposeToCompanionContainers) {
+        // App-facing properties: the Docker host by default (reachable from the host-JVM running dev mode or a
+        // plain unit test), switched to the shared-network alias when shared-network mode is active.
+        var addressSource = useSharedNetwork
+                ? emulatorContainer.containerEmulatorUrls()
+                : emulatorContainer.hostEmulatorUrls();
+
+        var emulatorProperties = new HashMap<>(addressSource
                 .entrySet()
                 .stream()
                 .filter(e -> CONFIG_PROPERTIES.containsKey(e.getKey()))
@@ -300,9 +308,8 @@ public class FirebaseDevServiceProcessor {
                                 e -> configPropertyForEmulator(e.getKey()),
                                 Map.Entry::getValue)));
 
-        // In case either the pubsub or cloud firestore is running and we use shared network mode, we force the usage
-        // of emulator credentials, as the default automatic detection won't work (because the hostname is set to the
-        // shared network host instead of localhost).
+        // Once host-override no longer contains "localhost", the automatic emulator-credentials detection (e.g.
+        // FirestoreProducer#automaticEmulatorCredentials) won't kick in, so force it explicitly.
         if (useSharedNetwork) {
             if (emulatorProperties.containsKey(CONFIG_PROPERTIES.get(FirebaseEmulatorContainer.Emulator.PUB_SUB))) {
                 emulatorProperties.put("quarkus.google.cloud.pubsub.use-emulator-credentials", "true");
@@ -311,9 +318,14 @@ public class FirebaseDevServiceProcessor {
             if (emulatorProperties.containsKey(CONFIG_PROPERTIES.get(FirebaseEmulatorContainer.Emulator.CLOUD_FIRESTORE))) {
                 emulatorProperties.put("quarkus.google.cloud.firestore.use-emulator-credentials", "true");
             }
+        }
 
-            // Expose the emulator's host-mapped ports to any container started by Testcontainers in this JVM
-            // (e.g. the Playwright browser container), reachable via the "host.testcontainers.internal" ambassador.
+        // Expose the emulator's host-mapped ports to any container started by Testcontainers in this JVM (e.g. a
+        // Playwright browser container), reachable via the "host.testcontainers.internal" ambassador. This works
+        // regardless of shared-network mode - Testcontainers.exposeHostPorts() is independent of it - so it's
+        // available whenever the user hasn't opted out, not just when shared-network happens to be on for some
+        // unrelated reason.
+        if (exposeToCompanionContainers) {
             var configuredEmulators = emulatorContainer.hostEmulatorUrls().keySet();
             configuredEmulators
                     .forEach(emulator -> Testcontainers.exposeHostPorts(emulatorContainer.hostMappedPort(emulator)));
