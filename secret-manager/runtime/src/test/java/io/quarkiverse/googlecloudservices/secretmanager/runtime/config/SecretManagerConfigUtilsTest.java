@@ -76,4 +76,26 @@ public class SecretManagerConfigUtilsTest {
         assertThat(secretIdentifier.getSecret()).isEqualTo("the-secret");
         assertThat(secretIdentifier.getSecretVersion()).isEqualTo("3");
     }
+
+    @Test
+    public void testRegionalSecret_projectLocationSecret() {
+        String property = "sm//projects/my-project/locations/the-location/secrets/the-secret";
+        SecretVersionName secretIdentifier = SecretManagerConfigUtils.getSecretVersionName(property, DEFAULT_PROJECT);
+
+        assertThat(secretIdentifier.getProject()).isEqualTo("my-project");
+        assertThat(secretIdentifier.getLocation()).isEqualTo("the-location");
+        assertThat(secretIdentifier.getSecret()).isEqualTo("the-secret");
+        assertThat(secretIdentifier.getSecretVersion()).isEqualTo("latest");
+    }
+
+    @Test
+    public void testRegionalSecret_projectLocationSecretVersion() {
+        String property = "sm//projects/my-project/locations/the-location/secrets/the-secret/versions/4";
+        SecretVersionName secretIdentifier = SecretManagerConfigUtils.getSecretVersionName(property, DEFAULT_PROJECT);
+
+        assertThat(secretIdentifier.getProject()).isEqualTo("my-project");
+        assertThat(secretIdentifier.getLocation()).isEqualTo("the-location");
+        assertThat(secretIdentifier.getSecret()).isEqualTo("the-secret");
+        assertThat(secretIdentifier.getSecretVersion()).isEqualTo("4");
+    }
 }
