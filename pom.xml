@@ -16,6 +16,7 @@
     <enforcer-plugin.version>3.6.3</enforcer-plugin.version>
     <assertj.version>3.27.7</assertj.version>
     <opentelemetry-alpha.version>1.64.0-alpha</opentelemetry-alpha.version>
+    <google-http-client.version>2.2.0</google-http-client.version> <!-- Quarkus defines 1.47.1, Google needs 2.20 for Storage and other project -->
   </properties>
   <scm>
     <connection>scm:git:git@github.com:quarkiverse/quarkus-google-cloud-services.git</connection>
@@ -68,6 +69,56 @@
         <groupId>io.opentelemetry</groupId>
         <artifactId>opentelemetry-opencensus-shim</artifactId>
         <version>${opentelemetry-alpha.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.google.http-client</groupId>
+        <artifactId>google-http-client-android</artifactId>
+        <version>${google-http-client.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.google.http-client</groupId>
+        <artifactId>google-http-client-apache-v2</artifactId>
+        <version>${google-http-client.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.google.http-client</groupId>
+        <artifactId>google-http-client-apache-v5</artifactId>
+        <version>${google-http-client.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.google.http-client</groupId>
+        <artifactId>google-http-client-appengine</artifactId>
+        <version>${google-http-client.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.google.http-client</groupId>
+        <artifactId>google-http-client-gson</artifactId>
+        <version>${google-http-client.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.google.http-client</groupId>
+        <artifactId>google-http-client-jackson2</artifactId>
+        <version>${google-http-client.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.google.http-client</groupId>
+        <artifactId>google-http-client-protobuf</artifactId>
+        <version>${google-http-client.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.google.http-client</groupId>
+        <artifactId>google-http-client-test</artifactId>
+        <version>${google-http-client.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.google.http-client</groupId>
+        <artifactId>google-http-client-xml</artifactId>
+        <version>${google-http-client.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.google.http-client</groupId>
+        <artifactId>google-http-client</artifactId>
+        <version>${google-http-client.version}</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
