@@ -28,6 +28,7 @@
         <conscrypt.version>2.6.1</conscrypt.version><!-- mess in google-cloud-bigquery and the other google cloud lib-->
         <animal-sniffer.version>1.27</animal-sniffer.version> <!-- mess in google-cloud-storage -->
         <protobuf-version>4.35.1</protobuf-version> <!-- mess in Firebase -->
+        <opentelemetry-alpha.version>1.45.0-alpha</opentelemetry-alpha.version> <!--storage vs bigtable vs spanner -->
         <re2j-version>1.8</re2j-version>
     </properties>
 
@@ -95,6 +96,11 @@
                 <groupId>io.opencensus</groupId>
                 <artifactId>opencensus-contrib-grpc-util</artifactId>
                 <version>${opencensus.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.opentelemetry.contrib</groupId>
+                <artifactId>opentelemetry-gcp-resources</artifactId>
+                <version>${opentelemetry-alpha.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.threeten</groupId>
