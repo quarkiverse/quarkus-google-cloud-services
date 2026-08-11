@@ -36,6 +36,11 @@
             <groupId>org.testcontainers</groupId>
             <artifactId>testcontainers-gcloud</artifactId>
         </dependency>
+        <dependency>
+            <groupId>io.quarkiverse.shim</groupId>
+            <artifactId>quarkus-shim-deployment</artifactId>
+            <version>0.2.0</version>
+        </dependency>
     </dependencies>
 
     <build>

@@ -68,6 +68,15 @@
             <groupId>io.quarkus</groupId>
             <artifactId>quarkus-grpc-common</artifactId>
         </dependency>
+
+        <!-- Quarkus Shim - patches com.google.cloud.firestore.telemetry.EnabledTraceUtil so the
+             patch class lands on the same "base runtime" classloader tier as the class it patches
+             in quarkus:dev, instead of the app's reloadable tier (see EnabledTraceUtilShim). -->
+        <dependency>
+            <groupId>io.quarkiverse.shim</groupId>
+            <artifactId>quarkus-shim</artifactId>
+            <version>0.2.0</version>
+        </dependency>
     </dependencies>
 
     <build>
