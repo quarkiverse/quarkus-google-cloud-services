@@ -40,6 +40,7 @@ public class FirebaseDevServiceProcessor {
     private static final Map<FirebaseEmulatorContainer.Emulator, String> CONFIG_PROPERTIES = Map.of(
             FirebaseEmulatorContainer.Emulator.AUTHENTICATION, "quarkus.google.cloud.firebase.auth.emulator-host",
             FirebaseEmulatorContainer.Emulator.EMULATOR_SUITE_UI, "quarkus.google.cloud.firebase.emulator-host",
+            FirebaseEmulatorContainer.Emulator.EMULATOR_HUB, "quarkus.google.cloud.firebase.hub-host",
             FirebaseEmulatorContainer.Emulator.FIREBASE_HOSTING, "quarkus.google.cloud.firebase.hosting.emulator-host",
             FirebaseEmulatorContainer.Emulator.CLOUD_FUNCTIONS, "quarkus.google.cloud.functions.emulator-host",
             FirebaseEmulatorContainer.Emulator.EVENT_ARC, "quarkus.google.cloud.eventarc.emulator-host",
@@ -56,6 +57,7 @@ public class FirebaseDevServiceProcessor {
     private static final Map<FirebaseEmulatorContainer.Emulator, String> CONTAINER_CONFIG_PROPERTIES = Map.of(
             FirebaseEmulatorContainer.Emulator.AUTHENTICATION, "quarkus.google.cloud.firebase.auth.container-emulator-host",
             FirebaseEmulatorContainer.Emulator.EMULATOR_SUITE_UI, "quarkus.google.cloud.firebase.container-emulator-host",
+            FirebaseEmulatorContainer.Emulator.EMULATOR_HUB, "quarkus.google.cloud.firebase.container-hub-host",
             FirebaseEmulatorContainer.Emulator.FIREBASE_HOSTING,
             "quarkus.google.cloud.firebase.hosting.container-emulator-host",
             FirebaseEmulatorContainer.Emulator.CLOUD_FUNCTIONS, "quarkus.google.cloud.functions.container-emulator-host",
