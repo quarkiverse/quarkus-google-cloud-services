@@ -1,6 +1,7 @@
 package io.quarkiverse.googlecloudservices.common.grpc.runtime.graal;
 
 import java.io.IOException;
+import java.security.GeneralSecurityException;
 import java.time.Duration;
 import java.util.concurrent.Executor;
 import java.util.concurrent.TimeUnit;
@@ -14,13 +15,7 @@ import com.oracle.svm.core.annotate.Alias;
 import com.oracle.svm.core.annotate.Substitute;
 import com.oracle.svm.core.annotate.TargetClass;
 
-import io.grpc.CallOptions;
-import io.grpc.Channel;
-import io.grpc.ClientCall;
-import io.grpc.ClientInterceptor;
-import io.grpc.ManagedChannel;
-import io.grpc.ManagedChannelBuilder;
-import io.grpc.MethodDescriptor;
+import io.grpc.*;
 
 @TargetClass(className = "com.google.api.gax.grpc.InstantiatingGrpcChannelProvider")
 final class Target_com_google_api_gax_grpc_InstantiatingGrpcChannelProvider {
@@ -72,7 +67,20 @@ final class Target_com_google_api_gax_grpc_InstantiatingGrpcChannelProvider {
             //                builder = ManagedChannelBuilder.forAddress(serviceAddress, port);
             //            }
 
-            ManagedChannelBuilder builder = ManagedChannelBuilder.forAddress(serviceAddress, port);
+            ManagedChannelBuilder<?> builder;
+            ChannelCredentials channelCredentials;
+            try {
+                channelCredentials = createMtlsChannelCredentials();
+            } catch (GeneralSecurityException e) {
+                throw new IOException(e);
+            }
+
+            if (channelCredentials != null) {
+                builder = Grpc.newChannelBuilder(endpoint, channelCredentials);
+            } else {
+                builder = ManagedChannelBuilder.forAddress(serviceAddress, port);
+            }
+
             builder = ((ManagedChannelBuilder) builder).disableServiceConfigLookUp()
                     .intercept(new ClientInterceptor[] { new Target_com_google_api_gax_grpc_GrpcChannelUUIDInterceptor() })
                     .intercept(new ClientInterceptor[] { headerInterceptor })
@@ -113,6 +121,11 @@ final class Target_com_google_api_gax_grpc_InstantiatingGrpcChannelProvider {
 
             return managedChannel;
         }
+    }
+
+    @Alias
+    ChannelCredentials createMtlsChannelCredentials() throws IOException, GeneralSecurityException {
+        throw new UnsupportedOperationException();
     }
 }
 
