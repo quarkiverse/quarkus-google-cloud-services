@@ -75,7 +75,7 @@
         <dependency>
             <groupId>io.quarkiverse.shim</groupId>
             <artifactId>quarkus-shim</artifactId>
-            <version>0.2.0</version>
+            <version>0.4.0</version>
         </dependency>
     </dependencies>
 
