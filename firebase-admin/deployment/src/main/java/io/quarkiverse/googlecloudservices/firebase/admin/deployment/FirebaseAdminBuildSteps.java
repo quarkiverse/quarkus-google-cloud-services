@@ -1,5 +1,8 @@
 package io.quarkiverse.googlecloudservices.firebase.admin.deployment;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import io.quarkiverse.googlecloudservices.firebase.admin.deployment.authentication.FirebaseAuthConfiguration;
 import io.quarkiverse.googlecloudservices.firebase.admin.runtime.FirebaseAdminProducer;
 import io.quarkiverse.googlecloudservices.firebase.admin.runtime.FirebaseSessionCookieManager;
@@ -11,6 +14,7 @@ import io.quarkus.deployment.annotations.BuildProducer;
 import io.quarkus.deployment.annotations.BuildStep;
 import io.quarkus.deployment.builditem.FeatureBuildItem;
 import io.quarkus.deployment.builditem.nativeimage.NativeImageConfigBuildItem;
+import io.quarkus.deployment.builditem.nativeimage.ReflectiveClassBuildItem;
 
 public class FirebaseAdminBuildSteps {
 
@@ -54,5 +58,24 @@ public class FirebaseAdminBuildSteps {
                 .addRuntimeInitializedClass("com.google.firebase.internal.ApiClientUtils")
                 .addRuntimeInitializedClass("com.google.firebase.internal.ApiClientUtils$TransportInstanceHolder")
                 .build();
+    }
+
+    /**
+     * Fix for <a href="https://github.com/firebase/firebase-admin-java/issues/800">firebase-admin-java#800</a>
+     * when running FirebaseAdmin in a native environment.
+     */
+    @BuildStep
+    public List<ReflectiveClassBuildItem> registerReflectiveClasses() {
+        List<ReflectiveClassBuildItem> items = new ArrayList<>();
+        items.add(ReflectiveClassBuildItem.builder(
+                "com.google.firebase.auth.internal.GetAccountInfoResponse",
+                "com.google.firebase.auth.internal.GetAccountInfoResponse$User",
+                "com.google.firebase.auth.internal.GetAccountInfoResponse$Provider",
+                "com.google.api.client.json.GenericJson")
+                .constructors(true)
+                .fields(true)
+                .methods(true)
+                .build());
+        return items;
     }
 }
