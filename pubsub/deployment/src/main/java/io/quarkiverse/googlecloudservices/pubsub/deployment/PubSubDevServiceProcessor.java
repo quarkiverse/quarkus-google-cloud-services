@@ -8,6 +8,7 @@ import org.jboss.logging.Logger;
 import org.testcontainers.gcloud.PubSubEmulatorContainer;
 import org.testcontainers.utility.DockerImageName;
 
+import io.quarkiverse.googlecloudservices.pubsub.push.PubSubPushBuildTimeConfig;
 import io.quarkus.deployment.IsProduction;
 import io.quarkus.deployment.annotations.BuildStep;
 import io.quarkus.deployment.annotations.BuildSteps;
@@ -37,6 +38,7 @@ public class PubSubDevServiceProcessor {
     public DevServicesResultBuildItem start(
             DockerStatusBuildItem dockerStatusBuildItem,
             PubSubDevServiceConfig devServiceConfig,
+            PubSubPushBuildTimeConfig pushConfig,
             FirebaseDevServiceConfig firebaseConfig,
             DevServicesComposeProjectBuildItem composeProjectBuildItem,
             List<DevServicesSharedNetworkBuildItem> devServicesSharedNetworkBuildItem,
@@ -62,7 +64,7 @@ public class PubSubDevServiceProcessor {
         try {
             boolean useSharedNetwork = DevServicesSharedNetworkBuildItem.isSharedNetworkRequired(devServicesConfig,
                     devServicesSharedNetworkBuildItem);
-            devService = startContainerIfAvailable(dockerStatusBuildItem, devServiceConfig,
+            devService = startContainerIfAvailable(dockerStatusBuildItem, devServiceConfig, pushConfig,
                     firebaseConfig, devServicesConfig.timeout(), composeProjectBuildItem, useSharedNetwork);
         } catch (Throwable t) {
             LOGGER.warn("Unable to start PubSub dev service", t);
@@ -89,6 +91,7 @@ public class PubSubDevServiceProcessor {
     private DevServicesResultBuildItem.RunningDevService startContainerIfAvailable(
             DockerStatusBuildItem dockerStatusBuildItem,
             PubSubDevServiceConfig config,
+            PubSubPushBuildTimeConfig pushConfig,
             FirebaseDevServiceConfig firebaseConfig,
             Optional<Duration> timeout,
             DevServicesComposeProjectBuildItem composeProjectBuildItem,
@@ -110,7 +113,7 @@ public class PubSubDevServiceProcessor {
             return null;
         }
 
-        return startContainer(dockerStatusBuildItem, config, timeout, composeProjectBuildItem, useSharedNetwork);
+        return startContainer(dockerStatusBuildItem, config, pushConfig, timeout, composeProjectBuildItem, useSharedNetwork);
     }
 
     /**
@@ -118,6 +121,7 @@ public class PubSubDevServiceProcessor {
      *
      * @param dockerStatusBuildItem, Docker status
      * @param config, Configuration for the PubSub service
+     * @param pushConfig The push configuration for the PubSub service
      * @param timeout, Optional timeout for starting the service
      * @param composeProjectBuildItem The compose build item
      * @param useSharedNetwork Start the service on a shared docker network
@@ -126,6 +130,7 @@ public class PubSubDevServiceProcessor {
     private DevServicesResultBuildItem.RunningDevService startContainer(
             DockerStatusBuildItem dockerStatusBuildItem,
             PubSubDevServiceConfig config,
+            PubSubPushBuildTimeConfig pushConfig,
             Optional<Duration> timeout,
             DevServicesComposeProjectBuildItem composeProjectBuildItem,
             boolean useSharedNetwork) {
@@ -135,7 +140,8 @@ public class PubSubDevServiceProcessor {
                         .asCompatibleSubstituteFor("gcr.io/google.com/cloudsdktool/cloud-sdk:emulators"),
                 config.emulatorPort().orElse(null),
                 composeProjectBuildItem.getDefaultNetworkId(),
-                useSharedNetwork);
+                useSharedNetwork,
+                pushConfig.enabled());
 
         // Set container startup timeout if provided
         timeout.ifPresent(emulatorContainer::withStartupTimeout);
@@ -174,15 +180,17 @@ public class PubSubDevServiceProcessor {
 
         private final Integer fixedExposedPort;
         private final boolean useSharedNetwork;
+        private final boolean usePush;
         private final String hostName;
         private static final int INTERNAL_PORT = 8085;
 
         private QuarkusPubSubContainer(DockerImageName dockerImageName, Integer fixedExposedPort,
-                String defaultNetworkId, boolean useSharedNetwork) {
+                String defaultNetworkId, boolean useSharedNetwork, boolean usePush) {
             super(dockerImageName);
             this.fixedExposedPort = fixedExposedPort;
             this.useSharedNetwork = useSharedNetwork;
             this.hostName = ConfigureUtil.configureNetwork(this, defaultNetworkId, useSharedNetwork, "pubsub");
+            this.usePush = usePush;
         }
 
         /**
@@ -193,6 +201,10 @@ public class PubSubDevServiceProcessor {
             super.configure();
             if (useSharedNetwork) {
                 return;
+            }
+
+            if (usePush) {
+                withExtraHost("host.docker.internal", "host-gateway");
             }
 
             // Expose Pub/Sub emulatorPort

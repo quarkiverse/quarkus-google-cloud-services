@@ -20,6 +20,7 @@ import io.vertx.ext.web.RoutingContext;
 public class GooglePubSubAuthenticationHandler implements Handler<RoutingContext> {
 
     private static final Logger LOGGER = Logger.getLogger(GooglePubSubAuthenticationHandler.class);
+    public static final String VERIFICATION_TOKEN_NAME = "token";
 
     private final String pubSubEndpoint;
     private final Optional<String> verificationToken;
@@ -61,9 +62,10 @@ public class GooglePubSubAuthenticationHandler implements Handler<RoutingContext
 
         if (verificationToken.isPresent()) {
             String pubsubVerificationToken = verificationToken.get();
-            var receivedToken = rc.queryParam("token");
+            var receivedToken = rc.queryParam(VERIFICATION_TOKEN_NAME);
             // Do not process message if request token does not match pubsubVerificationToken
-            if (receivedToken.size() != 1 || pubsubVerificationToken.compareTo(rc.queryParam("token").get(0)) != 0) {
+            if (receivedToken.size() != 1
+                    || pubsubVerificationToken.compareTo(rc.queryParam(VERIFICATION_TOKEN_NAME).get(0)) != 0) {
                 LOGGER.warn("The request did not contain the required verification token, denying the pubsub message");
                 rc.fail(401);
                 return;

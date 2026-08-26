@@ -1,6 +1,8 @@
 package io.quarkiverse.googlecloudservices.it;
 
 import static io.restassured.RestAssured.given;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
@@ -11,6 +13,7 @@ import javax.annotation.Priority;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.Alternative;
+import jakarta.inject.Inject;
 
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.junit.jupiter.api.Test;
@@ -18,6 +21,7 @@ import org.junit.jupiter.api.Test;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
 import com.google.api.client.json.webtoken.JsonWebSignature;
 
+import io.quarkiverse.googlecloudservices.pubsub.push.PubSubPushManager;
 import io.quarkiverse.googlecloudservices.pubsub.push.TokenVerifier;
 import io.quarkus.test.junit.QuarkusTest;
 import io.quarkus.test.junit.QuarkusTestProfile;
@@ -39,6 +43,9 @@ public class PubSubPushRuntimeConfigTest {
 
     @ConfigProperty(name = "quarkus.google.cloud.project-id")
     String projectId;
+
+    @Inject
+    PubSubPushManager pushManager;
 
     public static final class Profile implements QuarkusTestProfile {
 
@@ -121,6 +128,17 @@ public class PubSubPushRuntimeConfigTest {
                 .when().post("/pubsub-push-receiver?token=testtoken")
                 .then()
                 .statusCode(401);
+    }
+
+    @Test
+    public void testEndpointUrl() {
+        var uri = pushManager.getEndpointUrl("my-host");
+
+        assertThat(uri.getScheme(), is("http"));
+        assertThat(uri.getHost(), is("my-host"));
+        assertThat(uri.getPort(), is(8081));
+        assertThat(uri.getPath(), is("/pubsub-push-receiver"));
+        assertThat(uri.getQuery(), is("token=testtoken"));
     }
 
     private String createMessage(String message) {

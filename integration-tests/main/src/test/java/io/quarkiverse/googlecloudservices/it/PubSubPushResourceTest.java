@@ -4,22 +4,27 @@ import static io.restassured.RestAssured.given;
 import static org.awaitility.Awaitility.await;
 import static org.hamcrest.core.IsEqual.equalTo;
 
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
-import javax.annotation.Priority;
-
+import jakarta.annotation.Priority;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.Alternative;
+import jakarta.inject.Inject;
 
 import org.eclipse.microprofile.config.inject.ConfigProperty;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
 import com.google.api.client.json.webtoken.JsonWebSignature;
 
+import io.quarkiverse.googlecloudservices.pubsub.QuarkusPubSub;
 import io.quarkiverse.googlecloudservices.pubsub.push.TokenVerifier;
 import io.quarkus.test.junit.QuarkusTest;
 import io.quarkus.test.junit.QuarkusTestProfile;
@@ -32,6 +37,9 @@ public class PubSubPushResourceTest {
 
     @ConfigProperty(name = "quarkus.google.cloud.project-id")
     String projectId;
+
+    @Inject
+    QuarkusPubSub pubSub;
 
     public static final class Profile implements QuarkusTestProfile {
 
@@ -77,6 +85,12 @@ public class PubSubPushResourceTest {
                     new byte[0],
                     new byte[0]);
         }
+    }
+
+    @BeforeEach
+    public void setup() throws IOException {
+        pubSub.createTopicsAndPushSubscriptions(Map.of("test-push-topic", List.of("test-push-subscription")),
+                "host.docker.internal");
     }
 
     @Test

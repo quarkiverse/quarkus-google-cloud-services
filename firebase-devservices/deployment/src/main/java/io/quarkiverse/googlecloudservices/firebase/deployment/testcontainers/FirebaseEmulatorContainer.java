@@ -1091,6 +1091,13 @@ public class FirebaseEmulatorContainer extends GenericContainer<FirebaseEmulator
         this.afterStart = emulatorConfig.dockerConfig().afterStart();
         this.useSharedNetwork = emulatorConfig.dockerConfig().useSharedNetwork();
 
+        // Configure host.docker.internal for non-shared network mode, so that the container can reach the host machine
+        // This needed as e.g. hosting needs to reach the host machine for API calls. Linux doesn't have
+        // host.docker.internal by default, so we add it here.
+        if (!useSharedNetwork) {
+            withExtraHost("host.docker.internal", "host-gateway");
+        }
+
         emulatorConfig.cliArguments().emulatorData().ifPresent(path -> {
             // https://firebase.google.com/docs/emulator-suite/install_and_configure#export_and_import_emulator_data
             // Mount the volume to the specified path
