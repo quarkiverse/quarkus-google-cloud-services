@@ -201,10 +201,16 @@ in the `MessageReceiver` interface.
 
 When running quarkus-tests, messages will also be authenticated, which will fail as you cannot provide a valid JWT
 signed with the Google private keys. To resolve this issue, there are two options:
+
 * Using pull-subscriptions for testing purposes. For the `%test` profile, set the `quarkus.google.cloud.pubsub.push.enabed` flag to false. This
   will result in the code using pull messages instead of push messages without any underlying code changes
-* Use a mock implementation of the `TokenVerifier` class as can be seen in the `PubSubPushResourceTest` in the
-  integration tests of this extension.
+* Disable authentication (as the emulator does not support this) and use true end-to-end testing of push messages. To
+  register the subscriptions `QuarkusPubSub` provides a `createPushSubscription` method which can be used to create a push subscription with the correct endpoint and authentication credentials. The devservices will automatically register
+  `host.docker.internal` (which is not present on Linux) as the container url for push subscriptions. This can be used
+  as the hostname to register the push subscription to. Note
+
+_Note that when running a `@QuarkusIntegrationTest` where the quarkus app is running in a container, you need to use the
+shared network container name as the hostname._
 
 Consult the https://cloud.google.com/pubsub/docs/push[Google Cloud PubSub push] documentation for more information on
 the push model, configuring the topics and subscriptions and configuring authentication.

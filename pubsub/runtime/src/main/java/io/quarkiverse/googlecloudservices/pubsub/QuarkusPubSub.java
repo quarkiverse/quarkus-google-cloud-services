@@ -1,8 +1,11 @@
 package io.quarkiverse.googlecloudservices.pubsub;
 
 import java.io.IOException;
+import java.util.Collection;
+import java.util.Map;
 import java.util.Optional;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 import jakarta.annotation.PostConstruct;
@@ -217,6 +220,82 @@ public class QuarkusPubSub {
             return existing.orElseGet(() -> subscriptionAdminClient.createSubscription(subscriptionName, topicName,
                     PushConfig.getDefaultInstance(), 0));
         }
+    }
+
+    /**
+     * Creates a PubSub Push Subscription if not already exist, using the configured project ID.
+     */
+    public Subscription createPushSubscription(String topic, String subscription, String host) throws IOException {
+        SubscriptionName subscriptionName = SubscriptionName.of(
+                gcpConfigHolder.getBootstrapConfig().projectId().orElseThrow(),
+                subscription);
+        TopicName topicName = TopicName.of(gcpConfigHolder.getBootstrapConfig().projectId().orElseThrow(), topic);
+        SubscriptionAdminSettings subscriptionAdminSettings = subscriptionAdminSettings();
+
+        try (SubscriptionAdminClient subscriptionAdminClient = SubscriptionAdminClient
+                .create(subscriptionAdminSettings)) {
+            Iterable<Subscription> subscriptions = subscriptionAdminClient
+                    .listSubscriptions(ProjectName.of(gcpConfigHolder.getBootstrapConfig().projectId().orElseThrow()))
+                    .iterateAll();
+            Optional<Subscription> existing = StreamSupport.stream(subscriptions.spliterator(), false)
+                    .filter(sub -> sub.getName().equals(subscriptionName.toString()))
+                    .findFirst();
+            return existing.orElseGet(() -> subscriptionAdminClient.createSubscription(subscriptionName, topicName,
+                    PushConfig.newBuilder()
+                            .setPushEndpoint(pushManager.get().getEndpointUrl(host).toString())
+                            .build(),
+                    0));
+        }
+    }
+
+    /**
+     * Convenience method to create topics and subscriptions for the given map of topic names and subscription names.
+     */
+    public Collection<Subscription> createTopicsAndSubscriptions(Map<String, Collection<String>> topicsAndSubscriptions) {
+        return internalCreateTopicsAndSubscriptions(topicsAndSubscriptions, this::createSubscription);
+    }
+
+    /**
+     * Convenience method to create topics and push subscriptions for the given map of topic names and subscription names.
+     */
+    public Collection<Subscription> createTopicsAndPushSubscriptions(Map<String, Collection<String>> topicsAndSubscriptions,
+            String host) {
+        return internalCreateTopicsAndSubscriptions(topicsAndSubscriptions,
+                (topic, name) -> createPushSubscription(topic, name, host));
+    }
+
+    /**
+     * Convenience method to create topics and push subscriptions for the given map of topic names and subscription names,
+     * using <code>host.docker.internal</code> as hostname.
+     */
+    public Collection<Subscription> createTopicsAndPushSubscriptions(Map<String, Collection<String>> topicsAndSubscriptions) {
+        return createTopicsAndPushSubscriptions(topicsAndSubscriptions, "host.docker.internal");
+    }
+
+    @FunctionalInterface
+    private interface SubscriptionCreator {
+        Subscription create(String topic, String subscription) throws IOException;
+    }
+
+    private Collection<Subscription> internalCreateTopicsAndSubscriptions(
+            Map<String, Collection<String>> topicsAndSubscriptions, SubscriptionCreator subscriptionCreator) {
+        return topicsAndSubscriptions.entrySet().stream().flatMap(entry -> {
+            try {
+                var topicName = entry.getKey();
+                createTopic(topicName);
+                return entry.getValue()
+                        .stream()
+                        .map(name -> {
+                            try {
+                                return subscriptionCreator.create(topicName, name);
+                            } catch (IOException e) {
+                                throw new IllegalStateException(e);
+                            }
+                        });
+            } catch (IOException e) {
+                throw new IllegalStateException(e);
+            }
+        }).collect(Collectors.toList());
     }
 
     private CredentialsProvider credentialsProvider() {
