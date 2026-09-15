@@ -168,6 +168,7 @@ class CustomFirebaseConfigReader {
 
             return new FirebaseEmulatorContainer.HostingConfig(
                     publicDir,
+                    Optional.empty(),
                     Optional.empty());
         } else {
             return FirebaseEmulatorContainer.HostingConfig.DEFAULT;
