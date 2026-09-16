@@ -28,6 +28,27 @@ endif::add-copy-button-to-env-var[]
 |boolean
 |`+++false+++`
 
+a|icon:lock[title=Fixed at build time] [[quarkus-google-cloud-firebase-admin_quarkus-google-cloud-firebase-auth-enabled]] [.property-path]##link:#quarkus-google-cloud-firebase-admin_quarkus-google-cloud-firebase-auth-enabled[`+++quarkus.google.cloud.firebase.auth.enabled+++`]##
+ifdef::add-copy-button-to-config-props[]
+config_property_copy_button:+++quarkus.google.cloud.firebase.auth.enabled+++[]
+endif::add-copy-button-to-config-props[]
+
+
+[.description]
+--
+Enable or disable Firebase authentication.
+
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_GOOGLE_CLOUD_FIREBASE_AUTH_ENABLED+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_GOOGLE_CLOUD_FIREBASE_AUTH_ENABLED+++`
+endif::add-copy-button-to-env-var[]
+--
+|boolean
+|`+++false+++`
+
 a|icon:lock[title=Fixed at build time] [[quarkus-google-cloud-firebase-admin_quarkus-google-cloud-firebase-auth-session-cookie-enabled]] [.property-path]##link:#quarkus-google-cloud-firebase-admin_quarkus-google-cloud-firebase-auth-session-cookie-enabled[`+++quarkus.google.cloud.firebase.auth.session-cookie.enabled+++`]##
 ifdef::add-copy-button-to-config-props[]
 config_property_copy_button:+++quarkus.google.cloud.firebase.auth.session-cookie.enabled+++[]
@@ -48,6 +69,242 @@ endif::add-copy-button-to-env-var[]
 --
 |boolean
 |`+++false+++`
+
+a|icon:lock[title=Fixed at build time] [[quarkus-google-cloud-firebase-admin_quarkus-google-cloud-firebase-auth-session-cookie-enabled]] [.property-path]##link:#quarkus-google-cloud-firebase-admin_quarkus-google-cloud-firebase-auth-session-cookie-enabled[`+++quarkus.google.cloud.firebase.auth.session-cookie.enabled+++`]##
+ifdef::add-copy-button-to-config-props[]
+config_property_copy_button:+++quarkus.google.cloud.firebase.auth.session-cookie.enabled+++[]
+endif::add-copy-button-to-config-props[]
+
+
+[.description]
+--
+Enable session cookie support
+
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_GOOGLE_CLOUD_FIREBASE_AUTH_SESSION_COOKIE_ENABLED+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_GOOGLE_CLOUD_FIREBASE_AUTH_SESSION_COOKIE_ENABLED+++`
+endif::add-copy-button-to-env-var[]
+--
+|boolean
+|`+++false+++`
+
+a| [[quarkus-google-cloud-firebase-admin_quarkus-google-cloud-firebase-auth-emulator-host]] [.property-path]##link:#quarkus-google-cloud-firebase-admin_quarkus-google-cloud-firebase-auth-emulator-host[`+++quarkus.google.cloud.firebase.auth.emulator-host+++`]##
+ifdef::add-copy-button-to-config-props[]
+config_property_copy_button:+++quarkus.google.cloud.firebase.auth.emulator-host+++[]
+endif::add-copy-button-to-config-props[]
+
+
+[.description]
+--
+Sets the emulator host to use.
+
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_GOOGLE_CLOUD_FIREBASE_AUTH_EMULATOR_HOST+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_GOOGLE_CLOUD_FIREBASE_AUTH_EMULATOR_HOST+++`
+endif::add-copy-button-to-env-var[]
+--
+|string
+|
+
+a| [[quarkus-google-cloud-firebase-admin_quarkus-google-cloud-firebase-auth-use-emulator-credentials]] [.property-path]##link:#quarkus-google-cloud-firebase-admin_quarkus-google-cloud-firebase-auth-use-emulator-credentials[`+++quarkus.google.cloud.firebase.auth.use-emulator-credentials+++`]##
+ifdef::add-copy-button-to-config-props[]
+config_property_copy_button:+++quarkus.google.cloud.firebase.auth.use-emulator-credentials+++[]
+endif::add-copy-button-to-config-props[]
+
+
+[.description]
+--
+Forces the usage of emulator credentials. The logic automatically uses emulator credentials in case the emulatorHost is set.
+
+ * If true: force usage of emulator credentials
+ * If false: force not using emulator credentials
+
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_GOOGLE_CLOUD_FIREBASE_AUTH_USE_EMULATOR_CREDENTIALS+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_GOOGLE_CLOUD_FIREBASE_AUTH_USE_EMULATOR_CREDENTIALS+++`
+endif::add-copy-button-to-env-var[]
+--
+|boolean
+|`+++true+++`
+
+a| [[quarkus-google-cloud-firebase-admin_quarkus-google-cloud-firebase-auth-roles-claim]] [.property-path]##link:#quarkus-google-cloud-firebase-admin_quarkus-google-cloud-firebase-auth-roles-claim[`+++quarkus.google.cloud.firebase.auth.roles-claim+++`]##
+ifdef::add-copy-button-to-config-props[]
+config_property_copy_button:+++quarkus.google.cloud.firebase.auth.roles-claim+++[]
+endif::add-copy-button-to-config-props[]
+
+
+[.description]
+--
+When set, the values in this claim in the Firebase JWT will be mapped to the roles in the Quarkus `io.quarkus.security.identity.SecurityIdentity`. This claim can either be a set of roles (i.e. an array in the JWT) or a single value.
+
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_GOOGLE_CLOUD_FIREBASE_AUTH_ROLES_CLAIM+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_GOOGLE_CLOUD_FIREBASE_AUTH_ROLES_CLAIM+++`
+endif::add-copy-button-to-env-var[]
+--
+|string
+|
+
+a| [[quarkus-google-cloud-firebase-admin_quarkus-google-cloud-firebase-auth-session-cookie-name]] [.property-path]##link:#quarkus-google-cloud-firebase-admin_quarkus-google-cloud-firebase-auth-session-cookie-name[`+++quarkus.google.cloud.firebase.auth.session-cookie.name+++`]##
+ifdef::add-copy-button-to-config-props[]
+config_property_copy_button:+++quarkus.google.cloud.firebase.auth.session-cookie.name+++[]
+endif::add-copy-button-to-config-props[]
+
+
+[.description]
+--
+Name to use for session cookies (see link:https://firebase.google.com/docs/auth/admin/manage-cookies#java_2[Manage session cookies])
+
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_GOOGLE_CLOUD_FIREBASE_AUTH_SESSION_COOKIE_NAME+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_GOOGLE_CLOUD_FIREBASE_AUTH_SESSION_COOKIE_NAME+++`
+endif::add-copy-button-to-env-var[]
+--
+|string
+|`+++session+++`
+
+a| [[quarkus-google-cloud-firebase-admin_quarkus-google-cloud-firebase-auth-session-cookie-expiration-duration]] [.property-path]##link:#quarkus-google-cloud-firebase-admin_quarkus-google-cloud-firebase-auth-session-cookie-expiration-duration[`+++quarkus.google.cloud.firebase.auth.session-cookie.expiration-duration+++`]##
+ifdef::add-copy-button-to-config-props[]
+config_property_copy_button:+++quarkus.google.cloud.firebase.auth.session-cookie.expiration-duration+++[]
+endif::add-copy-button-to-config-props[]
+
+
+[.description]
+--
+The expiration duration of the session cookie. Uses `java.time.Duration++#++parse(CharSequence)` to get a duration for the expiration. See the JavaDoc of this method for the format of this value.
+
+Defaults to 5 days.
+
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_GOOGLE_CLOUD_FIREBASE_AUTH_SESSION_COOKIE_EXPIRATION_DURATION+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_GOOGLE_CLOUD_FIREBASE_AUTH_SESSION_COOKIE_EXPIRATION_DURATION+++`
+endif::add-copy-button-to-env-var[]
+--
+|link:https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/time/Duration.html[Duration] link:#duration-note-anchor-quarkus-google-cloud-firebase-admin_quarkus-google[icon:question-circle[title=More information about the Duration format]]
+|`+++P5D+++`
+
+a| [[quarkus-google-cloud-firebase-admin_quarkus-google-cloud-firebase-auth-session-cookie-check-revoked]] [.property-path]##link:#quarkus-google-cloud-firebase-admin_quarkus-google-cloud-firebase-auth-session-cookie-check-revoked[`+++quarkus.google.cloud.firebase.auth.session-cookie.check-revoked+++`]##
+ifdef::add-copy-button-to-config-props[]
+config_property_copy_button:+++quarkus.google.cloud.firebase.auth.session-cookie.check-revoked+++[]
+endif::add-copy-button-to-config-props[]
+
+
+[.description]
+--
+Perform an additional check to see if the session was revoked
+
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_GOOGLE_CLOUD_FIREBASE_AUTH_SESSION_COOKIE_CHECK_REVOKED+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_GOOGLE_CLOUD_FIREBASE_AUTH_SESSION_COOKIE_CHECK_REVOKED+++`
+endif::add-copy-button-to-env-var[]
+--
+|boolean
+|`+++true+++`
+
+a| [[quarkus-google-cloud-firebase-admin_quarkus-google-cloud-firebase-auth-session-cookie-validate-token]] [.property-path]##link:#quarkus-google-cloud-firebase-admin_quarkus-google-cloud-firebase-auth-session-cookie-validate-token[`+++quarkus.google.cloud.firebase.auth.session-cookie.validate-token+++`]##
+ifdef::add-copy-button-to-config-props[]
+config_property_copy_button:+++quarkus.google.cloud.firebase.auth.session-cookie.validate-token+++[]
+endif::add-copy-button-to-config-props[]
+
+
+[.description]
+--
+Validate the expiration date of the token.
+
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_GOOGLE_CLOUD_FIREBASE_AUTH_SESSION_COOKIE_VALIDATE_TOKEN+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_GOOGLE_CLOUD_FIREBASE_AUTH_SESSION_COOKIE_VALIDATE_TOKEN+++`
+endif::add-copy-button-to-env-var[]
+--
+|boolean
+|`+++false+++`
+
+a| [[quarkus-google-cloud-firebase-admin_quarkus-google-cloud-firebase-auth-session-cookie-minimum-token-validity]] [.property-path]##link:#quarkus-google-cloud-firebase-admin_quarkus-google-cloud-firebase-auth-session-cookie-minimum-token-validity[`+++quarkus.google.cloud.firebase.auth.session-cookie.minimum-token-validity+++`]##
+ifdef::add-copy-button-to-config-props[]
+config_property_copy_button:+++quarkus.google.cloud.firebase.auth.session-cookie.minimum-token-validity+++[]
+endif::add-copy-button-to-config-props[]
+
+
+[.description]
+--
+Minimum token validity in case `validate-token()` is set to true. Uses `java.time.Duration++#++parse(CharSequence)` to get a duration for the expiration. See the JavaDoc of this method for the format of this value.
+
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_GOOGLE_CLOUD_FIREBASE_AUTH_SESSION_COOKIE_MINIMUM_TOKEN_VALIDITY+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_GOOGLE_CLOUD_FIREBASE_AUTH_SESSION_COOKIE_MINIMUM_TOKEN_VALIDITY+++`
+endif::add-copy-button-to-env-var[]
+--
+|link:https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/time/Duration.html[Duration] link:#duration-note-anchor-quarkus-google-cloud-firebase-admin_quarkus-google[icon:question-circle[title=More information about the Duration format]]
+|
+
+a| [[quarkus-google-cloud-firebase-admin_quarkus-google-cloud-firebase-auth-session-cookie-login-api-path]] [.property-path]##link:#quarkus-google-cloud-firebase-admin_quarkus-google-cloud-firebase-auth-session-cookie-login-api-path[`+++quarkus.google.cloud.firebase.auth.session-cookie.login-api-path+++`]##
+ifdef::add-copy-button-to-config-props[]
+config_property_copy_button:+++quarkus.google.cloud.firebase.auth.session-cookie.login-api-path+++[]
+endif::add-copy-button-to-config-props[]
+
+
+[.description]
+--
+Path of an HTTP endpoint which can be used to perform the session login. If set, a reactive route will be registered to handle setting the cookie based on an authenticated request.
+
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_GOOGLE_CLOUD_FIREBASE_AUTH_SESSION_COOKIE_LOGIN_API_PATH+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_GOOGLE_CLOUD_FIREBASE_AUTH_SESSION_COOKIE_LOGIN_API_PATH+++`
+endif::add-copy-button-to-env-var[]
+--
+|string
+|
+
+a| [[quarkus-google-cloud-firebase-admin_quarkus-google-cloud-firebase-auth-session-cookie-logout-api-path]] [.property-path]##link:#quarkus-google-cloud-firebase-admin_quarkus-google-cloud-firebase-auth-session-cookie-logout-api-path[`+++quarkus.google.cloud.firebase.auth.session-cookie.logout-api-path+++`]##
+ifdef::add-copy-button-to-config-props[]
+config_property_copy_button:+++quarkus.google.cloud.firebase.auth.session-cookie.logout-api-path+++[]
+endif::add-copy-button-to-config-props[]
+
+
+[.description]
+--
+Path of an HTTP endpoint which can be used to perform the session logout. If set, a reactive route will be registered to handle clearing the session cookie.
+
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_GOOGLE_CLOUD_FIREBASE_AUTH_SESSION_COOKIE_LOGOUT_API_PATH+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_GOOGLE_CLOUD_FIREBASE_AUTH_SESSION_COOKIE_LOGOUT_API_PATH+++`
+endif::add-copy-button-to-env-var[]
+--
+|string
+|
 
 a| [[quarkus-google-cloud-firebase-admin_quarkus-google-cloud-firebase-auth-emulator-host]] [.property-path]##link:#quarkus-google-cloud-firebase-admin_quarkus-google-cloud-firebase-auth-emulator-host[`+++quarkus.google.cloud.firebase.auth.emulator-host+++`]##
 ifdef::add-copy-button-to-config-props[]

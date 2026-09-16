@@ -91,6 +91,90 @@ endif::add-copy-button-to-env-var[]
 |int
 |
 
+a|icon:lock[title=Fixed at build time] [[quarkus-google-cloud-pubsub_quarkus-google-cloud-firebase-devservice-prefer-firebase-dev-services]] [.property-path]##link:#quarkus-google-cloud-pubsub_quarkus-google-cloud-firebase-devservice-prefer-firebase-dev-services[`+++quarkus.google.cloud.firebase.devservice.prefer-firebase-dev-services+++`]##
+ifdef::add-copy-button-to-config-props[]
+config_property_copy_button:+++quarkus.google.cloud.firebase.devservice.prefer-firebase-dev-services+++[]
+endif::add-copy-button-to-config-props[]
+
+
+[.description]
+--
+Indicates to use the dev service for Firebase. The default value is not setup unless the firebase module is included. In that case, the Firebase devservices will by default be preferred and the DevService for PubSub will be disabled.
+
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_GOOGLE_CLOUD_FIREBASE_DEVSERVICE_PREFER_FIREBASE_DEV_SERVICES+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_GOOGLE_CLOUD_FIREBASE_DEVSERVICE_PREFER_FIREBASE_DEV_SERVICES+++`
+endif::add-copy-button-to-env-var[]
+--
+|boolean
+|
+
+a|icon:lock[title=Fixed at build time] [[quarkus-google-cloud-pubsub_quarkus-google-cloud-pubsub-devservice-enabled]] [.property-path]##link:#quarkus-google-cloud-pubsub_quarkus-google-cloud-pubsub-devservice-enabled[`+++quarkus.google.cloud.pubsub.devservice.enabled+++`]##
+ifdef::add-copy-button-to-config-props[]
+config_property_copy_button:+++quarkus.google.cloud.pubsub.devservice.enabled+++[]
+endif::add-copy-button-to-config-props[]
+
+
+[.description]
+--
+Indicates whether the Pub/Sub service should be enabled or not. The default value is 'false'.
+
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_GOOGLE_CLOUD_PUBSUB_DEVSERVICE_ENABLED+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_GOOGLE_CLOUD_PUBSUB_DEVSERVICE_ENABLED+++`
+endif::add-copy-button-to-env-var[]
+--
+|boolean
+|`+++false+++`
+
+a|icon:lock[title=Fixed at build time] [[quarkus-google-cloud-pubsub_quarkus-google-cloud-pubsub-devservice-image-name]] [.property-path]##link:#quarkus-google-cloud-pubsub_quarkus-google-cloud-pubsub-devservice-image-name[`+++quarkus.google.cloud.pubsub.devservice.image-name+++`]##
+ifdef::add-copy-button-to-config-props[]
+config_property_copy_button:+++quarkus.google.cloud.pubsub.devservice.image-name+++[]
+endif::add-copy-button-to-config-props[]
+
+
+[.description]
+--
+Sets the Docker image name for the Google Cloud SDK. This image is used to emulate the Pub/Sub service in the development environment. The default value is 'gcr.io/google.com/cloudsdktool/google-cloud-cli:emulators'.
+
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_GOOGLE_CLOUD_PUBSUB_DEVSERVICE_IMAGE_NAME+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_GOOGLE_CLOUD_PUBSUB_DEVSERVICE_IMAGE_NAME+++`
+endif::add-copy-button-to-env-var[]
+--
+|string
+|`+++gcr.io/google.com/cloudsdktool/google-cloud-cli:emulators+++`
+
+a|icon:lock[title=Fixed at build time] [[quarkus-google-cloud-pubsub_quarkus-google-cloud-pubsub-devservice-emulator-port]] [.property-path]##link:#quarkus-google-cloud-pubsub_quarkus-google-cloud-pubsub-devservice-emulator-port[`+++quarkus.google.cloud.pubsub.devservice.emulator-port+++`]##
+ifdef::add-copy-button-to-config-props[]
+config_property_copy_button:+++quarkus.google.cloud.pubsub.devservice.emulator-port+++[]
+endif::add-copy-button-to-config-props[]
+
+
+[.description]
+--
+Specifies the emulatorPort on which the Pub/Sub service should run in the development environment.
+
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_GOOGLE_CLOUD_PUBSUB_DEVSERVICE_EMULATOR_PORT+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_GOOGLE_CLOUD_PUBSUB_DEVSERVICE_EMULATOR_PORT+++`
+endif::add-copy-button-to-env-var[]
+--
+|int
+|
+
 a|icon:lock[title=Fixed at build time] [[quarkus-google-cloud-pubsub_quarkus-google-cloud-pubsub-push-enabled]] [.property-path]##link:#quarkus-google-cloud-pubsub_quarkus-google-cloud-pubsub-push-enabled[`+++quarkus.google.cloud.pubsub.push.enabled+++`]##
 ifdef::add-copy-button-to-config-props[]
 config_property_copy_button:+++quarkus.google.cloud.pubsub.push.enabled+++[]
@@ -132,6 +216,219 @@ endif::add-copy-button-to-env-var[]
 --
 |string
 |
+
+a|icon:lock[title=Fixed at build time] [[quarkus-google-cloud-pubsub_quarkus-google-cloud-pubsub-push-enabled]] [.property-path]##link:#quarkus-google-cloud-pubsub_quarkus-google-cloud-pubsub-push-enabled[`+++quarkus.google.cloud.pubsub.push.enabled+++`]##
+ifdef::add-copy-button-to-config-props[]
+config_property_copy_button:+++quarkus.google.cloud.pubsub.push.enabled+++[]
+endif::add-copy-button-to-config-props[]
+
+
+[.description]
+--
+Enable push configuration
+
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_GOOGLE_CLOUD_PUBSUB_PUSH_ENABLED+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_GOOGLE_CLOUD_PUBSUB_PUSH_ENABLED+++`
+endif::add-copy-button-to-env-var[]
+--
+|boolean
+|`+++false+++`
+
+a|icon:lock[title=Fixed at build time] [[quarkus-google-cloud-pubsub_quarkus-google-cloud-pubsub-push-endpoint-path]] [.property-path]##link:#quarkus-google-cloud-pubsub_quarkus-google-cloud-pubsub-push-endpoint-path[`+++quarkus.google.cloud.pubsub.push.endpoint-path+++`]##
+ifdef::add-copy-button-to-config-props[]
+config_property_copy_button:+++quarkus.google.cloud.pubsub.push.endpoint-path+++[]
+endif::add-copy-button-to-config-props[]
+
+
+[.description]
+--
+The endpoint path for the pubsub push calls.
+
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_GOOGLE_CLOUD_PUBSUB_PUSH_ENDPOINT_PATH+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_GOOGLE_CLOUD_PUBSUB_PUSH_ENDPOINT_PATH+++`
+endif::add-copy-button-to-env-var[]
+--
+|string
+|
+
+a| [[quarkus-google-cloud-pubsub_quarkus-google-cloud-pubsub-emulator-host]] [.property-path]##link:#quarkus-google-cloud-pubsub_quarkus-google-cloud-pubsub-emulator-host[`+++quarkus.google.cloud.pubsub.emulator-host+++`]##
+ifdef::add-copy-button-to-config-props[]
+config_property_copy_button:+++quarkus.google.cloud.pubsub.emulator-host+++[]
+endif::add-copy-button-to-config-props[]
+
+
+[.description]
+--
+Enable emulator and set its host.
+
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_GOOGLE_CLOUD_PUBSUB_EMULATOR_HOST+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_GOOGLE_CLOUD_PUBSUB_EMULATOR_HOST+++`
+endif::add-copy-button-to-env-var[]
+--
+|string
+|
+
+a| [[quarkus-google-cloud-pubsub_quarkus-google-cloud-pubsub-use-emulator-credentials]] [.property-path]##link:#quarkus-google-cloud-pubsub_quarkus-google-cloud-pubsub-use-emulator-credentials[`+++quarkus.google.cloud.pubsub.use-emulator-credentials+++`]##
+ifdef::add-copy-button-to-config-props[]
+config_property_copy_button:+++quarkus.google.cloud.pubsub.use-emulator-credentials+++[]
+endif::add-copy-button-to-config-props[]
+
+
+[.description]
+--
+Forces the usage of emulator credentials. The logic automatically uses emulator credentials in case the emulatorHost is set.
+
+ * If true: force usage of emulator credentials
+ * If false: force not using emulator credentials
+
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_GOOGLE_CLOUD_PUBSUB_USE_EMULATOR_CREDENTIALS+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_GOOGLE_CLOUD_PUBSUB_USE_EMULATOR_CREDENTIALS+++`
+endif::add-copy-button-to-env-var[]
+--
+|boolean
+|`+++true+++`
+
+a| [[quarkus-google-cloud-pubsub_quarkus-google-cloud-pubsub-pull-parallel-stream-count]] [.property-path]##link:#quarkus-google-cloud-pubsub_quarkus-google-cloud-pubsub-pull-parallel-stream-count[`+++quarkus.google.cloud.pubsub.pull.parallel-stream-count+++`]##
+ifdef::add-copy-button-to-config-props[]
+config_property_copy_button:+++quarkus.google.cloud.pubsub.pull.parallel-stream-count+++[]
+endif::add-copy-button-to-config-props[]
+
+
+[.description]
+--
+Number of concurrent streams to use for pull subscriptions. Defaults to 1 which is the same as the base PubSub library.
+
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_GOOGLE_CLOUD_PUBSUB_PULL_PARALLEL_STREAM_COUNT+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_GOOGLE_CLOUD_PUBSUB_PULL_PARALLEL_STREAM_COUNT+++`
+endif::add-copy-button-to-env-var[]
+--
+|int
+|`+++1+++`
+
+a| [[quarkus-google-cloud-pubsub_quarkus-google-cloud-pubsub-pull-stream-concurrency]] [.property-path]##link:#quarkus-google-cloud-pubsub_quarkus-google-cloud-pubsub-pull-stream-concurrency[`+++quarkus.google.cloud.pubsub.pull.stream-concurrency+++`]##
+ifdef::add-copy-button-to-config-props[]
+config_property_copy_button:+++quarkus.google.cloud.pubsub.pull.stream-concurrency+++[]
+endif::add-copy-button-to-config-props[]
+
+
+[.description]
+--
+Number of concurrent messages to process per stream. Defaults to 5 which is the same as the base PubSub library.
+
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_GOOGLE_CLOUD_PUBSUB_PULL_STREAM_CONCURRENCY+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_GOOGLE_CLOUD_PUBSUB_PULL_STREAM_CONCURRENCY+++`
+endif::add-copy-button-to-env-var[]
+--
+|int
+|`+++5+++`
+
+a| [[quarkus-google-cloud-pubsub_quarkus-google-cloud-pubsub-push-audience]] [.property-path]##link:#quarkus-google-cloud-pubsub_quarkus-google-cloud-pubsub-push-audience[`+++quarkus.google.cloud.pubsub.push.audience+++`]##
+ifdef::add-copy-button-to-config-props[]
+config_property_copy_button:+++quarkus.google.cloud.pubsub.push.audience+++[]
+endif::add-copy-button-to-config-props[]
+
+
+[.description]
+--
+Audiences to accept for pubsub push messages. This can be set as a comma-separated list for multiple audiences. If the audience is not configured, the `aud` claim in the Pub sub JWT will be ignored
+
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_GOOGLE_CLOUD_PUBSUB_PUSH_AUDIENCE+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_GOOGLE_CLOUD_PUBSUB_PUSH_AUDIENCE+++`
+endif::add-copy-button-to-env-var[]
+--
+|string
+|
+
+a| [[quarkus-google-cloud-pubsub_quarkus-google-cloud-pubsub-push-verification-token]] [.property-path]##link:#quarkus-google-cloud-pubsub_quarkus-google-cloud-pubsub-push-verification-token[`+++quarkus.google.cloud.pubsub.push.verification-token+++`]##
+ifdef::add-copy-button-to-config-props[]
+config_property_copy_button:+++quarkus.google.cloud.pubsub.push.verification-token+++[]
+endif::add-copy-button-to-config-props[]
+
+
+[.description]
+--
+In case this is set, a query-parameter called "token" is expected to be present in the request with the same value as this configuration option. Calls without this token will be denied. If this property is not set the token will be ignored.
+
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_GOOGLE_CLOUD_PUBSUB_PUSH_VERIFICATION_TOKEN+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_GOOGLE_CLOUD_PUBSUB_PUSH_VERIFICATION_TOKEN+++`
+endif::add-copy-button-to-env-var[]
+--
+|string
+|
+
+a| [[quarkus-google-cloud-pubsub_quarkus-google-cloud-pubsub-push-service-account-email]] [.property-path]##link:#quarkus-google-cloud-pubsub_quarkus-google-cloud-pubsub-push-service-account-email[`+++quarkus.google.cloud.pubsub.push.service-account-email+++`]##
+ifdef::add-copy-button-to-config-props[]
+config_property_copy_button:+++quarkus.google.cloud.pubsub.push.service-account-email+++[]
+endif::add-copy-button-to-config-props[]
+
+
+[.description]
+--
+Email address of the service account used to send the pub-sub messages. The JWT used for authentication will contain this email address when Google PubSub calls the push-endpoint.
+
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_GOOGLE_CLOUD_PUBSUB_PUSH_SERVICE_ACCOUNT_EMAIL+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_GOOGLE_CLOUD_PUBSUB_PUSH_SERVICE_ACCOUNT_EMAIL+++`
+endif::add-copy-button-to-env-var[]
+--
+|string
+|
+
+a| [[quarkus-google-cloud-pubsub_quarkus-google-cloud-pubsub-push-disable-authentication]] [.property-path]##link:#quarkus-google-cloud-pubsub_quarkus-google-cloud-pubsub-push-disable-authentication[`+++quarkus.google.cloud.pubsub.push.disable-authentication+++`]##
+ifdef::add-copy-button-to-config-props[]
+config_property_copy_button:+++quarkus.google.cloud.pubsub.push.disable-authentication+++[]
+endif::add-copy-button-to-config-props[]
+
+
+[.description]
+--
+If set to true, the authentication for the pubsub push endpoint will be disabled. This is not recommended for production environments, however the Pub/Sub emulator does not support authentication, so this option can be used for local development and testing.
+
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_GOOGLE_CLOUD_PUBSUB_PUSH_DISABLE_AUTHENTICATION+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_GOOGLE_CLOUD_PUBSUB_PUSH_DISABLE_AUTHENTICATION+++`
+endif::add-copy-button-to-env-var[]
+--
+|boolean
+|`+++false+++`
 
 a| [[quarkus-google-cloud-pubsub_quarkus-google-cloud-pubsub-emulator-host]] [.property-path]##link:#quarkus-google-cloud-pubsub_quarkus-google-cloud-pubsub-emulator-host[`+++quarkus.google.cloud.pubsub.emulator-host+++`]##
 ifdef::add-copy-button-to-config-props[]
