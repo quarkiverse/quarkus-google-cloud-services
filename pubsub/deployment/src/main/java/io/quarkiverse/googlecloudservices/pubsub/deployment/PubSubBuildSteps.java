@@ -8,6 +8,7 @@ import io.quarkus.deployment.annotations.BuildStep;
 import io.quarkus.deployment.annotations.ExecutionTime;
 import io.quarkus.deployment.annotations.Record;
 import io.quarkus.deployment.builditem.FeatureBuildItem;
+import io.quarkus.deployment.builditem.nativeimage.ReflectiveClassBuildItem;
 import io.quarkus.vertx.http.deployment.FilterBuildItem;
 import io.quarkus.vertx.http.deployment.NonApplicationRootPathBuildItem;
 import io.quarkus.vertx.http.deployment.RouteBuildItem;
@@ -57,6 +58,17 @@ public class PubSubBuildSteps {
                     999));
         });
 
+    }
+
+    @BuildStep
+    public ReflectiveClassBuildItem registerPubSubNative() {
+        return ReflectiveClassBuildItem.builder(PubSubPushEndpointHandler.PubSubMessageJson.class)
+                .fields(true)
+                .constructors(true)
+                .methods(true)
+                .reason("Used by serialization")
+                .serialization()
+                .build();
     }
 
 }
