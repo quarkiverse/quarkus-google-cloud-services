@@ -36,7 +36,7 @@ endif::add-copy-button-to-config-props[]
 
 [.description]
 --
-Sets the Docker image name for the Google Cloud SDK. This image is used to emulate the Bigtable service in the development environment. The default value is 'gcr.io/google.com/cloudsdktool/google-cloud-cli'.
+Sets the Docker image name for the Google Cloud SDK. This image is used to emulate the Bigtable service in the development environment. The default value is 'gcr.io/google.com/cloudsdktool/google-cloud-cli:emulators'.
 
 
 ifdef::add-copy-button-to-env-var[]
@@ -70,68 +70,51 @@ endif::add-copy-button-to-env-var[]
 |int
 |
 
-a|icon:lock[title=Fixed at build time] [[quarkus-google-cloud-bigtable_quarkus-google-cloud-bigtable-devservice-enabled]] [.property-path]##link:#quarkus-google-cloud-bigtable_quarkus-google-cloud-bigtable-devservice-enabled[`+++quarkus.google.cloud.bigtable.devservice.enabled+++`]##
+a|icon:lock[title=Fixed at build time] [[quarkus-google-cloud-bigtable_quarkus-google-cloud-bigtable-devservice-shared]] [.property-path]##link:#quarkus-google-cloud-bigtable_quarkus-google-cloud-bigtable-devservice-shared[`+++quarkus.google.cloud.bigtable.devservice.shared+++`]##
 ifdef::add-copy-button-to-config-props[]
-config_property_copy_button:+++quarkus.google.cloud.bigtable.devservice.enabled+++[]
+config_property_copy_button:+++quarkus.google.cloud.bigtable.devservice.shared+++[]
 endif::add-copy-button-to-config-props[]
 
 
 [.description]
 --
-Indicates whether the Bigtable service should be enabled or not. The default value is 'false'.
+Indicates if the Bigtable emulator managed by Dev Services is shared. When shared, Quarkus looks for running containers using label-based service discovery. If a matching container is found, it is used, and so a second one is not started. Otherwise, Dev Services starts a new container.
+
+The discovery uses the `quarkus-dev-service-google-cloud-bigtable` label. The value is configured using the `service-name` property.
+
+Container sharing is only used in dev mode.
 
 
 ifdef::add-copy-button-to-env-var[]
-Environment variable: env_var_with_copy_button:+++QUARKUS_GOOGLE_CLOUD_BIGTABLE_DEVSERVICE_ENABLED+++[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_GOOGLE_CLOUD_BIGTABLE_DEVSERVICE_SHARED+++[]
 endif::add-copy-button-to-env-var[]
 ifndef::add-copy-button-to-env-var[]
-Environment variable: `+++QUARKUS_GOOGLE_CLOUD_BIGTABLE_DEVSERVICE_ENABLED+++`
+Environment variable: `+++QUARKUS_GOOGLE_CLOUD_BIGTABLE_DEVSERVICE_SHARED+++`
 endif::add-copy-button-to-env-var[]
 --
 |boolean
-|`+++false+++`
+|`+++true+++`
 
-a|icon:lock[title=Fixed at build time] [[quarkus-google-cloud-bigtable_quarkus-google-cloud-bigtable-devservice-image-name]] [.property-path]##link:#quarkus-google-cloud-bigtable_quarkus-google-cloud-bigtable-devservice-image-name[`+++quarkus.google.cloud.bigtable.devservice.image-name+++`]##
+a|icon:lock[title=Fixed at build time] [[quarkus-google-cloud-bigtable_quarkus-google-cloud-bigtable-devservice-service-name]] [.property-path]##link:#quarkus-google-cloud-bigtable_quarkus-google-cloud-bigtable-devservice-service-name[`+++quarkus.google.cloud.bigtable.devservice.service-name+++`]##
 ifdef::add-copy-button-to-config-props[]
-config_property_copy_button:+++quarkus.google.cloud.bigtable.devservice.image-name+++[]
+config_property_copy_button:+++quarkus.google.cloud.bigtable.devservice.service-name+++[]
 endif::add-copy-button-to-config-props[]
 
 
 [.description]
 --
-Sets the Docker image name for the Google Cloud SDK. This image is used to emulate the Bigtable service in the development environment. The default value is 'gcr.io/google.com/cloudsdktool/google-cloud-cli'.
+The value of the `quarkus-dev-service-google-cloud-bigtable` label attached to the started container. This property is used when `shared` is set to `true`. In this case, before starting a container, Dev Services looks for a container with the `quarkus-dev-service-google-cloud-bigtable` label set to the configured value. If found, it will use this container instead of starting a new one. Otherwise, it starts a new container with the `quarkus-dev-service-google-cloud-bigtable` label set to the specified value.
 
 
 ifdef::add-copy-button-to-env-var[]
-Environment variable: env_var_with_copy_button:+++QUARKUS_GOOGLE_CLOUD_BIGTABLE_DEVSERVICE_IMAGE_NAME+++[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_GOOGLE_CLOUD_BIGTABLE_DEVSERVICE_SERVICE_NAME+++[]
 endif::add-copy-button-to-env-var[]
 ifndef::add-copy-button-to-env-var[]
-Environment variable: `+++QUARKUS_GOOGLE_CLOUD_BIGTABLE_DEVSERVICE_IMAGE_NAME+++`
+Environment variable: `+++QUARKUS_GOOGLE_CLOUD_BIGTABLE_DEVSERVICE_SERVICE_NAME+++`
 endif::add-copy-button-to-env-var[]
 --
 |string
-|`+++gcr.io/google.com/cloudsdktool/google-cloud-cli:emulators+++`
-
-a|icon:lock[title=Fixed at build time] [[quarkus-google-cloud-bigtable_quarkus-google-cloud-bigtable-devservice-emulator-port]] [.property-path]##link:#quarkus-google-cloud-bigtable_quarkus-google-cloud-bigtable-devservice-emulator-port[`+++quarkus.google.cloud.bigtable.devservice.emulator-port+++`]##
-ifdef::add-copy-button-to-config-props[]
-config_property_copy_button:+++quarkus.google.cloud.bigtable.devservice.emulator-port+++[]
-endif::add-copy-button-to-config-props[]
-
-
-[.description]
---
-Specifies the emulatorPort on which the Bigtable service should run in the development environment.
-
-
-ifdef::add-copy-button-to-env-var[]
-Environment variable: env_var_with_copy_button:+++QUARKUS_GOOGLE_CLOUD_BIGTABLE_DEVSERVICE_EMULATOR_PORT+++[]
-endif::add-copy-button-to-env-var[]
-ifndef::add-copy-button-to-env-var[]
-Environment variable: `+++QUARKUS_GOOGLE_CLOUD_BIGTABLE_DEVSERVICE_EMULATOR_PORT+++`
-endif::add-copy-button-to-env-var[]
---
-|int
-|
+|`+++bigtable+++`
 
 |===
 
