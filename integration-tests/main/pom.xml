@@ -57,6 +57,10 @@
       <groupId>io.quarkiverse.googlecloudservices</groupId>
       <artifactId>quarkus-google-cloud-vertex-ai</artifactId>
     </dependency>
+    <dependency>
+      <groupId>io.quarkiverse.googlecloudservices</groupId>
+      <artifactId>quarkus-google-cloud-genai</artifactId>
+    </dependency>
     <!-- Used to test shared network logic -->
     <dependency>
       <groupId>io.quarkus</groupId>

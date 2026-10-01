@@ -12,6 +12,6 @@ metadata:
   categories:
   - "cloud"
   guide: "https://quarkiverse.github.io/quarkiverse-docs/quarkus-google-cloud-services/main/vertexai.html"
-  status: "preview"
+  status: "deprecated"
   config: 
   - "quarkus.google.cloud.vertexai."

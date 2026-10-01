@@ -10,6 +10,7 @@ The Google Cloud Services extension pack provides Quarkus extensions for the fol
 * xref:firebase-devservices.adoc[Firebase Dev services]
 * xref:firebase-realtime-database.adoc[Firebase Realtime Database]
 * xref:firestore.adoc[Firestore]
+* xref:genai.adoc[Gen AI]
 * xref:logging.adoc[Logging]
 * xref:pubsub.adoc[PubSub]
 * xref:secretmanager.adoc[SecretManager]

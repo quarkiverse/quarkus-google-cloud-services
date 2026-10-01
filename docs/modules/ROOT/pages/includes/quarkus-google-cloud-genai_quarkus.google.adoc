@@ -1,0 +1,156 @@
+[.configuration-legend]
+icon:lock[title=Fixed at build time] Configuration property fixed at build time - All other configuration properties are overridable at runtime
+[.configuration-reference.searchable, cols="80,.^10,.^10"]
+|===
+
+h|[.header-title]##Configuration property##
+h|Type
+h|Default
+
+a| [[quarkus-google-cloud-genai_quarkus-google-cloud-genai-api-key]] [.property-path]##link:#quarkus-google-cloud-genai_quarkus-google-cloud-genai-api-key[`+++quarkus.google.cloud.genai.api-key+++`]##
+ifdef::add-copy-button-to-config-props[]
+config_property_copy_button:+++quarkus.google.cloud.genai.api-key+++[]
+endif::add-copy-button-to-config-props[]
+
+
+[.description]
+--
+Gemini Developer API key. When set, the client uses the Gemini Developer API instead of Vertex AI, unless `vertex-ai` is set to `true`.
+
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_GOOGLE_CLOUD_GENAI_API_KEY+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_GOOGLE_CLOUD_GENAI_API_KEY+++`
+endif::add-copy-button-to-env-var[]
+--
+|string
+|
+
+a| [[quarkus-google-cloud-genai_quarkus-google-cloud-genai-vertex-ai]] [.property-path]##link:#quarkus-google-cloud-genai_quarkus-google-cloud-genai-vertex-ai[`+++quarkus.google.cloud.genai.vertex-ai+++`]##
+ifdef::add-copy-button-to-config-props[]
+config_property_copy_button:+++quarkus.google.cloud.genai.vertex-ai+++[]
+endif::add-copy-button-to-config-props[]
+
+
+[.description]
+--
+Force the backend: `true` for Vertex AI, `false` for the Gemini Developer API. Defaults to Vertex AI unless an API key is configured.
+
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_GOOGLE_CLOUD_GENAI_VERTEX_AI+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_GOOGLE_CLOUD_GENAI_VERTEX_AI+++`
+endif::add-copy-button-to-env-var[]
+--
+|boolean
+|
+
+a| [[quarkus-google-cloud-genai_quarkus-google-cloud-genai-location]] [.property-path]##link:#quarkus-google-cloud-genai_quarkus-google-cloud-genai-location[`+++quarkus.google.cloud.genai.location+++`]##
+ifdef::add-copy-button-to-config-props[]
+config_property_copy_button:+++quarkus.google.cloud.genai.location+++[]
+endif::add-copy-button-to-config-props[]
+
+
+[.description]
+--
+Google Cloud region used by Vertex AI, for example `global` or `us-central1`.
+
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_GOOGLE_CLOUD_GENAI_LOCATION+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_GOOGLE_CLOUD_GENAI_LOCATION+++`
+endif::add-copy-button-to-env-var[]
+--
+|string
+|
+
+a| [[quarkus-google-cloud-genai_quarkus-google-cloud-genai-base-url]] [.property-path]##link:#quarkus-google-cloud-genai_quarkus-google-cloud-genai-base-url[`+++quarkus.google.cloud.genai.base-url+++`]##
+ifdef::add-copy-button-to-config-props[]
+config_property_copy_button:+++quarkus.google.cloud.genai.base-url+++[]
+endif::add-copy-button-to-config-props[]
+
+
+[.description]
+--
+Override the base URL of the API.
+
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_GOOGLE_CLOUD_GENAI_BASE_URL+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_GOOGLE_CLOUD_GENAI_BASE_URL+++`
+endif::add-copy-button-to-env-var[]
+--
+|string
+|
+
+a| [[quarkus-google-cloud-genai_quarkus-google-cloud-genai-api-version]] [.property-path]##link:#quarkus-google-cloud-genai_quarkus-google-cloud-genai-api-version[`+++quarkus.google.cloud.genai.api-version+++`]##
+ifdef::add-copy-button-to-config-props[]
+config_property_copy_button:+++quarkus.google.cloud.genai.api-version+++[]
+endif::add-copy-button-to-config-props[]
+
+
+[.description]
+--
+Override the API version.
+
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_GOOGLE_CLOUD_GENAI_API_VERSION+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_GOOGLE_CLOUD_GENAI_API_VERSION+++`
+endif::add-copy-button-to-env-var[]
+--
+|string
+|
+
+a| [[quarkus-google-cloud-genai_quarkus-google-cloud-genai-timeout]] [.property-path]##link:#quarkus-google-cloud-genai_quarkus-google-cloud-genai-timeout[`+++quarkus.google.cloud.genai.timeout+++`]##
+ifdef::add-copy-button-to-config-props[]
+config_property_copy_button:+++quarkus.google.cloud.genai.timeout+++[]
+endif::add-copy-button-to-config-props[]
+
+
+[.description]
+--
+Timeout of HTTP requests.
+
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_GOOGLE_CLOUD_GENAI_TIMEOUT+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_GOOGLE_CLOUD_GENAI_TIMEOUT+++`
+endif::add-copy-button-to-env-var[]
+--
+|link:https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/time/Duration.html[Duration] link:#duration-note-anchor-quarkus-google-cloud-genai_quarkus-google[icon:question-circle[title=More information about the Duration format]]
+|
+
+|===
+
+ifndef::no-duration-note[]
+[NOTE]
+[id=duration-note-anchor-quarkus-google-cloud-genai_quarkus-google]
+.About the Duration format
+====
+To write duration values, use the standard `java.time.Duration` format.
+See the link:https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/time/Duration.html#parse(java.lang.CharSequence)[Duration#parse() Java API documentation] for more information.
+
+You can also use a simplified format, starting with a number:
+
+* If the value is only a number, it represents time in seconds.
+* If the value is a number followed by `ms`, it represents time in milliseconds.
+
+In other cases, the simplified format is translated to the `java.time.Duration` format for parsing:
+
+* If the value is a number followed by `h`, `m`, or `s`, it is prefixed with `PT`.
+* If the value is a number followed by `d`, it is prefixed with `P`.
+====
+endif::no-duration-note[]

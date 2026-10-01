@@ -1,0 +1,97 @@
+= Google Cloud Services - Gen AI
+
+This extension allows to inject a `com.google.genai.Client` object, from the https://github.com/googleapis/java-genai[Google Gen AI SDK], inside your Quarkus application.
+The client can talk to Vertex AI (default) or to the Gemini Developer API.
+
+It replaces the xref:vertexai.adoc[Vertex AI] extension, which relies on Vertex AI SDK generative APIs that are deprecated by Google.
+
+Be sure to have read the https://quarkiverse.github.io/quarkiverse-docs/quarkus-google-cloud-services/main/index.html[Google Cloud Services extension pack global documentation] before this one, it contains general configuration and information.
+
+== Bootstrapping the project
+
+First, we need a new project.Create a new project with the following command (replace the version placeholder with the correct one):
+
+[source,shell script]
+----
+mvn io.quarkus:quarkus-maven-plugin:<quarkusVersion>:create \
+    -DprojectGroupId=org.acme \
+    -DprojectArtifactId=genai-quickstart \
+    -Dextensions="resteasy-reactive-jackson,quarkus-google-cloud-genai"
+cd genai-quickstart
+----
+
+This command generates a Maven project, importing the Google Cloud Gen AI extension.
+
+If you already have your Quarkus project configured, you can add the `quarkus-google-cloud-genai` extension to your project by running the following command in your project base directory:
+
+[source,shell script]
+----
+./mvnw quarkus:add-extension -Dextensions="quarkus-google-cloud-genai"
+----
+
+This will add the following to your pom.xml:
+
+[source,xml]
+----
+<dependency>
+    <groupId>io.quarkiverse.googlecloudservices</groupId>
+    <artifactId>quarkus-google-cloud-genai</artifactId>
+</dependency>
+----
+
+== Choosing the backend
+
+By default, the client uses Vertex AI with the Google Cloud credentials and project ID configured as described in the global documentation.
+You can set the region with:
+
+[source,properties]
+----
+quarkus.google.cloud.genai.location=us-central1
+----
+
+If no project ID or location is configured, the SDK falls back to the `GOOGLE_CLOUD_PROJECT` and `GOOGLE_CLOUD_LOCATION` environment variables.
+
+To use the Gemini Developer API instead, configure an API key, no Google Cloud credentials are needed:
+
+[source,properties]
+----
+quarkus.google.cloud.genai.api-key=<your-api-key>
+----
+
+The backend is selected as follows: `quarkus.google.cloud.genai.vertex-ai` if set, otherwise the Gemini Developer API when an API key is configured, otherwise Vertex AI.
+Setting an API key together with `vertex-ai=true` fails at startup.
+The API key is a secret: prefer an environment variable or a secret source over a plain `application.properties`.
+
+== Some example
+
+This is an example usage of the extension: we create a REST resource with a single endpoint that takes a prompt as query parameter and generates a response using Gemini Flash.
+
+[source,java]
+----
+import jakarta.inject.Inject;
+import jakarta.ws.rs.GET;
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.QueryParam;
+
+import com.google.genai.Client;
+
+@Path("/genai")
+public class GenAIResource {
+    @Inject
+    Client client;
+
+    @GET
+    public String generate(@QueryParam("prompt") String prompt) {
+        return client.models.generateContent("gemini-2.5-flash", prompt, null).text();
+    }
+}
+----
+
+== Migrating from the Vertex AI extension
+
+Replace the `quarkus-google-cloud-vertex-ai` dependency by `quarkus-google-cloud-genai` and the `quarkus.google.cloud.vertexai.*` properties by `quarkus.google.cloud.genai.*`.
+Then replace the `VertexAI` and `GenerativeModel` usages by the `Client` API, see the https://cloud.google.com/vertex-ai/generative-ai/docs/deprecations/genai-vertexai-sdk[Google migration guide].
+
+== Configuration Reference
+
+include::./includes/quarkus-google-cloud-genai.adoc[]
