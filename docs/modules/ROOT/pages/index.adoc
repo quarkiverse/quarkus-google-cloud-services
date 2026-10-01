@@ -33,9 +33,23 @@ These extensions work well within the various Google Cloud Functions extensions 
 [[dependency-management]]
 == Dependency management
 
-All Google Cloud services extensions are part of the Quarkus platform, if you're using the platform BOM (`io.quarkus.platform:quarkus-bom`) there is no need to manage their version.
+All Google Cloud services extensions are part of the Quarkus platform. If you're using the platform BOM (`io.quarkus.platform:quarkus-bom`), also import the platform-aligned Google Cloud services BOM to manage their versions:
+[source,xml]
+----
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>io.quarkus.platform</groupId>
+        <artifactId>quarkus-google-cloud-services-bom</artifactId>
+        <version>${quarkus.platform.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+----
 
-If you're not using the platform BOM, you can use the Google Cloud services BOM to manage all versions:
+If you're not using the platform BOM, you can use the Google Cloud services BOM directly to manage all versions:
 [source,xml]
 ----
   <dependencyManagement>
