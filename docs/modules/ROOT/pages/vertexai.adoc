@@ -1,5 +1,7 @@
 = Google Cloud Services - Vertex AI
 
+WARNING: This extension is deprecated as Google deprecated the Vertex AI SDK generative APIs it relies on. Use the xref:genai.adoc[Gen AI] extension instead.
+
 This extension allows to inject a `com.google.cloud.vertexai.VertexAI` object inside your Quarkus application.
 
 Be sure to have read the https://quarkiverse.github.io/quarkiverse-docs/quarkus-google-cloud-services/main/index.html[Google Cloud Services extension pack global documentation] before this one, it contains general configuration and information.
@@ -12,12 +14,12 @@ First, we need a new project.Create a new project with the following command (re
 ----
 mvn io.quarkus:quarkus-maven-plugin:<quarkusVersion>:create \
     -DprojectGroupId=org.acme \
-    -DprojectArtifactId=spanner-quickstart \
+    -DprojectArtifactId=vertexai-quickstart \
     -Dextensions="resteasy-reactive-jackson,quarkus-google-cloud-vertex-ai"
-cd spanner-quickstart
+cd vertexai-quickstart
 ----
 
-This command generates a Maven project, importing the Google Cloud Spanner extension.
+This command generates a Maven project, importing the Google Cloud Vertex AI extension.
 
 If you already have your Quarkus project configured, you can add the `quarkus-google-cloud-vertex-ai` extension to your project by running the following command in your project base directory:
 

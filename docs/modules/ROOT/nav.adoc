@@ -8,6 +8,7 @@
 * xref:firebase-realtime-database.adoc[Firebase Realtime Database]
 * xref:firebase-admin.adoc[Firebase Admin]
 * xref:firestore.adoc[Firestore]
+* xref:genai.adoc[Gen AI]
 * xref:logging.adoc[Logging]
 * xref:pubsub.adoc[PubSub]
 * xref:secretmanager.adoc[Secret Manager]

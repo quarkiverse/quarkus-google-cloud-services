@@ -39,6 +39,7 @@
     <module>secret-manager</module>
     <module>logging</module>
     <module>vertx-ai</module>
+    <module>genai</module>
     
     <module>integration-tests</module>
       <module>docs-rag</module>
