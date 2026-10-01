@@ -33,9 +33,9 @@ public interface FirestoreDevServiceConfig {
     /**
      * Sets the Docker image name for the Google Cloud SDK.
      * This image is used to emulate the Firestore service in the development environment.
-     * The default value is 'gcr.io/google.com/cloudsdktool/google-cloud-cli:emulators:emulators'.
+     * The default value is 'gcr.io/google.com/cloudsdktool/google-cloud-cli:emulators'.
      */
-    @WithDefault("gcr.io/google.com/cloudsdktool/google-cloud-cli:emulators:emulators")
+    @WithDefault("gcr.io/google.com/cloudsdktool/google-cloud-cli:emulators")
     String imageName();
 
     /**

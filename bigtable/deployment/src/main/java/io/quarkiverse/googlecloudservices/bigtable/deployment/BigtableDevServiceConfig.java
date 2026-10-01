@@ -33,7 +33,7 @@ public interface BigtableDevServiceConfig {
     /**
      * Sets the Docker image name for the Google Cloud SDK.
      * This image is used to emulate the Bigtable service in the development environment.
-     * The default value is 'gcr.io/google.com/cloudsdktool/google-cloud-cli'.
+     * The default value is 'gcr.io/google.com/cloudsdktool/google-cloud-cli:emulators'.
      */
     @WithDefault("gcr.io/google.com/cloudsdktool/google-cloud-cli:emulators")
     String imageName();
