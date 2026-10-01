@@ -87,7 +87,7 @@ public class PubSubPushEndpointHandler implements Handler<RoutingContext> {
      * @param message The message
      * @param subscription The subscription
      */
-    private record PubSubMessageJson(
+    public record PubSubMessageJson(
             MessageJson message,
             String subscription) {
 
