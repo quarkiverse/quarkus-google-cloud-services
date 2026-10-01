@@ -35,7 +35,7 @@ public interface FirebaseDevServiceConfig {
     /**
      * Configuration for the Functions emulator
      */
-    GenericDevService functions();
+    FunctionsDevService functions();
 
     /**
      * Configuration for the Google Cloud PubSub emulator
@@ -267,7 +267,10 @@ public interface FirebaseDevServiceConfig {
         interface HostingDevService extends GenericDevService {
 
             /**
-             * Path to the hosting files.
+             * Path to the hosting files. Takes precedence over a custom firebase.json's own
+             * {@code hosting.public}/{@code hosting.source}, if
+             * {@code quarkus.google.cloud.devservices.firebase.emulator.custom-firebase-json} is also set --
+             * see the docs section on Custom Firebase JSON for why you may need this.
              */
             Optional<String> hostingPath();
 
@@ -325,6 +328,16 @@ public interface FirebaseDevServiceConfig {
          * Path to the storage.rules file.
          */
         Optional<String> rulesFile();
+    }
+
+    interface FunctionsDevService extends GenericDevService {
+
+        /**
+         * Path to the functions source directory. Takes precedence over a custom firebase.json's own
+         * {@code functions.source}, if {@code quarkus.google.cloud.devservices.firebase.emulator.custom-firebase-json}
+         * is also set -- see the docs section on Custom Firebase JSON for why you may need this.
+         */
+        Optional<String> functionsPath();
     }
 
     /**

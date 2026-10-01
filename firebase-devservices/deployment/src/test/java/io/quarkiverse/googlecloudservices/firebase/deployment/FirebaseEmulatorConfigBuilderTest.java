@@ -64,9 +64,10 @@ class FirebaseEmulatorConfigBuilderTest {
                                 Optional.of(6007),
                                 Optional.of("firestore.rules"),
                                 Optional.of("firestore.indexes.json"))),
-                new TestGenericDevService(
+                new TestFunctionsDevService(
                         true,
-                        Optional.of(6008)),
+                        Optional.of(6008),
+                        Optional.empty()),
                 new TestGenericDevService(
                         true,
                         Optional.of(6009)),
@@ -138,6 +139,83 @@ class FirebaseEmulatorConfigBuilderTest {
         assertNull(exposedPorts.get(FirebaseEmulatorContainer.Emulator.REALTIME_DATABASE));
     }
 
+    // src/test/firebase.json (used by the Testcontainers-backed
+    // testcontainers.FirebaseEmulatorContainerCustomConfigTest too) sets hosting.public="hosting" and
+    // functions.source="functions" -- these tests only build the config (no container start), so they stay
+    // fast/Docker-free while still exercising the real file the plain-JSON parsing reads.
+    private static final String CUSTOM_FIREBASE_JSON = "src/test/firebase.json";
+
+    @Test
+    void testCustomFirebaseJsonAppliesHostingAndFunctionsPathOverride() {
+        var configBuilder = customFirebaseJsonConfigBuilder(
+                Optional.of("overridden-hosting"),
+                Optional.of("overridden-functions"));
+
+        var firebaseConfig = configBuilder.buildConfig().firebaseConfig();
+
+        assertPathEndsWith("overridden-hosting", firebaseConfig.hostingConfig().hostingOverride().orElse(null));
+        assertPathEndsWith("overridden-functions", firebaseConfig.functionsConfig().functionsPath().orElse(null));
+        assertPathEndsWith("hosting", firebaseConfig.hostingConfig().hostingContentDir().orElse(null));
+        // Everything else that came from the custom firebase.json must survive the override untouched.
+        assertPathEndsWith("firestore.rules", firebaseConfig.firestoreConfig().rulesFile().orElse(null));
+        assertPathEndsWith("storage.rules", firebaseConfig.storageConfig().rulesFile().orElse(null));
+    }
+
+    @Test
+    void testCustomFirebaseJsonWithoutOverrideKeepsOriginalPaths() {
+        var configBuilder = customFirebaseJsonConfigBuilder(Optional.empty(), Optional.empty());
+
+        var firebaseConfig = configBuilder.buildConfig().firebaseConfig();
+
+        assertPathEndsWith("hosting", firebaseConfig.hostingConfig().hostingContentDir().orElse(null));
+        assertPathEndsWith("functions", firebaseConfig.functionsConfig().functionsPath().orElse(null));
+    }
+
+    private FirebaseEmulatorConfigBuilder customFirebaseJsonConfigBuilder(
+            Optional<String> hostingPathOverride,
+            Optional<String> functionsPathOverride) {
+        var projectConfig = new TestProjectConfig(Optional.of("my-project-id"));
+        var config = new TestFirebaseDevServiceConfig(
+                new TestFirebase(
+                        true,
+                        new TestFirebaseEmulator(
+                                Optional.empty(),
+                                new TestDocker(
+                                        "node:21-alpine",
+                                        Optional.empty(),
+                                        Optional.empty(),
+                                        Optional.empty(),
+                                        Optional.empty(),
+                                        true,
+                                        Optional.empty(),
+                                        Optional.empty(),
+                                        Map.of()),
+                                new TestCli(
+                                        Optional.empty(),
+                                        Optional.empty(),
+                                        Optional.empty(),
+                                        Optional.empty(),
+                                        Optional.empty(),
+                                        Optional.empty()),
+                                Optional.of(CUSTOM_FIREBASE_JSON),
+                                new TestUI(false, Optional.empty(), Optional.empty(), Optional.empty()),
+                                true),
+                        new TestGenericDevService(false, Optional.empty()),
+                        new TestHosting(
+                                false,
+                                Optional.empty(),
+                                hostingPathOverride,
+                                new TestVite(Optional.empty())),
+                        new TestGenericDevService(false, Optional.empty()),
+                        new TestFirestoreDevService(
+                                false, Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty())),
+                new TestFunctionsDevService(false, Optional.empty(), functionsPathOverride),
+                new TestGenericDevService(false, Optional.empty()),
+                new TestStorageDevService(false, Optional.empty(), Optional.empty()));
+
+        return new FirebaseEmulatorConfigBuilder(projectConfig, config, true);
+    }
+
     // Record implementations for interfaces
     record TestProjectConfig(
             Optional<String> projectId) implements FirebaseDevServiceProjectConfig {
@@ -145,7 +223,7 @@ class FirebaseEmulatorConfigBuilderTest {
 
     record TestFirebaseDevServiceConfig(
             FirebaseDevServiceConfig.Firebase firebase,
-            FirebaseDevServiceConfig.GenericDevService functions,
+            FirebaseDevServiceConfig.FunctionsDevService functions,
             FirebaseDevServiceConfig.GenericDevService pubsub,
             FirebaseDevServiceConfig.StorageDevService storage) implements FirebaseDevServiceConfig {
     }
@@ -228,6 +306,12 @@ class FirebaseEmulatorConfigBuilderTest {
     record TestGenericDevService(
             boolean enabled,
             Optional<Integer> emulatorPort) implements FirebaseDevServiceConfig.GenericDevService {
+    }
+
+    record TestFunctionsDevService(
+            boolean enabled,
+            Optional<Integer> emulatorPort,
+            Optional<String> functionsPath) implements FirebaseDevServiceConfig.FunctionsDevService {
     }
 
 }

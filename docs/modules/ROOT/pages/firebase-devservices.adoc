@@ -157,6 +157,33 @@ If emulators are configured via the configuration options, a `firebase.json` fil
 * Each of the emulators must be exposed on `0.0.0.0` as host as described https://firebase.google.com/docs/emulator-suite/use_hosting#emulators-no-local-host[here]. If this is not done, the Emulators will not be reachable from the Docker host.
 * Emulators need to be configured to use the default ports. Customizing the ports on which they run is currently not supported (this might change in a future version).
 
+=== Overriding the hosting/functions path from config
+
+The TestContainers Docker container running the emulator mounts a number of files and directories (depending on which emulators you enabled):
+
+* The hosting directory (only when using the hosting emulator)
+* The functions directory (only when using the functions emulator)
+* The emulator data (only when importing data into Firestore)
+
+These directories are mounted based on the path relative to the `firebase.json` file. Docker volume mounts are used, as
+
+1. these directories contain a lot of data (`node_modules` directory most notably), where the data into the container would impose a significant delay or
+2. data needs also to be written back to the host environment (when exporting data from Firestore)
+
+Volume mounts are known to cause issues in when running on CI environments, where the path to be mounted cannot be determined automatically. This is especially the case when sharing Docker sockets to another container or using a Docker-inside-Docker setup.
+
+If you hit this, you can override these directories using the config properties for the devservices setup instead as shown below. (_Note: the emulator data location is not read from `firebase.json`, so no override exists for this, just use the regular config property._ )
+
+[source,properties]
+----
+# e.g. exported by the pipeline to the one absolute path both the build container and the host agent agree on;
+# defaults to "." so nothing changes for a plain local run
+quarkus.google.cloud.devservices.firebase.hosting.hosting-path=${PROJECT_ROOT:.}/my-frontend
+quarkus.google.cloud.devservices.functions.functions-path=${PROJECT_ROOT:.}/functions
+----
+
+When set, these take precedence over the custom firebase.json's own `hosting.public`/`hosting.source` and `functions.source` -- everything else in that file (rewrites, headers, ignore patterns, rule file references, ...) is unaffected.
+
 == Connectivity
 
 Each emulator's address is exposed to your application through two config properties, because which one is

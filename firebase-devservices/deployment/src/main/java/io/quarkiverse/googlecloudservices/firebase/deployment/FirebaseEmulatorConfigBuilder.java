@@ -109,6 +109,17 @@ public class FirebaseEmulatorConfigBuilder {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+
+        // The custom firebase.json itself can't express a build-environment-dependent path (it's plain JSON,
+        // also consumed by the real `firebase` CLI, with no property placeholder support) -- these devservices
+        // config values, when set, override whatever it says. See Builder#overrideHostingPath's javadoc.
+        config.firebase().hosting().hostingPath()
+                .map(FirebaseEmulatorConfigBuilder::asPath)
+                .ifPresent(builder::overrideHostingPath);
+
+        config.functions().functionsPath()
+                .map(FirebaseEmulatorConfigBuilder::asPath)
+                .ifPresent(builder::overrideFunctionsPath);
     }
 
     private void configureEmulators(FirebaseEmulatorContainer.Builder builder) {
@@ -184,6 +195,11 @@ public class FirebaseEmulatorConfigBuilder {
                 .rulesFile()
                 .map(FirebaseEmulatorConfigBuilder::asPath)
                 .ifPresent(firebaseConfigBuilder::withStorageRules);
+
+        config.functions()
+                .functionsPath()
+                .map(FirebaseEmulatorConfigBuilder::asPath)
+                .ifPresent(firebaseConfigBuilder::withFunctionsFromPath);
 
         firebaseConfigBuilder.done();
     }
