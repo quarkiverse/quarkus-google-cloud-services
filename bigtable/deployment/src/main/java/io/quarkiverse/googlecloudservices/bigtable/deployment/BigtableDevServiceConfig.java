@@ -17,6 +17,8 @@ import io.smallrye.config.WithDefault;
  * quarkus.google.cloud.bigtable.devservice.enabled = true
  * quarkus.google.cloud.bigtable.devservice.image-name = gcr.io/google.com/cloudsdktool/google-cloud-cli:emulators # optional
  * quarkus.google.cloud.bigtable.devservice.emulatorPort = 9000 # optional
+ * quarkus.google.cloud.bigtable.devservice.shared = true # optional
+ * quarkus.google.cloud.bigtable.devservice.service-name = bigtable # optional
  * </pre>
  */
 @ConfigMapping(prefix = "quarkus.google.cloud.bigtable.devservice")
@@ -42,4 +44,30 @@ public interface BigtableDevServiceConfig {
      * Specifies the emulatorPort on which the Bigtable service should run in the development environment.
      */
     Optional<Integer> emulatorPort();
+
+    /**
+     * Indicates if the Bigtable emulator managed by Dev Services is shared.
+     * When shared, Quarkus looks for running containers using label-based service discovery.
+     * If a matching container is found, it is used, and so a second one is not started.
+     * Otherwise, Dev Services starts a new container.
+     * <p>
+     * The discovery uses the {@code quarkus-dev-service-google-cloud-bigtable} label.
+     * The value is configured using the {@code service-name} property.
+     * <p>
+     * Container sharing is only used in dev mode.
+     */
+    @WithDefault("true")
+    boolean shared();
+
+    /**
+     * The value of the {@code quarkus-dev-service-google-cloud-bigtable} label attached to the started container.
+     * This property is used when {@code shared} is set to {@code true}.
+     * In this case, before starting a container, Dev Services looks for a container with the
+     * {@code quarkus-dev-service-google-cloud-bigtable} label set to the configured value.
+     * If found, it will use this container instead of starting a new one.
+     * Otherwise, it starts a new container with the {@code quarkus-dev-service-google-cloud-bigtable} label set to the
+     * specified value.
+     */
+    @WithDefault("bigtable")
+    String serviceName();
 }
