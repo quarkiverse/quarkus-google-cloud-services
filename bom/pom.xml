@@ -18,7 +18,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
-        <google-cloud-sdk.version>26.84.0</google-cloud-sdk.version>
+        <google-cloud-sdk.version>26.89.0</google-cloud-sdk.version>
         <firebase-admin-sdk.version>9.11.0</firebase-admin-sdk.version>
         <sztd-jni.version>1.5.7-20</sztd-jni.version>
         <shim.version>0.4.0</shim.version>
@@ -30,6 +30,7 @@
         <conscrypt.version>2.7.0</conscrypt.version><!-- mess in google-cloud-bigquery and the other google cloud lib-->
         <animal-sniffer.version>1.28</animal-sniffer.version> <!-- mess in google-cloud-storage -->
         <protobuf-version>4.36.2</protobuf-version> <!-- mess in Firebase -->
+        <opentelemetry-gcp-resources-version>1.45.0-alpha</opentelemetry-gcp-resources-version> <!-- mess between storage, bigtable and spanner-->
         <re2j-version>1.8</re2j-version>
     </properties>
 
@@ -144,6 +145,11 @@
                 <groupId>com.google.protobuf</groupId>
                 <artifactId>protobuf-java-util</artifactId>
                 <version>${protobuf-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.opentelemetry.contrib</groupId>
+                <artifactId>opentelemetry-gcp-resources</artifactId>
+                <version>${opentelemetry-gcp-resources-version}</version>
             </dependency>
 
             <!-- Google Cloud Services Extensions -->
