@@ -2,6 +2,8 @@ package io.quarkiverse.googlecloudservices.secretmanager.runtime.config;
 
 import com.google.cloud.secretmanager.v1.SecretVersionName;
 
+import java.util.Arrays;
+
 /**
  * Utilities for parsing the secret manager URI string.
  */
@@ -16,13 +18,44 @@ public class SecretManagerConfigUtils {
             return null;
         }
 
-        String resourcePath = input.substring(GCP_SECRET_PREFIX.length());
-        String[] tokens = resourcePath.split("/");
+        if (input.contains("locations")) {
+            return parseRegionalSecret(input, defaultProjectId);
+        } else {
+            return parseGlobalSecret(input, defaultProjectId);
+        }
+    }
 
+    static private SecretVersionName parseRegionalSecret(String input, String defaultProjectId) {
+        String projectId = defaultProjectId;
+        String location = null;
+        String secretId = null;
+        String version = "latest";
+        String[] tokens = tokenize(input);
+        if ((tokens.length == 6 || tokens.length == 8)
+                && tokens[0].equals("projects")
+                && tokens[2].equals("locations")
+                && tokens[4].equals("secrets")) {
+            // property is form "sm//projects/<project-id>/locations/<location>/secrets/<secret>"
+            projectId = tokens[1];
+            location = tokens[3];
+            secretId = tokens[5];
+            if (tokens.length == 8 && tokens[6].equals("versions")) {
+                // property is form "sm//projects/<project-id>/locations/<location>/secrets/<secret>/versions/<version>"
+                version = tokens[7];
+            }
+        } else {
+            illegalState(input);
+        }
+        return SecretVersionName.ofProjectLocationSecretSecretVersionName(
+                projectId, location, secretId, version
+        );
+    }
+
+    static private SecretVersionName parseGlobalSecret(String input, String defaultProjectId) {
         String projectId = defaultProjectId;
         String secretId = null;
         String version = "latest";
-
+        String[] tokens = tokenize(input);
         if (tokens.length == 1) {
             // property is form "sm//<secret-id>"
             secretId = tokens[0];
@@ -50,18 +83,25 @@ public class SecretManagerConfigUtils {
             secretId = tokens[3];
             version = tokens[5];
         } else {
-            throw new IllegalArgumentException(
-                    "Unrecognized format for specifying a GCP Secret Manager secret: " + input);
+            illegalState(input);
         }
+        assertURI(secretId, projectId, version, input);
+        return SecretVersionName.ofProjectSecretSecretVersionName(projectId, secretId, version);
+    }
 
+    static private void assertURI(String secretId, String projectId, String version, String input) {
         if (secretId.isEmpty() || projectId.isEmpty() || version.isEmpty()) {
             throw new IllegalArgumentException("The provided secret manager URI is invalid: " + input);
         }
+    }
 
-        return SecretVersionName.newBuilder()
-                .setProject(projectId)
-                .setSecret(secretId)
-                .setSecretVersion(version)
-                .build();
+    static private String[] tokenize(String input) {
+        String resourcePath = input.substring(GCP_SECRET_PREFIX.length());
+        return resourcePath.split("/");
+    }
+
+    static private void illegalState(String input) {
+        throw new IllegalArgumentException(
+                "Unrecognized format for specifying a GCP Secret Manager secret: " + input);
     }
 }
