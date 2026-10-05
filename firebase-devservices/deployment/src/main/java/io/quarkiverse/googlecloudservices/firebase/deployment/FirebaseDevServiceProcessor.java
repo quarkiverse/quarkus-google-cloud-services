@@ -1,41 +1,57 @@
 package io.quarkiverse.googlecloudservices.firebase.deployment;
 
+import static io.quarkus.devservices.common.ConfigureUtil.configureSharedServiceLabel;
+import static io.quarkus.devservices.common.ContainerLocator.locateContainerWithLabels;
+
 import java.time.Duration;
-import java.util.*;
+import java.util.EnumSet;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import org.jboss.logging.Logger;
 import org.testcontainers.Testcontainers;
 
 import io.quarkiverse.googlecloudservices.firebase.deployment.testcontainers.FirebaseEmulatorContainer;
-import io.quarkus.deployment.IsNormal;
+import io.quarkus.deployment.IsDevServicesSupportedByLaunchMode;
 import io.quarkus.deployment.annotations.BuildProducer;
 import io.quarkus.deployment.annotations.BuildStep;
 import io.quarkus.deployment.annotations.BuildSteps;
-import io.quarkus.deployment.builditem.*;
-import io.quarkus.deployment.console.ConsoleInstalledBuildItem;
-import io.quarkus.deployment.console.StartupLogCompressor;
+import io.quarkus.deployment.builditem.DevServicesComposeProjectBuildItem;
+import io.quarkus.deployment.builditem.DevServicesResultBuildItem;
+import io.quarkus.deployment.builditem.DevServicesSharedNetworkBuildItem;
+import io.quarkus.deployment.builditem.DockerStatusBuildItem;
+import io.quarkus.deployment.builditem.LaunchModeBuildItem;
 import io.quarkus.deployment.dev.devservices.DevServicesConfig;
-import io.quarkus.deployment.logging.LoggingSetupBuildItem;
 import io.quarkus.devservices.common.ConfigureUtil;
+import io.quarkus.devservices.common.ContainerAddress;
+import io.quarkus.devservices.common.ContainerLocator;
+import io.quarkus.devservices.common.StartableContainer;
 import io.quarkus.devui.spi.page.CardPageBuildItem;
-import io.quarkus.devui.spi.page.ExternalPageBuilder;
 import io.quarkus.devui.spi.page.Page;
+import io.quarkus.runtime.LaunchMode;
 
 /**
  * Processor responsible for managing Firebase Dev Services.
  * <p>
- * The processor starts the Firebase service in case it's not running.
+ * The processor discovers a running Firebase emulator, or declares an owned Dev Service that Quarkus starts
+ * at application startup and reuses across restarts of the application (for example the restart groups of
+ * {@code @QuarkusTest}).
  */
-@BuildSteps(onlyIfNot = IsNormal.class, onlyIf = DevServicesConfig.Enabled.class)
+@BuildSteps(onlyIf = { IsDevServicesSupportedByLaunchMode.class, DevServicesConfig.Enabled.class })
 public class FirebaseDevServiceProcessor {
 
     private static final Logger LOGGER = Logger.getLogger(FirebaseDevServiceProcessor.class.getName());
 
-    // Running dev service instance
-    private static volatile DevServicesResultBuildItem.RunningDevService devService;
-    // Configuration for the Firebase Dev service
-    private static volatile FirebaseDevServiceConfig config;
+    /**
+     * Label to add to the shared Dev Service for Firebase running in containers.
+     * This allows other applications to discover the running service and use it instead of starting a new instance.
+     */
+    private static final String DEV_SERVICE_LABEL = "quarkus-dev-service-google-cloud-firebase";
 
     private static final Map<FirebaseEmulatorContainer.Emulator, String> CONFIG_PROPERTIES = Map.of(
             FirebaseEmulatorContainer.Emulator.AUTHENTICATION, "quarkus.google.cloud.firebase.auth.emulator-host",
@@ -71,58 +87,98 @@ public class FirebaseDevServiceProcessor {
     private static final String HOST_TESTCONTAINERS_INTERNAL = "host.testcontainers.internal";
 
     @BuildStep
-    public DevServicesResultBuildItem start(
+    public void start(
             DockerStatusBuildItem dockerStatusBuildItem,
             FirebaseDevServiceProjectConfig projectConfig,
             FirebaseDevServiceConfig firebaseBuildTimeConfig,
             DevServicesComposeProjectBuildItem composeProjectBuildItem,
             List<DevServicesSharedNetworkBuildItem> devServicesSharedNetworkBuildItem,
-            Optional<ConsoleInstalledBuildItem> consoleInstalledBuildItem,
-            CuratedApplicationShutdownBuildItem closeBuildItem,
             LaunchModeBuildItem launchMode,
-            LoggingSetupBuildItem loggingSetupBuildItem,
             BuildProducer<CardPageBuildItem> cardProducer,
-            DevServicesConfig devServicesConfig) {
-        // If dev service is running and config has changed, stop the service
-        if (devService != null && !firebaseBuildTimeConfig.equals(config)) {
-            stopContainer();
-        } else if (devService != null) {
-            createDevServiceCard(devService, firebaseBuildTimeConfig, launchMode, cardProducer);
-            return devService.toBuildItem();
+            DevServicesConfig devServicesConfig,
+            BuildProducer<DevServicesResultBuildItem> devServicesResult) {
+        if (!firebaseBuildTimeConfig.firebase().preferFirebaseDevServices()) {
+            // Firebase service explicitly disabled
+            LOGGER.info("Not starting Dev Services for Firebase as it has been disabled in the config.");
+            return;
         }
 
-        // Set up log compressor for startup logs
-        StartupLogCompressor compressor = new StartupLogCompressor(
-                (launchMode.isTest() ? "(test) " : "") + "Google Cloud Firebase Dev Services Starting:",
-                consoleInstalledBuildItem,
-                loggingSetupBuildItem);
+        if (!isEnabled(firebaseBuildTimeConfig)) {
+            // Firebase service implicitly disabled, no emulators enabled.
+            LOGGER.info("Not starting Dev Services for Firebase as no emulators are enabled.");
+            return;
+        }
 
-        // Try starting the container if conditions are met
+        if (!dockerStatusBuildItem.isContainerRuntimeAvailable()) {
+            LOGGER.info("Not starting DevService because docker is not available");
+            return;
+        }
+
+        boolean useSharedNetwork = DevServicesSharedNetworkBuildItem.isSharedNetworkRequired(devServicesConfig,
+                devServicesSharedNetworkBuildItem);
+
+        // The emulators are known at build time, either from the configuration or from the firebase.json file.
+        Set<FirebaseEmulatorContainer.Emulator> emulators;
         try {
-            boolean useSharedNetwork = DevServicesSharedNetworkBuildItem.isSharedNetworkRequired(devServicesConfig,
-                    devServicesSharedNetworkBuildItem);
-            devService = startContainerIfAvailable(
-                    dockerStatusBuildItem,
-                    closeBuildItem,
-                    projectConfig,
-                    firebaseBuildTimeConfig,
-                    devServicesConfig.timeout(),
-                    composeProjectBuildItem,
-                    useSharedNetwork);
+            emulators = new FirebaseEmulatorConfigBuilder(projectConfig, firebaseBuildTimeConfig, useSharedNetwork)
+                    .buildConfig()
+                    .firebaseConfig()
+                    .services()
+                    .keySet()
+                    .stream()
+                    .filter(CONFIG_PROPERTIES::containsKey)
+                    .collect(Collectors.toCollection(() -> EnumSet.noneOf(FirebaseEmulatorContainer.Emulator.class)));
         } catch (Throwable t) {
-            LOGGER.warn("Unable to start Firebase dev service", t);
-            // Dump captured logs in case of an error
-            compressor.closeAndDumpCaptured();
-            return null;
-        } finally {
-            compressor.close();
+            LOGGER.warn("Unable to configure Firebase dev service", t);
+            return;
         }
 
-        createDevServiceCard(devService, firebaseBuildTimeConfig, launchMode, cardProducer);
-        return devService == null ? null : devService.toBuildItem();
+        if (emulators.isEmpty()) {
+            LOGGER.info("Not starting Dev Services for Firebase as no emulators are configured.");
+            return;
+        }
+
+        createDevServiceCard(emulators, firebaseBuildTimeConfig, launchMode, cardProducer);
+
+        LaunchMode mode = launchMode.getLaunchMode();
+        var emulatorConfig = firebaseBuildTimeConfig.firebase().emulator();
+
+        DevServicesResultBuildItem discovered = discoverRunningService(emulators, emulatorConfig.serviceName(),
+                emulatorConfig.shared(), mode, useSharedNetwork);
+        if (discovered != null) {
+            devServicesResult.produce(discovered);
+            return;
+        }
+
+        Optional<Duration> timeout = devServicesConfig.timeout();
+        String networkId = composeProjectBuildItem.getDefaultNetworkId();
+        boolean exposeToCompanionContainers = emulatorConfig.exposeToCompanionContainers();
+        FirebaseEmulatorContainer.Emulator primaryEmulator = emulators.iterator().next();
+
+        devServicesResult.produce(DevServicesResultBuildItem.owned()
+                .feature(FirebaseBuildSteps.FEATURE)
+                .serviceName(emulatorConfig.serviceName())
+                .serviceConfig(firebaseBuildTimeConfig)
+                .startable(() -> {
+                    // Create and configure Firebase emulator container
+                    var emulatorContainer = new FirebaseEmulatorConfigBuilder(projectConfig, firebaseBuildTimeConfig,
+                            useSharedNetwork).build();
+                    String hostName = ConfigureUtil.configureNetwork(emulatorContainer, networkId, useSharedNetwork,
+                            "firebase");
+
+                    // Set container startup timeout if provided
+                    timeout.ifPresent(emulatorContainer::withStartupTimeout);
+                    emulatorContainer.setupSharedNetworkHost(hostName);
+                    configureSharedServiceLabel(emulatorContainer, mode, DEV_SERVICE_LABEL,
+                            emulatorConfig.serviceName());
+                    return new StartableContainer<>(emulatorContainer, c -> c.hostEmulatorUrl(primaryEmulator));
+                })
+                .postStartHook(startable -> postStart(startable.getContainer(), exposeToCompanionContainers))
+                .configProvider(configProviders(emulators, useSharedNetwork, exposeToCompanionContainers))
+                .build());
     }
 
-    private void createDevServiceCard(DevServicesResultBuildItem.RunningDevService devService,
+    private void createDevServiceCard(Set<FirebaseEmulatorContainer.Emulator> emulators,
             FirebaseDevServiceConfig firebaseBuildTimeConfig,
             LaunchModeBuildItem launchMode,
             BuildProducer<CardPageBuildItem> cardProducer) {
@@ -130,40 +186,18 @@ public class FirebaseDevServiceProcessor {
             return;
         }
 
-        var config = devService.getConfig();
-
         var cardBuildItem = new CardPageBuildItem();
-        cardBuildItem.addBuildTimeData("emulators", config
-                .entrySet()
+        cardBuildItem.addBuildTimeData("emulators", emulators
                 .stream()
-                .map(entry -> {
-                    var emulator = CONFIG_PROPERTIES.entrySet()
-                            .stream()
-                            .filter(e -> e.getValue().equals(entry.getKey()))
-                            .findFirst()
-                            .map(Map.Entry::getKey)
-                            .orElse(null);
-
-                    return new EmulatorRow(emulator, entry.getKey(), entry.getValue());
-                })
+                .map(emulator -> new EmulatorRow(emulator, CONFIG_PROPERTIES.get(emulator)))
                 .toList());
 
         cardBuildItem.addPage(Page.tableDataPageBuilder("Running emulators")
                 .showColumn("name")
                 .showColumn("configProperty")
-                .showColumn("host")
                 .icon("font-awesome-solid:plug")
-                .staticLabel("" + config.size())
+                .staticLabel("" + emulators.size())
                 .buildTimeDataKey("emulators"));
-
-        var uiHost = config.get(CONFIG_PROPERTIES.get(FirebaseEmulatorContainer.Emulator.EMULATOR_SUITE_UI));
-        if (uiHost != null) {
-            cardBuildItem.addPage(Page.externalPageBuilder("Firebase UI")
-                    .url(uiHost, uiHost)
-                    .icon("font-awesome-solid:gauge-high")
-                    .staticLabel(firebaseBuildTimeConfig.firebase().emulator().firebaseVersion().orElse("auto-detected"))
-                    .mimeType(ExternalPageBuilder.MIME_TYPE_HTML));
-        }
 
         cardProducer.produce(cardBuildItem);
     }
@@ -171,12 +205,10 @@ public class FirebaseDevServiceProcessor {
     public static class EmulatorRow {
         private final FirebaseEmulatorContainer.Emulator name;
         private final String configProperty;
-        private final String host;
 
-        public EmulatorRow(FirebaseEmulatorContainer.Emulator name, String configProperty, String host) {
+        public EmulatorRow(FirebaseEmulatorContainer.Emulator name, String configProperty) {
             this.name = name;
             this.configProperty = configProperty;
-            this.host = host;
         }
 
         public FirebaseEmulatorContainer.Emulator getName() {
@@ -186,50 +218,6 @@ public class FirebaseDevServiceProcessor {
         public String getConfigProperty() {
             return configProperty;
         }
-
-        public String getHost() {
-            return host;
-        }
-    }
-
-    /**
-     * Start the container if conditions are met.
-     *
-     * @param dockerStatusBuildItem, Docker status
-     * @param config, Configuration for the Firebase service
-     * @param closeBuildItem The close build item
-     * @param projectConfig The project configuration
-     * @param timeout, Optional timeout for starting the service
-     * @param useSharedNetwork Start the service on a shared docker network
-     * @return Running service item, or null if the service couldn't be started
-     */
-    private DevServicesResultBuildItem.RunningDevService startContainerIfAvailable(
-            DockerStatusBuildItem dockerStatusBuildItem,
-            CuratedApplicationShutdownBuildItem closeBuildItem,
-            FirebaseDevServiceProjectConfig projectConfig,
-            FirebaseDevServiceConfig config,
-            Optional<Duration> timeout,
-            DevServicesComposeProjectBuildItem composeProjectBuildItem,
-            boolean useSharedNetwork) {
-
-        if (!config.firebase().preferFirebaseDevServices()) {
-            // Firebase service explicitly disabled
-            LOGGER.info("Not starting Dev Services for Firebase as it has been disabled in the config.");
-            return null;
-        }
-
-        if (!isEnabled(config)) {
-            // Firebase service implicitly disabled, no emulators enabled.
-            LOGGER.info("Not starting Dev Services for Firebase as no emulators are enabled.");
-            return null;
-        }
-
-        if (!dockerStatusBuildItem.isContainerRuntimeAvailable()) {
-            LOGGER.info("Not starting DevService because docker is not available");
-            return null;
-        }
-
-        return startContainer(closeBuildItem, projectConfig, config, timeout, composeProjectBuildItem, useSharedNetwork);
     }
 
     private boolean isEnabled(FirebaseDevServiceConfig config) {
@@ -241,84 +229,67 @@ public class FirebaseDevServiceProcessor {
     }
 
     /**
-     * Starts the Pub/Sub emulator container with provided configuration.
+     * Look for an already running emulator, started by another application. Not supported on a shared docker network,
+     * as the container aliases cannot be discovered.
      *
-     * @param closeBuildItem The close build item to handle shutdown of the container
-     * @param config, Configuration for the Firebase service
-     * @param timeout, Optional timeout for starting the service
-     * @param useSharedNetwork Start the service on a shared docker network
-     * @return Running service item, or null if the service couldn't be started
+     * @return a discovered Dev Service, or null if no emulator is running
      */
-    private DevServicesResultBuildItem.RunningDevService startContainer(
-            CuratedApplicationShutdownBuildItem closeBuildItem,
-            FirebaseDevServiceProjectConfig projectConfig,
-            FirebaseDevServiceConfig config,
-            Optional<Duration> timeout,
-            DevServicesComposeProjectBuildItem composeProjectBuildItem,
-            boolean useSharedNetwork) {
-
-        // Create and configure Firebase emulator container
-        var emulatorContainer = new FirebaseEmulatorConfigBuilder(projectConfig, config, useSharedNetwork).build();
-        String hostName = ConfigureUtil.configureNetwork(
-                emulatorContainer,
-                composeProjectBuildItem.getDefaultNetworkId(),
-                useSharedNetwork,
-                "firebase");
-
-        // Set container startup timeout if provided
-        timeout.ifPresent(emulatorContainer::withStartupTimeout);
-        emulatorContainer.setupSharedNetworkHost(hostName);
-        emulatorContainer.start();
-
-        // Set the config for the started container
-        FirebaseDevServiceProcessor.config = config;
-
-        var emulatorContainerConfig = emulatorContainerConfig(emulatorContainer, useSharedNetwork,
-                config.firebase().emulator().exposeToCompanionContainers());
-
-        if (LOGGER.isInfoEnabled()) {
-            var runningPorts = emulatorContainer.hostEmulatorUrls();
-            runningPorts.forEach((e, p) -> LOGGER.info("Google Cloud Emulator " + e + " reachable on " + p));
-
-            emulatorContainerConfig
-                    .forEach((e, h) -> LOGGER.info("Google Cloud emulator config property " + e + " set to " + h));
+    private DevServicesResultBuildItem discoverRunningService(Set<FirebaseEmulatorContainer.Emulator> emulators,
+            String serviceName, boolean shared, LaunchMode launchMode, boolean useSharedNetwork) {
+        if (useSharedNetwork) {
+            return null;
         }
 
-        closeBuildItem.addCloseTask(emulatorContainer::close, true);
+        // The locator is bound to a single port, the other ones are looked up with the same labels
+        ContainerLocator locator = locateContainerWithLabels(emulators.iterator().next().internalPort, DEV_SERVICE_LABEL);
+        Optional<ContainerAddress> address = locator.locateContainer(serviceName, shared, launchMode);
+        if (address.isEmpty()) {
+            return null;
+        }
 
-        // Return running service item with container details
-        return new DevServicesResultBuildItem.RunningDevService(FirebaseBuildSteps.FEATURE,
-                emulatorContainer.getContainerId(),
-                emulatorContainer::close,
-                emulatorContainerConfig);
+        Map<String, String> config = new HashMap<>();
+        for (var emulator : emulators) {
+            Optional<Integer> port = locator.locatePublicPort(serviceName, shared, launchMode, emulator.internalPort);
+            if (port.isEmpty()) {
+                LOGGER.debugv("The running Firebase emulator does not expose {0}, starting a new one", emulator);
+                return null;
+            }
+            config.put(CONFIG_PROPERTIES.get(emulator), FirebaseEmulatorContainer.withHttpPrefixIfNeeded(emulator,
+                    address.get().getHost() + ":" + port.get()));
+        }
+
+        return DevServicesResultBuildItem.discovered()
+                .feature(FirebaseBuildSteps.FEATURE)
+                .containerId(address.get().getId())
+                .config(config)
+                .build();
     }
 
-    private Map<String, String> emulatorContainerConfig(FirebaseEmulatorContainer emulatorContainer,
-            boolean useSharedNetwork, boolean exposeToCompanionContainers) {
+    /**
+     * The config properties to set once the container is started, as functions of the started container.
+     */
+    private Map<String, Function<StartableContainer<FirebaseEmulatorContainer>, String>> configProviders(
+            Set<FirebaseEmulatorContainer.Emulator> emulators, boolean useSharedNetwork,
+            boolean exposeToCompanionContainers) {
+        Map<String, Function<StartableContainer<FirebaseEmulatorContainer>, String>> providers = new HashMap<>();
+
         // App-facing properties: the Docker host by default (reachable from the host-JVM running dev mode or a
         // plain unit test), switched to the shared-network alias when shared-network mode is active.
-        var addressSource = useSharedNetwork
-                ? emulatorContainer.containerEmulatorUrls()
-                : emulatorContainer.hostEmulatorUrls();
-
-        var emulatorProperties = new HashMap<>(addressSource
-                .entrySet()
-                .stream()
-                .filter(e -> CONFIG_PROPERTIES.containsKey(e.getKey()))
-                .collect(
-                        Collectors.toMap(
-                                e -> configPropertyForEmulator(e.getKey()),
-                                Map.Entry::getValue)));
+        for (var emulator : emulators) {
+            providers.put(CONFIG_PROPERTIES.get(emulator), useSharedNetwork
+                    ? s -> s.getContainer().containerEmulatorUrl(emulator)
+                    : s -> s.getContainer().hostEmulatorUrl(emulator));
+        }
 
         // Once host-override no longer contains "localhost", the automatic emulator-credentials detection (e.g.
         // FirestoreProducer#automaticEmulatorCredentials) won't kick in, so force it explicitly.
         if (useSharedNetwork) {
-            if (emulatorProperties.containsKey(CONFIG_PROPERTIES.get(FirebaseEmulatorContainer.Emulator.PUB_SUB))) {
-                emulatorProperties.put("quarkus.google.cloud.pubsub.use-emulator-credentials", "true");
+            if (emulators.contains(FirebaseEmulatorContainer.Emulator.PUB_SUB)) {
+                providers.put("quarkus.google.cloud.pubsub.use-emulator-credentials", s -> "true");
             }
 
-            if (emulatorProperties.containsKey(CONFIG_PROPERTIES.get(FirebaseEmulatorContainer.Emulator.CLOUD_FIRESTORE))) {
-                emulatorProperties.put("quarkus.google.cloud.firestore.use-emulator-credentials", "true");
+            if (emulators.contains(FirebaseEmulatorContainer.Emulator.CLOUD_FIRESTORE)) {
+                providers.put("quarkus.google.cloud.firestore.use-emulator-credentials", s -> "true");
             }
         }
 
@@ -328,23 +299,27 @@ public class FirebaseDevServiceProcessor {
         // available whenever the user hasn't opted out, not just when shared-network happens to be on for some
         // unrelated reason.
         if (exposeToCompanionContainers) {
-            var configuredEmulators = emulatorContainer.hostEmulatorUrls().keySet();
-            configuredEmulators
-                    .forEach(emulator -> Testcontainers.exposeHostPorts(emulatorContainer.hostMappedPort(emulator)));
-
-            emulatorProperties.putAll(configuredEmulators
-                    .stream()
-                    .filter(CONTAINER_CONFIG_PROPERTIES::containsKey)
-                    .collect(Collectors.toMap(
-                            CONTAINER_CONFIG_PROPERTIES::get,
-                            emulator -> containerEmulatorUrl(emulatorContainer, emulator))));
+            for (var emulator : emulators) {
+                if (CONTAINER_CONFIG_PROPERTIES.containsKey(emulator)) {
+                    providers.put(CONTAINER_CONFIG_PROPERTIES.get(emulator),
+                            s -> containerEmulatorUrl(s.getContainer(), emulator));
+                }
+            }
         }
 
-        return emulatorProperties;
+        return providers;
     }
 
-    private String configPropertyForEmulator(FirebaseEmulatorContainer.Emulator emulator) {
-        return CONFIG_PROPERTIES.get(emulator);
+    private void postStart(FirebaseEmulatorContainer emulatorContainer, boolean exposeToCompanionContainers) {
+        if (LOGGER.isInfoEnabled()) {
+            var runningPorts = emulatorContainer.hostEmulatorUrls();
+            runningPorts.forEach((e, p) -> LOGGER.info("Google Cloud Emulator " + e + " reachable on " + p));
+        }
+
+        if (exposeToCompanionContainers) {
+            emulatorContainer.hostEmulatorUrls().keySet()
+                    .forEach(emulator -> Testcontainers.exposeHostPorts(emulatorContainer.hostMappedPort(emulator)));
+        }
     }
 
     /**
@@ -355,22 +330,6 @@ public class FirebaseDevServiceProcessor {
             FirebaseEmulatorContainer.Emulator emulator) {
         return FirebaseEmulatorContainer.withHttpPrefixIfNeeded(emulator,
                 HOST_TESTCONTAINERS_INTERNAL + ":" + emulatorContainer.hostMappedPort(emulator));
-    }
-
-    /**
-     * Stops the running Firebase emulator container.
-     */
-    private void stopContainer() {
-        if (devService != null && devService.isOwner()) {
-            try {
-                // Try closing the running dev service
-                devService.close();
-            } catch (Throwable e) {
-                LOGGER.error("Failed to stop firebase container", e);
-            } finally {
-                devService = null;
-            }
-        }
     }
 
 }

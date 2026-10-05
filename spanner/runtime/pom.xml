@@ -14,6 +14,10 @@
 
     <dependencies>
         <dependency>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-devservices</artifactId>
+        </dependency>
+        <dependency>
             <groupId>io.quarkiverse.googlecloudservices</groupId>
             <artifactId>quarkus-google-cloud-common</artifactId>
         </dependency>

@@ -227,6 +227,13 @@ You can also set the
 
 * `quarkus.google.cloud.pubsub.devservice.emulator-port` property to change the port on which the emulator will be started (by default there is no port set, so the emulator will use a random port)
 
+The emulator is started once and reused when the application restarts (for example in live reload, continuous testing, or between the test classes of a `@QuarkusTest` suite that use different test profiles). It is stopped when the application stops or when the Dev Service configuration changes.
+
+In dev mode, the emulator is also shared between applications by default: if an emulator started by another Quarkus application is running, it will be used instead of starting a new one. You can control this with the
+
+* `quarkus.google.cloud.pubsub.devservice.shared` property (defaults to `true`)
+* `quarkus.google.cloud.pubsub.devservice.service-name` property (defaults to `pubsub`), the value of the `quarkus-dev-service-google-cloud-pubsub` label used to find the shared emulator
+
 === Using the Dev Service
 
 _Note: the setup below is handled automatically in case you use `QuarkusPubSub` to create publishers and subscribers._
