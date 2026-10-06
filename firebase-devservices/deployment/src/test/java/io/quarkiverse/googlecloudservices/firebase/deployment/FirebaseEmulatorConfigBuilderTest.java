@@ -245,6 +245,16 @@ class FirebaseEmulatorConfigBuilderTest {
             Optional<String> customFirebaseJson,
             UI ui,
             boolean exposeToCompanionContainers) implements FirebaseDevServiceConfig.Firebase.Emulator {
+
+        @Override
+        public boolean shared() {
+            return true;
+        }
+
+        @Override
+        public String serviceName() {
+            return "firebase";
+        }
     }
 
     record TestDocker(

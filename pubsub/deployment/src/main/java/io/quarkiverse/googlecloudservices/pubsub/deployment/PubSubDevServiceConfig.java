@@ -17,6 +17,8 @@ import io.smallrye.config.WithDefault;
  * quarkus.google.cloud.pubsub.devservice.enabled = true
  * quarkus.google.cloud.pubsub.devservice.image-name = gcr.io/google.com/cloudsdktool/google-cloud-cli # optional
  * quarkus.google.cloud.pubsub.devservice.emulatorPort = 8085 # optional
+ * quarkus.google.cloud.pubsub.devservice.shared = true # optional
+ * quarkus.google.cloud.pubsub.devservice.service-name = pubsub # optional
  * </pre>
  */
 @ConfigMapping(prefix = "quarkus.google.cloud.pubsub.devservice")
@@ -42,4 +44,30 @@ public interface PubSubDevServiceConfig {
      * Specifies the emulatorPort on which the Pub/Sub service should run in the development environment.
      */
     Optional<Integer> emulatorPort();
+
+    /**
+     * Indicates if the Pub/Sub emulator managed by Dev Services is shared.
+     * When shared, Quarkus looks for running containers using label-based service discovery.
+     * If a matching container is found, it is used, and so a second one is not started.
+     * Otherwise, Dev Services starts a new container.
+     * <p>
+     * The discovery uses the {@code quarkus-dev-service-google-cloud-pubsub} label.
+     * The value is configured using the {@code service-name} property.
+     * <p>
+     * Container sharing is only used in dev mode.
+     */
+    @WithDefault("true")
+    boolean shared();
+
+    /**
+     * The value of the {@code quarkus-dev-service-google-cloud-pubsub} label attached to the started container.
+     * This property is used when {@code shared} is set to {@code true}.
+     * In this case, before starting a container, Dev Services looks for a container with the
+     * {@code quarkus-dev-service-google-cloud-pubsub} label set to the configured value.
+     * If found, it will use this container instead of starting a new one.
+     * Otherwise, it starts a new container with the {@code quarkus-dev-service-google-cloud-pubsub} label set to the
+     * specified value.
+     */
+    @WithDefault("pubsub")
+    String serviceName();
 }
