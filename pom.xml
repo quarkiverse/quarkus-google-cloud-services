@@ -16,6 +16,7 @@
     <enforcer-plugin.version>3.6.3</enforcer-plugin.version>
     <assertj.version>3.27.7</assertj.version>
     <opentelemetry-alpha.version>1.66.0-alpha</opentelemetry-alpha.version>
+    <maven.compiler.release>17</maven.compiler.release>
   </properties>
   <scm>
     <connection>scm:git:git@github.com:quarkiverse/quarkus-google-cloud-services.git</connection>
