@@ -32,6 +32,7 @@ import io.quarkus.devservices.common.ContainerAddress;
 import io.quarkus.devservices.common.ContainerLocator;
 import io.quarkus.devservices.common.StartableContainer;
 import io.quarkus.devui.spi.page.CardPageBuildItem;
+import io.quarkus.devui.spi.page.ExternalPageBuilder;
 import io.quarkus.devui.spi.page.Page;
 import io.quarkus.runtime.LaunchMode;
 
@@ -117,28 +118,32 @@ public class FirebaseDevServiceProcessor {
         boolean useSharedNetwork = DevServicesSharedNetworkBuildItem.isSharedNetworkRequired(devServicesConfig,
                 devServicesSharedNetworkBuildItem);
 
-        // The emulators are known at build time, either from the configuration or from the firebase.json file.
-        Set<FirebaseEmulatorContainer.Emulator> emulators;
+        FirebaseEmulatorContainer.EmulatorConfig emulatorContainerConfig;
         try {
-            emulators = new FirebaseEmulatorConfigBuilder(projectConfig, firebaseBuildTimeConfig, useSharedNetwork)
-                    .buildConfig()
-                    .firebaseConfig()
-                    .services()
-                    .keySet()
-                    .stream()
-                    .filter(CONFIG_PROPERTIES::containsKey)
-                    .collect(Collectors.toCollection(() -> EnumSet.noneOf(FirebaseEmulatorContainer.Emulator.class)));
+            emulatorContainerConfig = new FirebaseEmulatorConfigBuilder(
+                    projectConfig,
+                    firebaseBuildTimeConfig,
+                    useSharedNetwork).buildConfig();
         } catch (Throwable t) {
             LOGGER.warn("Unable to configure Firebase dev service", t);
             return;
         }
+
+        // The emulators are known at build time, either from the configuration or from the firebase.json file.
+        Set<FirebaseEmulatorContainer.Emulator> emulators = emulatorContainerConfig
+                .firebaseConfig()
+                .services()
+                .keySet()
+                .stream()
+                .filter(CONFIG_PROPERTIES::containsKey)
+                .collect(Collectors.toCollection(() -> EnumSet.noneOf(FirebaseEmulatorContainer.Emulator.class)));
 
         if (emulators.isEmpty()) {
             LOGGER.info("Not starting Dev Services for Firebase as no emulators are configured.");
             return;
         }
 
-        createDevServiceCard(emulators, firebaseBuildTimeConfig, launchMode, cardProducer);
+        createDevServiceCard(emulators, emulatorContainerConfig, firebaseBuildTimeConfig, launchMode, cardProducer);
 
         LaunchMode mode = launchMode.getLaunchMode();
         var emulatorConfig = firebaseBuildTimeConfig.firebase().emulator();
@@ -179,6 +184,7 @@ public class FirebaseDevServiceProcessor {
     }
 
     private void createDevServiceCard(Set<FirebaseEmulatorContainer.Emulator> emulators,
+            FirebaseEmulatorContainer.EmulatorConfig emulatorContainerConfig,
             FirebaseDevServiceConfig firebaseBuildTimeConfig,
             LaunchModeBuildItem launchMode,
             BuildProducer<CardPageBuildItem> cardProducer) {
@@ -198,6 +204,19 @@ public class FirebaseDevServiceProcessor {
                 .icon("font-awesome-solid:plug")
                 .staticLabel("" + emulators.size())
                 .buildTimeDataKey("emulators"));
+
+        // The UI URL is only known once the emulator runs (or has been discovered), so it is resolved at runtime
+        // from the config of the Dev Service.
+        if (emulators.contains(FirebaseEmulatorContainer.Emulator.EMULATOR_SUITE_UI)) {
+            cardBuildItem.addPage(Page.externalPageBuilder("Firebase UI")
+                    .dynamicUrlJsonRPCMethodName("devui-dev-services:devServicesConfig",
+                            Map.of("name", FirebaseBuildSteps.FEATURE,
+                                    "configKey",
+                                    CONFIG_PROPERTIES.get(FirebaseEmulatorContainer.Emulator.EMULATOR_SUITE_UI)))
+                    .icon("font-awesome-solid:gauge-high")
+                    .staticLabel(Optional.ofNullable(emulatorContainerConfig.firebaseVersion()).orElse("auto-detected"))
+                    .mimeType(ExternalPageBuilder.MIME_TYPE_HTML));
+        }
 
         cardProducer.produce(cardBuildItem);
     }
