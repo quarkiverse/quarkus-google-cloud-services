@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.nio.file.Path;
 import java.util.HashMap;
-import java.util.Optional;
 import java.util.function.Consumer;
 
 import org.testcontainers.shaded.com.fasterxml.jackson.databind.ObjectMapper;
@@ -141,9 +140,7 @@ class FirebaseJsonBuilder {
 
     private void withEmulator(FirebaseEmulatorContainer.Emulator emulator, Consumer<Integer> handler) {
         if (isEmulatorEnabled(emulator)) {
-            var exposedPort = emulatorConfig.firebaseConfig().services().get(emulator);
-            var port = Optional.ofNullable(exposedPort.fixedPort())
-                    .orElse(emulator.internalPort);
+            var port = emulatorConfig.emulatorPort(emulator);
 
             handler.accept(port);
         }
