@@ -3,6 +3,8 @@ package io.quarkiverse.googlecloudservices.firebase.deployment.testcontainers;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.*;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
@@ -126,12 +128,12 @@ public class FirebaseEmulatorContainer extends GenericContainer<FirebaseEmulator
         /**
          * The default port on which the emulator is running.
          */
-        public final int internalPort;
+        public final int defaultPort;
         final String configProperty;
         final String emulatorName;
 
-        Emulator(int internalPort, String configProperty, String onlyArgument) {
-            this.internalPort = internalPort;
+        Emulator(int defaultPort, String configProperty, String onlyArgument) {
+            this.defaultPort = defaultPort;
             this.configProperty = configProperty;
             this.emulatorName = onlyArgument;
         }
@@ -338,6 +340,18 @@ public class FirebaseEmulatorContainer extends GenericContainer<FirebaseEmulator
             FirestoreConfig firestoreConfig,
             FunctionsConfig functionsConfig,
             Map<Emulator, ExposedPort> services) {
+
+        /**
+         * Returns the container-internal emulator port for the given emulator.
+         *
+         * @param emulator The emulator
+         * @return The emulator port
+         */
+        public int emulatorPort(Emulator emulator) {
+            return Optional.ofNullable(services.get(emulator))
+                    .flatMap(p -> Optional.ofNullable(p.fixedPort()))
+                    .orElse(emulator.defaultPort);
+        }
     }
 
     /**
@@ -355,6 +369,105 @@ public class FirebaseEmulatorContainer extends GenericContainer<FirebaseEmulator
             CliArgumentsConfig cliArguments,
             Optional<Path> customFirebaseJson,
             FirebaseConfig firebaseConfig) {
+
+        /**
+         * Returns the container-internal emulator port for the given emulator.
+         *
+         * @param emulator The emulator
+         * @return The emulator port
+         */
+        public int emulatorPort(Emulator emulator) {
+            return firebaseConfig.emulatorPort(emulator);
+        }
+
+        /**
+         * Returns the iterator of enabled emulators
+         */
+        public Set<Emulator> emulators() {
+            return firebaseConfig.services().keySet();
+        }
+
+        /**
+         * Describes everything that determines the behaviour of the container, using plain JDK types only. This
+         * allows comparing two configurations (also when they were created by different classloaders) to decide
+         * whether a running container can be reused.
+         * <p>
+         * Beyond the plain values, this includes the content of the files the container is built from (the
+         * firebase.json, rules and indexes files). A configuration which refers to the same file name can
+         * resolve to different content, e.g. after switching branches. The hosting, functions and emulator data
+         * directories are bind-mounted, so only their location is relevant.
+         *
+         * @return The fingerprint, sorted by key
+         */
+        public Map<String, String> reuseFingerprint() {
+            var fingerprint = new TreeMap<String, String>();
+
+            fingerprint.put("firebaseVersion", String.valueOf(firebaseVersion));
+
+            fingerprint.put("docker.imageName", dockerConfig.imageName());
+            fingerprint.put("docker.useSharedNetwork", String.valueOf(dockerConfig.useSharedNetwork()));
+            fingerprint.put("docker.envVars", new TreeMap<>(dockerConfig.envVars()).toString());
+
+            fingerprint.put("cli.projectId", asString(cliArguments.projectId()));
+            fingerprint.put("cli.emulatorData", asPath(cliArguments.emulatorData()));
+            fingerprint.put("cli.importExport", String.valueOf(cliArguments.importExport()));
+            fingerprint.put("cli.experiments", new TreeSet<>(cliArguments.experiments().orElse(Set.of())).toString());
+
+            fingerprint.put("customFirebaseJson", asPath(customFirebaseJson));
+            fingerprint.put("customFirebaseJson.sha256", fileHash(customFirebaseJson));
+
+            // Includes the emulators without a Quarkus config property, like the logging one
+            firebaseConfig.services().forEach((emulator, port) -> fingerprint.put("emulator." + emulator.name(),
+                    port.isFixed() ? String.valueOf(port.fixedPort()) : "random"));
+
+            var hosting = firebaseConfig.hostingConfig();
+            fingerprint.put("hosting.contentDir", asPath(hosting.hostingContentDir()));
+            fingerprint.put("hosting.override", asPath(hosting.hostingOverride()));
+            fingerprint.put("hosting.viteHmrPort", asString(hosting.viteHmrPort()));
+
+            var functions = firebaseConfig.functionsConfig();
+            fingerprint.put("functions.path", asPath(functions.functionsPath()));
+            fingerprint.put("functions.ignores", Arrays.toString(functions.ignores()));
+
+            var storage = firebaseConfig.storageConfig();
+            fingerprint.put("storage.rules", asPath(storage.rulesFile()));
+            fingerprint.put("storage.rules.sha256", fileHash(storage.rulesFile()));
+
+            var firestore = firebaseConfig.firestoreConfig();
+            fingerprint.put("firestore.rules", asPath(firestore.rulesFile()));
+            fingerprint.put("firestore.rules.sha256", fileHash(firestore.rulesFile()));
+            fingerprint.put("firestore.indexes", asPath(firestore.indexesFile()));
+            fingerprint.put("firestore.indexes.sha256", fileHash(firestore.indexesFile()));
+
+            return fingerprint;
+        }
+
+        private static String asString(Optional<?> value) {
+            return value.map(Object::toString).orElse("");
+        }
+
+        private static String asPath(Optional<Path> path) {
+            return path.map(p -> p.toAbsolutePath().normalize().toString()).orElse("");
+        }
+
+        private static String fileHash(Optional<Path> path) {
+            try {
+                if (path.isPresent() && Files.isRegularFile(path.get())) {
+                    return sha256(Files.readAllBytes(path.get()));
+                }
+                return "";
+            } catch (IOException e) {
+                throw new IllegalStateException("Unable to read " + path.get(), e);
+            }
+        }
+
+        private static String sha256(byte[] content) {
+            try {
+                return HexFormat.of().formatHex(MessageDigest.getInstance("SHA-256").digest(content));
+            } catch (NoSuchAlgorithmException e) {
+                throw new IllegalStateException(e);
+            }
+        }
     }
 
     // Use node:20 for now because of https://github.com/firebase/firebase-tools/issues/7173
@@ -1117,6 +1230,7 @@ public class FirebaseEmulatorContainer extends GenericContainer<FirebaseEmulator
         }
     }
 
+    private final FirebaseConfig firebaseConfig;
     private final Map<Emulator, ExposedPort> services;
     private final Set<Integer> additionalExposedPorts;
     private final Optional<Integer> viteHmrPort;
@@ -1147,7 +1261,8 @@ public class FirebaseEmulatorContainer extends GenericContainer<FirebaseEmulator
     private FirebaseEmulatorContainer(FirebaseDockerBuilder dockerBuilder, EmulatorConfig emulatorConfig) {
         super(dockerBuilder.build());
 
-        this.services = emulatorConfig.firebaseConfig().services;
+        this.firebaseConfig = emulatorConfig.firebaseConfig();
+        this.services = firebaseConfig.services;
         this.additionalExposedPorts = dockerBuilder.additionalExposedPorts();
         this.viteHmrPort = dockerBuilder.viteHmrPort();
         this.followStdOut = emulatorConfig.dockerConfig().followStdOut();
@@ -1750,7 +1865,7 @@ public class FirebaseEmulatorContainer extends GenericContainer<FirebaseEmulator
                     if (exposedPort.isFixed()) {
                         addFixedExposedPort(exposedPort.fixedPort(), exposedPort.fixedPort());
                     } else {
-                        addExposedPort(emulator.internalPort);
+                        addExposedPort(firebaseConfig.emulatorPort(emulator));
                     }
                 });
 
@@ -1774,8 +1889,8 @@ public class FirebaseEmulatorContainer extends GenericContainer<FirebaseEmulator
      * @return The TCP Port
      */
     public Integer containerEmulatorPort(Emulator emulator) {
-        if (useSharedNetwork && !services.get(emulator).isFixed()) {
-            return emulator.internalPort;
+        if (useSharedNetwork) {
+            return firebaseConfig.emulatorPort(emulator);
         }
         return hostMappedPort(emulator);
     }
@@ -1790,7 +1905,7 @@ public class FirebaseEmulatorContainer extends GenericContainer<FirebaseEmulator
      */
     public Integer hostMappedPort(Emulator emulator) {
         var exposedPort = services.get(emulator);
-        return exposedPort.isFixed() ? exposedPort.fixedPort() : getMappedPort(emulator.internalPort);
+        return exposedPort.isFixed() ? exposedPort.fixedPort() : getMappedPort(firebaseConfig.emulatorPort(emulator));
     }
 
     /**
