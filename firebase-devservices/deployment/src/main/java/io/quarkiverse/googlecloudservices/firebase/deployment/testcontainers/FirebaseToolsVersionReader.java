@@ -2,7 +2,11 @@ package io.quarkiverse.googlecloudservices.firebase.deployment.testcontainers;
 
 import static io.quarkiverse.googlecloudservices.firebase.deployment.testcontainers.FirebaseEmulatorContainer.DEFAULT_FIREBASE_VERSION;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -11,7 +15,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.databind.ObjectMapper;
+
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.json.JsonMapper;
 
 /**
  * This class reads the firebase-tools version we want to use. If a package.json file is detected,
@@ -22,7 +28,7 @@ public class FirebaseToolsVersionReader {
     private static final Logger LOGGER = LoggerFactory.getLogger(FirebaseToolsVersionReader.class);
 
     public static String getFirebaseVersion() {
-        var mapper = new ObjectMapper();
+        var mapper = new JsonMapper();
 
         LOGGER.info("Trying to auto detect the firebase-tools version to use");
 
@@ -43,7 +49,7 @@ public class FirebaseToolsVersionReader {
                         LOGGER.info("Auto detect the firebase-tools version to use: no version found");
                         return DEFAULT_FIREBASE_VERSION;
                     });
-        } catch (IOException e) {
+        } catch (IOException | JacksonException e) {
             LOGGER.info("package.json file was not found, defaulting to latest version of firebase-tools");
             return DEFAULT_FIREBASE_VERSION;
         }
