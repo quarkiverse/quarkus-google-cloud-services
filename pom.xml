@@ -68,11 +68,6 @@
         <artifactId>assertj-core</artifactId>
         <version>${assertj.version}</version>
       </dependency>
-      <dependency>
-        <groupId>io.opentelemetry</groupId>
-        <artifactId>opentelemetry-opencensus-shim</artifactId>
-        <version>${opentelemetry-alpha.version}</version>
-      </dependency>
     </dependencies>
   </dependencyManagement>
   <build>
