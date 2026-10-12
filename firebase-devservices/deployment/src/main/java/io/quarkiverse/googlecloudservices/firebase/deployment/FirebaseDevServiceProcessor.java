@@ -4,12 +4,7 @@ import static io.quarkus.devservices.common.ConfigureUtil.configureSharedService
 import static io.quarkus.devservices.common.ContainerLocator.locateContainerWithLabels;
 
 import java.time.Duration;
-import java.util.EnumSet;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -27,9 +22,9 @@ import io.quarkus.deployment.builditem.DevServicesSharedNetworkBuildItem;
 import io.quarkus.deployment.builditem.DockerStatusBuildItem;
 import io.quarkus.deployment.builditem.LaunchModeBuildItem;
 import io.quarkus.deployment.dev.devservices.DevServicesConfig;
+import io.quarkus.devservices.common.ComposeLocator;
 import io.quarkus.devservices.common.ConfigureUtil;
 import io.quarkus.devservices.common.ContainerAddress;
-import io.quarkus.devservices.common.ContainerLocator;
 import io.quarkus.devservices.common.StartableContainer;
 import io.quarkus.devui.spi.page.CardPageBuildItem;
 import io.quarkus.devui.spi.page.ExternalPageBuilder;
@@ -130,40 +125,38 @@ public class FirebaseDevServiceProcessor {
         }
 
         // The emulators are known at build time, either from the configuration or from the firebase.json file.
-        Set<FirebaseEmulatorContainer.Emulator> emulators = emulatorContainerConfig
-                .firebaseConfig()
-                .services()
-                .keySet()
-                .stream()
-                .filter(CONFIG_PROPERTIES::containsKey)
-                .collect(Collectors.toCollection(() -> EnumSet.noneOf(FirebaseEmulatorContainer.Emulator.class)));
+        Set<FirebaseEmulatorContainer.Emulator> emulators = appEmulators(emulatorContainerConfig);
 
         if (emulators.isEmpty()) {
             LOGGER.info("Not starting Dev Services for Firebase as no emulators are configured.");
             return;
         }
 
-        createDevServiceCard(emulators, emulatorContainerConfig, firebaseBuildTimeConfig, launchMode, cardProducer);
+        createDevServiceCard(emulators, emulatorContainerConfig, launchMode, cardProducer);
 
         LaunchMode mode = launchMode.getLaunchMode();
         var emulatorConfig = firebaseBuildTimeConfig.firebase().emulator();
 
-        DevServicesResultBuildItem discovered = discoverRunningService(emulators, emulatorConfig.serviceName(),
-                emulatorConfig.shared(), mode, useSharedNetwork);
+        DevServicesResultBuildItem discovered = discoverRunningService(emulatorContainerConfig, composeProjectBuildItem,
+                emulatorConfig, mode, useSharedNetwork);
         if (discovered != null) {
+            LOGGER.debugv("Using discovered Firebase emulator in container {0}", discovered.getContainerId());
             devServicesResult.produce(discovered);
             return;
+        } else {
+            LOGGER.debug("No running Firebase emulator found, starting a new one");
         }
 
         Optional<Duration> timeout = devServicesConfig.timeout();
         String networkId = composeProjectBuildItem.getDefaultNetworkId();
         boolean exposeToCompanionContainers = emulatorConfig.exposeToCompanionContainers();
         FirebaseEmulatorContainer.Emulator primaryEmulator = emulators.iterator().next();
+        var configProviders = configProviders(emulators, useSharedNetwork, exposeToCompanionContainers);
 
         devServicesResult.produce(DevServicesResultBuildItem.owned()
                 .feature(FirebaseBuildSteps.FEATURE)
                 .serviceName(emulatorConfig.serviceName())
-                .serviceConfig(firebaseBuildTimeConfig)
+                .serviceConfig(serviceConfig(emulatorContainerConfig, emulatorConfig))
                 .startable(() -> {
                     // Create and configure Firebase emulator container
                     var emulatorContainer = new FirebaseEmulatorConfigBuilder(projectConfig, firebaseBuildTimeConfig,
@@ -178,14 +171,13 @@ public class FirebaseDevServiceProcessor {
                             emulatorConfig.serviceName());
                     return new StartableContainer<>(emulatorContainer, c -> c.hostEmulatorUrl(primaryEmulator));
                 })
-                .postStartHook(startable -> postStart(startable.getContainer(), exposeToCompanionContainers))
-                .configProvider(configProviders(emulators, useSharedNetwork, exposeToCompanionContainers))
+                .postStartHook(startable -> postStart(startable, configProviders, exposeToCompanionContainers))
+                .configProvider(configProviders)
                 .build());
     }
 
     private void createDevServiceCard(Set<FirebaseEmulatorContainer.Emulator> emulators,
             FirebaseEmulatorContainer.EmulatorConfig emulatorContainerConfig,
-            FirebaseDevServiceConfig firebaseBuildTimeConfig,
             LaunchModeBuildItem launchMode,
             BuildProducer<CardPageBuildItem> cardProducer) {
         if (launchMode.isNotLocalDevModeType()) {
@@ -248,40 +240,108 @@ public class FirebaseDevServiceProcessor {
     }
 
     /**
-     * Look for an already running emulator, started by another application. Not supported on a shared docker network,
-     * as the container aliases cannot be discovered.
+     * Look for an already running emulator, either a shared one started by another application or one that is part of a
+     * Compose project. As Firebase runs several emulators in one container, each
+     * emulator is located on its own port. The container found by label is addressed on the Docker host and the
+     * published port, a container of a Compose project as the {@link ComposeLocator} does (so by the service name and
+     * container port when using a shared network).
      *
-     * @return a discovered Dev Service, or null if no emulator is running
+     * @return a discovered Dev Service, or null if not every emulator is running
      */
-    private DevServicesResultBuildItem discoverRunningService(Set<FirebaseEmulatorContainer.Emulator> emulators,
-            String serviceName, boolean shared, LaunchMode launchMode, boolean useSharedNetwork) {
-        if (useSharedNetwork) {
+    private DevServicesResultBuildItem discoverRunningService(FirebaseEmulatorContainer.EmulatorConfig emulatorConfig,
+            DevServicesComposeProjectBuildItem composeProject, FirebaseDevServiceConfig.Firebase.Emulator config,
+            LaunchMode launchMode, boolean useSharedNetwork) {
+
+        Set<FirebaseEmulatorContainer.Emulator> emulators = appEmulators(emulatorConfig);
+
+        Set<EmulatorContainerAddress> addresses = emulators.stream()
+                .map(emulator -> {
+                    int port = emulatorConfig.emulatorPort(emulator);
+                    return locateContainerWithLabels(port, DEV_SERVICE_LABEL)
+                            .locateContainer(config.serviceName(), config.shared(), launchMode)
+                            .or(() -> ComposeLocator.locateContainer(composeProject,
+                                    List.of(FirebaseEmulatorContainer.IMAGE_NAME),
+                                    port, launchMode, useSharedNetwork))
+                            .map(containerAddress -> new EmulatorContainerAddress(emulator, containerAddress));
+                })
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .collect(Collectors.toSet());
+
+        if (addresses.size() != emulators.size()) {
             return null;
         }
 
-        // The locator is bound to a single port, the other ones are looked up with the same labels
-        ContainerLocator locator = locateContainerWithLabels(emulators.iterator().next().internalPort, DEV_SERVICE_LABEL);
-        Optional<ContainerAddress> address = locator.locateContainer(serviceName, shared, launchMode);
-        if (address.isEmpty()) {
-            return null;
-        }
+        Map<String, String> properties = new HashMap<>();
+        Set<Integer> hostPorts = new HashSet<>();
 
-        Map<String, String> config = new HashMap<>();
-        for (var emulator : emulators) {
-            Optional<Integer> port = locator.locatePublicPort(serviceName, shared, launchMode, emulator.internalPort);
-            if (port.isEmpty()) {
-                LOGGER.debugv("The running Firebase emulator does not expose {0}, starting a new one", emulator);
-                return null;
+        addresses.forEach(emulatorContainerAddress -> {
+            ContainerAddress address = emulatorContainerAddress.containerAddress();
+            FirebaseEmulatorContainer.Emulator emulator = emulatorContainerAddress.emulator();
+
+            properties.put(CONFIG_PROPERTIES.get(emulator),
+                    FirebaseEmulatorContainer.withHttpPrefixIfNeeded(emulator, address.getUrl()));
+
+            // The port is only published to the Docker host if it was found by label or the Compose project is not
+            // addressed by its shared network
+            boolean publishedToHost = address.getRunningContainer() == null || !useSharedNetwork;
+            if (config.exposeToCompanionContainers() && CONTAINER_CONFIG_PROPERTIES.containsKey(emulator)
+                    && publishedToHost) {
+                properties.put(CONTAINER_CONFIG_PROPERTIES.get(emulator), containerEmulatorUrl(emulator, address.getPort()));
+                hostPorts.add(address.getPort());
             }
-            config.put(CONFIG_PROPERTIES.get(emulator), FirebaseEmulatorContainer.withHttpPrefixIfNeeded(emulator,
-                    address.get().getHost() + ":" + port.get()));
+        });
+
+        if (useSharedNetwork) {
+            properties.putAll(emulatorCredentialsConfig(emulators));
+        }
+
+        if (LOGGER.isInfoEnabled()) {
+            properties
+                    .forEach((key, value) -> LOGGER.info("Google Cloud emulator config property " + key + " set to " + value));
+        }
+
+        // A discovered Dev Service has no post start hook, so the host ports are exposed to the containers started
+        // by Testcontainers in this JVM right here, as that is needed per JVM.
+        if (!hostPorts.isEmpty()) {
+            LOGGER.infov("Exposing the discovered Firebase emulator ports {0} to companion containers", hostPorts);
+            Testcontainers.exposeHostPorts(hostPorts.stream().mapToInt(Integer::intValue).toArray());
         }
 
         return DevServicesResultBuildItem.discovered()
                 .feature(FirebaseBuildSteps.FEATURE)
-                .containerId(address.get().getId())
-                .config(config)
+                .containerId(addresses.iterator().next().containerAddress().getId())
+                .config(properties)
                 .build();
+    }
+
+    private record EmulatorContainerAddress(FirebaseEmulatorContainer.Emulator emulator,
+            ContainerAddress containerAddress) {
+    }
+
+    /**
+     * The configured emulators for which a config property is exposed to the application.
+     */
+    private static Set<FirebaseEmulatorContainer.Emulator> appEmulators(
+            FirebaseEmulatorContainer.EmulatorConfig emulatorConfig) {
+        return emulatorConfig
+                .emulators()
+                .stream()
+                .filter(CONFIG_PROPERTIES::containsKey)
+                .collect(Collectors.toCollection(() -> EnumSet.noneOf(FirebaseEmulatorContainer.Emulator.class)));
+    }
+
+    /**
+     * The configuration Quarkus compares between restarts of the application to decide whether the running container
+     * can be reused. It is based on the resolved emulator configuration instead of the config mapping, as the
+     * same configuration can resolve to a different container, for example when a firebase.json or hosting path
+     * differs between branches. It only contains JDK types, as every restart has its own classloader.
+     */
+    private Map<String, String> serviceConfig(FirebaseEmulatorContainer.EmulatorConfig emulatorContainerConfig,
+            FirebaseDevServiceConfig.Firebase.Emulator emulatorConfig) {
+        var serviceConfig = new HashMap<>(emulatorContainerConfig.reuseFingerprint());
+        serviceConfig.put("exposeToCompanionContainers", String.valueOf(emulatorConfig.exposeToCompanionContainers()));
+        return serviceConfig;
     }
 
     /**
@@ -300,16 +360,11 @@ public class FirebaseDevServiceProcessor {
                     : s -> s.getContainer().hostEmulatorUrl(emulator));
         }
 
-        // Once host-override no longer contains "localhost", the automatic emulator-credentials detection (e.g.
-        // FirestoreProducer#automaticEmulatorCredentials) won't kick in, so force it explicitly.
+        // On a shared network the host is the container alias, so the automatic emulator-credentials detection
+        // doesn't kick in (see emulatorCredentialsConfig). This is not needed in the other modes, as the host is
+        // then localhost.
         if (useSharedNetwork) {
-            if (emulators.contains(FirebaseEmulatorContainer.Emulator.PUB_SUB)) {
-                providers.put("quarkus.google.cloud.pubsub.use-emulator-credentials", s -> "true");
-            }
-
-            if (emulators.contains(FirebaseEmulatorContainer.Emulator.CLOUD_FIRESTORE)) {
-                providers.put("quarkus.google.cloud.firestore.use-emulator-credentials", s -> "true");
-            }
+            emulatorCredentialsConfig(emulators).forEach((key, value) -> providers.put(key, s -> value));
         }
 
         // Expose the emulator's host-mapped ports to any container started by Testcontainers in this JVM (e.g. a
@@ -321,7 +376,7 @@ public class FirebaseDevServiceProcessor {
             for (var emulator : emulators) {
                 if (CONTAINER_CONFIG_PROPERTIES.containsKey(emulator)) {
                     providers.put(CONTAINER_CONFIG_PROPERTIES.get(emulator),
-                            s -> containerEmulatorUrl(s.getContainer(), emulator));
+                            s -> containerEmulatorUrl(emulator, s.getContainer().hostMappedPort(emulator)));
                 }
             }
         }
@@ -329,10 +384,32 @@ public class FirebaseDevServiceProcessor {
         return providers;
     }
 
-    private void postStart(FirebaseEmulatorContainer emulatorContainer, boolean exposeToCompanionContainers) {
+    /**
+     * The automatic emulator-credentials detection (e.g. FirestoreProducer#automaticEmulatorCredentials) only
+     * triggers when the emulator host contains "localhost". On a shared network the host is the container alias
+     * instead, so the detection doesn't kick in and it is forced explicitly.
+     */
+    private static Map<String, String> emulatorCredentialsConfig(Set<FirebaseEmulatorContainer.Emulator> emulators) {
+        Map<String, String> config = new HashMap<>();
+        if (emulators.contains(FirebaseEmulatorContainer.Emulator.PUB_SUB)) {
+            config.put("quarkus.google.cloud.pubsub.use-emulator-credentials", "true");
+        }
+        if (emulators.contains(FirebaseEmulatorContainer.Emulator.CLOUD_FIRESTORE)) {
+            config.put("quarkus.google.cloud.firestore.use-emulator-credentials", "true");
+        }
+        return config;
+    }
+
+    private void postStart(StartableContainer<FirebaseEmulatorContainer> startable,
+            Map<String, Function<StartableContainer<FirebaseEmulatorContainer>, String>> configProviders,
+            boolean exposeToCompanionContainers) {
+        FirebaseEmulatorContainer emulatorContainer = startable.getContainer();
         if (LOGGER.isInfoEnabled()) {
             var runningPorts = emulatorContainer.hostEmulatorUrls();
             runningPorts.forEach((e, p) -> LOGGER.info("Google Cloud Emulator " + e + " reachable on " + p));
+
+            configProviders.forEach((key, value) -> LOGGER
+                    .info("Google Cloud emulator config property " + key + " set to " + value.apply(startable)));
         }
 
         if (exposeToCompanionContainers) {
@@ -345,10 +422,9 @@ public class FirebaseDevServiceProcessor {
      * Build the URL on which an emulator is reachable from another Testcontainers-managed container, via the
      * {@code host.testcontainers.internal} ambassador (see {@link Testcontainers#exposeHostPorts(int...)}).
      */
-    private String containerEmulatorUrl(FirebaseEmulatorContainer emulatorContainer,
-            FirebaseEmulatorContainer.Emulator emulator) {
+    private static String containerEmulatorUrl(FirebaseEmulatorContainer.Emulator emulator, int hostPort) {
         return FirebaseEmulatorContainer.withHttpPrefixIfNeeded(emulator,
-                HOST_TESTCONTAINERS_INTERNAL + ":" + emulatorContainer.hostMappedPort(emulator));
+                HOST_TESTCONTAINERS_INTERNAL + ":" + hostPort);
     }
 
 }
