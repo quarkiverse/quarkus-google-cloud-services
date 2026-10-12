@@ -17,7 +17,6 @@
     <quarkus.version>4.0.0.Beta1</quarkus.version>
     <enforcer-plugin.version>3.6.3</enforcer-plugin.version>
     <assertj.version>3.27.7</assertj.version>
-    <opentelemetry-alpha.version>1.67.0-alpha</opentelemetry-alpha.version>
     <maven.compiler.release>21</maven.compiler.release>
   </properties>
   <scm>
@@ -67,11 +66,6 @@
         <groupId>org.assertj</groupId>
         <artifactId>assertj-core</artifactId>
         <version>${assertj.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>io.opentelemetry</groupId>
-        <artifactId>opentelemetry-opencensus-shim</artifactId>
-        <version>${opentelemetry-alpha.version}</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
