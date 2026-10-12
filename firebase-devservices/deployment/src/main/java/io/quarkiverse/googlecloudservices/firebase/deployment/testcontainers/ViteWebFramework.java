@@ -11,7 +11,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testcontainers.images.builder.dockerfile.DockerfileBuilder;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.json.JsonMapper;
 
 /**
  * Detects projects using <a href="https://vite.dev">Vite</a> for the Firebase Hosting content, using the same
@@ -113,9 +114,9 @@ public class ViteWebFramework implements FirebaseEmulatorContainer.WebFramework 
 
     private boolean declaresViteDependency(Path packageJson) {
         try {
-            var parsed = new ObjectMapper().readValue(packageJson.toFile(), FirebaseToolsVersionReader.PackageJson.class);
+            var parsed = new JsonMapper().readValue(packageJson.toFile(), FirebaseToolsVersionReader.PackageJson.class);
             return parsed.getDependencies().containsKey("vite") || parsed.getDevDependencies().containsKey("vite");
-        } catch (IOException e) {
+        } catch (JacksonException e) {
             LOGGER.debug("Failed to read {} while detecting Vite, treating as not detected", packageJson, e);
             return false;
         }
