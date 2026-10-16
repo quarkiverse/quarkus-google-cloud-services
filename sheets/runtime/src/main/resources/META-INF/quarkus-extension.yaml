@@ -1,0 +1,16 @@
+---
+name: "Google Cloud Sheets"
+artifact: ${project.groupId}:${project.artifactId}:${project.version}
+metadata:
+  keywords:
+  - "sheets"
+  - "google sheets"
+  - "spreadsheet"
+  - "google cloud"
+  - "gcloud"
+  - "gcp"
+  categories:
+  - "cloud"
+  - "data"
+  guide: "https://quarkiverse.github.io/quarkiverse-docs/quarkus-google-cloud-services/main/sheets.html"
+  status: "preview"
