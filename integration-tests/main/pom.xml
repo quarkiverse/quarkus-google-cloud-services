@@ -61,6 +61,10 @@
       <groupId>io.quarkiverse.googlecloudservices</groupId>
       <artifactId>quarkus-google-cloud-genai</artifactId>
     </dependency>
+    <dependency>
+      <groupId>io.quarkiverse.googlecloudservices</groupId>
+      <artifactId>quarkus-google-cloud-sheets</artifactId>
+    </dependency>
     <!-- Used to test shared network logic -->
     <dependency>
       <groupId>io.quarkus</groupId>

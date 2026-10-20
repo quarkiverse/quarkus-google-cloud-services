@@ -11,11 +11,13 @@ import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 
 import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
+import com.google.api.client.http.HttpRequestInitializer;
 import com.google.api.client.json.gson.GsonFactory;
 import com.google.api.services.sheets.v4.Sheets;
 import com.google.auth.Credentials;
 import com.google.auth.http.HttpCredentialsAdapter;
 import com.google.auth.oauth2.GoogleCredentials;
+import com.google.cloud.NoCredentials;
 
 import io.quarkus.arc.Unremovable;
 
@@ -37,10 +39,14 @@ public class SheetsProducer {
             credentials = googleCreds.createScoped(configuration.scopes());
         }
 
+        HttpRequestInitializer requestInitializer = credentials instanceof NoCredentials
+                ? request -> {
+                }
+                : new HttpCredentialsAdapter(credentials);
         var builder = new Sheets.Builder(
                 GoogleNetHttpTransport.newTrustedTransport(),
                 GsonFactory.getDefaultInstance(),
-                new HttpCredentialsAdapter(credentials));
+                requestInitializer);
 
         configuration.applicationName().ifPresent(builder::setApplicationName);
         configuration.rootUrl().ifPresent(builder::setRootUrl);
