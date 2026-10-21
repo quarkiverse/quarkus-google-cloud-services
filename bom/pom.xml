@@ -292,7 +292,7 @@
             </dependency>
             <dependency>
                 <groupId>io.quarkiverse.googlecloudservices</groupId>
-                <artifactId>quarkus-google-cloud-sheet-deployment</artifactId>
+                <artifactId>quarkus-google-cloud-sheets-deployment</artifactId>
                 <version>${project.version}</version>
             </dependency>
         </dependencies>
