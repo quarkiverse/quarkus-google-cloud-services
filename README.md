@@ -22,6 +22,7 @@ The following services are implemented:
 - [Logging](logging)
 - [Vertex AI](vertx-ai) (deprecated, use Gen AI)
 - [Gen AI](genai)
+- [Sheets](sheets)
     
 ## Example applications
 
