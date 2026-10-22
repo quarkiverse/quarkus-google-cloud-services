@@ -25,6 +25,7 @@
         <sztd-jni.version>1.5.7-23</sztd-jni.version>
         <shim.version>0.4.0</shim.version>
         <google-genai.version>1.78.0</google-genai.version>
+        <google-api-services-sheets.version>v4-rev20260930-2.0.0</google-api-services-sheets.version>
 
         <!-- Dependency convergence issues -->
         <opencensus.version>0.31.1</opencensus.version><!-- mess in google-pubsub and grpc deps; should be rather stable as OpenCensus has been sunsetted already - see https://github.com/GoogleCloudPlatform/cloud-opensource-java/issues/862 -->
@@ -49,6 +50,11 @@
                 <groupId>com.google.genai</groupId>
                 <artifactId>google-genai</artifactId>
                 <version>${google-genai.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.google.apis</groupId>
+                <artifactId>google-api-services-sheets</artifactId>
+                <version>${google-api-services-sheets.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.google.firebase</groupId>
@@ -277,6 +283,16 @@
             <dependency>
                 <groupId>io.quarkiverse.googlecloudservices</groupId>
                 <artifactId>quarkus-google-cloud-genai-deployment</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.quarkiverse.googlecloudservices</groupId>
+                <artifactId>quarkus-google-cloud-sheets</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.quarkiverse.googlecloudservices</groupId>
+                <artifactId>quarkus-google-cloud-sheets-deployment</artifactId>
                 <version>${project.version}</version>
             </dependency>
         </dependencies>

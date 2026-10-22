@@ -12,6 +12,7 @@
 * xref:logging.adoc[Logging]
 * xref:pubsub.adoc[PubSub]
 * xref:secretmanager.adoc[Secret Manager]
+* xref:sheets.adoc[Sheets]
 * xref:spanner.adoc[Spanner]
 * xref:storage.adoc[Storage]
 * xref:vertexai.adoc[Vertex AI]

@@ -43,7 +43,8 @@
     <module>logging</module>
     <module>vertx-ai</module>
     <module>genai</module>
-    
+    <module>sheets</module>
+
     <module>integration-tests</module>
       <module>docs-rag</module>
     </modules>

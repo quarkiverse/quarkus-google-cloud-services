@@ -14,6 +14,7 @@ The Google Cloud Services extension pack provides Quarkus extensions for the fol
 * xref:logging.adoc[Logging]
 * xref:pubsub.adoc[PubSub]
 * xref:secretmanager.adoc[SecretManager]
+* xref:sheets.adoc[Sheets]
 * xref:spanner.adoc[Spanner]
 * xref:storage.adoc[Storage]
 * xref:vertexai.adoc[Vertex AI]

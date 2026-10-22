@@ -1,0 +1,119 @@
+= Google Cloud Services - Sheets
+
+This extension provides an injectable `com.google.api.services.sheets.v4.Sheets` client for the Google Sheets API.
+
+Be sure to have read the https://quarkiverse.github.io/quarkiverse-docs/quarkus-google-cloud-services/main/index.html[Google Cloud Services extension pack global documentation] before this one; it contains general authentication and configuration information.
+
+== Bootstrapping the project
+
+Create a project with the Sheets extension (replace the version placeholder with the correct Quarkus version):
+
+[source,shell script]
+----
+mvn io.quarkus:quarkus-maven-plugin:<quarkusVersion>:create \
+    -DprojectGroupId=org.acme \
+    -DprojectArtifactId=sheets-quickstart \
+    -Dextensions="resteasy-reactive-jackson,quarkus-google-cloud-sheets"
+cd sheets-quickstart
+----
+
+For an existing Quarkus project, add the extension with:
+
+[source,shell script]
+----
+./mvnw quarkus:add-extension -Dextensions="quarkus-google-cloud-sheets"
+----
+
+This adds the following dependency to `pom.xml`:
+
+[source,xml]
+----
+<dependency>
+    <groupId>io.quarkiverse.googlecloudservices</groupId>
+    <artifactId>quarkus-google-cloud-sheets</artifactId>
+</dependency>
+----
+
+== Google Cloud prerequisites
+
+In the Google Cloud project used by your application, enable the Google Sheets API:
+
+[source,shell script]
+----
+gcloud services enable sheets.googleapis.com --project=<your-project-id>
+----
+
+Configure Google Cloud credentials as described in the global documentation. The identity represented by those credentials must also have access to each spreadsheet your application uses. For a service account, share the spreadsheet with its service-account email address and grant the required access (Viewer for reads, Editor for writes).
+
+The API OAuth scope must permit the operations your application performs. The default scope allows read and write access; choose the narrowest scope that supports your use case. The extension applies the configured Sheets scopes to service-account credentials, whether loaded from `quarkus.google.cloud.service-account-location`, `quarkus.google.cloud.service-account-encoded-key`, or Application Default Credentials (including a file set by `GOOGLE_APPLICATION_CREDENTIALS`). For bearer access tokens and Google Cloud SDK user credentials, the token must already include the required Sheets scope; scopes cannot be added to an issued access token.
+
+A suitable OAuth scope does not itself grant access to a spreadsheet: the spreadsheet must also be shared with the authenticated identity.
+
+To configure read-only access, set the `quarkus.google.cloud.sheets.scopes` property:
+
+[source,properties]
+----
+quarkus.google.cloud.sheets.scopes=https://www.googleapis.com/auth/spreadsheets.readonly
+----
+
+=== Supported OAuth scopes
+
+The Sheets API scopes used directly by this extension are:
+
+[cols="2,3",options="header"]
+|===
+|Scope |Access
+
+|`https://www.googleapis.com/auth/spreadsheets`
+|View, edit, create, and delete the authenticated identity's spreadsheets.
+
+|`https://www.googleapis.com/auth/spreadsheets.readonly`
+|View the authenticated identity's spreadsheets.
+|===
+
+These scopes apply to spreadsheet files, not individual tabs; use protected ranges to prevent edits to particular cells or ranges. Google also documents Drive scopes that can be used with Sheets, including their different access models and verification requirements, on its https://developers.google.com/workspace/sheets/api/scopes[Sheets API scopes page].
+
+== Example
+
+The extension creates and makes the Google Sheets API `Sheets` client available for CDI injection; inject it rather than constructing the client yourself. Use the client to read a range. The spreadsheet ID is the identifier in the spreadsheet URL, and the range uses A1 notation (including the sheet name when needed).
+
+[source,java]
+----
+import java.io.IOException;
+import java.util.List;
+
+import jakarta.inject.Inject;
+import jakarta.ws.rs.GET;
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.QueryParam;
+import jakarta.ws.rs.core.MediaType;
+
+import com.google.api.services.sheets.v4.Sheets;
+import com.google.api.services.sheets.v4.model.ValueRange;
+
+@Path("/sheets")
+public class SheetsResource {
+    @Inject
+    Sheets sheets;
+
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<List<Object>> read(
+            @QueryParam("spreadsheetId") String spreadsheetId,
+            @QueryParam("range") String range) throws IOException {
+        ValueRange response = sheets.spreadsheets().values()
+                .get(spreadsheetId, range)
+                .execute();
+        return response.getValues();
+    }
+}
+----
+
+For example, a request to `/sheets?spreadsheetId=<spreadsheet-id>&range=Sheet1!A1:B2` returns the values in that range.
+
+If the requested range is empty, the Sheets API may omit its values field and `getValues()` returns `null`.
+
+== Configuration Reference
+
+include::./includes/quarkus-google-cloud-sheets.adoc[]
