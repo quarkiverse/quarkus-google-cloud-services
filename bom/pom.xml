@@ -24,7 +24,7 @@
         <firebase-admin-sdk.version>9.11.0</firebase-admin-sdk.version>
         <sztd-jni.version>1.5.7-23</sztd-jni.version>
         <shim.version>0.4.0</shim.version>
-        <google-genai.version>1.76.0</google-genai.version>
+        <google-genai.version>1.78.0</google-genai.version>
         <google-api-services-sheets.version>v4-rev20260930-2.0.0</google-api-services-sheets.version>
 
         <!-- Dependency convergence issues -->
