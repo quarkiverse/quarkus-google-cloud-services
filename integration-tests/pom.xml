@@ -35,6 +35,7 @@
                 <module>app-engine</module>
                 <module>firebase-admin</module>
                 <module>firebase</module>
+                <module>bigquery-access-token</module>
             </modules>
         </profile>
     </profiles>
