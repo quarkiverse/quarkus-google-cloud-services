@@ -69,6 +69,15 @@
             <groupId>org.graalvm.sdk</groupId>
             <artifactId>nativeimage</artifactId>
         </dependency>
+        <!-- Compile-time only: needed to reference the shaded Netty logging class in the
+             GraalVM substitution below. Extensions that end up with grpc-netty-shaded on
+             their runtime classpath (transitively, via their own GCP client) get the fix;
+             ones that don't simply never trigger the substitution. -->
+        <dependency>
+            <groupId>io.grpc</groupId>
+            <artifactId>grpc-netty-shaded</artifactId>
+            <scope>provided</scope>
+        </dependency>
 
         <!-- Tests -->
         <dependency>
