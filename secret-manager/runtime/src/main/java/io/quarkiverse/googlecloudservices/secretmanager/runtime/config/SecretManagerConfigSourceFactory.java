@@ -8,6 +8,7 @@ import org.eclipse.microprofile.config.spi.ConfigSource;
 import com.google.cloud.ServiceOptions;
 
 import io.quarkiverse.googlecloudservices.common.GcpBootstrapConfiguration;
+import io.quarkiverse.googlecloudservices.secretmanager.runtime.SecretManagerConfiguration;
 import io.smallrye.config.ConfigSourceContext;
 import io.smallrye.config.ConfigSourceFactory;
 import io.smallrye.config.SmallRyeConfig;
@@ -19,14 +20,16 @@ public class SecretManagerConfigSourceFactory implements ConfigSourceFactory {
         SmallRyeConfig config = new SmallRyeConfigBuilder()
                 .withSources(new ConfigSourceContext.ConfigSourceContextConfigSource(context))
                 .withMapping(GcpBootstrapConfiguration.class)
+                .withMapping(SecretManagerConfiguration.class)
                 .withMappingIgnore("quarkus.**")
                 .build();
 
         GcpBootstrapConfiguration gcpConfig = config.getConfigMapping(GcpBootstrapConfiguration.class);
+        SecretManagerConfiguration secretManagerConfig = config.getConfigMapping(SecretManagerConfiguration.class);
 
         String projectId = getProjectId(gcpConfig);
         if (projectId != null) {
-            return singletonList(new SecretManagerConfigSource(gcpConfig, projectId));
+            return singletonList(new SecretManagerConfigSource(gcpConfig, secretManagerConfig, projectId));
         } else {
             return emptyList();
         }
