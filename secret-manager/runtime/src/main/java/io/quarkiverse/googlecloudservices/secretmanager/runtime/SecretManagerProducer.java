@@ -23,6 +23,7 @@ import io.quarkus.arc.Unremovable;
 public class SecretManagerProducer {
 
     @Inject
+    @SecretManagerCredentials
     Credentials googleCredentials;
 
     @Inject
