@@ -31,7 +31,7 @@ class SecretManagerCredentialProducerTest {
     @Test
     void inheritsGlobalAccessTokenConfiguration() throws Exception {
         givenGlobalConfiguration(Optional.empty(), Optional.empty(), true);
-        producer.configuration = configuration(Optional.empty());
+        producer.configuration = configuration(Optional.empty(), Optional.empty(), Optional.empty());
 
         producer.secretManagerCredentials();
 
@@ -41,7 +41,7 @@ class SecretManagerCredentialProducerTest {
     @Test
     void disablesAccessTokenForSecretManagerOnly() throws Exception {
         givenGlobalConfiguration(Optional.empty(), Optional.empty(), true);
-        producer.configuration = configuration(Optional.of(false));
+        producer.configuration = configuration(Optional.empty(), Optional.empty(), Optional.of(false));
 
         producer.secretManagerCredentials();
 
@@ -51,7 +51,7 @@ class SecretManagerCredentialProducerTest {
     @Test
     void enablesAccessTokenForSecretManagerOnly() throws Exception {
         givenGlobalConfiguration(Optional.empty(), Optional.empty(), false);
-        producer.configuration = configuration(Optional.of(true));
+        producer.configuration = configuration(Optional.empty(), Optional.empty(), Optional.of(true));
 
         producer.secretManagerCredentials();
 
@@ -60,13 +60,36 @@ class SecretManagerCredentialProducerTest {
 
     @Test
     void forwardsGlobalServiceAccountConfiguration() throws Exception {
-        givenGlobalConfiguration(Optional.of("/path/service-account.json"), Optional.of("encoded-key"), false);
-        producer.configuration = configuration(Optional.empty());
+        givenGlobalConfiguration(Optional.of("/path/global-service-account.json"), Optional.of("global-key"), false);
+        producer.configuration = configuration(Optional.empty(), Optional.empty(), Optional.empty());
 
         producer.secretManagerCredentials();
 
-        assertThat(credentialsFactory.serviceAccountLocation).contains("/path/service-account.json");
-        assertThat(credentialsFactory.serviceAccountEncodedKey).contains("encoded-key");
+        assertThat(credentialsFactory.serviceAccountLocation).contains("/path/global-service-account.json");
+        assertThat(credentialsFactory.serviceAccountEncodedKey).contains("global-key");
+    }
+
+    @Test
+    void usesServiceAccountConfiguredForSecretManager() throws Exception {
+        givenGlobalConfiguration(Optional.of("/path/global-service-account.json"), Optional.empty(), true);
+        producer.configuration = configuration(Optional.of("/path/secret-manager-service-account.json"), Optional.empty(),
+                Optional.empty());
+
+        producer.secretManagerCredentials();
+
+        assertThat(credentialsFactory.serviceAccountLocation).contains("/path/secret-manager-service-account.json");
+        assertThat(credentialsFactory.serviceAccountEncodedKey).isEmpty();
+    }
+
+    @Test
+    void serviceAccountEncodedKeyOverridesGlobalLocation() throws Exception {
+        givenGlobalConfiguration(Optional.of("/path/global-service-account.json"), Optional.empty(), true);
+        producer.configuration = configuration(Optional.empty(), Optional.of("secret-manager-key"), Optional.empty());
+
+        producer.secretManagerCredentials();
+
+        assertThat(credentialsFactory.serviceAccountLocation).isEmpty();
+        assertThat(credentialsFactory.serviceAccountEncodedKey).contains("secret-manager-key");
     }
 
     private void givenGlobalConfiguration(Optional<String> serviceAccountLocation,
@@ -78,8 +101,25 @@ class SecretManagerCredentialProducerTest {
         when(configHolder.getBootstrapConfig()).thenReturn(globalConfiguration);
     }
 
-    private static SecretManagerConfiguration configuration(Optional<Boolean> accessTokenEnabled) {
-        return () -> accessTokenEnabled;
+    private static SecretManagerConfiguration configuration(Optional<String> serviceAccountLocation,
+            Optional<String> serviceAccountEncodedKey, Optional<Boolean> accessTokenEnabled) {
+        return new SecretManagerConfiguration() {
+
+            @Override
+            public Optional<String> serviceAccountLocation() {
+                return serviceAccountLocation;
+            }
+
+            @Override
+            public Optional<String> serviceAccountEncodedKey() {
+                return serviceAccountEncodedKey;
+            }
+
+            @Override
+            public Optional<Boolean> accessTokenEnabled() {
+                return accessTokenEnabled;
+            }
+        };
     }
 
     private static class RecordingCredentialsFactory extends GcpCredentialsFactory {

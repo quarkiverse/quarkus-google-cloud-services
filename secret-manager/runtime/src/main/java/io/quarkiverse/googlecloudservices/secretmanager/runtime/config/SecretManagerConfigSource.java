@@ -15,6 +15,7 @@ import com.google.cloud.secretmanager.v1.SecretVersionName;
 
 import io.quarkiverse.googlecloudservices.common.GcpBootstrapConfiguration;
 import io.quarkiverse.googlecloudservices.common.GcpCredentials;
+import io.quarkiverse.googlecloudservices.secretmanager.runtime.SecretManagerConfiguration;
 import io.smallrye.config.common.AbstractConfigSource;
 
 public class SecretManagerConfigSource extends AbstractConfigSource {
@@ -28,11 +29,13 @@ public class SecretManagerConfigSource extends AbstractConfigSource {
     private final SecretManagerServiceClient client;
     private final AtomicBoolean closed;
 
-    public SecretManagerConfigSource(final GcpBootstrapConfiguration gcpConfig, final String projectId) {
+    public SecretManagerConfigSource(final GcpBootstrapConfiguration gcpConfig,
+            final SecretManagerConfiguration secretManagerConfig,
+            final String projectId) {
         super(CONFIG_SOURCE_NAME, SECRET_MANAGER_ORDINAL);
         this.projectId = projectId;
         if (gcpConfig.secretManagerEnabled()) {
-            this.client = createClient(gcpConfig, projectId);
+            this.client = createClient(gcpConfig, secretManagerConfig, projectId);
             this.closed = new AtomicBoolean(false);
         } else {
             this.client = null;
@@ -75,25 +78,30 @@ public class SecretManagerConfigSource extends AbstractConfigSource {
 
     private static SecretManagerServiceClient createClient(
             final GcpBootstrapConfiguration gcpConfig,
+            final SecretManagerConfiguration secretManagerConfig,
             final String projectId) {
 
         try {
             return SecretManagerServiceClient.create(
                     SecretManagerServiceSettings.newBuilder()
                             .setQuotaProjectId(projectId)
-                            .setCredentialsProvider(FixedCredentialsProvider.create(credentials(gcpConfig)))
+                            .setCredentialsProvider(FixedCredentialsProvider
+                                    .create(credentials(gcpConfig, secretManagerConfig)))
                             .build());
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
 
-    private static Credentials credentials(final GcpBootstrapConfiguration gcpConfig) throws IOException {
-        Credentials serviceAccountCredentials = GcpCredentials.fromServiceAccount(gcpConfig.serviceAccountLocation(),
-                gcpConfig.serviceAccountEncodedKey());
+    static Credentials credentials(final GcpBootstrapConfiguration gcpConfig,
+            final SecretManagerConfiguration secretManagerConfig) throws IOException {
+        Credentials serviceAccountCredentials = GcpCredentials.fromServiceAccount(
+                secretManagerConfig.effectiveServiceAccountLocation(gcpConfig),
+                secretManagerConfig.effectiveServiceAccountEncodedKey(gcpConfig));
         if (serviceAccountCredentials != null) {
             return serviceAccountCredentials;
         }
+        // Access tokens are never used here: secrets are resolved at bootstrap time, before any user is authenticated.
         return GcpCredentials.applicationDefault();
     }
 }

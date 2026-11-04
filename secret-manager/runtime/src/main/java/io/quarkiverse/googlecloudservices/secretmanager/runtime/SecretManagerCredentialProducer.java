@@ -34,8 +34,8 @@ public class SecretManagerCredentialProducer {
     public Credentials secretManagerCredentials() throws IOException {
         GcpBootstrapConfiguration globalConfiguration = gcpConfigHolder.getBootstrapConfig();
         return credentialsFactory.create(
-                globalConfiguration.serviceAccountLocation(),
-                globalConfiguration.serviceAccountEncodedKey(),
+                configuration.effectiveServiceAccountLocation(globalConfiguration),
+                configuration.effectiveServiceAccountEncodedKey(globalConfiguration),
                 configuration.effectiveAccessTokenEnabled(globalConfiguration));
     }
 }

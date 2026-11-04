@@ -85,12 +85,14 @@ but will be ignored if the `quarkus.google.cloud.access-token-enabled` property 
 * Credentials provided by the Google Cloud SDK `gcloud auth application-default login` command.
 * Google Cloud managed environment (Google App Engine, Google Cloud Functions, GCE, ...) built-in credentials.
 
-The authentication can be overridden per service. For example, Secret Manager can ignore the access token even when
-it is enabled globally, see the xref:secretmanager.adoc[Secret Manager documentation] for details:
+The authentication can be overridden per service. For example, Secret Manager can use a dedicated service account and
+ignore the access token even when it is enabled globally, see the xref:secretmanager.adoc[Secret Manager documentation]
+for details:
 
 [source,properties]
 ----
 quarkus.google.cloud.secret-manager.access-token-enabled=false
+quarkus.google.cloud.secret-manager.service-account-location=/path/to/secret-manager-service-account.json
 ----
 
 **Google PubSub and Google Bigtable should be authenticated using the `GOOGLE_APPLICATION_CREDENTIALS` environment variable,
