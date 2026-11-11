@@ -61,6 +61,11 @@
       <groupId>io.quarkiverse.googlecloudservices</groupId>
       <artifactId>quarkus-google-cloud-genai</artifactId>
     </dependency>
+    <!-- Used directly by CustomGoogleApiResource; version is managed via the Google Cloud BOM -->
+    <dependency>
+      <groupId>com.google.api-client</groupId>
+      <artifactId>google-api-client</artifactId>
+    </dependency>
     <!-- Used to test shared network logic -->
     <dependency>
       <groupId>io.quarkus</groupId>
