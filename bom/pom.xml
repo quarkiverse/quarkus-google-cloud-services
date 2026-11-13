@@ -23,6 +23,7 @@
         <google-cloud-sdk.version>26.84.0</google-cloud-sdk.version>
         <firebase-admin-sdk.version>9.11.0</firebase-admin-sdk.version>
         <sztd-jni.version>1.5.7-26</sztd-jni.version>
+        <brotli4j.version>1.24.0</brotli4j.version>
         <shim.version>0.4.0</shim.version>
         <google-genai.version>2.0.0</google-genai.version>
 
@@ -72,6 +73,12 @@
                 <groupId>com.github.luben</groupId>
                 <artifactId>zstd-jni</artifactId>
                 <version>${sztd-jni.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.aayushatharva.brotli4j</groupId>
+                <artifactId>brotli4j</artifactId>
+                <version>1.24.0</version>
+                <scope>${brotli4j.version}</scope>
             </dependency>
             <dependency>
                 <groupId>org.eclipse.jetty.alpn</groupId>
