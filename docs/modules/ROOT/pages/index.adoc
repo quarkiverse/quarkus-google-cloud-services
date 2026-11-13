@@ -85,6 +85,14 @@ but will be ignored if the `quarkus.google.cloud.access-token-enabled` property 
 * Credentials provided by the Google Cloud SDK `gcloud auth application-default login` command.
 * Google Cloud managed environment (Google App Engine, Google Cloud Functions, GCE, ...) built-in credentials.
 
+The authentication can be overridden per service. For example, Secret Manager can ignore the access token even when
+it is enabled globally, see the xref:secretmanager.adoc[Secret Manager documentation] for details:
+
+[source,properties]
+----
+quarkus.google.cloud.secret-manager.access-token-enabled=false
+----
+
 **Google PubSub and Google Bigtable should be authenticated using the `GOOGLE_APPLICATION_CREDENTIALS` environment variable,
 or use the provided `CredentialsProvider` when instantiating their objects.**
 
@@ -129,6 +137,30 @@ public class GoogleCredentialsMockProducer {
   public CredentialsProvider credentialsProvider() {
     return NoCredentialsProvider.create();
   }
+}
+----
+
+Secret Manager uses its own `Credentials` bean, qualified with `@SecretManagerCredentials`, because it can be
+configured independently from the other services. When testing Secret Manager, mock this qualified bean as well:
+
+[source, java]
+----
+import com.google.auth.Credentials;
+import com.google.cloud.NoCredentials;
+
+import io.quarkiverse.googlecloudservices.secretmanager.runtime.SecretManagerCredentials;
+import io.quarkus.test.Mock;
+
+@Mock
+@ApplicationScoped
+public class SecretManagerCredentialsMockProducer {
+
+    @Produces
+    @Singleton
+    @SecretManagerCredentials
+    public Credentials secretManagerCredentials() {
+        return NoCredentials.getInstance();
+    }
 }
 ----
 
