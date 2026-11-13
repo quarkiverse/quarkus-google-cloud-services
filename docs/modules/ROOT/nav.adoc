@@ -2,6 +2,7 @@
 ** xref:index.adoc#authenticating[Authenticating to Google Cloud]
 ** xref:index.adoc#emulators[Google Cloud services emulators: mocking Google Cloud credentials]
 ** xref:index.adoc#examples[Example applications]
+* xref:using-other-google-apis.adoc[Using other Google APIs]
 * xref:bigquery.adoc[BigQuery]
 * xref:bigtable.adoc[BigTable]
 * xref:firebase-devservices.adoc[Firebase DevServices]
