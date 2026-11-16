@@ -25,7 +25,7 @@
         <sztd-jni.version>1.5.7-26</sztd-jni.version>
         <brotli4j.version>1.24.0</brotli4j.version>
         <shim.version>0.4.0</shim.version>
-        <google-genai.version>2.0.0</google-genai.version>
+        <google-genai.version>2.3.0</google-genai.version>
 
         <!-- Dependency convergence issues -->
         <opencensus.version>0.31.1</opencensus.version><!-- mess in google-pubsub and grpc deps; should be rather stable as OpenCensus has been sunsetted already - see https://github.com/GoogleCloudPlatform/cloud-opensource-java/issues/862 -->
