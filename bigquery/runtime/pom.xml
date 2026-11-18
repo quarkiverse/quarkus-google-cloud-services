@@ -37,12 +37,6 @@
                     <groupId>org.checkerframework</groupId>
                     <artifactId>checker-qual</artifactId>
                 </exclusion>
-                <!-- We exclude the grpc-netty-shaded library and include only the grpc-netty
-                one (coming from quarkus-google-cloud-common-grpc) as netty is already included with Quarkus -->
-                <exclusion>
-                    <groupId>io.grpc</groupId>
-                    <artifactId>grpc-netty-shaded</artifactId>
-                </exclusion>
                 <exclusion>
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>animal-sniffer-annotations</artifactId>
