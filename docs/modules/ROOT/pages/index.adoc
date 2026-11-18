@@ -88,6 +88,9 @@ but will be ignored if the `quarkus.google.cloud.access-token-enabled` property 
 **Google PubSub and Google Bigtable should be authenticated using the `GOOGLE_APPLICATION_CREDENTIALS` environment variable,
 or use the provided `CredentialsProvider` when instantiating their objects.**
 
+If you need to call a Google API that does not have a dedicated extension, you can inject the `Credentials` bean and use it with the official Google client library.
+See xref:using-other-google-apis.adoc[Using other Google APIs] for REST and gRPC examples.
+
 [[emulators]]
 == Using Google Cloud services emulators
 
