@@ -1,5 +1,6 @@
 package io.quarkiverse.googlecloudservices.secretmanager.deployment;
 
+import io.quarkiverse.googlecloudservices.secretmanager.runtime.SecretManagerCredentialProducer;
 import io.quarkiverse.googlecloudservices.secretmanager.runtime.SecretManagerProducer;
 import io.quarkiverse.googlecloudservices.secretmanager.runtime.config.SecretManagerClientDestroyer;
 import io.quarkiverse.googlecloudservices.secretmanager.runtime.config.SecretManagerConfigBuilder;
@@ -20,6 +21,7 @@ public class SecretManagerBuildSteps {
     @BuildStep
     public void additionalBeans(BuildProducer<AdditionalBeanBuildItem> additionalBeans) {
         additionalBeans.produce(new AdditionalBeanBuildItem(SecretManagerProducer.class));
+        additionalBeans.produce(new AdditionalBeanBuildItem(SecretManagerCredentialProducer.class));
         additionalBeans.produce(new AdditionalBeanBuildItem(SecretManagerClientDestroyer.class));
     }
 
